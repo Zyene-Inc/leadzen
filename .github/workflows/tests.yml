@@ -77,8 +77,8 @@ jobs:
         run: npm run build
 
   build:
-    if: github.event_name != 'pull_request'
     needs: [test, dashboard, security, browser]
+    if: ${{ always() && !cancelled() && needs.test.result == 'success' && needs.dashboard.result == 'success' && needs.browser.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -96,9 +96,16 @@ jobs:
           name: leadzen-distribution
           path: dist/
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        if: ${{ needs.security.result == 'success' }}
         with:
           name: scanned-candidate-image
           path: candidate-image/
       - name: Verify the exact scanned image
+        if: ${{ needs.security.result == 'success' }}
         working-directory: candidate-image
         run: sha256sum --check candidate-image.tar.gz.sha256
+      - name: Require the security image gate
+        if: ${{ needs.security.result != 'success' }}
+        run: |
+          echo "The security image workflow did not pass; this release check remains blocked." >&2
+          exit 1

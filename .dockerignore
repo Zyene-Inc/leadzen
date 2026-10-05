@@ -1,0 +1,55 @@
+# Version control and local editor metadata.
+**/.git
+**/.github
+**/.idea
+**/.vscode
+**/.DS_Store
+
+# Private environment files; checked-in placeholder templates remain available.
+**/.env
+**/.env.*
+**/*.env
+**/*.env.*
+!**/.env.example
+!**/*.env.example
+**/*.pem
+**/*.key
+**/*.p12
+**/.vercel
+
+# Runtime records, database sidecars and recovery copies are mounted at runtime.
+data
+media
+**/*.sqlite*
+**/*.db
+**/*.db-*
+**/*.db.*
+**/*.bak
+**/*.backup
+**/backup
+**/backups
+**/*.log
+
+# Installed dependencies, caches, coverage and generated build outputs.
+**/.venv
+**/venv
+**/node_modules
+**/.next
+**/.cache
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.coverage
+**/.coverage.*
+**/htmlcov
+**/coverage
+**/test-results
+**/playwright-report
+**/*.tsbuildinfo
+**/dist
+**/build
+**/*.egg-info
+**/*.whl
+uv.lock

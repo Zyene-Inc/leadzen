@@ -25,9 +25,11 @@ test("trusted HTTPS renders, hydrates, sets private security headers and preserv
   const session = (await context.cookies()).find(cookie => cookie.name === "leadzen_dashboard_session");
   expect(Boolean(session?.value)).toBe(true);
   expect(session).toMatchObject({ secure: true, httpOnly: true, sameSite: "Lax", path: "/" });
-  await page.getByLabel("Dark mode", { exact: true }).check();
+  await page.getByRole("radio", { name: "Dark mode", exact: true }).press("Space");
+  await expect(page.getByRole("radio", { name: "Dark mode", exact: true })).toBeChecked();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.getByLabel("Light mode", { exact: true }).check();
+  await page.getByRole("radio", { name: "Light mode", exact: true }).press("Space");
+  await expect(page.getByRole("radio", { name: "Light mode", exact: true })).toBeChecked();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
@@ -81,8 +83,10 @@ test("settings persist and mobile navigation/forms fit a 375px viewport", async 
   await login(page, fixture);
   await page.goto("/settings");
   await page.getByRole("button", { name: "Edit Signature", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Edit Signature", exact: true })).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("heading", { name: "Edit Signature", exact: true })).toBeFocused();
   const signature = "Synthetic browser signature " + fixture.fixture_id.slice(0, 8);
-  await page.getByLabel("Email signature", { exact: true }).fill(signature);
+  await page.getByRole("textbox", { name: "Email signature", exact: true }).fill(signature);
   await page.getByRole("button", { name: "Save changes", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("Settings updated.");
   await page.reload();

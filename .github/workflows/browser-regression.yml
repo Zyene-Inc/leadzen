@@ -1,0 +1,40 @@
+name: Synthetic HTTPS browser regression
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          version: "0.11.15"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - name: Install locked application dependencies
+        run: |
+          uv pip install --system --require-hashes -r requirements-build.lock
+          uv pip install --system --require-hashes -r requirements-production.lock
+          uv pip install --system --no-build-isolation -e ".[web]"
+          npm ci --prefix dashboard
+      - name: Install pinned test browser
+        working-directory: dashboard
+        run: npx playwright install --with-deps chromium
+      - name: Exercise disposable production candidate over trusted HTTPS
+        # This publishes generated fixture data only to a temporary free tunnel.
+        # Missing HTTPS/provider guards/network availability FAIL this job.
+        run: python dashboard/e2e/stage.py --authorize-public-synthetic-fixture --test
+      # Private fixture logs/credentials/databases are intentionally not uploaded.

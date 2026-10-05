@@ -1,0 +1,3 @@
+# Deliberately refresh with: uv pip compile requirements-build.in --python-version 3.12 --universal --generate-hashes --output-file requirements-build.lock
+uv==0.11.15
+hatchling==1.32.4

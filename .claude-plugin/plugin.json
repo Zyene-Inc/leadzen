@@ -1,0 +1,19 @@
+{
+  "name": "leadzen",
+  "description": "Find qualified B2B leads from inside Claude Code — drives the LeadZen by Zyene CLI, reads the CSV it prints, and hands the rows to whatever you send with.",
+  "version": "0.1.0",
+  "author": {
+    "name": "LeadZen by Zyene",
+    "email": "support@zyene.com"
+  },
+  "homepage": "https://leadzen.zyene.com",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "lead-generation",
+    "b2b",
+    "outreach",
+    "sales",
+    "cli",
+    "self-hosted"
+  ]
+}

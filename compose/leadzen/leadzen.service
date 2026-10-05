@@ -1,0 +1,17 @@
+[Unit]
+Description=LeadZen by Zyene internal API
+After=network-online.target
+
+[Service]
+Type=simple
+User=zyene_inc
+Group=zyene_inc
+WorkingDirectory=/opt/leadzen
+EnvironmentFile=/etc/leadzen.env
+UMask=0077
+ExecStart=/opt/leadzen/.venv/bin/python -m gunicorn --bind 127.0.0.1:8000 --workers 1 --threads 8 --timeout 120 leadzen.wsgi:application
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

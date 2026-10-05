@@ -1,0 +1,34 @@
+#!/bin/sh
+# TEMPLATE ONLY. Install after reviewed service/storage/maintenance authorization.
+# A failure leaves intake held and preserves uncertain external work.
+set -eu
+umask 077
+: "${LEADZEN_OPS_APP_USER:?runtime owner required}"
+: "${LEADZEN_DB:?explicit control database required}"
+: "${LEADZEN_BACKUP_ENV_FILE:?private matched environment required}"
+: "${LEADZEN_BACKUP_RELEASE_MANIFEST:?verified deployed release required}"
+: "${LEADZEN_BACKUP_DASHBOARD_ENV_FILE:?private matched dashboard environment required}"
+: "${LEADZEN_BACKUP_PROXY_FILE:?private matched proxy configuration required}"
+: "${LEADZEN_BACKUP_ROOT:?private snapshot destination required}"
+: "${LEADZEN_BACKUP_INDEPENDENT_ROOT:?separate mounted filesystem required}"
+python=/opt/leadzen/.venv/bin/python
+as_runtime() {
+    /usr/sbin/runuser --user "$LEADZEN_OPS_APP_USER" -- "$python" "$@"
+}
+as_runtime -m leadzen.operations.maintenance hold --control-db "$LEADZEN_DB"
+as_runtime -m leadzen.operations.maintenance drain --control-db "$LEADZEN_DB" --timeout 3600
+# The installed policy must include both units and every additional writer. The
+# drain check must pass before stop; never stop/kill a still-active provider job.
+/usr/bin/systemctl stop leadzen-followups.service leadzen.service
+as_runtime -m leadzen.operations.recovery backup \
+    --env-file "$LEADZEN_BACKUP_ENV_FILE" \
+    --release-manifest "$LEADZEN_BACKUP_RELEASE_MANIFEST" \
+    --protected-file "$LEADZEN_BACKUP_DASHBOARD_ENV_FILE" \
+    --protected-file "$LEADZEN_BACKUP_PROXY_FILE" \
+    --service-unit-file /etc/systemd/system/leadzen.service \
+    --service-unit-file /etc/systemd/system/leadzen-followups.service \
+    --writer-unit leadzen.service --writer-unit leadzen-followups.service \
+    --destination "$LEADZEN_BACKUP_ROOT" \
+    --independent-destination "$LEADZEN_BACKUP_INDEPENDENT_ROOT"
+# No automatic intake release or scheduler restart. The reviewed operator
+# procedure verifies the snapshot, reconciles held effects and resumes explicitly.

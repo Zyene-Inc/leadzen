@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 180" role="img" aria-labelledby="title desc">
+  <title id="title">LeadZen by Zyene</title>
+  <desc id="desc">LeadZen wordmark with an indigo LZ monogram.</desc>
+  <rect width="620" height="180" rx="24" fill="oklch(0.981 0.004 266)"/>
+  <rect x="32" y="38" width="104" height="104" rx="28" fill="oklch(0.5 0.2 273)"/>
+  <path d="M57 63v54h26v-10H67V63zm36 0v10h18l-24 34v10h35v-10h-22l22-34V63z" fill="oklch(0.994 0.002 266)"/>
+  <text x="164" y="98" fill="oklch(0.26 0.018 266)" font-family="Arial, sans-serif" font-size="57" font-weight="700" letter-spacing="-2">LeadZen</text>
+  <text x="166" y="130" fill="oklch(0.49 0.02 266)" font-family="Arial, sans-serif" font-size="20">by Zyene</text>
+</svg>

@@ -1,0 +1,17 @@
+[Unit]
+Description=LeadZen verified full recovery snapshot (reviewed maintenance only)
+RequiresMountsFor=/srv/leadzen-backups /mnt/leadzen-independent-backups
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/leadzen
+EnvironmentFile=/etc/leadzen-backup.env
+UMask=0077
+ExecStart=/opt/leadzen/compose/leadzen/backup/backup-safe
+TimeoutStartSec=7200
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=yes
+# Root orchestrates only the fixed units; database/snapshot commands run as the
+# configured runtime owner. No secrets are passed as command-line arguments.

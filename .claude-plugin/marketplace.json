@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "leadzen",
+  "description": "The LeadZen by Zyene plugin for Claude Code — find B2B leads that fit, with the reason written out.",
+  "owner": {
+    "name": "LeadZen by Zyene",
+    "email": "support@zyene.com"
+  },
+  "plugins": [
+    {
+      "name": "leadzen",
+      "description": "Find qualified B2B leads from inside Claude Code — drives the LeadZen by Zyene CLI, reads the CSV it prints, and hands the rows to whatever you send with.",
+      "author": {
+        "name": "LeadZen by Zyene",
+        "email": "support@zyene.com"
+      },
+      "category": "productivity",
+      "source": "./",
+      "homepage": "https://leadzen.zyene.com"
+    }
+  ]
+}

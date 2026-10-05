@@ -1,0 +1,11 @@
+[Unit]
+Description=LeadZen full recovery snapshot maintenance reminder
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 America/New_York
+Persistent=false
+RandomizedDelaySec=300
+Unit=leadzen-backup.service
+
+[Install]
+WantedBy=timers.target

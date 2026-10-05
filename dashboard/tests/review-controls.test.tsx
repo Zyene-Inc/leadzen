@@ -1,0 +1,183 @@
+import { describe, test, expect, vi } from "vitest";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { api } from "@/lib/client-api";
+import CampaignSendReview from "@/components/campaign-send-review";
+import DiscoveryEmailReview from "@/components/discovery-email-review";
+import EmailPreview from "@/components/email-preview";
+import OutreachReview from "@/components/outreach-review";
+import FindLeads from "@/components/find-leads";
+import { SuppressionForm } from "@/components/suppression-form";
+import { SettingsTest } from "@/components/settings-test";
+import { SecretInput } from "@/components/secret-input";
+import { LeadTimeline } from "@/components/lead-timeline";
+import type { EmailDraft, EmailReview } from "@/lib/outreach";
+import type { Account } from "@/lib/auth";
+import type { Contact } from "@/lib/leads";
+import type { WorkspaceSettings } from "@/lib/workspace-settings";
+
+const call = vi.mocked(api);
+const draft: EmailDraft = { id: "d1", name: "Bruce", to: "bruce@example.com", subject: "Hello Bruce", body: "Saved message", preview_body: "Saved message\nSignature\nReply STOP", revision: "d-rev", approved: false, state: "pending", accepted_at: null };
+const review: EmailReview = { id: "r1", kind: "initial", status: "draft", from_address: "sender@example.com", requested_count: 1, drafts: [draft], accepted: 0, revision: "r-rev", stale: false, note: "Confirmation sends a real email" };
+const campaign = { from_address: "sender@example.com", revision: "c-rev", note: "A reviewed sequence", automatic_available: true, delay_basis: "working_days", timezone: "America/New_York", recipients: [{ id: 1, email: "bruce@example.com", step: 1, subject: "Hello Bruce", body: "Initial", followups: [{ step: 2, delay_days: 3, subject: "Follow up Bruce", body: "Approved future message" }] }] };
+const user: Account = { id: 1, name: "Synthetic user", email: "user@example.com", is_admin: false, is_active: true, must_change_password: false, onboarded: true, purpose: "other", workspace_name: "Synthetic", created_at: "2026-10-02T12:00:00Z", last_login: null, invitation_pending: false, tour_completed: true };
+const settings = { llm: { enabled: true, api_key_configured: true }, lead_finder: { api_key_configured: true }, mailbox: { address: "sender@example.com", password_configured: true }, workspace: { checks: { ai: { connected: false }, discovery: { connected: false }, mailbox: { connected: false } } } } as WorkspaceSettings;
+
+// Each control contract runs ten times with a fresh DOM and isolated mock state.
+for (let repetition = 1; repetition <= 10; repetition++) describe(`Review controls pass ${repetition}`, () => {
+  test("campaign Cancel never sends, and opening never authorizes", async () => {
+    call.mockResolvedValue(campaign);
+    const close = vi.fn();
+    render(<CampaignSendReview campaignId="c1" count={1} close={close} sent={vi.fn()} />);
+    await screen.findByText("Hello Bruce");
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(close).toHaveBeenCalledOnce();
+    expect(call.mock.calls.every(([, init]) => !init?.method)).toBe(true);
+  });
+  test("final campaign confirmation scopes automatic follow-ups and blocks double click", async () => {
+    call.mockImplementation(async (_, init) => init?.method ? {} : campaign);
+    const sent = vi.fn().mockResolvedValue(undefined);
+    render(<CampaignSendReview campaignId="c1" count={1} close={vi.fn()} sent={sent} />);
+    await screen.findByText("Hello Bruce");
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(screen.getByText("Approved future message")).toBeTruthy();
+    const button = screen.getByRole("button", { name: "Approve sequence" });
+    fireEvent.click(button); fireEvent.click(button);
+    await waitFor(() => expect(sent).toHaveBeenCalledOnce());
+    const posts = call.mock.calls.filter(([, init]) => init?.method === "POST");
+    expect(posts).toHaveLength(1);
+    expect(JSON.parse(String(posts[0][1]?.body))).toMatchObject({ count: 1, revision: "c-rev", automatic_followups: true });
+  });
+  test("campaign retry after failure keeps its request identity; Refresh reloads", async () => {
+    call.mockImplementation(async (_, init) => { if (init?.method) throw new Error("Send unavailable"); return campaign; });
+    render(<CampaignSendReview campaignId="c1" count={1} close={vi.fn()} sent={vi.fn()} />);
+    await screen.findByText("Hello Bruce");
+    await userEvent.click(screen.getByRole("button", { name: "Confirm & send" }));
+    expect(await screen.findByRole("alert")).toHaveProperty("textContent", "Send unavailable");
+    await userEvent.click(screen.getByRole("button", { name: "Confirm & send" }));
+    const posts = call.mock.calls.filter(([, init]) => init?.method === "POST");
+    expect(JSON.parse(String(posts[0][1]?.body)).request_id).toBe(JSON.parse(String(posts[1][1]?.body)).request_id);
+    await userEvent.click(screen.getByRole("button", { name: "Refresh review" }));
+    await screen.findByText("Hello Bruce");
+  });
+  test("discovery email selection confirms the exact one-credit choice", async () => {
+    call.mockImplementation(async (_, init) => init?.method ? { run: { id: "new-run" } } : { revision: "e-rev", note: "One credit each", items: [{ id: 1, name: "Bruce", title: "Owner", company: "Practice" }] });
+    render(<DiscoveryEmailReview runId="run1" close={vi.fn()} />);
+    await screen.findByText("Bruce");
+    expect((screen.getByRole("button", { name: "Confirm & Find Emails" }) as HTMLButtonElement).disabled).toBe(true);
+    await userEvent.click(screen.getByRole("checkbox"));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm & Find Emails" }));
+    const post = call.mock.calls.find(([, init]) => init?.method === "POST")!;
+    expect(JSON.parse(String(post[1]?.body))).toMatchObject({ candidate_ids: [1], estimated_credits: 1, revision: "e-rev" });
+  });
+  test("discovery Cancel spends no credits", async () => {
+    call.mockResolvedValue({ revision: "e-rev", note: "", items: [] });
+    const close = vi.fn();
+    render(<DiscoveryEmailReview runId="run1" close={close} />);
+    await screen.findByText(/No eligible profiles/);
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(close).toHaveBeenCalledOnce();
+    expect(call.mock.calls.every(([, init]) => !init?.method)).toBe(true);
+  });
+  test("email Edit and Cancel preserve copy; Save clears approval at the server boundary", async () => {
+    call.mockResolvedValue(review);
+    const update = vi.fn();
+    render(<EmailPreview draft={draft} review={review} update={update} />);
+    await userEvent.click(screen.getByRole("button", { name: "Edit" }));
+    await userEvent.clear(screen.getByLabelText("Message"));
+    await userEvent.type(screen.getByLabelText("Message"), "Changed copy");
+    await userEvent.click(screen.getByRole("button", { name: "Cancel edit" }));
+    expect(call).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole("button", { name: "Edit" }));
+    expect((screen.getByLabelText("Message") as HTMLTextAreaElement).value).toBe("Saved message");
+    await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+    await waitFor(() => expect(update).toHaveBeenCalledOnce());
+    expect(JSON.parse(String(call.mock.calls[0][1]?.body))).toMatchObject({ action: "edit", revision: "d-rev", body: "Saved message" });
+  });
+  test("email Approve and Regenerate never call a send endpoint", async () => {
+    call.mockResolvedValue(review);
+    render(<EmailPreview draft={draft} review={review} update={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: "Approve" }));
+    await userEvent.click(screen.getByRole("button", { name: "Regenerate" }));
+    expect(call.mock.calls.map(([, init]) => JSON.parse(String(init?.body)).action)).toEqual(["approve", "regenerate"]);
+    expect(call.mock.calls.every(([path]) => path.endsWith("/drafts/d1"))).toBe(true);
+  });
+  test("unapproved outreach cannot send, approved confirmation Cancel is inert, failures stay visible", async () => {
+    const approved = { ...review, drafts: [{ ...draft, approved: true }] };
+    call.mockImplementation(async (_, init) => { if (init?.method) throw new Error("Approval changed"); return approved; });
+    render(<OutreachReview reviewId="r1" />);
+    await screen.findByRole("button", { name: "Review & send" });
+    await userEvent.click(screen.getByRole("button", { name: "Review & send" }));
+    await userEvent.click(screen.getByRole("button", { name: "No, go back" }));
+    expect(call.mock.calls.every(([, init]) => !init?.method)).toBe(true);
+    await userEvent.click(screen.getByRole("button", { name: "Review & send" }));
+    await userEvent.click(screen.getByRole("button", { name: "Yes, start outreach" }));
+    expect(await screen.findByRole("alert")).toHaveProperty("textContent", "Approval changed");
+    expect(screen.getByRole("button", { name: "Yes, start outreach" })).toBeTruthy();
+  });
+  test("suppression Cancel is inert and confirmation blocks duplicate submissions", async () => {
+    call.mockResolvedValue({ created: true });
+    const saved = vi.fn(), cancel = vi.fn();
+    render(<SuppressionForm fixedEmail="bruce@example.com" cancel={cancel} saved={saved} />);
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(cancel).toHaveBeenCalledOnce(); expect(call).not.toHaveBeenCalled();
+    const button = screen.getByRole("button", { name: "Confirm suppression" });
+    fireEvent.click(button); fireEvent.click(button);
+    await waitFor(() => expect(saved).toHaveBeenCalledOnce());
+    expect(call).toHaveBeenCalledOnce();
+    expect(JSON.parse(String(call.mock.calls[0][1]?.body))).toEqual({ email: "bruce@example.com", reason: "Manually suppressed" });
+  });
+  test("saved connection Test requires confirmation, Cancel is inert", async () => {
+    call.mockResolvedValue(settings);
+    const saved = vi.fn();
+    render(<SettingsTest kind="ai" data={settings} disabled={false} saved={saved} />);
+    await userEvent.click(screen.getByRole("button", { name: "Test" }));
+    await userEvent.click(screen.getByRole("button", { name: "Cancel test" }));
+    expect(call).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole("button", { name: "Test" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm test" }));
+    await waitFor(() => expect(saved).toHaveBeenCalledOnce());
+    expect(call.mock.calls[0][0]).toBe("onboarding/test");
+    expect(JSON.parse(String(call.mock.calls[0][1]?.body))).toEqual({ kind: "ai" });
+  });
+  test("secret Show/Hide affects only the entered value and resets when cleared", async () => {
+    const { rerender } = render(<SecretInput label="API key" value="replacement-key" onChange={vi.fn()} />);
+    expect((screen.getByLabelText("API key") as HTMLInputElement).type).toBe("password");
+    await userEvent.click(screen.getByRole("button", { name: "Show API key" }));
+    expect((screen.getByLabelText("API key") as HTMLInputElement).type).toBe("text");
+    await userEvent.click(screen.getByRole("button", { name: "Hide API key" }));
+    await userEvent.click(screen.getByRole("button", { name: "Show API key" }));
+    rerender(<SecretInput label="API key" value="" onChange={vi.fn()} />);
+    expect((screen.getByLabelText("API key") as HTMLInputElement).type).toBe("password");
+  });
+  test("find count ±, free default, paid option, invalid count, and Start choices", async () => {
+    call.mockImplementation(async (_, init) => init?.method ? { run: { id: "run1" } } : { max_count: 25, target: "Dental practices", ready: true, blockers: [], revision: "f-rev", active_run: null });
+    render(<FindLeads user={user} />);
+    await screen.findByText("Dental practices");
+    expect((screen.getByRole("radio", { name: /Don’t find emails/ }) as HTMLInputElement).checked).toBe(true);
+    await userEvent.click(screen.getByRole("button", { name: "Increase lead count" }));
+    await userEvent.click(screen.getByRole("button", { name: "Decrease lead count" }));
+    await userEvent.click(screen.getByRole("radio", { name: /Find verified emails/ }));
+    fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "0" } });
+    expect((screen.getByRole("button", { name: "Start Finding" }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "3" } });
+    await userEvent.click(screen.getByRole("button", { name: "Start Finding" }));
+    const post = call.mock.calls.find(([, init]) => init?.method === "POST")!;
+    expect(JSON.parse(String(post[1]?.body))).toMatchObject({ count: 3, emails: true, estimated_credits: 3, revision: "f-rev" });
+  });
+  test("timeline stop Cancel is inert; Confirm stop and Refresh work", async () => {
+    call.mockResolvedValue({ ok: true });
+    const load = vi.fn().mockResolvedValue(undefined);
+    const lead = { id: 1, name: "Bruce", email: "bruce@example.com", reply_count: 0, timeline: { events: [], sequences: [], blocked_reason: "", can_stop: true, suppression: null } } as unknown as Contact;
+    render(<LeadTimeline lead={lead} load={load} />);
+    await userEvent.click(screen.getByRole("button", { name: "Stop Sequence" }));
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(call).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole("button", { name: "Stop Sequence" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm stop" }));
+    expect(await screen.findByText("Sequence stopped. History retained.")).toBeTruthy();
+    expect(JSON.parse(String(call.mock.calls[0][1]?.body))).toEqual({ stop: true });
+    await userEvent.click(screen.getByRole("button", { name: "Refresh outreach timeline" }));
+    expect(load).toHaveBeenCalledTimes(2);
+  });
+});

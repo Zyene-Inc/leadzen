@@ -1,0 +1,7 @@
+leadzen-api.zyene.com {
+    reverse_proxy 127.0.0.1:8000
+    header X-Content-Type-Options nosniff
+    header Strict-Transport-Security "max-age=31536000"
+    header Referrer-Policy no-referrer
+    header X-Frame-Options DENY
+}

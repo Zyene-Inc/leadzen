@@ -1,0 +1,92 @@
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "leadzen"
+# Internal releases are versioned here; deployment does not publish to a registry.
+version = "0.1.0"
+description = "LeadZen by Zyene — AI lead discovery and outreach for the Zyene team."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-or-later"
+license-files = ["LICENCE.md", "THIRD_PARTY_NOTICES.md"]
+authors = [{ name = "Zyene", email = "support@zyene.com" }]
+keywords = [
+    "lead-generation",
+    "b2b",
+    "outreach",
+    "cold-email",
+    "sales-automation",
+    "self-hosted",
+    "open-source",
+    "crm",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business",
+]
+
+# Both children are required, not extras: `pip install leadzen` alone has to be the
+# whole find-then-send flow, or the second install is the friction this package exists to
+# remove. Each child supplies its internal dependencies; LeadZen also declares the
+# packages used by its own schemas, provider factories and pinned HTTP transports.
+# requirements-production.lock pins the complete Python 3.12 web runtime with
+# hashes for CI and the company image; refresh it deliberately and rerun audits.
+#
+# **The pins are exact, and the cost is known.** This project hosts both children's Django
+# apps in one registry and owns the one migration graph over them, so a model change in
+# either child needs a matching release here. Three repos that move together is the price
+# of one install, and of a wizard that hands each child the environment it reads.
+dependencies = [
+    "Django>=5.2,<7.0",
+    "cryptography>=43,<51",
+    "openoutfind==0.1.10",
+    "openoutsend==0.1.32",
+    # Keep the provider/transport APIs within the versions exercised by LeadZen's
+    # synthetic compatibility tests. The slim extras install all supported SDKs;
+    # SDK bounds preserve their current httpx versus httpx2 client contracts.
+    "pydantic>=2.13.5,<2.14",
+    "pydantic-ai-slim[anthropic,cohere,google,groq,mistral,openai]>=2.52.0,<2.53",
+    "requests>=2.34.2,<2.35",
+    "openai>=3.22.1,<3.23",
+    "cohere>=7.2.0,<7.3",
+    "google-genai>=2.26.0,<2.27",
+    "anthropic>=1.11.0,<1.12",
+    "groq>=1.7.0,<1.8",
+    "mistralai>=3.0.0,<3.1",
+    "httpx>=0.28.1,<0.29",
+    "httpx2>=2.13.1,<2.14",
+    # The wizard validates a country code against a real list of them. Declared rather
+    # than inherited from the finder: the rule above is that this file names what *this*
+    # package imports directly.
+    "pytz>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-django>=4.8",
+]
+web = [
+    "gunicorn>=23,<24",
+]
+
+[project.scripts]
+leadzen = "leadzen.__main__:main"
+
+[project.urls]
+Homepage = "https://leadzen.zyene.com"
+
+[tool.hatch.build.targets.wheel]
+packages = ["leadzen"]
+
+[tool.hatch.build.targets.sdist]
+include = ["leadzen", "README.md", "LICENCE.md", "THIRD_PARTY_NOTICES.md", "LEGAL_NOTICE.md", "PRIVACY_NOTICE.md", "pyproject.toml"]

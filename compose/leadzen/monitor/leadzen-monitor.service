@@ -1,0 +1,21 @@
+[Unit]
+Description=LeadZen private health, scheduler and recovery checks
+After=leadzen.service
+
+[Service]
+Type=oneshot
+User=zyene_inc
+Group=zyene_inc
+WorkingDirectory=/opt/leadzen
+UMask=0077
+ExecStart=/opt/leadzen/.venv/bin/python -m leadzen.operations.monitoring --config /etc/leadzen-monitor.json
+TimeoutStartSec=180
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadOnlyPaths=/opt/leadzen/data /srv/leadzen-backups /mnt/leadzen-independent-backups /srv/private/leadzen-runtime.env
+ReadWritePaths=/opt/leadzen/data/operations
+# Add --deliver-alert only after the private sink and one bounded test delivery
+# receive fresh authorization. Default emits local actionable status only.

@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "decisions": [],
+  "policy": "Keep complete Trivy output. HIGH/CRITICAL matches require compatible patching or an exact package/version/architecture decision with reviewer, reason, primary evidence and expiry. No blanket ignore-unfixed waiver."
+}

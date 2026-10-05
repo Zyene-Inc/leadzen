@@ -1,0 +1,82 @@
+name: Release security
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - name: Current source secrets
+        run: >-
+          docker run --rm -v "$PWD:/repo" -w /repo
+          ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+          dir . --redact=100 --report-format json --report-path current-secrets.json
+      - name: Newly introduced historical secrets
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+        run: |
+          base="${PR_BASE:-$PUSH_BASE}"
+          if [[ "$base" =~ ^[0-9a-f]{40}$ && "$base" != "0000000000000000000000000000000000000000" ]] && git cat-file -e "$base^{commit}"; then
+            range="$base..HEAD"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            range="--all"
+          else
+            range="--all"
+          fi
+          docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f git . --log-opts="$range" --redact=100 --report-format json --report-path introduced-secrets.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: redacted-secret-evidence
+          path: '*secrets.json'
+          retention-days: 7
+
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - name: Build target image
+        run: |
+          docker build --platform linux/amd64 -f compose/leadzen/Dockerfile -t leadzen:candidate .
+          docker inspect leadzen:candidate --format '{{.Id}}' > candidate-image-id.txt
+      - name: Complete current advisory report
+        run: >-
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/evidence"
+          aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c
+          image --scanners vuln --format json --output /evidence/image-advisories.json "$(cat candidate-image-id.txt)"
+      - name: Reviewed image risk gate
+        run: python -m leadzen.operations.advisories image-advisories.json --image-id "$(cat candidate-image-id.txt)" --architecture linux/amd64 --decisions docs/production-image-risk-decisions.json --output image-risk-result.json
+      - name: Preserve the scanned image
+        run: |
+          docker inspect "$(cat candidate-image-id.txt)" --format '{{.Id}} {{.Architecture}}' > candidate-image.txt
+          docker save "$(cat candidate-image-id.txt)" | gzip > candidate-image.tar.gz
+          sha256sum candidate-image.tar.gz > candidate-image.tar.gz.sha256
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: scanned-candidate-image
+          path: |
+            candidate-image.tar.gz
+            candidate-image.tar.gz.sha256
+            candidate-image.txt
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: complete-image-advisories
+          path: |
+            image-advisories.json
+            image-risk-result.json

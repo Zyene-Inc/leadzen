@@ -1,0 +1,17 @@
+[Unit]
+Description=LeadZen approved automatic follow-ups
+After=network-online.target leadzen.service
+
+[Service]
+Type=simple
+User=zyene_inc
+Group=zyene_inc
+WorkingDirectory=/opt/leadzen
+EnvironmentFile=/etc/leadzen.env
+UMask=0077
+ExecStart=/opt/leadzen/.venv/bin/python -m leadzen.scheduler
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

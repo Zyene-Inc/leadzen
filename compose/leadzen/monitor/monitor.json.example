@@ -1,0 +1,29 @@
+{
+  "backend_env_file": "/srv/private/leadzen-runtime.env",
+  "api_private_origin": "http://127.0.0.1:8000",
+  "api_unit": "leadzen.service",
+  "scheduler_unit": "leadzen-followups.service",
+  "state_root": "/opt/leadzen/data/operations",
+  "backup_root": "/srv/leadzen-backups",
+  "independent_backup_root": "/mnt/leadzen-independent-backups",
+  "backup_max_age_seconds": 86400,
+  "scheduler_deadline_seconds": 900,
+  "worker_deadline_seconds": 1800,
+  "lock_deadline_seconds": 1800,
+  "failure_window_seconds": 3600,
+  "minimum_free_bytes": 1073741824,
+  "minimum_free_fraction": 0.1,
+  "minimum_memory_bytes": 268435456,
+  "latency_warning_seconds": 2,
+  "request_outcomes_enabled": true,
+  "request_window_seconds": 300,
+  "server_error_threshold": 5,
+  "slow_request_threshold": 5,
+  "auth_failure_threshold": 20,
+  "alert_retry_seconds": 3600,
+  "alert": {
+    "approved": false,
+    "url": "https://REPLACE_WITH_APPROVED_ALERT_HOST/leadzen",
+    "token": "REPLACE_THROUGH_PRIVATE_SECRET_STORE"
+  }
+}

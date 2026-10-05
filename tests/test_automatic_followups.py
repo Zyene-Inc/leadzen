@@ -158,8 +158,9 @@ def test_automatic_inbox_checks_never_spend_ai_credits(connected):
     from leadzen.transports import sync_replies_strict
     from cold_outreach.emails.models import FolderCoverage
     box = Mailbox.objects.get()
-    coverage = FolderCoverage.objects.create(mailbox=box, folder="INBOX", synced_at=timezone.now() + timedelta(seconds=5))
-    with patch("cold_outreach.emails.sync.mirror"), patch("cold_outreach.emails.classify.classify_pending") as classify, patch("cold_outreach.emails.project.project_pending") as project, patch("leadzen.outreach.honor_saved_optouts") as honor:
+    checked_at = timezone.now()
+    FolderCoverage.objects.create(mailbox=box, folder="INBOX", synced_at=checked_at)
+    with patch("django.utils.timezone.now", return_value=checked_at - timedelta(seconds=1)), patch("cold_outreach.emails.sync.mirror"), patch("cold_outreach.emails.classify.classify_pending") as classify, patch("cold_outreach.emails.project.project_pending") as project, patch("leadzen.outreach.honor_saved_optouts") as honor:
         sync_replies_strict(box, classify=False)
         classify.assert_not_called()
         project.assert_not_called()

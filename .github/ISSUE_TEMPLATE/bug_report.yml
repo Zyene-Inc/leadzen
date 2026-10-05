@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a reproducible problem without sensitive information.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include passwords, API keys, access tokens, real email addresses,
+        mailbox contents, customer data, or production exports. Use SECURITY.md
+        for suspected vulnerabilities.
+  - type: textarea
+    id: impact
+    attributes:
+      label: User or operator impact
+      description: Who is affected and what cannot they do?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Use synthetic or scrubbed example data.
+      placeholder: |
+        1. Go to ...
+        2. Enter ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include scrubbed errors or logs if useful.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser or command version, deployment type, and relevant non-sensitive configuration.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, personal data, mailbox content, and other sensitive information.
+          required: true

@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an improvement to LeadZen.
+title: "feature: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user or operator problem.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe what a successful experience looks like.
+    validations:
+      required: true
+  - type: textarea
+    id: users
+    attributes:
+      label: Who benefits?
+      description: Describe the employee, administrator, or operator need without sharing personal information.
+  - type: textarea
+    id: privacy_security
+    attributes:
+      label: Data, privacy, and security considerations
+      description: Note affected data, integrations, permissions, approvals, or external actions.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any workaround or other approach considered.

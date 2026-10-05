@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Product and account support
+    url: mailto:support@zyene.com
+    about: Request access, account help, or approved integration support.
+  - name: Security policy
+    url: https://github.com/Zyene-Inc/leadzen/security/policy
+    about: Report suspected vulnerabilities privately.

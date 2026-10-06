@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import pytest
 from cryptography.fernet import Fernet
+from django.contrib.auth import get_user_model
 from django.test import Client
 from django.utils import timezone
 
@@ -66,6 +67,27 @@ def test_invalid_or_revoked_setup_cannot_change_password(invite_clients, invalid
         token = "x" * 64
     assert public.post("/api/auth/setup", data=json.dumps({"token": token, "password": PASSWORD}), content_type="application/json").status_code == 400
     assert LoginSession.objects.count() == 1  # Only the administrator's session.
+
+
+def test_deleted_email_gets_fresh_account_and_keeps_archived_identity(invite_clients):
+    admin, public = invite_clients
+    old, old_token, _ = invite(admin)
+    old_user = get_user_model().objects.get(pk=old["id"])
+    old_workspace_id = old_user.leadzen_profile.pk
+    assert admin.delete(f'/api/admin/users/{old["id"]}').status_code == 200
+
+    new, new_token, _ = invite(admin, name="Returning employee")
+    old_user.refresh_from_db()
+    old_user.leadzen_profile.refresh_from_db()
+    new_user = get_user_model().objects.get(pk=new["id"])
+    assert new_user.pk != old_user.pk
+    assert new_user.username == "employee@example.com"
+    assert not new_user.has_usable_password()
+    assert new_user.leadzen_profile.pk != old_workspace_id
+    assert not old_user.is_active and old_user.leadzen_profile.deleted_at is not None
+    assert old_user.email == "employee@example.com" and old_user.username != old_user.email
+    assert public.post("/api/auth/setup", data=json.dumps({"token": old_token}), content_type="application/json").status_code == 400
+    assert public.post("/api/auth/setup", data=json.dumps({"token": new_token}), content_type="application/json").status_code == 200
 
 
 def test_resend_rotates_link_and_rate_limits_network(invite_clients):

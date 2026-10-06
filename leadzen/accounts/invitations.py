@@ -46,8 +46,22 @@ def issue_invitation(actor, *, email=None, name=None, target=None):
             email = email_address(email)
             if not isinstance(name, str) or not name.strip() or len(name) > 150 or any(ord(c) < 32 for c in name):
                 raise ValueError("Enter an employee name of up to 150 characters")
-            if get_user_model().objects.using("default").filter(username=email).exists():
-                raise ValueError("An account with that email already exists. Use Resend invitation instead.")
+            existing = (get_user_model().objects.using("default")
+                        .select_for_update().filter(username=email).first())
+            if existing:
+                profile = AccountProfile.objects.using("default").filter(user=existing).first()
+                if existing.is_staff or profile is None:
+                    raise ValueError("An account with that email already exists.")
+                if profile.deleted_at is None and not existing.is_active:
+                    raise ValueError("That account is disabled. Enable it, then send an invitation.")
+                if existing.is_active or profile.deleted_at is None:
+                    raise ValueError("An account with that email already exists. Use Resend invitation instead.")
+                # Keep the deleted employee and their outreach history archived.
+                # A new invitation receives a new user ID and isolated workspace,
+                # so old permissions and automatic approvals cannot resume.
+                existing.username = f"deleted-{existing.pk}-{secrets.token_hex(12)}"
+                existing.save(using="default", update_fields=["username"])
+                audit(actor, "account_replaced", existing.pk)
             target = get_user_model()(username=email, email=email, first_name=name.strip(), is_staff=False)
             target.set_unusable_password()
             target.save(using="default")

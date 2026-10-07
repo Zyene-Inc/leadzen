@@ -129,7 +129,7 @@ export default function DiscoveryEmailReview({
             )}
           </fieldset>
           <p className="live-cost" aria-live="polite">
-            Estimated BetterContact email cost:{" "}
+            Estimated {review?.provider_name ?? "BetterContact"} email cost:{" "}
             <strong>
               up to {selected.length} credit{selected.length === 1 ? "" : "s"}
             </strong>

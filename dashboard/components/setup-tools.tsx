@@ -70,7 +70,7 @@ export function SetupTools({
         <div className="setup-credit-guide">
           <div>
             <strong>Profile discovery</strong>
-            <span>Free</span>
+            <span>{settings.lead_finder.provider === "ai_ark" ? "0.5 credits per returned profile" : "Free"}</span>
           </div>
           <div>
             <strong>Verified work email</strong>

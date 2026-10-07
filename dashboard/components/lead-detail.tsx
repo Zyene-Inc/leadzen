@@ -12,7 +12,7 @@ import { useWorkspaceRevision } from "@/lib/workspace-updates";
 import { api } from "@/lib/client-api";
 import { leadStatus, type Contact } from "@/lib/leads";
 
-type Review = { eligible: boolean; reason: string; revision: string; name: string };
+type Review = { eligible: boolean; reason: string; revision: string; name: string; provider_name?: string };
 const active = new Set(["queued", "running", "paused"]);
 
 function EmailConfirmation({ contactId, close, started }: { contactId: number; close: () => void; started: () => Promise<void> }) {
@@ -46,7 +46,7 @@ function EmailConfirmation({ contactId, close, started }: { contactId: number; c
   }
   return <section className="live-email-review" aria-labelledby="work-email-confirm">
     <h3 ref={heading} id="work-email-confirm" tabIndex={-1}>Find this person’s work email?</h3>
-    <p>This may use <strong>1 BetterContact credit</strong>. No other profiles will be searched and no emails will be sent. AI-provider charges may apply separately.</p>
+    <p>This may use <strong>1 {review?.provider_name ?? "lead-provider"} credit</strong>. No other profiles will be searched and no emails will be sent. AI-provider charges may apply separately.</p>
     {!review && !error && <p role="status">Reviewing the saved profile…</p>}
     {review && <p className="settings-help">{review.eligible ? `Find an email for ${review.name}. An address is not guaranteed; actual usage will be shown when the provider reports it.` : review.reason}</p>}
     {error && <p className="error" role="alert">{error}</p>}
@@ -70,9 +70,9 @@ function EmailOutcome({ lead }: { lead: Contact }) {
 }
 
 function LookupUsage({ lookup }: { lookup: NonNullable<Contact["lookup"]> }) {
-  if (lookup.credits_used === null) return <p className="settings-help">BetterContact credit usage has not been reported.</p>;
+  if (lookup.credits_used === null) return <p className="settings-help">{lookup.provider_name ?? "BetterContact"} credit usage has not been reported.</p>;
   const label = lookup.credits_used === 1 ? "credit" : "credits";
-  return <p className="settings-help">{lookup.credits_used} BetterContact {label} used{lookup.synthetic ? " (synthetic preview only)" : ""}.</p>;
+  return <p className="settings-help">{lookup.credits_used} {lookup.provider_name ?? "BetterContact"} {label} used{lookup.synthetic ? " (synthetic preview only)" : ""}.</p>;
 }
 
 function WorkEmail({ lead, load }: { lead: Contact; load: () => Promise<void> }) {

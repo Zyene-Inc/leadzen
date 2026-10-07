@@ -63,6 +63,7 @@ def contacts_query():
 
 
 def contact_payload(deal, *, detail=False, facts=None):
+    from leadzen.lead_finder import LABELS
     source = facts["source"] if facts is not None else source_profile(deal)
     decision = facts["decision"] if facts is not None else Decision.objects.filter(lead=source).first() if source else None
     qualified = bool(decision and decision.state in QUALIFIED and decision.outcome != "wrong_fit" and not source.disqualified)
@@ -76,6 +77,7 @@ def contact_payload(deal, *, detail=False, facts=None):
     lookup = None
     if lookup_session:
         lookup = {"run_id": str(lookup_session.pk) if not lookup_session.run.thread.archived else None,
+                  "provider_name": LABELS.get(lookup_session.action.get("provider"), "BetterContact"),
                   "status": lookup_session.run.status, "receipt_state": receipt.state if receipt else "not_submitted",
                   "credits_used": float(receipt.credits) if receipt and receipt.credits is not None else None,
                   "email_verdict": receipt.email_status if receipt else "",
@@ -194,7 +196,8 @@ def email_review(deal, actor_id):
     revision = hashlib.sha256(json.dumps({"setup": snapshot("find_leads", {}), "identity": identity,
         "id": deal.pk, "state": deal.state, "email": deal.lead.email, "source_email": source.email if source else "",
         "decision": [decision.state, decision.outcome] if decision else None, "eligible": not reason}, sort_keys=True).encode()).hexdigest()
-    return {"eligible": not reason, "reason": reason, "revision": revision, "estimated_credits": 1,
+    from leadzen.lead_finder import label
+    return {"eligible": not reason, "reason": reason, "revision": revision, "estimated_credits": 1, "provider_name": label(),
             "name": contact_payload(deal)["name"], "source_id": source.pk if source else None}
 
 
@@ -237,10 +240,10 @@ def work_email(request, deal_id):
             source_ids = [review["source_id"]]
             thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Work email for {review['name']}"[:100])
             row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id)
-            prepare(row, "find_leads", normalize("find_leads", {"count": 1, "emails": True}))
+            prepare(row, "find_leads", normalize("find_leads", {"count": 1, "emails": True}), selected=True)
             row.refresh_from_db()
             row.pending = {**row.pending, "approved": True, "single_action": True, "source_identity": selected_identity(source_ids),
-                           "summary": f"Find a work email for {review['name']} only. Up to 1 BetterContact credit. No email sending."}
+                           "summary": f"Find a work email for {review['name']} only. Up to 1 {review['provider_name']} credit. No email sending."}
             row.status = "queued"
             row.save()
             DiscoverySession.objects.create(run=row, action=row.pending, goal=1, unit="emails", source_ids=source_ids, target=SiteConfig.load().campaign_target)

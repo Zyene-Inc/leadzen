@@ -42,7 +42,7 @@ def test_bettercontact_key_is_encrypted_and_only_presence_is_returned(db, accoun
 
     response = save(account_client, body())
     assert response.status_code == 200
-    assert response.json()["lead_finder"] == {"provider": "bettercontact", "api_key_configured": True}
+    assert response.json()["lead_finder"] == {"provider": "bettercontact", "name": "BetterContact", "api_key_configured": True, "configured_providers": {"bettercontact": True, "ai_ark": False}}
     assert "synthetic-bettercontact-key" not in response.content.decode()
     assert "synthetic-bettercontact-key" not in account_client.get("/api/settings").content.decode()
     stored = RuntimeSettings.load()

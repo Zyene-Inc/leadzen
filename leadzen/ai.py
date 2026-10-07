@@ -30,7 +30,7 @@ def pinned_open(method, url, headers, content, host, *, kind="LLM", timeout=40):
         raise SettingsError("AI request must stay on the approved HTTPS endpoint")
     if kind == "LLM":
         approved_host(host, "LLM")
-    elif kind != "BETTERCONTACT" or host != "app.bettercontact.rocks":
+    elif (kind, host) not in {("BETTERCONTACT", "app.bettercontact.rocks"), ("AI_ARK", "api.ai-ark.com")}:
         raise SettingsError("Unapproved lead-provider endpoint")
     if method not in ({"POST"} if kind == "LLM" else {"GET", "POST"}) or len(content) > 262144:
         raise SettingsError("AI request is not supported or is too large")

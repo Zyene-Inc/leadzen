@@ -7,8 +7,9 @@ export type Settings = {
     api_key_configured: boolean;
   };
   lead_finder: {
-    provider: "bettercontact";
+    provider: "bettercontact" | "ai_ark";
     api_key_configured: boolean;
+    configured_providers?: { bettercontact: boolean; ai_ark: boolean };
   };
   mailbox: {
     transport: string;
@@ -33,6 +34,8 @@ export type Credentials = {
   imap: string;
   bettercontact: string;
   clearBettercontact: boolean;
+  aiArk?: string;
+  clearAiArk?: boolean;
 };
 export const emptyCredentials: Credentials = {
   ai: "",
@@ -41,6 +44,8 @@ export const emptyCredentials: Credentials = {
   imap: "",
   bettercontact: "",
   clearBettercontact: false,
+  aiArk: "",
+  clearAiArk: false,
 };
 export const emptySettings: Settings = {
   llm: {
@@ -74,9 +79,9 @@ export function settingsBody(settings: Settings, credentials: Credentials) {
   return {
     llm: { ...settings.llm, api_key: credentials.ai },
     lead_finder: {
-      provider: "bettercontact",
-      api_key: credentials.bettercontact,
-      clear_api_key: credentials.clearBettercontact,
+      provider: settings.lead_finder.provider,
+      api_key: settings.lead_finder.provider === "ai_ark" ? credentials.aiArk ?? "" : credentials.bettercontact,
+      clear_api_key: settings.lead_finder.provider === "ai_ark" ? credentials.clearAiArk ?? false : credentials.clearBettercontact,
     },
     mailbox: {
       ...settings.mailbox,

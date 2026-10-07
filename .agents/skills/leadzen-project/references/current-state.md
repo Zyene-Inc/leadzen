@@ -1,5 +1,26 @@
 # Last verified project state
 
+## Selectable lead providers — local source, October 7, 2026
+
+Employees can choose BetterContact or AI Ark in Settings/onboarding, with separate
+encrypted keys and no automatic fallback. Find Leads, Chat, MCP portal approvals
+and selected-contact email lookup use the chosen provider over the same CRM.
+AI Ark uses the active structured Target and explicitly approved, bounded paid
+profile searches; uncertain purchases are not retried. Daily Autopilot remains
+BetterContact-only because its standing approval does not cover paid searches.
+Migration `0020_lead_finder_provider` is required; no production migration or
+deployment was performed. Backend regression tests (920), frontend tests (1,212),
+TypeScript, production build, Django system checks and migration consistency passed.
+A subsequent requested cross-check passed the full backend suite (1,686), two
+expanded feature runs (931 each), and three frontend runs (1,212 each). Added 11
+provider failure/resume/budget regressions and migration-preservation assertions;
+fresh build/typecheck passed after recoverably moving duplicate/generated caches.
+No new application defect was found; React Doctor scores remained unchanged.
+Visual browser validation was unavailable; real provider credentials/billing were
+not tested. See the [implementation and validation report](../../../../docs/lead-provider-selection-2026-10-07.md)
+for exact final regression results and release requirements. Earlier production
+observations below remain dated history, not evidence this feature is live.
+
 Updated October 7, 2026 after the discovery correction release. The October 6
 installation summary below remains relevant but its VM sizing and deployed
 discovery module are superseded by the newer sections. This is a dated

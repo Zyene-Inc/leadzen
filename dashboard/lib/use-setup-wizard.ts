@@ -60,6 +60,8 @@ export function useSetupWizard(user: Account, initial: Wizard | null) {
     setState((current) => {
       if (!current) return current;
       const checks = { ...current.wizard.checks };
+      if (next.lead_finder.provider !== current.settings.lead_finder.provider)
+        checks.discovery = { connected: false };
       if (JSON.stringify(next.llm) !== JSON.stringify(current.settings.llm))
         checks.ai = { connected: false };
       if (
@@ -117,7 +119,7 @@ export function useSetupWizard(user: Account, initial: Wizard | null) {
       if (!current) return current;
       const checks = { ...current.wizard.checks };
       if (next.ai !== current.credentials.ai) checks.ai = { connected: false };
-      if (next.bettercontact !== current.credentials.bettercontact)
+      if (next.bettercontact !== current.credentials.bettercontact || next.aiArk !== current.credentials.aiArk || next.clearAiArk !== current.credentials.clearAiArk || next.clearBettercontact !== current.credentials.clearBettercontact)
         checks.discovery = { connected: false };
       if (
         next.smtp !== current.credentials.smtp ||

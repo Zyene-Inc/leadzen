@@ -34,6 +34,7 @@ user = apps.get_model("auth", "User").objects.create(username="synthetic-migrati
 completed = timezone.now()
 profile = apps.get_model("leadzen_accounts", "AccountProfile").objects.create(user_id=user.pk, tour_completed_at=completed)
 config = apps.get_model("leadzen_config", "SiteConfig").objects.create(product_docs="Synthetic preserved product", operator_email="sender@example.com")
+runtime = apps.get_model("leadzen_config", "RuntimeSettings").objects.create(encrypted_secrets="synthetic-opaque-encrypted-credentials")
 lead = apps.get_model("outsend_leads", "Lead").objects.create(lead_id="synthetic-preserved", email="lead@example.com", first_name="Synthetic")
 deal = apps.get_model("outsend_leads", "Deal").objects.create(lead_id=lead.pk)
 campaign = apps.get_model("leadzen_config", "EmailCampaign").objects.create(name="Synthetic preserved campaign", delay_timezone="Asia/Kolkata")
@@ -44,6 +45,10 @@ assert apps.get_model("auth", "User").objects.get(pk=user.pk).email == "migratio
 saved_profile = apps.get_model("leadzen_accounts", "AccountProfile").objects.get(pk=profile.pk)
 assert saved_profile.tour_completed_at == completed and saved_profile.tour_started_at == completed
 assert apps.get_model("leadzen_config", "SiteConfig").objects.get(pk=config.pk).product_docs == "Synthetic preserved product"
+saved_runtime = apps.get_model("leadzen_config", "RuntimeSettings").objects.get(pk=runtime.pk)
+assert saved_runtime.lead_finder_provider == "bettercontact"
+assert saved_runtime.encrypted_secrets == "synthetic-opaque-encrypted-credentials"
+assert not apps.get_model("leadzen_config", "DiscoverySearch").objects.exists()
 assert apps.get_model("outsend_leads", "Lead").objects.get(pk=lead.pk).email == "lead@example.com"
 assert apps.get_model("outsend_leads", "Deal").objects.get(pk=deal.pk).lead_id == lead.pk
 assert apps.get_model("leadzen_config", "EmailCampaign").objects.get(pk=campaign.pk).delay_timezone == "America/New_York"

@@ -565,7 +565,10 @@ def _workspace_features(db: sqlite3.Connection, secrets: Mapping, features: Mapp
             if base_url or provider == "openai_compatible":
                 valid = valid and _endpoint_valid(base_url, backend, "LLM")
         if feature in {"discovery", "autopilot"}:
-            valid = valid and bool(secrets.get("bettercontact_api_key"))
+            finder = current.get("lead_finder_provider", "bettercontact")
+            valid = valid and finder in {"bettercontact", "ai_ark"} and bool(secrets.get(f"{finder}_api_key"))
+            if feature == "autopilot":
+                valid = valid and finder == "bettercontact"
         if feature in {"mail", "autopilot", "automatic_followups"}:
             valid = valid and mail_ready
         results[feature] = {"status": "PASS" if valid else "FAIL", "code": "FEATURE_CONFIGURED" if valid else "FEATURE_CONFIGURATION_INCOMPLETE", "enabled": True, "scope": "RELEASE_POLICY"}

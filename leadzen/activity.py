@@ -33,15 +33,17 @@ def discovery_items(actor_id):
     ).select_related("session").order_by("-created_at", "-pk")[:LIMIT]
     for row in rows:
         data = row.data if isinstance(row.data, dict) else {}
+        from leadzen.lead_finder import LABELS
+        provider = LABELS.get(row.session.action.get("provider"), "BetterContact")
         href = f"/find-leads/{row.session_id}"
         if row.kind in {"qualified", "rejected"}:
             result.append(item(f"discovery-{row.pk}", f"Lead {row.kind}", data.get("name") or "Unnamed profile", row.created_at, "success" if row.kind == "qualified" else "rejected", href))
         elif row.kind == "search_completed":
             count = data.get("profiles_returned")
             if type(count) is int and count >= 0:
-                result.append(item(f"discovery-{row.pk}", "BetterContact search completed", f"{count:,} profile{'s' if count != 1 else ''} returned", row.created_at, href=href))
+                result.append(item(f"discovery-{row.pk}", f"{provider} search completed", f"{count:,} profile{'s' if count != 1 else ''} returned", row.created_at, href=href))
         elif row.kind == "searching":
-            result.append(item(f"discovery-{row.pk}", "BetterContact search started", "Searching the selected audience", row.created_at, href=href))
+            result.append(item(f"discovery-{row.pk}", f"{provider} search started", "Searching the selected audience", row.created_at, href=href))
         elif row.kind == "email_lookup":
             result.append(item(f"discovery-{row.pk}", "Email lookup requested", "One approved lead", row.created_at, href=href))
     sessions = DiscoverySession.objects.filter(run__actor_id=actor_id).select_related("run").annotate(first_event_at=Min("events__created_at")).order_by("-run__created_at")[:LIMIT]

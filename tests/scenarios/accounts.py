@@ -245,6 +245,23 @@ with workspace_scope(users[1].leadzen_profile):
     assert effective().bettercontact_api_key == "synthetic-finder-secret-1"
 
 # Revocation is checked again at transport time, including retries after a wait.
+# Provider selection and encrypted keys stay in the authenticated employee's file.
+for index, client in enumerate(clients):
+    response = client.put("/api/settings", data=json.dumps({"workspace_id": str(users[1 - index].leadzen_profile.pk),
+        "lead_finder": {"provider": "ai_ark", "api_key": f"fixtureArkToken{index}"}}), content_type="application/json")
+    assert response.status_code == 200, response.content
+    assert f"fixtureArkToken{index}" not in response.content.decode()
+for index, user in enumerate(users):
+    with workspace_scope(user.leadzen_profile):
+        assert effective().lead_finder_provider == "ai_ark"
+        assert effective().ai_ark_api_key == f"fixtureArkToken{index}"
+        assert f"fixtureArkToken{index}" not in RuntimeSettings.load().encrypted_secrets
+assert clients[0].put("/api/settings", data=json.dumps({"lead_finder": {"provider": "ai_ark", "clear_api_key": True}}), content_type="application/json").status_code == 200
+provider_reset = json.dumps({"lead_finder": {"provider": "bettercontact"}})
+for client in clients:
+    response = client.put("/api/settings", data=provider_reset, content_type="application/json")
+    assert response.status_code == 200, response.content
+
 # Setup drafts and receipts also belong to the authenticated employee's file.
 for index, client in enumerate(clients):
     result = client.get("/api/onboarding/wizard?workspace_id=" + str(users[1 - index].leadzen_profile.pk))

@@ -192,6 +192,34 @@ def test_free_discovery_also_waits_for_portal_approval_then_performs_once_withou
     assert result["result"]["discovery"]["id"] == str(row.pk)
 
 
+def test_ai_ark_mcp_search_keeps_paid_provider_approval(identity):
+    from dataclasses import asdict
+    from leadzen.configuration import effective
+    from leadzen.config.models import OnboardingState
+    from leadzen.setup_wizard import target_preview
+    from leadzen.discovery_progress import current
+    audience = {"roles": ["Owner"], "industry": "Dental practices", "country": "US", "company_size": "any", "seniority": ["owner"], "instructions": ""}
+    OnboardingState.objects.update_or_create(pk=1, defaults={"draft": {"audience": audience}})
+    config = SiteConfig.load()
+    config.campaign_target = target_preview(audience)
+    config.save()
+    save_dashboard_settings(asdict(effective()), lead_finder_provider="ai_ark", ai_ark_api_key="synthetic-ark-mcp")
+    operation = call(identity, "find_leads", {"count": 2, "includeEmails": False})
+    assert operation["status"] == "awaiting_approval"
+    assert operation["operation"]["approval"]["credits"] == 2
+    assert operation["operation"]["approval"]["preview"]["provider"] == "AI Ark"
+    row = approve(identity, operation)
+    def checked(args):
+        assert current().session.action["provider"] == "ai_ark"
+        assert current().session.action["credits"] == 2
+        assert args["emails"] is False
+        return {"stored": 0, "partial": True}
+    with patch("leadzen.chat.engine.find_leads", side_effect=checked) as finder:
+        drive(row.pk)
+        drive(row.pk)
+    finder.assert_called_once()
+
+
 def test_drafting_requires_portal_review_of_selected_leads_then_saves_canonical_drafts(identity):
     lead = person()
     with patch("leadzen.outreach.generate") as model:

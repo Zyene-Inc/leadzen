@@ -43,9 +43,10 @@ def summary():
     qualified = decisions.filter(state__in=QUALIFIED, lead__disqualified=False).exclude(outcome="wrong_fit")
     accepted = Message.objects.filter(direction=Direction.OUTBOUND, delivery_events__status="accepted")
     replies = Message.objects.filter(direction=Direction.INBOUND, kind="human_reply", thread_id__in=accepted.exclude(thread_id=None).values("thread_id"))
-    credits = {"configured": bool(values.bettercontact_api_key), "balance": None, "checked_at": None, "synthetic": False}
+    from leadzen.lead_finder import key, label
+    credits = {"provider": values.lead_finder_provider, "provider_name": label(values), "configured": bool(key(values)), "balance": None, "checked_at": None, "synthetic": False}
     receipt = state.checks.get("discovery", {}) if state else {}
-    if values.bettercontact_api_key and receipt and hmac.compare_digest(receipt.get("fingerprint", ""), fingerprint(values, "discovery")):
+    if key(values) and receipt and hmac.compare_digest(receipt.get("fingerprint", ""), fingerprint(values, "discovery")):
         # This is a dated balance, not a claim that the connection or balance is live.
         credits.update(balance=receipt.get("credits"), checked_at=receipt.get("tested_at"), synthetic=receipt.get("synthetic", False))
     activity = []

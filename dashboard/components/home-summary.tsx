@@ -18,6 +18,7 @@ export type HomeSummary = {
     replies: number;
   };
   credits: {
+    provider_name?: string;
     configured: boolean;
     balance: number | null;
     checked_at: string | null;
@@ -73,10 +74,10 @@ function CreditBalance({
     }
   }
   return (
-    <section className="home-credit-bar" aria-label="BetterContact credits">
+    <section className="home-credit-bar" aria-label={`${credits.provider_name ?? "BetterContact"} credits`}>
       <div>
         <div className="home-credit-value">
-          BetterContact credits <HelpTooltip label="BetterContact credits">Check your saved balance. Checking credits does not buy profiles or email addresses.</HelpTooltip>{" "}
+          {credits.provider_name ?? "BetterContact"} credits <HelpTooltip label="Provider credits">Check your saved balance. Checking credits does not buy profiles or email addresses.</HelpTooltip>{" "}
           <strong>
             {credits.balance === null
               ? "Not checked"
@@ -85,7 +86,7 @@ function CreditBalance({
         </div>
         <p className="settings-help">
           {!credits.configured
-            ? "Connect BetterContact to discover leads."
+            ? `Connect ${credits.provider_name ?? "BetterContact"} to discover leads.`
             : credits.checked_at
               ? `${credits.synthetic ? "Synthetic preview. " : ""}Checked ${timestamp(credits.checked_at)}.`
               : "Check credits to retrieve your balance."}
@@ -108,7 +109,7 @@ function CreditBalance({
         </button>
       ) : (
         <Link className="button" href="/settings">
-          Connect BetterContact
+          Connect {credits.provider_name ?? "BetterContact"}
         </Link>
       )}
     </section>

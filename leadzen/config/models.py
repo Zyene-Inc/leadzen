@@ -186,6 +186,7 @@ class RuntimeSettings(models.Model):
     mail_api_url = models.CharField(max_length=500, blank=True, default="")
     smtp_username = models.CharField(max_length=320, blank=True, default="")
     ai_enabled = models.BooleanField(default=True)
+    lead_finder_provider = models.CharField(max_length=24, default="bettercontact")
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -357,6 +358,17 @@ class DiscoveryCandidate(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["session", "source_id"], name="discovery_candidate_unique")]
+
+
+class DiscoverySearch(models.Model):
+    """Paid profile-search reservation, persisted before any network write."""
+    session = models.OneToOneField(DiscoverySession, on_delete=models.CASCADE, related_name="profile_search")
+    query_hash = models.CharField(max_length=64, db_index=True)
+    page = models.PositiveIntegerField(default=0)
+    size = models.PositiveSmallIntegerField()
+    credits = models.DecimalField(max_digits=8, decimal_places=2, null=True)
+    state = models.CharField(max_length=16, default="uncertain")
+    profiles = models.JSONField(default=list)
 
 
 class DiscoveryEvent(models.Model):

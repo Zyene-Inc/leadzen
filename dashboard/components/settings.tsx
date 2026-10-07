@@ -19,7 +19,7 @@ import {
 
 const sectionHelp: Record<SettingSection, string> = {
   ai: "Connect a model for discovery, qualification and drafting. Manual campaigns work without AI. Provider usage can incur charges.",
-  finder: "BetterContact finds profiles and optional verified work emails. You can also add or import contacts yourself.",
+  finder: "Choose BetterContact or AI Ark for profiles and verified work emails. You can also add or import contacts yourself.",
   identity: "Your outreach name and email. These do not change your login or sending mailbox.",
   mailbox: "The account used to send email and check replies. Test the connection after changing it.",
   schedule: "Choose outreach days and hours in New York (Eastern Time). Daylight saving time adjusts automatically. Daily Autopilot uses the same selected days and start time for lead discovery. Changes require reviewing automatic approvals again.",

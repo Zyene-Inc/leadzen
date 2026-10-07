@@ -82,6 +82,8 @@ class EffectiveSettings:
     imap_password: str = ""
     ai_enabled: bool = True
     bettercontact_api_key: str = ""
+    ai_ark_api_key: str = ""
+    lead_finder_provider: str = "bettercontact"
 
 
 def _legacy_values(config: SiteConfig) -> dict[str, str]:
@@ -120,6 +122,7 @@ def effective() -> EffectiveSettings:
             ("signature", "signature"),
             ("mail_transport", "mail_transport"), ("mail_api_url", "mail_api_url"),
             ("smtp_username", "smtp_username"),
+            ("lead_finder_provider", "lead_finder_provider"),
         ):
             value = getattr(runtime, field)
             values[key] = "" if value is None else str(value)
@@ -223,9 +226,9 @@ def validate_bettercontact_key(value: str | None) -> str | None:
     if value is None:
         return None
     if not isinstance(value, str) or len(value) > 2000:
-        raise SettingsError("BetterContact API key must be text, at most 2000 characters")
+        raise SettingsError("Lead provider API key must be text, at most 2000 characters")
     if any(ord(char) < 32 or ord(char) == 127 for char in value):
-        raise SettingsError("BetterContact API key cannot contain control characters")
+        raise SettingsError("Lead provider API key cannot contain control characters")
     return value.strip()
 
 
@@ -234,22 +237,35 @@ def lead_finder_credentials(data: dict) -> tuple[str | None, bool]:
     finder = data.get("lead_finder", {})
     if not isinstance(finder, dict):
         raise SettingsError("lead_finder must be an object")
-    if finder.get("provider", "bettercontact") != "bettercontact":
-        raise SettingsError("Choose BetterContact for lead finding")
+    validate_finder_provider(finder.get("provider", "bettercontact"))
     clear = finder.get("clear_api_key", False)
     if not isinstance(clear, bool):
         raise SettingsError("Lead finder clear_api_key must be a boolean")
     return validate_bettercontact_key(finder.get("api_key")), clear
 
 
+def validate_finder_provider(value):
+    if not isinstance(value, str) or value not in {"bettercontact", "ai_ark"}:
+        raise SettingsError("Choose BetterContact or AI Ark for lead finding")
+    return value
+
+
+def finder_settings(body, current):
+    key, clear = lead_finder_credentials(body)
+    provider = validate_finder_provider(body.get("lead_finder", {}).get("provider", current.lead_finder_provider))
+    return {"lead_finder_provider": provider, f"{provider}_api_key": key, f"clear_{provider}_api_key": clear}
+
+
 def save_dashboard_settings(public: dict, *, llm_api_key: str | None = None, mailbox_password: str | None = None,
                             mail_api_key: str | None = None, imap_password: str | None = None,
                             bettercontact_api_key: str | None = None,
+                            ai_ark_api_key: str | None = None, lead_finder_provider: str | None = None,
                             clear_llm_api_key: bool = False, clear_mailbox_password: bool = False,
                             clear_mail_api_key: bool = False, clear_imap_password: bool = False,
-                            clear_bettercontact_api_key: bool = False) -> EffectiveSettings:
+                            clear_bettercontact_api_key: bool = False, clear_ai_ark_api_key: bool = False) -> EffectiveSettings:
     normalized = validate_public(public)
     bettercontact_api_key = validate_bettercontact_key(bettercontact_api_key)
+    ai_ark_api_key = validate_bettercontact_key(ai_ark_api_key)
     for value in (llm_api_key, mailbox_password, mail_api_key, imap_password):
         if value is not None and (not isinstance(value, str) or len(value) > 2000):
             raise SettingsError("Credentials must be text, at most 2000 characters")
@@ -259,7 +275,8 @@ def save_dashboard_settings(public: dict, *, llm_api_key: str | None = None, mai
     current = effective()
     secrets = {"llm_api_key": current.llm_api_key, "mailbox_password": current.mailbox_password,
                "mail_api_key": current.mail_api_key, "imap_password": current.imap_password,
-               "bettercontact_api_key": current.bettercontact_api_key}
+               "bettercontact_api_key": current.bettercontact_api_key, "ai_ark_api_key": current.ai_ark_api_key}
+    runtime.lead_finder_provider = validate_finder_provider(lead_finder_provider or public.get("lead_finder_provider", current.lead_finder_provider))
     if (normalized["provider"], normalized["base_url"]) != (current.provider, current.base_url):
         secrets["llm_api_key"] = ""
     if (normalized["mailbox_address"], normalized["smtp_host"], normalized["imap_host"]) != (current.mailbox_address, current.smtp_host, current.imap_host):
@@ -284,6 +301,10 @@ def save_dashboard_settings(public: dict, *, llm_api_key: str | None = None, mai
         secrets["bettercontact_api_key"] = ""
     elif bettercontact_api_key:
         secrets["bettercontact_api_key"] = bettercontact_api_key
+    if clear_ai_ark_api_key:
+        secrets["ai_ark_api_key"] = ""
+    elif ai_ark_api_key:
+        secrets["ai_ark_api_key"] = ai_ark_api_key
     if any(len(value) > 2000 for value in secrets.values()):
         raise SettingsError("credential is too long")
     runtime.llm_provider = str(normalized["provider"])
@@ -341,8 +362,13 @@ def apply_dashboard_overrides() -> None:
             # ambient values from an earlier run in this process.
             os.environ.pop(variable, None)
     if runtime and "bettercontact_api_key" in _decode(runtime.encrypted_secrets):
-        if values.bettercontact_api_key:
+        if values.bettercontact_api_key and values.lead_finder_provider == "bettercontact":
             os.environ["OPENOUTFIND_BETTERCONTACT_API_KEY"] = values.bettercontact_api_key
             os.environ["OPENOUTFIND_EMAIL_FINDER"] = "bettercontact"
         else:
             os.environ.pop("OPENOUTFIND_BETTERCONTACT_API_KEY", None)
+    # An explicit choice must never fall back to an ambient upstream provider.
+    if runtime:
+        os.environ["OPENOUTFIND_EMAIL_FINDER"] = values.lead_finder_provider
+    if values.lead_finder_provider != "bettercontact":
+        os.environ.pop("OPENOUTFIND_BETTERCONTACT_API_KEY", None)

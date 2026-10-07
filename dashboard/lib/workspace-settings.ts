@@ -1,4 +1,8 @@
 import type { Settings } from "@/lib/connection-settings";
+
+function tidyIndustry(value: string) {
+  return value.replace(/\s+/g, " ").trim();
+}
 import type { Audience, ConnectionCheck, Country } from "@/lib/setup-wizard";
 import { defaultSendingSchedule, NEW_YORK_TIMEZONE_LABEL, scheduleDayLabel, scheduleHours, type SendingSchedule } from "@/lib/sending-schedule";
 import { formatNewYorkDateTime } from "@/lib/date-time";
@@ -116,7 +120,7 @@ export function settingSummary(
       };
     case "target":
       return {
-        main: workspace.target.audience?.industry || "Target audience",
+        main: (workspace.target.audience?.industry && tidyIndustry(workspace.target.audience.industry)) || "Target audience",
         detail: workspace.target.summary || "Choose who you want to reach",
       };
     case "signature":

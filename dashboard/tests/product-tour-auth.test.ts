@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { requireAccount, type Account } from "@/lib/auth";
 import { POST as signIn } from "@/app/api/auth/login/route";
 import LoginPage from "@/app/login/page";
+import LoginForm from "@/app/login/LoginForm";
 import { SESSION_COOKIE } from "@/lib/session";
 import { user } from "./fixtures";
 
@@ -118,6 +119,28 @@ describe("sign-in routing", () => {
   });
 });
 
+describe("login page session redirect", () => {
+  test("an authenticated visitor with a valid session is bounced off /login to the workspace", async () => {
+    me(user);
+    await expect(LoginPage()).rejects.toThrow("redirect:/");
+  });
+  test("an expired session falls through to the sign-in form", async () => {
+    me(user, 401);
+    const page = await LoginPage();
+    expect(page.type).toBe(LoginForm);
+  });
+  test("a backend outage falls through to the sign-in form rather than looping", async () => {
+    fetchMock.mockRejectedValue(new Error("synthetic offline"));
+    const page = await LoginPage();
+    expect(page.type).toBe(LoginForm);
+  });
+  test("an anonymous visitor is shown the sign-in form", async () => {
+    auth.token = undefined;
+    const page = await LoginPage();
+    expect(page.type).toBe(LoginForm);
+  });
+});
+
 describe("client MCP consent return after sign-in", () => {
   test.each([
     [{ tour_started: true }, consent], [{ tour_skipped: true }, consent], [{ tour_completed: true }, consent],
@@ -127,7 +150,7 @@ describe("client MCP consent return after sign-in", () => {
     window.history.replaceState(null, "", `/login?returnTo=${encodeURIComponent(consent)}`);
     const account = { ...neverStarted(), ...flags };
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ user: account, next: destination === consent ? "/" : destination }), { status: 200 }));
-    render(createElement(LoginPage));
+    render(createElement(LoginForm));
     await userEvent.type(screen.getByLabelText("Work email"), "employee@preview.example");
     await userEvent.type(screen.getByLabelText("Password"), "synthetic-password");
     await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
@@ -138,7 +161,7 @@ describe("client MCP consent return after sign-in", () => {
   test("an active tour never enables an arbitrary return redirect", async () => {
     window.history.replaceState(null, "", "/login?returnTo=https%3A%2F%2Fforeign.example");
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ user: { ...neverStarted(), tour_started: true }, next: "/" }), { status: 200 }));
-    render(createElement(LoginPage));
+    render(createElement(LoginForm));
     await userEvent.type(screen.getByLabelText("Work email"), "employee@preview.example");
     await userEvent.type(screen.getByLabelText("Password"), "synthetic-password");
     await userEvent.click(screen.getByRole("button", { name: "Sign in" }));

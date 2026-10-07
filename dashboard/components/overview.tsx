@@ -248,7 +248,7 @@ export default function Dashboard({ user }: { user: Account }) {
                 aria-label="Filter leads"
               >
                 <option value="all">All stages</option>
-                <option value="Ready to Email">Ready to email</option>
+                <option value="Ready to Email">Ready to enrich</option>
                 <option value="Emailed">Emailed</option>
                 <option value="Completed">Completed</option>
               </select>

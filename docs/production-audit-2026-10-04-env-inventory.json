@@ -1,0 +1,320 @@
+{
+  "ANTHROPIC_API_KEY": [
+    "leadzen/workspaces.py:42"
+  ],
+  "APP_HOME": [
+    "compose/leadzen/Dockerfile:39"
+  ],
+  "COHERE_API_KEY": [
+    "leadzen/workspaces.py:43"
+  ],
+  "DJANGO_SETTINGS_MODULE": [
+    "leadzen/__main__.py:117",
+    "leadzen/autopilot_worker.py:10",
+    "leadzen/chat_worker.py:7",
+    "leadzen/mcp/worker.py:109",
+    "leadzen/scheduler.py:62",
+    "leadzen/web_worker.py:26",
+    "leadzen/wsgi.py:7"
+  ],
+  "EDITOR": [
+    "compose/leadzen/Dockerfile:26"
+  ],
+  "GOOGLE_API_KEY": [
+    "leadzen/workspaces.py:42"
+  ],
+  "GROQ_API_KEY": [
+    "leadzen/workspaces.py:42"
+  ],
+  "HOST_GID": [
+    "compose/leadzen/entrypoint:11",
+    "compose/leadzen/entrypoint:12",
+    "compose/leadzen/entrypoint:7",
+    "compose/leadzen/entrypoint:8",
+    "compose/leadzen/entrypoint:9"
+  ],
+  "HOST_UID": [
+    "compose/leadzen/entrypoint:11",
+    "compose/leadzen/entrypoint:12",
+    "compose/leadzen/entrypoint:6"
+  ],
+  "LEADZEN_ACTOR_ID": [
+    "leadzen/autopilot.py:208",
+    "leadzen/autopilot_worker.py:8",
+    "leadzen/chat/engine.py:563",
+    "leadzen/chat/engine.py:566",
+    "leadzen/followups.py:55",
+    "leadzen/mcp/worker.py:52",
+    "leadzen/scheduler.py:67",
+    "leadzen/workspaces.py:102",
+    "leadzen/workspaces.py:52",
+    "leadzen/workspaces.py:92"
+  ],
+  "LEADZEN_ALLOWED_HOSTS": [
+    "leadzen/production.py:20",
+    "leadzen/production.py:55",
+    "leadzen/production.py:57",
+    "leadzen/settings.py:104"
+  ],
+  "LEADZEN_API_TOKEN": [
+    "dashboard/lib/auth.ts:18",
+    "dashboard/proxy.ts:37"
+  ],
+  "LEADZEN_API_URL": [
+    "dashboard/lib/auth.ts:17",
+    "dashboard/proxy.ts:37"
+  ],
+  "LEADZEN_AUTOMATIC_FOLLOWUPS_ENABLED": [
+    "leadzen/autopilot_worker.py:244",
+    "leadzen/campaigns.py:358",
+    "leadzen/scheduler.py:3",
+    "leadzen/scheduler.py:60",
+    "leadzen/web.py:426"
+  ],
+  "LEADZEN_AUTOPILOT_ENABLED": [
+    "leadzen/autopilot.py:34",
+    "leadzen/autopilot_worker.py:8",
+    "leadzen/scheduler.py:60",
+    "leadzen/scheduler.py:76"
+  ],
+  "LEADZEN_CHAT_PROMPTED_OUTPUT_HOSTS": [
+    "leadzen/chat/engine.py:179"
+  ],
+  "LEADZEN_CHAT_RUN_ID": [
+    "leadzen/chat/engine.py:41",
+    "leadzen/chat/engine.py:560",
+    "leadzen/chat/engine.py:564",
+    "leadzen/chat/engine.py:628",
+    "leadzen/chat/engine.py:630",
+    "leadzen/mcp/guard.py:15",
+    "leadzen/mcp/worker.py:103",
+    "leadzen/mcp/worker.py:105",
+    "leadzen/mcp/worker.py:56",
+    "leadzen/mcp/worker.py:65"
+  ],
+  "LEADZEN_CONTROL_DB": [
+    "leadzen/autopilot_worker.py:8",
+    "leadzen/chat/context.py:68",
+    "leadzen/chat/tools.py:172",
+    "leadzen/mcp/auth.py:140",
+    "leadzen/outreach.py:69",
+    "leadzen/scheduler.py:67",
+    "leadzen/workspaces.py:51",
+    "leadzen/workspaces.py:90"
+  ],
+  "LEADZEN_DASHBOARD_ORIGINS": [
+    "leadzen/production.py:21",
+    "leadzen/production.py:61",
+    "leadzen/production.py:63",
+    "leadzen/web.py:53"
+  ],
+  "LEADZEN_DASHBOARD_PUBLIC_URL": [
+    "dashboard/lib/auth.ts:51"
+  ],
+  "LEADZEN_DASHBOARD_TOKEN": [
+    "leadzen/production.py:20",
+    "leadzen/production.py:51",
+    "leadzen/web.py:39",
+    "leadzen/workspaces.py:43"
+  ],
+  "LEADZEN_DB": [
+    "leadzen/__main__.py:116",
+    "leadzen/__main__.py:34",
+    "leadzen/production.py:19",
+    "leadzen/production.py:44",
+    "leadzen/settings.py:37",
+    "leadzen/settings.py:39",
+    "leadzen/workspaces.py:49"
+  ],
+  "LEADZEN_ENV": [
+    "leadzen/observability.py:17",
+    "leadzen/production.py:18",
+    "leadzen/production.py:42",
+    "leadzen/production.py:43",
+    "leadzen/production_logging.py:26",
+    "leadzen/settings.py:118"
+  ],
+  "LEADZEN_INVITATION_FROM": [
+    "leadzen/accounts/invitations.py:26"
+  ],
+  "LEADZEN_MCP_ALLOW_LOCAL": [
+    "leadzen/mcp/auth.py:57",
+    "leadzen/mcp/auth.py:58",
+    "leadzen/production.py:64",
+    "leadzen/production.py:65"
+  ],
+  "LEADZEN_MCP_PUBLIC_URL": [
+    "leadzen/mcp/auth.py:75"
+  ],
+  "LEADZEN_PUBLIC_URL": [
+    "leadzen/accounts/invitations.py:20",
+    "leadzen/mcp/auth.py:79",
+    "leadzen/production.py:21",
+    "leadzen/production.py:58",
+    "leadzen/production.py:60",
+    "leadzen/web.py:145"
+  ],
+  "LEADZEN_RESEND_API_KEY": [
+    "leadzen/accounts/invitations.py:25",
+    "leadzen/workspaces.py:44"
+  ],
+  "LEADZEN_SECRET_KEY": [
+    "leadzen/production.py:20",
+    "leadzen/production.py:51",
+    "leadzen/settings.py:78"
+  ],
+  "LEADZEN_SETTINGS_KEY": [
+    "leadzen/accounts/views.py:289",
+    "leadzen/config/models.py:171",
+    "leadzen/configuration.py:36",
+    "leadzen/configuration.py:38",
+    "leadzen/configuration.py:42",
+    "leadzen/production.py:19",
+    "leadzen/production.py:48",
+    "leadzen/production.py:50",
+    "leadzen/setup_wizard.py:92",
+    "leadzen/web.py:138",
+    "leadzen/web.py:260",
+    "leadzen/workspace_settings.py:31"
+  ],
+  "LEADZEN_WORKSPACE_ID": [
+    "leadzen/workspaces.py:103",
+    "leadzen/workspaces.py:53"
+  ],
+  "LEADZEN_WORKSPACE_ROOT": [
+    "leadzen/production.py:19",
+    "leadzen/production.py:44",
+    "leadzen/workspaces.py:34"
+  ],
+  "MISTRAL_API_KEY": [
+    "leadzen/workspaces.py:43"
+  ],
+  "NODE_ENV": [
+    "dashboard/app/api/auth/login/route.ts:17",
+    "dashboard/app/api/auth/logout/route.ts:18",
+    "dashboard/app/api/auth/password/route.ts:15",
+    "dashboard/lib/auth.ts:22",
+    "dashboard/lib/auth.ts:52",
+    "dashboard/lib/auth.ts:57",
+    "dashboard/next.config.ts:15",
+    "dashboard/proxy.ts:12"
+  ],
+  "OPENAI_API_KEY": [
+    "leadzen/workspaces.py:42"
+  ],
+  "OPENOUTFIND_ACCEPT_LEGAL_NOTICE": [
+    "leadzen/config/models.py:41"
+  ],
+  "OPENOUTFIND_AI_MODEL": [
+    "leadzen/config/models.py:32",
+    "leadzen/configuration.py:322"
+  ],
+  "OPENOUTFIND_APOLLO_API_KEY": [
+    "leadzen/config/models.py:36"
+  ],
+  "OPENOUTFIND_BETTERCONTACT_API_KEY": [
+    "leadzen/config/models.py:35",
+    "leadzen/configuration.py:345",
+    "leadzen/configuration.py:348"
+  ],
+  "OPENOUTFIND_CAMPAIGN_TARGET": [
+    "leadzen/chat/engine.py:337",
+    "leadzen/config/models.py:31"
+  ],
+  "OPENOUTFIND_CONTACTS_API_TOKEN": [
+    "leadzen/config/models.py:40"
+  ],
+  "OPENOUTFIND_EMAIL_FINDER": [
+    "leadzen/config/models.py:37",
+    "leadzen/configuration.py:346"
+  ],
+  "OPENOUTFIND_LLM_API_BASE": [
+    "leadzen/config/models.py:34",
+    "leadzen/configuration.py:326"
+  ],
+  "OPENOUTFIND_LLM_API_KEY": [
+    "leadzen/config/models.py:33",
+    "leadzen/configuration.py:324"
+  ],
+  "OPENOUTFIND_NEWSLETTER": [
+    "leadzen/config/models.py:42"
+  ],
+  "OPENOUTFIND_OPERATOR_COUNTRY": [
+    "leadzen/config/models.py:39",
+    "leadzen/config/models.py:45"
+  ],
+  "OPENOUTFIND_OPERATOR_EMAIL": [
+    "leadzen/config/models.py:38"
+  ],
+  "OPENOUTFIND_PRODUCT_DOCS": [
+    "leadzen/config/models.py:30"
+  ],
+  "OUTSEND_AI_MODEL": [
+    "leadzen/config/models.py:53",
+    "leadzen/configuration.py:323"
+  ],
+  "OUTSEND_BOOKING_LINK": [
+    "leadzen/config/models.py:52"
+  ],
+  "OUTSEND_CAMPAIGN_TARGET": [
+    "leadzen/config/models.py:51"
+  ],
+  "OUTSEND_HOME": [
+    "leadzen/settings.py:126",
+    "leadzen/settings.py:50",
+    "leadzen/workspaces.py:50"
+  ],
+  "OUTSEND_IMAP_HOST": [
+    "leadzen/config/models.py:63",
+    "leadzen/configuration.py:332"
+  ],
+  "OUTSEND_IMAP_PORT": [
+    "leadzen/config/models.py:64",
+    "leadzen/configuration.py:333"
+  ],
+  "OUTSEND_LLM_API_BASE": [
+    "leadzen/config/models.py:55",
+    "leadzen/configuration.py:327"
+  ],
+  "OUTSEND_LLM_API_KEY": [
+    "leadzen/config/models.py:54",
+    "leadzen/configuration.py:325"
+  ],
+  "OUTSEND_MAILBOX_ADDRESS": [
+    "leadzen/config/models.py:59",
+    "leadzen/configuration.py:328"
+  ],
+  "OUTSEND_MAILBOX_PASSWORD": [
+    "leadzen/config/models.py:60",
+    "leadzen/configuration.py:329"
+  ],
+  "OUTSEND_OPERATOR_COUNTRY": [
+    "leadzen/config/models.py:46",
+    "leadzen/config/models.py:58"
+  ],
+  "OUTSEND_OPERATOR_EMAIL": [
+    "leadzen/config/models.py:57"
+  ],
+  "OUTSEND_OPERATOR_NAME": [
+    "leadzen/config/models.py:46",
+    "leadzen/config/models.py:56"
+  ],
+  "OUTSEND_PRODUCT_DOCS": [
+    "leadzen/config/models.py:50"
+  ],
+  "OUTSEND_SIGNATURE": [
+    "leadzen/config/models.py:65",
+    "leadzen/configuration.py:334"
+  ],
+  "OUTSEND_SMTP_HOST": [
+    "leadzen/config/models.py:61",
+    "leadzen/configuration.py:330"
+  ],
+  "OUTSEND_SMTP_PORT": [
+    "leadzen/config/models.py:62",
+    "leadzen/configuration.py:331"
+  ],
+  "PATH": [
+    "compose/leadzen/Dockerfile:21"
+  ]
+}

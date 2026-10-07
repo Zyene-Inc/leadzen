@@ -1,0 +1,661 @@
+{
+  "date": "2026-10-04",
+  "scope": "Assigned backend authentication, employee isolation, Chat/MCP, API setup/settings and backups",
+  "source_files": 34,
+  "source_lines": 4985,
+  "files": [
+    {
+      "path": "leadzen/accounts/__init__.py",
+      "status": "inspected_source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lines": 0,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/apps.py",
+      "status": "inspected_source",
+      "sha256": "a00703325d261d2a0dcdd68a3124ed329c1e2aa4749c2f570a74e3d41cc819bb",
+      "lines": 7,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/invitations.py",
+      "status": "inspected_source",
+      "sha256": "6eacff808e0542a9926a02621e768345ac9f00e76442b4c5f23e524a6341518e",
+      "lines": 114,
+      "functions": [
+        "invitation_config",
+        "issue_invitation",
+        "valid_invitation",
+        "accept_invitation"
+      ]
+    },
+    {
+      "path": "leadzen/accounts/management/__init__.py",
+      "status": "inspected_source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lines": 0,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/management/commands/__init__.py",
+      "status": "inspected_source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lines": 0,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/management/commands/bootstrap_admin.py",
+      "status": "inspected_source",
+      "sha256": "158ff4fd37714623d9b721b439a7710a3c4ab2a699ff616c67acd41af12649e2",
+      "lines": 26,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/migrations/0001_initial.py",
+      "status": "inspected_source",
+      "sha256": "9d2e481ea6cf40faa8007b76b82603fbf218e2159c434bb13202f8b5eca0f0a0",
+      "lines": 59,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/migrations/0002_accountprofile_tour_completed_at_employeeinvitation.py",
+      "status": "inspected_source",
+      "sha256": "c420672f1e51e1ba6c8414918dd57075bc05fcf7cdbbfa4230e6da58ac51d470",
+      "lines": 38,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/migrations/0003_mcp_oauth.py",
+      "status": "inspected_source",
+      "sha256": "efa6ca1794b75c2889d551c0f2494a60e7be7da551d286aa860f5c34faa737fd",
+      "lines": 79,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/migrations/0004_accountprofile_tour_state.py",
+      "status": "inspected_source",
+      "sha256": "caa272f5ae21d56acd46ad53f99bebb33e8438c7dd2a197f233b2c4b85c4c270",
+      "lines": 31,
+      "functions": [
+        "preserve_completed_tours"
+      ]
+    },
+    {
+      "path": "leadzen/accounts/migrations/__init__.py",
+      "status": "inspected_source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lines": 0,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/models.py",
+      "status": "inspected_source",
+      "sha256": "372f17ff063676eaebc2734250c700710267e54bbc3bb0e458628f0425d6fd96",
+      "lines": 109,
+      "functions": []
+    },
+    {
+      "path": "leadzen/accounts/service.py",
+      "status": "inspected_source",
+      "sha256": "64ef0d0778cefbc4bb511aed49012ee32badd046bd8ef563a0e95a0baac10c12",
+      "lines": 192,
+      "functions": [
+        "payload",
+        "email_address",
+        "password_value",
+        "error",
+        "session_user",
+        "tour_payload",
+        "user_payload",
+        "access",
+        "audit",
+        "create_account",
+        "login"
+      ]
+    },
+    {
+      "path": "leadzen/accounts/views.py",
+      "status": "inspected_source",
+      "sha256": "5758e165e75aede302f2db4fde5a90425ffccc0ca722dc9b50ca54787b7ef0c5",
+      "lines": 289,
+      "functions": [
+        "sign_in",
+        "me",
+        "sign_out",
+        "change_password",
+        "admin_users",
+        "resend_invitation",
+        "setup_invitation",
+        "complete_tour",
+        "admin_user",
+        "onboarding"
+      ]
+    },
+    {
+      "path": "leadzen/chat/__init__.py",
+      "status": "inspected_source",
+      "sha256": "1e2c372b3e7bfd9d74c66b046569b8343400b725c27056f0ecbb9f0bd0ccb1a3",
+      "lines": 1,
+      "functions": []
+    },
+    {
+      "path": "leadzen/chat/context.py",
+      "status": "inspected_source",
+      "sha256": "aa4a51c3ad84dfc4959e6113a2cc475e95fc7eae1ae37fac9e51f2d96e23532c",
+      "lines": 79,
+      "functions": [
+        "validate",
+        "save",
+        "structured",
+        "remember"
+      ]
+    },
+    {
+      "path": "leadzen/chat/engine.py",
+      "status": "inspected_source",
+      "sha256": "331f500caa27d088e1716c1ac6669b4d5b19a1eab1f9ed49f93c9764bf0968b8",
+      "lines": 630,
+      "functions": [
+        "assert_action_access",
+        "redact",
+        "snapshot",
+        "decide",
+        "count",
+        "campaign_id",
+        "normalize",
+        "prepare",
+        "find_leads",
+        "execute",
+        "event",
+        "perform",
+        "finish",
+        "discovery_checkpoint",
+        "drive"
+      ]
+    },
+    {
+      "path": "leadzen/chat/tools.py",
+      "status": "inspected_source",
+      "sha256": "592163c039c4c6ce21dc01bc08422e2e7e25450582b0578a0ae3e83e1e9f565a",
+      "lines": 435,
+      "functions": [
+        "normalize",
+        "invoke",
+        "lead_rows",
+        "draft_rows",
+        "enrichment",
+        "send_preview",
+        "snapshot_data",
+        "setup_session",
+        "engine_find_args",
+        "drafts_result",
+        "send_confirmed",
+        "execute"
+      ]
+    },
+    {
+      "path": "leadzen/chat/views.py",
+      "status": "inspected_source",
+      "sha256": "de92139c8b177dd4c7f3e0df28fab4f771026702223a6654f749e4681844c77f",
+      "lines": 320,
+      "functions": [
+        "recover_stale",
+        "thread_payload",
+        "run_payload",
+        "detail",
+        "launch",
+        "threads",
+        "thread",
+        "message",
+        "run",
+        "workspace_context",
+        "stream"
+      ]
+    },
+    {
+      "path": "leadzen/chat_worker.py",
+      "status": "inspected_source",
+      "sha256": "876e58240a84eff674316857ec95c4519282f62b2943b72bba280bd1beb7cf28",
+      "lines": 26,
+      "functions": [
+        "main"
+      ]
+    },
+    {
+      "path": "leadzen/mcp/__init__.py",
+      "status": "inspected_source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lines": 0,
+      "functions": []
+    },
+    {
+      "path": "leadzen/mcp/auth.py",
+      "status": "inspected_source",
+      "sha256": "2e9766e6a012bdc93bff84ea7283a34fc20fc45e0fb08d45a2436c049806e0f7",
+      "lines": 198,
+      "functions": [
+        "digest",
+        "opaque",
+        "secure_url",
+        "configuration",
+        "oauth_response",
+        "oauth_error",
+        "auth_error",
+        "throttle",
+        "account_is_live",
+        "connection_live",
+        "revoke_actor_connections",
+        "authenticate_mcp",
+        "issue_tokens",
+        "pkce_challenge"
+      ]
+    },
+    {
+      "path": "leadzen/mcp/guard.py",
+      "status": "inspected_source",
+      "sha256": "de42d5262c8d95fb1ff0f1c4532e2afa4519782b5e0487e6514f423099e9b134",
+      "lines": 34,
+      "functions": [
+        "assert_connection_access",
+        "connection_execution"
+      ]
+    },
+    {
+      "path": "leadzen/mcp/models.py",
+      "status": "inspected_source",
+      "sha256": "9be4813fab9224c74741747202ae07e555e0b41c0860b84e9655770de9a2b31e",
+      "lines": 10,
+      "functions": []
+    },
+    {
+      "path": "leadzen/mcp/tools.py",
+      "status": "inspected_source",
+      "sha256": "2838c34e243367bbd50d3479e7d10ebce8452ba11b72fea984b2dc72b5158911",
+      "lines": 431,
+      "functions": [
+        "list_tools",
+        "normalized",
+        "_operation",
+        "operation_payload",
+        "_portal_links",
+        "_settings",
+        "_invoke",
+        "_canonical_tool",
+        "_generation_preview",
+        "_execute_local",
+        "_safe_settings_result",
+        "_public_connections",
+        "call_tool"
+      ]
+    },
+    {
+      "path": "leadzen/mcp/transport.py",
+      "status": "inspected_source",
+      "sha256": "b1db5adec5c803c4585cf3fc6f303060c4bfb51342d4c8c96dc2cded2360fbd0",
+      "lines": 124,
+      "functions": [
+        "_response",
+        "_error",
+        "_allowed_origin",
+        "endpoint"
+      ]
+    },
+    {
+      "path": "leadzen/mcp/views.py",
+      "status": "inspected_source",
+      "sha256": "49c1bd06533d3d329532769620b57a7310eb24b5287ead855d7b8e6a3d8d8a3e",
+      "lines": 347,
+      "functions": [
+        "_ready",
+        "_parameters",
+        "_scopes",
+        "_redirect",
+        "resource_metadata",
+        "authorization_metadata",
+        "register_client",
+        "authorize",
+        "consent",
+        "connections",
+        "token",
+        "revoke"
+      ]
+    },
+    {
+      "path": "leadzen/mcp/worker.py",
+      "status": "inspected_source",
+      "sha256": "cfc96c9a4842aa3d3ceae96e33b1702b7cc50201a09bce47f928696cc9e69bd4",
+      "lines": 129,
+      "functions": [
+        "_matches_action",
+        "drive",
+        "main"
+      ]
+    },
+    {
+      "path": "leadzen/setup_wizard.py",
+      "status": "inspected_source",
+      "sha256": "bc8554f4fd5c6b8b6c3d4f7227272a3cb129e35868899016681419103e17ed9e",
+      "lines": 341,
+      "functions": [
+        "text",
+        "secret",
+        "candidate",
+        "fingerprint",
+        "checked",
+        "save_candidate",
+        "probe_ai",
+        "probe_discovery",
+        "probe_mailbox",
+        "state_payload",
+        "validate_booking_link",
+        "validate_step",
+        "target_preview",
+        "wizard",
+        "test_connection",
+        "complete"
+      ]
+    },
+    {
+      "path": "leadzen/urls.py",
+      "status": "inspected_source",
+      "sha256": "0b5176b776cddb72c34f4983b0515d8aaece95d72a5c6090b4d632c8314dda24",
+      "lines": 84,
+      "functions": []
+    },
+    {
+      "path": "leadzen/web.py",
+      "status": "inspected_source",
+      "sha256": "fd8f54c34100a830a154fe4c5130650cef150fde652fe1a8f0fac464633bd2e9",
+      "lines": 486,
+      "functions": [
+        "_json_error",
+        "_token_is_valid",
+        "_cors",
+        "_protected",
+        "_iso",
+        "_message_payload",
+        "_mailbox_payload",
+        "_settings_payload",
+        "dashboard_entry",
+        "health",
+        "ready",
+        "runtime_settings",
+        "overview",
+        "leads",
+        "_workspace_page",
+        "inbox",
+        "suppression",
+        "_job_payload",
+        "recover_expired_jobs",
+        "jobs",
+        "start_send",
+        "start_campaign",
+        "_launch_job"
+      ]
+    },
+    {
+      "path": "leadzen/workspace_actions.py",
+      "status": "inspected_source",
+      "sha256": "639f3f0ed9de6d945bce65fb3fa8eb18d1f9b9ceb7ab3eb0063f9c75f8669fe1",
+      "lines": 91,
+      "functions": [
+        "check_replies",
+        "attention"
+      ]
+    },
+    {
+      "path": "leadzen/workspace_settings.py",
+      "status": "inspected_source",
+      "sha256": "d50719687998192eb3cc0bc34ab187be20ba0ddca4219e367b048fff50e35b79",
+      "lines": 135,
+      "functions": [
+        "settings_payload",
+        "validate_changes",
+        "apply_changes",
+        "backup"
+      ]
+    },
+    {
+      "path": "leadzen/workspaces.py",
+      "status": "inspected_source",
+      "sha256": "0a84f315872fa8334ee257a456a56a428704de578bb6a11f5c94e479ca120937",
+      "lines": 140,
+      "functions": [
+        "database_path",
+        "worker_environment",
+        "initialize_workspace",
+        "workspace_scope",
+        "assert_worker_access",
+        "guard_worker_sends"
+      ]
+    },
+    {
+      "path": "tests/test_production_security.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "f97480e00d64b9d1d68b588d38294e22e531c415c0199d64fdf0264f51650662",
+      "lines": 111,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_accounts.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "b37c96d56c42af47603fd2af278a5157fe52414263d10c32b90a8b2c3051c664",
+      "lines": 142,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_accounts_integration.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "8ad0dfb2cc9541af9147bef4f24baf8edddd498267c5c3a74b96fb44f802fadb",
+      "lines": 14,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_invitations.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "602a557368034fef995ddf42ef0846d8ab76b4ccfaa6954e7f41d346cd0b5e07",
+      "lines": 132,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_mcp_auth.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "545ae6b0d58f3d9276accf2d08d81b11ece1574aa7e9bce5f9d5ee20ac0a1473",
+      "lines": 368,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_mcp_auth_integration.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "78b1029fa03ab565ba6769a14b6c937a0fc8cc287bbf039edc8964a34a6b6c54",
+      "lines": 14,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_mcp_tools.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "eba563f1fdd3043ed3dfce0317d2291c214ead2495af234d92129fb52beea191",
+      "lines": 382,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_mcp_transport.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "5a3b679055a18def6dae0db8c91dfcf947629037c5ef6360a7e8d969a4c167d8",
+      "lines": 132,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_chat.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "ecd77903a96fd4c571fd4473b2208b10482f632e52e274d62c57f96e842ff16a",
+      "lines": 315,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_chat_workspace.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "5a93ef4f0b4b699a3f17325820afe9a2c0a3dd11c6aed481966f8d0cf4a721bf",
+      "lines": 463,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_chat_ai.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "68d29890ec62d63a21dbfedf7170aa39efe31e4c9f33b0d28db3324ba599488a",
+      "lines": 174,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_setup_wizard.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "fc80bae0dea899a5d655d473af100cf9754acebed15d8a89e617d991e055d0b6",
+      "lines": 272,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_workspace_settings.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "fe49586bc40b5b9b0ec96dbbc00c3a541504fcf913b8596d84976a368dfa284a",
+      "lines": 117,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_workspace_views.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "12c44f5767a306caf7c66bded71bf04abe1824329f8caa8fd99ef5ec70c4cc29",
+      "lines": 62,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_web.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "9cf8cbedaa4589bc79d62cb78cd458cceed98ba25589165e138f885cd533e707",
+      "lines": 92,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_runtime_settings.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "e3233fba4262930eb5422ac6d82260fc75b730ece151ecd7dfbc1c970494cf64",
+      "lines": 135,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/test_bettercontact_settings.py",
+      "status": "critical_assertions_reviewed_and_executed",
+      "sha256": "c2ae45851779f7cb9c9c7795edbbed2d60346315f7d2e0e12ec39c1cd6c58a89",
+      "lines": 163,
+      "note": "Focused trust-boundary assertions were manually reviewed; exhaustive assertion-by-assertion review is not claimed."
+    },
+    {
+      "path": "tests/scenarios/accounts.py",
+      "status": "inspected_synthetic_integration_scenario_and_executed",
+      "sha256": "30d6c8245a210fc8608efa7170d70ddbd38c0cd4f15f4b1431e84f46679883a0",
+      "lines": 334
+    },
+    {
+      "path": "tests/scenarios/mcp_auth.py",
+      "status": "inspected_synthetic_integration_scenario_and_executed",
+      "sha256": "2159285195693acc33b02fee79264371dc283e752e30ca0d79fee6e5bdb0e6d3",
+      "lines": 92
+    },
+    {
+      "path": "tests/scenarios/workspace_settings.py",
+      "status": "inspected_synthetic_integration_scenario_and_executed",
+      "sha256": "6cc35ed7b4268da36385f320db8e3b4dc93d79965bc5cc34092d9e90cf49fca5",
+      "lines": 87
+    }
+  ],
+  "excluded": [
+    "Real credentials and production database contents were not opened.",
+    "Live third-party calls and MCP clients were not exercised.",
+    "Other repository source is audited by the parent and sibling agents."
+  ],
+  "unverified": [
+    "Real deployed account/database/migration state",
+    "Live OAuth client interop",
+    "Production load, SSE connection exhaustion and SQLite contention",
+    "Filesystem protection against local OS compromise",
+    "Live Resend delivery, email ownership verification and billing"
+  ],
+  "findings": [
+    {
+      "id": "BSEC-01",
+      "severity": "HIGH",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-02",
+      "severity": "HIGH",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-03",
+      "severity": "HIGH",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-04",
+      "severity": "HIGH",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-05",
+      "severity": "MEDIUM",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-06",
+      "severity": "MEDIUM",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-07",
+      "severity": "MEDIUM",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-08",
+      "severity": "MEDIUM",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    },
+    {
+      "id": "BSEC-09",
+      "severity": "MEDIUM",
+      "disposition": "fixed_locally",
+      "deployment": "UNVERIFIED"
+    }
+  ],
+  "verification": {
+    "final_focused_commands": [
+      {
+        "command": ".venv/bin/pytest -q tests/test_web.py tests/test_production_security.py tests/test_runtime_settings.py tests/test_invitations.py",
+        "passed": 42,
+        "seconds": 27.66
+      },
+      {
+        "command": ".venv/bin/pytest -q tests/test_mcp_auth.py tests/test_mcp_auth_integration.py tests/test_mcp_transport.py tests/test_production_security.py tests/test_invitations.py",
+        "passed": 80,
+        "seconds": 24.72
+      },
+      {
+        "command": ".venv/bin/pytest -q tests/test_runtime_settings.py tests/test_bettercontact_settings.py tests/test_workspace_settings.py tests/test_setup_wizard.py",
+        "passed": 85,
+        "seconds": 26.6
+      }
+    ],
+    "compileall": "passed",
+    "git_diff_check": "passed",
+    "ruff_invocation": "unavailable_at_.venv/bin/ruff; parent handles lint"
+  }
+}

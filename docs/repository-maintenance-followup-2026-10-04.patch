@@ -1,0 +1,167 @@
+--- a/.dockerignore
++++ b/.dockerignore
+@@ -1,7 +1,51 @@
+-.git
+-.github
+-.venv
+-.pytest_cache
+-.idea
+-__pycache__
+-.vscode
++# Version control and local editor metadata.
++**/.git
++**/.github
++**/.idea
++**/.vscode
++**/.DS_Store
++
++# Private environment files; checked-in placeholder templates remain available.
++**/.env
++**/.env.*
++**/*.env
++**/*.env.*
++!**/.env.example
++!**/*.env.example
++
++# Runtime records, database sidecars and recovery copies are mounted at runtime.
++data
++media
++**/*.sqlite*
++**/*.db
++**/*.db-*
++**/*.db.*
++**/*.bak
++**/*.backup
++**/backup
++**/backups
++**/*.log
++
++# Installed dependencies, caches, coverage and generated build outputs.
++**/.venv
++**/venv
++**/node_modules
++**/.next
++**/.cache
++**/__pycache__
++**/*.py[cod]
++**/.pytest_cache
++**/.mypy_cache
++**/.ruff_cache
++**/.coverage
++**/.coverage.*
++**/htmlcov
++**/coverage
++**/test-results
++**/playwright-report
++**/*.tsbuildinfo
++**/dist
++**/build
++**/*.egg-info
++**/*.whl
++uv.lock
+--- a/Makefile
++++ b/Makefile
+@@ -26,7 +26,7 @@
+ test: ## run the test suite
+ 	pytest
+ 
+-# Docker targets — the server deploy only (docs/infrastructure.md §7).
++# Docker targets build and operate the bounded CLI service (docs/docker.md).
+ # Development and tests run natively; there is no docker-test.
+ logs: ## follow the logs of the service
+ 	docker compose -f local.yml logs -f
+--- a/compose/leadzen/Dockerfile
++++ b/compose/leadzen/Dockerfile
+@@ -1,6 +1,5 @@
+-# Production image. The supported install is `uv tool install leadzen` — this exists for
+-# running a bounded job on a server from a timer (docs/infrastructure.md §7), not for local
+-# development and not for tests. Run those natively.
++# Build the company image from this checkout; see docs/docker.md.
++# It runs bounded CLI jobs or the private API. Development and tests run natively.
+ 
+ # ── Stage 1: build a venv holding the package and its dependencies ──
+ FROM python:3.12-slim-bookworm AS deps
+--- a/compose/leadzen/start
++++ b/compose/leadzen/start
+@@ -11,5 +11,5 @@
+ # here loops. `find` migrates on the way in; it never prompts, so a container that was not
+ # given its `OPENOUTFIND_*` / `OUTSEND_*` variables exits naming the ones it lacked.
+ #
+-# The goal is the argument: `docker compose run leadzen 10 emails`.
++# The goal is the argument: `docker compose -f local.yml run --rm app 10 emails`.
+ exec leadzen find "${@:-1}"
+--- a/docs/docker.md
++++ b/docs/docker.md
+@@ -5,6 +5,11 @@
+ ```bash
+ docker build -f compose/leadzen/Dockerfile -t leadzen:local .
+ ```
++
++The build context excludes private environment files, runtime databases and
++backups, installed dependencies, caches and generated builds. Source, migrations,
++package metadata, legal notices and placeholder environment examples remain
++available. Provide real credentials and persistent storage when running the image.
+ 
+ Run a bounded discovery job with persistent storage and the provider variables
+ in a private environment file:
+@@ -33,6 +38,15 @@
+ 
+ The Compose file `local.yml` builds the same image. `make build`,
+ `make up`, `make logs`, and `make stop` operate that local service.
++For a one-off job, use the `app` service explicitly:
++
++```bash
++docker compose -f local.yml run --rm --env-from-file .env app 10 emails > leads.csv
++```
++
++Compose's `--env-file` option supplies variable interpolation; it does not pass
++every provider variable into this service. `--env-from-file` supplies the job's
++container environment. The paid `emails` example requires explicit authorization.
+ 
+ Existing database files are upgraded on first startup with a SQLite recovery
+ copy. Schedule bounded CLI jobs using a systemd timer or your existing scheduler.
+--- a/local.yml
++++ b/local.yml
+@@ -1,5 +1,5 @@
+-# local.yml — the server deploy (docs/infrastructure.md §7). Filename kept because the
+-# VM's update-all.sh and every existing instance reference it.
++# local.yml — the bounded CLI service described in docs/docker.md.
++# Keep this filename for existing operator commands and Makefile targets.
+ #
+ # For development, install the package instead: `uv pip install -e ".[dev]"`.
+ 
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -36,9 +36,8 @@
+ 
+ # Both children are required, not extras: `pip install leadzen` alone has to be the
+ # whole find-then-send flow, or the second install is the friction this package exists to
+-# remove. Everything the finding and the sending need — pydantic-ai, fastembed, sklearn,
+-# the mail transport — arrives through them; what is declared here is what *this* package
+-# imports directly.
++# remove. Each child supplies its internal dependencies; LeadZen also declares the
++# packages used by its own schemas, provider factories and pinned HTTP transports.
+ #
+ # **The pins are exact, and the cost is known.** This project hosts both children's Django
+ # apps in one registry and owns the one migration graph over them, so a model change in
+@@ -49,6 +48,20 @@
+     "cryptography>=43,<51",
+     "openoutfind==0.1.10",
+     "openoutsend==0.1.32",
++    # Keep the provider/transport APIs within the versions exercised by LeadZen's
++    # synthetic compatibility tests. The slim extras install all supported SDKs;
++    # SDK bounds preserve their current httpx versus httpx2 client contracts.
++    "pydantic>=2.13.5,<2.14",
++    "pydantic-ai-slim[anthropic,cohere,google,groq,mistral,openai]>=2.52.0,<2.53",
++    "requests>=2.34.2,<2.35",
++    "openai>=3.22.1,<3.23",
++    "cohere>=7.2.0,<7.3",
++    "google-genai>=2.26.0,<2.27",
++    "anthropic>=1.11.0,<1.12",
++    "groq>=1.7.0,<1.8",
++    "mistralai>=3.0.0,<3.1",
++    "httpx>=0.28.1,<0.29",
++    "httpx2>=2.13.1,<2.14",
+     # The wizard validates a country code against a real list of them. Declared rather
+     # than inherited from the finder: the rule above is that this file names what *this*
+     # package imports directly.

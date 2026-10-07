@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-04",
+  "read_only": true,
+  "origin_source": "Fresh authorized Vercel production environment export",
+  "required_names_present": {
+    "LEADZEN_API_URL": true,
+    "LEADZEN_API_TOKEN": true,
+    "LEADZEN_DASHBOARD_PUBLIC_URL": false
+  },
+  "public_api_origin_canonical": false,
+  "service_token_structurally_usable": false,
+  "secrets_printed": false,
+  "production_changed": false,
+  "service_token_equality": "UNVERIFIED_CURRENT_VM_ENV_UNAVAILABLE",
+  "probes": []
+}

@@ -1,0 +1,13 @@
+{
+  "scope": "Disposable full control plus all workspace backup/restore only",
+  "databases": 6,
+  "table_row_counts_preserved": true,
+  "integrity_and_foreign_keys": true,
+  "matched_key_decryption": true,
+  "production_wsgi_private_health": true,
+  "restored_login_and_own_workspace": true,
+  "service_only_data_rejected": true,
+  "production_restore": "UNVERIFIED",
+  "script_sha256": "1784e9a1b6ff2a64f14c873076925b7b333e623e291246f608ef28b0464956f4",
+  "command": "PYTHONPATH=\"$TASK_AUDIT_DIR/source\" \"$TASK_AUDIT_DIR/clean-venv/bin/python\" \"$TASK_AUDIT_DIR/restore-rehearsal.py\" \"$TASK_AUDIT_DIR\""
+}

@@ -34,7 +34,11 @@ test("newly received text reveals progressively; final content and restored hist
   expect(container.textContent).not.toContain("five leads are saved");
   act(() => tick(0));
   expect(container.textContent).toContain("Hello S");
+  // Mid-animation still hides the tail; the effect stretches ~600 ms so the
+  // rendered text visibly advances frame by frame.
   act(() => tick(120));
+  expect(container.textContent).not.toContain("five leads are saved.");
+  act(() => tick(600));
   expect(container.textContent).toContain("Hello Sarah, your five leads are saved.");
   rerender(<ChatResponse content="A corrected final answer." />);
   expect(container.textContent).toBe("A corrected final answer.");

@@ -1,0 +1,9 @@
+# Deleted employee re-invitation — October 6, 2026
+
+The admin page's Delete action deactivates an employee and records `deleted_at` while preserving their account and outreach history. The Create action previously rejected the email because the deleted account still held the unique username.
+
+The prepared backend change archives that deleted username, then creates a new employee ID with an unusable password and a new setup invitation. The old account stays inactive and deleted, and its workspace history remains separate. This avoids resuming old workspace permissions or automatic approvals. Active accounts still require their existing invitation action; disabled accounts now receive an instruction to enable them first.
+
+The change was merged through [PR #5](https://github.com/Zyene-Inc/leadzen/pull/5) into GitHub `main` at commit `f1d8cfe314ba84dd7b9e59592fba0b721e63e0d4`. The temporary feature branch was deleted; GitHub lists only `main`. Focused account/invitation tests passed (21). A local full-suite run was stopped after 892 passes because it exceeded 13 minutes, while the GitHub Actions backend test job and all other required checks passed.
+
+With fresh user approval, the equivalent narrow fix was applied to the live Google VM `leadzen-api` on October 6, 2026. The live `invitations.py` checksum after patch is `5f93c9c0966e49a437be0deaaca98eaa49bd583930cb07f62422362725e3cea5`. The pre-change copy is at `/srv/private/leadzen-hotfix-backups/invitations.py.20261006T173840Z.bak`. `leadzen.service` restarted and reported `active`; the authenticated `https://leadzen-api.zyene.com/api/health` response reported `ok: true`. The live backend otherwise remains on its existing code baseline; this was a narrow hotfix, not a full backend release. No real invitation was sent and the actual employee re-invitation has not been exercised in production. The admin can now retry Add employee for the deleted email, which will use the normal invitation flow.

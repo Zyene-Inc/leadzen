@@ -147,7 +147,7 @@ export function HomeSummaryPanel({
           <div className="home-target-body">
             {audience ? (
               <>
-                <h3>{audience.industry}</h3>
+                <h3>{audience.industry?.replace(/\s+/g, " ").trim()}</h3>
                 <p className="home-target-location">
                   {home.target.country_name}
                   {audience.company_size !== "any"

@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/api/health",
+    "service_token": false,
+    "status": 401
+  },
+  {
+    "path": "/api/ready",
+    "service_token": false,
+    "status": 401
+  },
+  {
+    "path": "/api/ready",
+    "service_token": true,
+    "status": 200
+  },
+  {
+    "path": "/api/overview",
+    "service_token": true,
+    "status": 401
+  }
+]

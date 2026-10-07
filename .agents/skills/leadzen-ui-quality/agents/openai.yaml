@@ -1,0 +1,4 @@
+interface:
+  display_name: "LeadZen UI Quality"
+  short_description: "Polish LeadZen visuals, live feedback, and usability"
+  default_prompt: "Use $leadzen-ui-quality to refine this LeadZen interaction using the approved Zyene design and browser checks."

@@ -37,10 +37,14 @@ function useStreamedText(content: string, streaming: boolean) {
     if (!received.length) return;
     let frame = 0;
     let start: number | undefined;
+    // Reveal the batch over ~600 ms so the user actually perceives a
+    // typewriter effect; the original 120 ms was too fast to read as typing.
+    const DURATION_MS = 600;
     function reveal(at: number) {
       start ??= at;
-      const fraction = Math.min(1, (at - start + 16) / 120);
-      show(prefix + received.slice(0, Math.ceil(received.length * fraction)).join(""));
+      const fraction = Math.min(1, (at - start + 16) / DURATION_MS);
+      const burst = Math.min(received.length, Math.max(2, Math.ceil(received.length * fraction)));
+      show(prefix + received.slice(0, burst).join(""));
       if (fraction < 1) frame = requestAnimationFrame(reveal);
     }
     const finish = () => { cancelAnimationFrame(frame); show(content); };

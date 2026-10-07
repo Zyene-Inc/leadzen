@@ -1,0 +1,27 @@
+{
+  "mobile": {
+    "background": "rgb(44, 55, 66)",
+    "clientWidth": 333,
+    "color": "rgb(251, 251, 250)",
+    "font": "16px",
+    "radius": "20px",
+    "rect": {
+      "height": 352.71875,
+      "left": 42.9609375,
+      "right": 376,
+      "width": 333.0390625
+    },
+    "scrollWidth": 333,
+    "theme": "dark",
+    "viewport": 390,
+    "whiteSpace": "pre-wrap"
+  },
+  "desktop": {
+    "clientWidth": 653,
+    "maxWidth": "85%",
+    "radius": "20px",
+    "scrollWidth": 653,
+    "viewport": 1280,
+    "width": 652.796875
+  }
+}

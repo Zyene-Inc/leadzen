@@ -1,0 +1,416 @@
+{
+  "date": "2026-10-02",
+  "status": "local_verification_passed_release_gates_open",
+  "provider_credits_spent": 0,
+  "real_emails_sent": 0,
+  "deployed": false,
+  "automatic_followup_service_started": false,
+  "user_work_preserved": true,
+  "backend": {
+    "command": ".venv/bin/pytest -q --junitxml=<evidence file>",
+    "tests_per_pass": 409,
+    "passes": 10,
+    "total_executions": 4090,
+    "runs": [
+      {
+        "pass": 1,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 213.572,
+        "evidence": "backend-01.xml",
+        "sha256": "fdfa9500ffaa2c5944b5057644ec67aa3f4049ec641ccd75b8c13bab1c3d4c3b"
+      },
+      {
+        "pass": 2,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 249.613,
+        "evidence": "backend-02.xml",
+        "sha256": "9fd3287e8018d6b147918e6c14873a08eca4f3150653532f307104fdcf5e6e28"
+      },
+      {
+        "pass": 3,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 279.955,
+        "evidence": "backend-03.xml",
+        "sha256": "71348a43e221c84413b96668cdc789c05341ce04ba1bddbbc23804c039421ca4"
+      },
+      {
+        "pass": 4,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 159.991,
+        "evidence": "backend-04.xml",
+        "sha256": "b92d9fa5e4575dae84d024bc7f8ec5e2d173a5fa54e115b9b4d598e951326113"
+      },
+      {
+        "pass": 5,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 141.219,
+        "evidence": "backend-05.xml",
+        "sha256": "b3b4a026f1114b73f21ed36d0f8d09ba9da656df4b13b9fb7a69333778372220"
+      },
+      {
+        "pass": 6,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 134.423,
+        "evidence": "backend-06.xml",
+        "sha256": "e978df3edd3d80cc34d46e4c01961b3b702660e5a6d46d0a9738346cbb78b2d8"
+      },
+      {
+        "pass": 7,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 179.392,
+        "evidence": "backend-07.xml",
+        "sha256": "34e0b9b3dc683130fc46af83623c0ee05701f37eb9c8b4bb6dbfadfb01c09f8a"
+      },
+      {
+        "pass": 8,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 136.894,
+        "evidence": "backend-08.xml",
+        "sha256": "2a764aea0b47cd861d6d548f47b101748425953875be0cea5c77c91124edb63d"
+      },
+      {
+        "pass": 9,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 147.324,
+        "evidence": "backend-09.xml",
+        "sha256": "a1f8a09c0a90b8fe2d2d9d6957d742e023b817f64e9110e706b73c494456096b"
+      },
+      {
+        "pass": 10,
+        "tests": 409,
+        "passed": 409,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 212.568,
+        "evidence": "backend-10.xml",
+        "sha256": "5f27d665e9575b40dc9a4b51edc55131b665f97dea2040d29d7cfc6fdd3b06cb"
+      }
+    ],
+    "module_cases_per_pass": {
+      "tests/test_accounts.py": 9,
+      "tests/test_activity.py": 12,
+      "tests/test_automatic_followups.py": 40,
+      "tests/test_bettercontact_settings.py": 15,
+      "tests/test_campaigns.py": 31,
+      "tests/test_chat.py": 15,
+      "tests/test_cli.py": 8,
+      "tests/test_discovery.py": 17,
+      "tests/test_discovery_live.py": 33,
+      "tests/test_home.py": 5,
+      "tests/test_invitations.py": 9,
+      "tests/test_lead_crm.py": 22,
+      "tests/test_lead_timeline.py": 15,
+      "tests/test_registry.py": 3,
+      "tests/test_reviewed_outreach.py": 43,
+      "tests/test_runtime_settings.py": 9,
+      "tests/test_setup_wizard.py": 43,
+      "tests/test_web.py": 4,
+      "tests/test_wizard.py": 12,
+      "tests/test_workspace_settings.py": 13,
+      "tests/test_workspace_views.py": 13,
+      "tests/test_accounts_integration.py": 1,
+      "tests/test_branding.py": 5,
+      "tests/test_chat_ai.py": 12,
+      "tests/test_email_transports.py": 20
+    }
+  },
+  "dashboard": {
+    "command": "npm run test -- --reporter=json --outputFile=<evidence file>",
+    "scenarios": 64,
+    "repetitions": 10,
+    "total_executions": 640,
+    "suites": [
+      {
+        "file": "dashboard/tests/remaining-controls.test.tsx",
+        "scenarios": 11,
+        "repetitions": 10,
+        "executions": 110,
+        "passed": true,
+        "scenario_names": [
+          "Remaining controls Activity defaults to readable events; Developer Logs opens, refreshes and closes",
+          "Remaining controls suppression list search, pagination and Add/Cancel use stored records",
+          "Remaining controls Sending ± and invalid count guard draft preparation and stable retry",
+          "Remaining controls one-lead email review Cancel, final credit choice and duplicate guard",
+          "Remaining controls setup step 1 Continue sends one draft save; Back preserves draft",
+          "Remaining controls setup step 2 Continue sends one draft save; Back preserves draft",
+          "Remaining controls setup step 3 Continue sends one draft save; Back preserves draft",
+          "Remaining controls setup step 4 Continue sends one draft save; Back preserves draft",
+          "Remaining controls setup step 5 Continue sends one draft save; Back preserves draft",
+          "Remaining controls setup Retry is bounded and final failure is visible without losing the draft",
+          "Remaining controls admin actions confirm deletion/reset, disable once, and filter employees"
+        ]
+      },
+      {
+        "file": "dashboard/tests/request-origin.test.ts",
+        "scenarios": 7,
+        "repetitions": 10,
+        "executions": 70,
+        "passed": true,
+        "scenario_names": [
+          "request origin allows only the request origin when no public URL is configured",
+          "request origin uses the configured public origin behind a proxy without trusting forwarded hosts",
+          "request origin rejects missing origins and explicitly cross-site requests",
+          "request origin fails closed for invalid production public URL http://localhost:3443",
+          "request origin fails closed for invalid production public URL https://[synthetic credentials]@localhost:3443",
+          "request origin fails closed for invalid production public URL https://localhost:3443/path",
+          "request origin fails closed for invalid production public URL invalid-public-url"
+        ]
+      },
+      {
+        "file": "dashboard/tests/review-controls.test.tsx",
+        "scenarios": 13,
+        "repetitions": 10,
+        "executions": 130,
+        "passed": true,
+        "scenario_names": [
+          "Review controls campaign Cancel never sends, and opening never authorizes",
+          "Review controls final campaign confirmation scopes automatic follow-ups and blocks double click",
+          "Review controls campaign retry after failure keeps its request identity; Refresh reloads",
+          "Review controls discovery email selection confirms the exact one-credit choice",
+          "Review controls discovery Cancel spends no credits",
+          "Review controls email Edit and Cancel preserve copy; Save clears approval at the server boundary",
+          "Review controls email Approve and Regenerate never call a send endpoint",
+          "Review controls unapproved outreach cannot send, approved confirmation Cancel is inert, failures stay visible",
+          "Review controls suppression Cancel is inert and confirmation blocks duplicate submissions",
+          "Review controls saved connection Test requires confirmation, Cancel is inert",
+          "Review controls secret Show/Hide affects only the entered value and resets when cleared",
+          "Review controls find count ±, free default, paid option, invalid count, and Start choices",
+          "Review controls timeline stop Cancel is inert; Confirm stop and Refresh work"
+        ]
+      },
+      {
+        "file": "dashboard/tests/workspace-controls.test.tsx",
+        "scenarios": 33,
+        "repetitions": 10,
+        "executions": 330,
+        "passed": true,
+        "scenario_names": [
+          "Workspace controls lead filters, search, pagination, links and form cancellation",
+          "Workspace controls Add contact and Edit save exact fields once",
+          "Workspace controls Stop, opt-out Cancel/confirm, and delete Cancel/confirm preserve boundaries",
+          "Workspace controls CSV rejects malformed input and imports quoted rows correctly",
+          "Workspace controls campaign Pause, Activate, Archive cancel/confirm and Refresh",
+          "Workspace controls campaign creation caps two follow-ups, 3/5 working days, category, Save and Cancel",
+          "Workspace controls discovery pause targets only the current run",
+          "Workspace controls discovery stop targets only the current run",
+          "Workspace controls discovery resume targets only the current run",
+          "Workspace controls completed discovery links and Find Emails open a cancellable paid review",
+          "Workspace controls Settings ai Edit/Close/Cancel",
+          "Workspace controls Settings finder Edit/Close/Cancel",
+          "Workspace controls Settings identity Edit/Close/Cancel",
+          "Workspace controls Settings mailbox Edit/Close/Cancel",
+          "Workspace controls Settings product Edit/Close/Cancel",
+          "Workspace controls Settings target Edit/Close/Cancel",
+          "Workspace controls Settings signature Edit/Close/Cancel",
+          "Workspace controls Settings booking Edit/Close/Cancel",
+          "Workspace controls Settings ai Save uses the settings boundary once",
+          "Workspace controls Settings finder Save uses the settings boundary once",
+          "Workspace controls Settings identity Save uses the settings boundary once",
+          "Workspace controls Settings mailbox Save uses the settings boundary once",
+          "Workspace controls Settings product Save uses the settings boundary once",
+          "Workspace controls Settings target Save uses the settings boundary once",
+          "Workspace controls Settings signature Save uses the settings boundary once",
+          "Workspace controls Settings booking Save uses the settings boundary once",
+          "Workspace controls saved discovery test requires separate confirmation",
+          "Workspace controls saved mailbox test requires separate confirmation",
+          "Workspace controls Backup Database confirms download and guards double clicks",
+          "Workspace controls mailbox presets emit correct Zoho, Gmail, Microsoft and custom settings",
+          "Workspace controls Inbox search, pagination, conversation and Back read stored data only",
+          "Workspace controls chat exact-action Approve, Decline, busy and history filter links",
+          "Workspace controls tour Next and Back cover all six slides and current sequence guidance"
+        ]
+      }
+    ],
+    "sha256": "08791f2d095d4a7717ed6707a436e8e67f221eab859ac6aa163e6d23e698dda8"
+  },
+  "http_flows": [
+    {
+      "kind": "development_http",
+      "passes": 10,
+      "external_effects": "mocked; campaign sending deliberately disabled",
+      "evidence": [
+        {
+          "file": "http-01.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-02.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-03.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-04.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-05.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-06.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-07.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-08.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-09.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "http-10.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        }
+      ]
+    },
+    {
+      "kind": "production_https",
+      "passes": 10,
+      "external_effects": "mocked; campaign sending deliberately disabled",
+      "evidence": [
+        {
+          "file": "production-https-01.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-02.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-03.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-04.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-05.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-06.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-07.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-08.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-09.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        },
+        {
+          "file": "production-https-10.log",
+          "sha256": "80de4b640cad55948cff93f9135340cf2daae8f9e518e7f9fc90ebcd014bf1b5"
+        }
+      ]
+    }
+  ],
+  "browser": {
+    "workspace_navigation": {
+      "passes": 10,
+      "pages_per_pass": 9,
+      "verified_navigations": 90,
+      "failures": 0,
+      "evidence": "browser-navigation.json",
+      "sha256": "ceafc96a6620d974487f3380599de9261c94cf1d3759cced2db5c2a6de662dbe"
+    },
+    "mobile_menu": {
+      "width": 390,
+      "passes": 10,
+      "actions": 20,
+      "failures": 0,
+      "horizontal_overflow": false,
+      "viewport_override_reset": true,
+      "evidence": "mobile-navigation.json"
+    },
+    "restored_dashboard_verified": true,
+    "screenshot": "/tmp/leadzen-production-audit-20261002/dashboard-restored.png"
+  },
+  "other_checks": {
+    "typescript": "passed; tsc --noEmit",
+    "production_build": "passed, 24 generated pages",
+    "django_check_registry": {
+      "issues": 0,
+      "database": "disposable"
+    },
+    "migration_drift": "no changes for leadzen_config and leadzen_accounts",
+    "release_script_syntax": "passed; no deployment execution",
+    "git_diff_check": "passed",
+    "npm_production_dependency_audit": {
+      "known_vulnerabilities": 0,
+      "dev_dependencies_excluded": true
+    },
+    "python_dependency_audit": {
+      "resolved_packages_audited": 102,
+      "known_vulnerabilities": 0,
+      "skipped": [
+        "local leadzen 0.1.0: not found on PyPI"
+      ]
+    },
+    "react_doctor_full": {
+      "score": 72,
+      "errors": 0,
+      "warnings": 16,
+      "files_scanned": 91
+    }
+  },
+  "release_gates": [
+    "Fresh approval and bounded live AI/BetterContact/SMTP/IMAP/internal-recipient pilot",
+    "Matching API/dashboard release and backups/migrations for control and every employee workspace through 0013",
+    "Explicit reviewed automatic-followup scope and service enablement",
+    "Scheduler health/alert plus isolated load/crash/full-restore verification before sustained unattended operation",
+    "Product decision on manual 8 AM–8 PM vs planned 9 AM–5 PM and AI-reviewed initial-to-campaign integration"
+  ],
+  "evidence_directory": "/tmp/leadzen-production-audit-20261002"
+}

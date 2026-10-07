@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-04",
+  "read_only": true,
+  "upstream_repository": "eracle/OpenOutreach",
+  "observations": [
+    {
+      "scope": "repository",
+      "exit": 0,
+      "status": "OBSERVED",
+      "permissions": {
+        "admin": false,
+        "maintain": false,
+        "push": false,
+        "triage": false,
+        "pull": true
+      },
+      "default_branch": "main",
+      "visibility": "public"
+    },
+    {
+      "scope": "branch_protection",
+      "exit": 1,
+      "status": "BLOCKED",
+      "http_status": "404"
+    },
+    {
+      "scope": "rulesets",
+      "exit": 0,
+      "status": "OBSERVED",
+      "returned_rulesets_count": 0
+    }
+  ],
+  "owning_release_repository_verified": false,
+  "enforcement": "UNVERIFIED",
+  "production_changed": false
+}

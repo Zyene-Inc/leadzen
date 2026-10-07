@@ -50,9 +50,7 @@ jobs:
 
   dashboard:
     runs-on: ubuntu-latest
-    # A clean install, full dashboard test suite, and production build can run
-    # longer than 15 minutes on an uncached GitHub-hosted runner.
-    timeout-minutes: 30
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:

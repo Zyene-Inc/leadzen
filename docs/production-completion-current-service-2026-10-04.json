@@ -1,0 +1,24 @@
+{
+  "status": "BLOCKED",
+  "code": "CURRENT_SERVICE_ORIGIN_OR_CREDENTIAL_NOT_USABLE_FOR_BOUNDED_TLS_CHECK",
+  "requests_made": false,
+  "configuration_booleans": {
+    "https": false,
+    "hostname_present": false,
+    "embedded_credentials_absent": true,
+    "root_path": false,
+    "query_fragment_absent": true,
+    "api_token_present": true,
+    "origin_control_characters_absent": true,
+    "dashboard_public_origin_present": false
+  },
+  "origin_format": {
+    "empty": false,
+    "contains_https_scheme": false,
+    "contains_http_scheme": false,
+    "contains_literal_backslash": false,
+    "surrounded_by_literal_quotes": false,
+    "contains_whitespace": false
+  },
+  "scope": "Available export values did not form a usable exact HTTPS service origin; no request or credential transmission occurred. Current VM service configuration remains UNVERIFIED; no claim of production endpoint failure."
+}

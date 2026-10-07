@@ -1,0 +1,13 @@
+{
+  "script_count": 11,
+  "inline_scripts": 3,
+  "all_script_nonces_match": true,
+  "production_unsafe_eval_absent": true,
+  "strict_dynamic": true,
+  "frame_ancestors_none": true,
+  "hsts_one_year": true,
+  "nosniff": true,
+  "no_referrer": true,
+  "private_no_store_no_transform": true,
+  "status": "PASS"
+}

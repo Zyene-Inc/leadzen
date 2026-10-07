@@ -1,0 +1,20 @@
+{
+  "status": "BLOCKED",
+  "missing": [],
+  "not_passed": [
+    "actual_recovery",
+    "alert_delivery",
+    "browser",
+    "credential_disposition",
+    "enabled_integrations",
+    "external_release_controls",
+    "image_advisories",
+    "migrations",
+    "preflight",
+    "target_capacity"
+  ],
+  "invalid_attestations": [],
+  "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+  "operator_attestations_are_independent_proof": false,
+  "automatic_deployment": false
+}

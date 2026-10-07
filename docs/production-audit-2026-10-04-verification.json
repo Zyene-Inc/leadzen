@@ -1,0 +1,157 @@
+{
+  "audit_date": "2026-10-04",
+  "snapshot": "preserved dirty working tree, including untracked application",
+  "status": "NOT READY",
+  "final_backend_suite": {
+    "status": "passed",
+    "command": "\"$TASK_AUDIT_DIR/clean-venv/bin/python\" -m pytest -q",
+    "cwd": "$TASK_AUDIT_DIR/source",
+    "passed": 1387,
+    "warnings": 1,
+    "seconds": 829.92,
+    "warning": "Installed pydantic_ai event-loop deprecation"
+  },
+  "previous_clean_backend": {
+    "passed": 1386,
+    "warnings": 1,
+    "seconds": 420.47,
+    "note": "Before final alternate-settings preflight plus one regression; raw-storage and logging-isolation assertions retained."
+  },
+  "frontend": {
+    "command": "npm test -- --maxWorkers=2",
+    "passed": 1191,
+    "files": 25,
+    "seconds": 62.17,
+    "typecheck": "npm run lint / tsc --noEmit passed",
+    "production_build": "passed in clean source",
+    "isolated_standalone": {
+      "isolated_from_dev_dependencies": true,
+      "login_status": 200,
+      "static_assets_loaded": 9,
+      "private_cache": true
+    }
+  },
+  "targeted_production": {
+    "command": ".venv/bin/pytest -q tests/test_production_config.py tests/test_production_migrations.py tests/test_branding.py",
+    "passed": 39,
+    "seconds": 3.44
+  },
+  "dependency_checks": {
+    "npm_advisories": 0,
+    "installed_python_packages_scanned": 102,
+    "installed_python_advisories": 0,
+    "locked_python_packages_scanned": 94,
+    "locked_python_advisories": 0,
+    "runtime_hash_install": "passed",
+    "compatibility_check": "passed"
+  },
+  "container": {
+    "final_build": "passed",
+    "image_id": "sha256:a97a39a229f8b16b629f353ce045fe54361a7cb08000664ba05548c0dcc548d4",
+    "architecture": "arm64",
+    "image_bytes": 677175002,
+    "os_advisories": {
+      "LOW": 100,
+      "HIGH": 57,
+      "MEDIUM": 116,
+      "CRITICAL": 5,
+      "UNKNOWN": 1
+    },
+    "python_advisories": 0,
+    "runtime_checks": [
+      "UID 1000",
+      "production WSGI",
+      "no pytest/pip",
+      "SQLite integrity",
+      "WAL synchronous FULL",
+      "Gunicorn private health/readiness",
+      "no-store",
+      "request IDs",
+      "reject missing environment",
+      "reject alternate Django settings"
+    ]
+  },
+  "production_http_journeys": {
+    "status": "passed",
+    "providers": "synthetic/disabled",
+    "cookie_assertions": [
+      "Secure",
+      "HttpOnly",
+      "SameSite=Lax"
+    ],
+    "flows": [
+      "invitation",
+      "password setup/reuse rejection",
+      "onboarding",
+      "tour",
+      "contacts CRUD",
+      "campaign preview",
+      "external send blocked",
+      "employee isolation",
+      "disable/re-enable",
+      "logout"
+    ]
+  },
+  "browser": {
+    "status": "UNVERIFIED",
+    "reason": "Native browser rejected disposable self-signed certificate; no TLS warning bypass."
+  },
+  "secret_scan": {
+    "history_commits": 1043,
+    "history_matches": 3646,
+    "unique_history_locations": 46,
+    "current_text_files": 489,
+    "current_findings": 0,
+    "values_disclosed": false
+  },
+  "static_checks": {
+    "fatal_python": "uvx ruff check leadzen tests --select F821,F822,F823,E9 passed",
+    "shell_syntax": "passed",
+    "compose_config": "passed",
+    "migration_drift": "none",
+    "whitespace": "passed",
+    "ci_fatal_python": "uvx ruff==0.16.10 check leadzen tests --select F821,F822,F823,E9 passed"
+  },
+  "prohibited_actions_performed": [],
+  "unverified": [
+    "actual deployed release/environment/employee schemas",
+    "historic credential validity/revocation",
+    "existing plaintext/log retention",
+    "complete current restore",
+    "alert delivery/scheduler watchdog",
+    "trusted browser/hydration/CSP/mobile/assistive tech",
+    "real provider delivery/billing/MCP clients",
+    "production host architecture/storage/load/capacity"
+  ],
+  "release_artifacts": [
+    {
+      "name": "leadzen-0.1.0-py3-none-any.whl",
+      "bytes": 222798,
+      "sha256": "20b56ec909a1e97b88989c17d2eb26089cc4ff2c0d97cb56de39516b7de205d4"
+    },
+    {
+      "name": "leadzen-0.1.0.tar.gz",
+      "bytes": 190775,
+      "sha256": "f0c0c2942eb19a53200ee5bd63db616ca29bab9944ea4b8da42b762c5d83c088"
+    }
+  ],
+  "completed_utc": "2026-10-04T18:04:39.041722+00:00",
+  "cleanup": {
+    "audit_preview_servers": "stopped",
+    "audit_container": "removed",
+    "preexisting_8000_3001_preview": "preserved"
+  },
+  "disposable_restore_rehearsal": {
+    "scope": "Disposable full control plus all workspace backup/restore only",
+    "databases": 6,
+    "table_row_counts_preserved": true,
+    "integrity_and_foreign_keys": true,
+    "matched_key_decryption": true,
+    "production_wsgi_private_health": true,
+    "restored_login_and_own_workspace": true,
+    "service_only_data_rejected": true,
+    "production_restore": "UNVERIFIED",
+    "script_sha256": "1784e9a1b6ff2a64f14c873076925b7b333e623e291246f608ef28b0464956f4",
+    "command": "PYTHONPATH=\"$TASK_AUDIT_DIR/source\" \"$TASK_AUDIT_DIR/clean-venv/bin/python\" \"$TASK_AUDIT_DIR/restore-rehearsal.py\" \"$TASK_AUDIT_DIR\""
+  }
+}

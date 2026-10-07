@@ -80,6 +80,12 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
     await waitFor(() => expect(writes()).toHaveLength(3));
     expect(writes()[2][1]?.method).toBe("DELETE");
   });
+  test("a completed contact shows no Stop control", async () => {
+    call.mockResolvedValue({ items: [{ ...lead, state: "Completed" }], total: 1 });
+    render(<Contacts user={user} />);
+    await screen.findByRole("button", { name: "Delete Bruce" });
+    expect(screen.queryByRole("button", { name: "Stop" })).toBeNull();
+  });
   test("CSV rejects malformed input and imports quoted rows correctly", async () => {
     call.mockResolvedValue({ items: [], total: 0 });
     render(<Contacts user={user} />);

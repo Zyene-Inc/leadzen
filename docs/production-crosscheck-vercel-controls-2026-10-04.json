@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-04",
+  "read_only": true,
+  "observations": [
+    {
+      "scope": "project",
+      "status": "OBSERVED",
+      "observations": {
+        "id": "prj_xqdt7BYiD9RnVTUZx613mnlP2kFU",
+        "name": "leadzen-dashboard",
+        "nodeVersion": "24.x",
+        "autoExposeSystemEnvs": true,
+        "gitProviderOptions": {
+          "createDeployments": "enabled"
+        },
+        "gitComments": {
+          "onCommit": false,
+          "onPullRequest": true
+        },
+        "productionDeploymentsFastLane": true,
+        "autoAssignCustomDomains": true,
+        "buildCommand": null,
+        "installCommand": null,
+        "rootDirectory": null,
+        "framework": "nextjs",
+        "resourceConfig": {
+          "fluid": true,
+          "functionDefaultRegions": [
+            "iad1"
+          ],
+          "elasticConcurrencyEnabled": true,
+          "buildMachineType": "standard",
+          "buildMachineSelection": "elastic"
+        },
+        "git_link_present": false,
+        "production_branch": null,
+        "protection_setting_fields_present": [
+          "ssoProtection",
+          "gitForkProtection"
+        ]
+      }
+    },
+    {
+      "scope": "deployment",
+      "status": "OBSERVED",
+      "observations": {
+        "id": "dpl_GmNa3MiHoPVsXHHSntmyX4BA5GUM",
+        "nodeVersion": "24.x",
+        "readyState": "READY",
+        "target": "production",
+        "autoAssignCustomDomains": false,
+        "aliasAssigned": true,
+        "checks_present": false,
+        "checks_count": null
+      }
+    }
+  ],
+  "release_control_enforcement": "UNVERIFIED",
+  "production_changed": false
+}

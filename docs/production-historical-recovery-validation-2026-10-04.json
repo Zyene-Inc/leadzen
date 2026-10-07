@@ -1,0 +1,22 @@
+{
+  "historical_date": "2026-10-03",
+  "database_count": 2,
+  "matched_encryption_validation": {
+    "encrypted_records": 1,
+    "encrypted_mailboxes": 1,
+    "legacy_plaintext_mailboxes": 0,
+    "nested_mailboxes": 0
+  },
+  "archive_sha256": "f83f74d99ab46fd1145fb1f4864dba3e62469868c16ed7e05bc35f6c3b9d450d",
+  "current_release_proof": false,
+  "authentication_key_present": false,
+  "drill": {
+    "authentication": true,
+    "encrypted_settings": true,
+    "network_blocked": true,
+    "session_revocation": true,
+    "status": "PASS",
+    "synthetic_isolation_workspaces": 2,
+    "workspace_routes": 1
+  }
+}

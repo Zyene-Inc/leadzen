@@ -1,0 +1,2560 @@
+{
+  "audit_date": "2026-10-04",
+  "scope": "dashboard/**; frontend portion of repository production audit",
+  "file_count": 176,
+  "counts": {
+    "configuration-documentation": 8,
+    "source": 120,
+    "license": 3,
+    "asset": 17,
+    "dependency-lock": 1,
+    "test": 27
+  },
+  "excluded": [
+    {
+      "path": "dashboard/.env.local",
+      "reason": "ignored local secret/config or generated compiler metadata; not runtime source; values not printed"
+    },
+    {
+      "path": "dashboard/.vercel/README.txt",
+      "reason": "ignored local secret/config or generated compiler metadata; not runtime source; values not printed"
+    },
+    {
+      "path": "dashboard/.vercel/project.json",
+      "reason": "ignored local secret/config or generated compiler metadata; not runtime source; values not printed"
+    },
+    {
+      "path": "dashboard/tsconfig.tsbuildinfo",
+      "reason": "ignored local secret/config or generated compiler metadata; not runtime source; values not printed"
+    }
+  ],
+  "verification": {
+    "full_tests": {
+      "command": "cd dashboard && npm test -- --maxWorkers=2",
+      "result": "PASS",
+      "files": 25,
+      "tests": 1191,
+      "seconds": 59.02
+    },
+    "typecheck": {
+      "command": "cd dashboard && npm run lint",
+      "actual_script": "tsc --noEmit",
+      "result": "PASS"
+    },
+    "dependency_audit": {
+      "command": "cd dashboard && npm audit --json",
+      "result": "PASS: 0 advisories"
+    },
+    "production_build": {
+      "command": "npm run build in clean disposable snapshot; parent root executed",
+      "result": "PASS, parent confirmed"
+    },
+    "production_http_journeys": {
+      "result": "PASS, parent confirmed TLS standalone API/DB invitation/setup/password/onboarding/tour/CRUD/campaign/isolation/revocation/logout"
+    },
+    "browser_hydration_csp_console_mobile": "UNVERIFIED: native browser refused self-signed local certificate; no certificate bypass",
+    "provider_paid_sends": "UNVERIFIED: not authorized/executed"
+  },
+  "files": [
+    {
+      "path": "dashboard/.env.example",
+      "bytes": 416,
+      "sha256": "03649c81aef3b8ef3fb5310c7b8065baa065a3e353f9c308a0801f3995b3a660",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    },
+    {
+      "path": "dashboard/.gitignore",
+      "bytes": 20,
+      "sha256": "36cc3adb0b71465833febbf7a15c2df26c2e1f3868fc2ffb349f38a0fb8dde0b",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    },
+    {
+      "path": "dashboard/AGENTS.md",
+      "bytes": 678,
+      "sha256": "63f2c50380ed6303237cce215ce27af1d620d094c215e28d1b1538a3c070e3bb",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    },
+    {
+      "path": "dashboard/CLAUDE.md",
+      "bytes": 11,
+      "sha256": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    },
+    {
+      "path": "dashboard/README.md",
+      "bytes": 3402,
+      "sha256": "fad4e0dd69bb7db988d3aca33d945ec9fbd0c5083f8845cb083e59e438a43817",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    },
+    {
+      "path": "dashboard/app/activity/page.tsx",
+      "bytes": 214,
+      "sha256": "c801e603877cb460f51affbe4af70bd25ffb22997115b08f9428703ab14f01cf",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/admin/page.tsx",
+      "bytes": 218,
+      "sha256": "8dd081144f8f7e7b072eba7d8cda0ff34f5f1e7d4e818caf48d445193f9f167a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/api/auth/login/route.ts",
+      "bytes": 1811,
+      "sha256": "203c23782da6f5c9d04e2349cfbccbf0101c0cd221d0e30378203a55b4309115",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/api/auth/logout/route.ts",
+      "bytes": 979,
+      "sha256": "589a28e534a6982f445df6f688d74289e142a1fecab61a50105cb49cc719aed0",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/api/auth/password/route.ts",
+      "bytes": 1384,
+      "sha256": "b89b944b4d2c6cbc05375d9c8bb31bb5b5d327dc73017697c452025e05642154",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/api/auth/setup/route.ts",
+      "bytes": 978,
+      "sha256": "8453b6ad01373729bf9a0c8f2b1b3c3da0a90ec4314263f96acbac83891ab216",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/api/proxy/[...path]/route.ts",
+      "bytes": 5372,
+      "sha256": "90c3b0b1869bee294b044cd6cbc5f9e3e072c441f7642c2339b8dcfe1a667a6a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/campaigns/page.tsx",
+      "bytes": 301,
+      "sha256": "4a40ae32ba90a994354ef7e66e1b3a7ae04a16369e6dd1adb7e8b04b25fdaddd",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/chat/[threadId]/page.tsx",
+      "bytes": 525,
+      "sha256": "da938e234d28da18911a64af2a85aa2ebfac3b1667f4facf4f4e6b78306c834f",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/chat/page.tsx",
+      "bytes": 990,
+      "sha256": "c1c0b75aced75d450a8b7265f176e6ec507d02dac347791165940f9c31911cf5",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/contacts/[contactId]/page.tsx",
+      "bytes": 533,
+      "sha256": "f8f98d298d455812792b962714a83d05f1274250c396501aefd339505305fa45",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/contacts/page.tsx",
+      "bytes": 202,
+      "sha256": "668cb3b297ccf025f5075e37d1906ab56a4ddee57a976af3562cfd63375540a9",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/find-leads/[runId]/page.tsx",
+      "bytes": 524,
+      "sha256": "a5c4c0ffd2578a5ef974296996e349066dff20cbf218ec34b7183a41da26005a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/find-leads/page.tsx",
+      "bytes": 209,
+      "sha256": "95e76d38139a00ba25ad9a5e54f67b665dd600b0f24e434c79995a9f52c94408",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/fonts/archivo-OFL.txt",
+      "bytes": 4388,
+      "sha256": "108b4e57c9c796d3d38d0428ca7ee39de47ad93187302718d9b2d8864b9b716b",
+      "kind": "license",
+      "review": "license retained and reviewed",
+      "checks": [
+        "SIL Open Font License"
+      ]
+    },
+    {
+      "path": "dashboard/app/fonts/archivo.woff2",
+      "bytes": 30512,
+      "sha256": "75d338ae5434d8f46c5e3500233cf9a5f9a0a832d60e428923c9f7a44d55af7d",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/fonts/geist-OFL.txt",
+      "bytes": 4387,
+      "sha256": "1781d2806a07d91c4edf4740b88449fab7d0eadad53f7c351b94cd4d4eb8c00f",
+      "kind": "license",
+      "review": "license retained and reviewed",
+      "checks": [
+        "SIL Open Font License"
+      ]
+    },
+    {
+      "path": "dashboard/app/fonts/geist.woff2",
+      "bytes": 69808,
+      "sha256": "0e3ada0675161c563fb9353243249415cc5c63db67744d8de67fbfbae9fe11da",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/fonts/geistmono-OFL.txt",
+      "bytes": 4387,
+      "sha256": "1781d2806a07d91c4edf4740b88449fab7d0eadad53f7c351b94cd4d4eb8c00f",
+      "kind": "license",
+      "review": "license retained and reviewed",
+      "checks": [
+        "SIL Open Font License"
+      ]
+    },
+    {
+      "path": "dashboard/app/fonts/geistmono.woff2",
+      "bytes": 71052,
+      "sha256": "282839943ad9665568491e220c706eb1b093bce7e745320082a18a7a39949285",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/globals.css",
+      "bytes": 92463,
+      "sha256": "b3a09a3168915e0cfc3196afe705d5926bf71ec1dfd5a61062eaca1d2c67f99c",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/inbox/messages/page.tsx",
+      "bytes": 212,
+      "sha256": "43b20b72e24858fb49269babc1e3f2e35ebf1a44f62a42718114b5d87919eac8",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/inbox/page.tsx",
+      "bytes": 520,
+      "sha256": "7ad23b68d8973ae749c1a6aa8b47590aeb437c091538cd83b2efd692049bf7c1",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/layout.tsx",
+      "bytes": 2171,
+      "sha256": "6423f6c87e92248392310e3088138dacae6f3f261c3a298befb701f97fa829d5",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/login/page.tsx",
+      "bytes": 3302,
+      "sha256": "fd06bc8805b4ce37bdcbf437c9d81f1000a5380d4c650cf87afa67c442aface2",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/mcp/connect/page.tsx",
+      "bytes": 531,
+      "sha256": "e3ecb18cc48ed7dfe0ffba28ada6e19919741a2616a9da0665f73d7f3c5b853e",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/onboarding/page.tsx",
+      "bytes": 725,
+      "sha256": "ab0edc23754993c7b90f1fd5704b66f1b9674761795a8750ed8d82ed3aa4b741",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/outreach/page.tsx",
+      "bytes": 1147,
+      "sha256": "196098e249dfd29bdc30869c1f0fef7e8ecdcaf77e24288870dfece4bb92604b",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/page.tsx",
+      "bytes": 205,
+      "sha256": "a199859322f58e772316811bba2d8bd926b3a1b8431c51e2b530f0feaef9bb20",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/password/page.tsx",
+      "bytes": 244,
+      "sha256": "d904a9e193b288fa939549d4d5a8537fa0003c128948a12d11e0f0b6701e8ffd",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/sending/page.tsx",
+      "bytes": 289,
+      "sha256": "d56afe4929aba223f8d88f3c58e3fb5b24156e7eb32e0c20d5ecfdb9cffc5420",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/settings/page.tsx",
+      "bytes": 205,
+      "sha256": "4ced639f9e0d9b8e014890d171dcaa3fdd59132b6ce1937fdd86b50ea66512b7",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/setup/page.tsx",
+      "bytes": 4225,
+      "sha256": "8e49fef4cf1826a10d8b36cc233a03f7a65023be17774f9ee367e3e76a490fb8",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/suppression/page.tsx",
+      "bytes": 224,
+      "sha256": "fc9b423a88b61a45b5071f1e89dc51063cdbff45c8d4630e6b12214a7e9f8814",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/target/page.tsx",
+      "bytes": 218,
+      "sha256": "480df09d63adfad1cfe1e9507f7660ba5a53d9904cdb4cdb2196e55645e3e980",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/app/tour/page.tsx",
+      "bytes": 206,
+      "sha256": "2e8b3549dec4e7f55a2a36dc299ce3dacea1106707b8c0dbfba77f560b7dffa4",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/activity-feed.tsx",
+      "bytes": 6056,
+      "sha256": "d5a45b88d43d5335aabcdde4b7190dcfb5ca779cfe9ef6389d91541a00bae539",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/admin.tsx",
+      "bytes": 8730,
+      "sha256": "828cbe1e660a61ea9d47a83fd509b7e55186bcf16154cc1b1b10e776239d9bbe",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/ai-connection.tsx",
+      "bytes": 3839,
+      "sha256": "552f3bb11b50338d4cb58a9aef855ee21bb1088645e246704a763edb3297653f",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/ask-leadzen.tsx",
+      "bytes": 1449,
+      "sha256": "4dc4df95ff66628d8933f054e7f2050e61bb9e44cfb5933f31103431747cc9c9",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/autopilot.tsx",
+      "bytes": 12578,
+      "sha256": "80614a3feb5f925acdf11f6fccbd0a56e7a9dd9d4b6b9fda93780da55d8e004a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/avatar.tsx",
+      "bytes": 328,
+      "sha256": "ff147f4337a939691bbff8d653bdd5823c7170210ad1afa70d256c66e0864315",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/brand.tsx",
+      "bytes": 549,
+      "sha256": "09f6e010ec662bbeac72dc2e25201fc3572738f860db7d9795b0a29ec617b199",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/campaign-send-review.tsx",
+      "bytes": 6057,
+      "sha256": "e5464f6df80b3ef22bda9b8cb80d8d6f810b8ec6413d0d78bad551e8479f7998",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/campaigns.tsx",
+      "bytes": 11256,
+      "sha256": "ba9b1ea25e9d27fa34d9e14726fbfb8f594a30be3e71fb187a826c5564c82bc7",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/chat-discovery-card.tsx",
+      "bytes": 2512,
+      "sha256": "2f1a9ae64979c0c3e9be2306bf042c09213c9c2f3930aef8dd2f8ddc22f694db",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/chat-history.tsx",
+      "bytes": 5253,
+      "sha256": "f23d83d28d83f16f976dc2ce8e9a67e9845991ec0c4003a5fc6bacb0e37bd346",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/chat-live-activity.tsx",
+      "bytes": 6816,
+      "sha256": "3b1c5db745a601be69e7f0f3e936892bb650509ef78aba99316e46df806c1973",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/chat-rename.tsx",
+      "bytes": 934,
+      "sha256": "55e0ef7c0456320f5e7d50a8c5f967c272ccbc3246a9a62baa7f4885fece6b22",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/chat-response.tsx",
+      "bytes": 3111,
+      "sha256": "effeba0273f0b631e89100eaf5ce357cf3b1afcff7e9aba064f60243c55f970f",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/chat-results.tsx",
+      "bytes": 11443,
+      "sha256": "23c2ccf4c646a78d4582223b9d3a0f588c39bd2cfd45d9e0e24b9b81ecb20d8e",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/chat.tsx",
+      "bytes": 22377,
+      "sha256": "37e2ac6ca214eb3f6bfd6da00bdd3ae2ecf934124eee822b02769731e737bc9d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/connections.tsx",
+      "bytes": 12889,
+      "sha256": "b14b196b4362e85731a3ce8d98b2ab98d809f1cc604ee09bfa49eca998bed7cf",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/contacts.tsx",
+      "bytes": 21910,
+      "sha256": "ff0f20733832c3b4e278780e153688742fdd3c20c0b3d13e2cd7338fe0592018",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/discovery-activity.tsx",
+      "bytes": 7865,
+      "sha256": "5dffae5f20d2d1fa08de0242c5c7a9cfed1b02e3da2eeee778114a97efba7fa2",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/discovery-email-review.tsx",
+      "bytes": 5432,
+      "sha256": "f9e5d2986c1752bff30caae7ee770c4b3d143942646437a72f8bec5d02fbbd14",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/discovery-live.tsx",
+      "bytes": 13375,
+      "sha256": "5012452f2196aaa7abc3a6f516411eb466f9fd39f00ea9e9849987a993274039",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/email-preview.tsx",
+      "bytes": 4186,
+      "sha256": "9aae84a716bc344da6896c6fd68846beee92608ec38e167a6dbfc4fbf22d9063",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/employee-row.tsx",
+      "bytes": 2485,
+      "sha256": "3439ada266bc2d86f5bbc2f1065022bd950933eea0738576c283853011b58c3d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/find-leads.tsx",
+      "bytes": 11165,
+      "sha256": "3db1605af642041aabfe64d7342237719cbe9b5412589325daa1003affd387da",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/help-tooltip.tsx",
+      "bytes": 3893,
+      "sha256": "000340dd4b6a3d46721d343e4b9de3d0c9ca1d1bcdbd1221a48bd4d89d04cdd3",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/home-summary.tsx",
+      "bytes": 8012,
+      "sha256": "d80270296b6d23df161d3f63d4ba65e3330779b3bcbdb013fd3ac40f436a5c73",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/icon.tsx",
+      "bytes": 3338,
+      "sha256": "3e23e2b956ab8853929ce6a7ea3824d437d3f468388cda22e52596eefecb70d6",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/inbox-check.tsx",
+      "bytes": 4915,
+      "sha256": "15212a17816a262668787731f5daa47db96a852f7cb969c1bc737aefadae6229",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/inbox.tsx",
+      "bytes": 7973,
+      "sha256": "b9c742d7bbc3c7275e85c93793c23e82247855ed6182ee32009ff5a2baab3c14",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/lead-detail.tsx",
+      "bytes": 9536,
+      "sha256": "722fbdef24835aa36c9226b93903a6a63acb2461fd544694416cae2aa9e03ea3",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/lead-links.tsx",
+      "bytes": 614,
+      "sha256": "34d8a0edcb8f63fa4bea21c5b3be1d0ac7791aca9bfdd8b4543342138a437594",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/lead-timeline.tsx",
+      "bytes": 7427,
+      "sha256": "bb326e67144cda4d43c3d148f02bbd82d4f75e8c96e3145e83629da302a22d93",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/mcp-connections.module.css",
+      "bytes": 3813,
+      "sha256": "0cf8436311caf3c1f8f7483c193a71efb88986ab0d97c5987f36bb4079411b3d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/mcp-connections.tsx",
+      "bytes": 9132,
+      "sha256": "94e3150faf4cbf59f546f210c75a56760f422df8dec379952eacd2ca045ba1b2",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/mcp-consent.tsx",
+      "bytes": 4969,
+      "sha256": "e0a53e3f6845ce3ac49d26a1754bd91b64b69008c12ebecf56b4ca16e91bcf8b",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/needs-attention.tsx",
+      "bytes": 1394,
+      "sha256": "1ed18b2c774b98046e0e1d582e91b3e60c14f3eaca2d64c17a77c58ccc07cc3b",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/onboarding.tsx",
+      "bytes": 4848,
+      "sha256": "8792350750b8b26173ca0e419aac6f025a3e35ed8cd97da24824a2c64034b812",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/outreach-composer.tsx",
+      "bytes": 16212,
+      "sha256": "249e18593094b2cfc53413785748cbf8329dc79c0bbdc5b9b427647e8f45377c",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/outreach-review.tsx",
+      "bytes": 7941,
+      "sha256": "958f2cae6fc2fc6afe45ae27eea9f2b154a8f13a22c079d14afe98a9e500bef2",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/overview.tsx",
+      "bytes": 14924,
+      "sha256": "1743df2fc7248dde76081b96fb0977507a6b82ece9027382e98d2ce8ac77bb8a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/page-heading.tsx",
+      "bytes": 439,
+      "sha256": "105214e12dc380184efd64465de258e16e89bf3db6d9b2b3c1e83d57f3117604",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/password.tsx",
+      "bytes": 3119,
+      "sha256": "bd5b4a599c6862ee2088d706a41d8c37e33205928b75124d737195b667615366",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/product-tour-provider.tsx",
+      "bytes": 22481,
+      "sha256": "22840f4201c7ce599855d3ad1e1d4cc8fc01ae2b5c9fd2dea28c5b86ea7a9abf",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/secret-input.tsx",
+      "bytes": 1589,
+      "sha256": "833db21da3f95249d044865a59804caa956c1a3f9620d670d65e5cbb15ac06a6",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/sending-schedule-editor.tsx",
+      "bytes": 2567,
+      "sha256": "0ff70a20f38d145a68c9578dece2556a628ec824c4a884c29942cc54dfea7dce",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/settings-data.tsx",
+      "bytes": 3114,
+      "sha256": "664901cabb0b7bb4ca9617265d43a65e119ac7e5ab3ed60177124b9400671cc1",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/settings-editor.tsx",
+      "bytes": 8485,
+      "sha256": "4953d1ba2d6bf34947649a2d24fad672041eb86fceeacaacc8c67b453f60701d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/settings-test.tsx",
+      "bytes": 3988,
+      "sha256": "767001e7c903df04342bd54b447dfb44b834bb2758b619034c0b72e56e410c3f",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/settings.tsx",
+      "bytes": 5793,
+      "sha256": "d0335f9c1da8b863831a1810e6aff1562785697712167fd54ecbfd3bbea7fbbb",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/setup-audience.tsx",
+      "bytes": 6332,
+      "sha256": "4ee5cf1ede34950d8595636e768e526e586851166f1ce952aaafa0764f952764",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/setup-connection-check.tsx",
+      "bytes": 2302,
+      "sha256": "232efb01bb257ed8af0787465ee9693bbe39f5fbe7dec8a6d5ee72ce4fe1c4cc",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/setup-mailbox.tsx",
+      "bytes": 2722,
+      "sha256": "840da7090908b50a8e86755812e30adaf21d77763c3943e7a7d3ac813afbd3bc",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/setup-profile.tsx",
+      "bytes": 5114,
+      "sha256": "d50b546b8ae5e198e75e0ed7cfe12f50215962e6509be8b18d1cab6270b03a0d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/setup-tools.tsx",
+      "bytes": 2938,
+      "sha256": "72493eb60866f693f6ed917bd30571bcd9d8948dfb2fcb3ebc0aa4014cda6835",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/sidebar.tsx",
+      "bytes": 8119,
+      "sha256": "c4500d92c2f539265097da769ac7a95f0c01b6ba3209940ef5cccc438925c06a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/suppression-form.tsx",
+      "bytes": 2349,
+      "sha256": "cf13cbe442e9ab871bb18e1e914d2fb8314f5ffd2c973126b9bb7943727fe3e9",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/target-editor.tsx",
+      "bytes": 3877,
+      "sha256": "544facbd23c598c9d69841cb4e371dfeca68e82168cf5f4957a3204b35146384",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/theme-toggle.tsx",
+      "bytes": 1221,
+      "sha256": "d736d25ccc40328b7cc1242c3f012ad500ee48db2305d8d0f060f8902107427e",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/tour.tsx",
+      "bytes": 1292,
+      "sha256": "544193074b1d8f8715100d434ce14b0e231846b61ee2414261e468d64bfc311d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/components/workspace-records.tsx",
+      "bytes": 10470,
+      "sha256": "f24a8ea6c777ee30a8ab79c7b7f274c60c7a9bcb433578f7d79d3c1c7c44fcd3",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/activity.ts",
+      "bytes": 430,
+      "sha256": "33aba271062ade396da2f418999bf9a6ee74e377a326d1d32a797e05cabae004",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/auth.ts",
+      "bytes": 3601,
+      "sha256": "d54683df2490976725de58f0884c55032e7552faa45f4f8a4424a1cf58260c75",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/campaign.ts",
+      "bytes": 692,
+      "sha256": "5f478e10da1956d7ab949187a63b8b5ee1575a17a93dfa926fffc8808eab5c4d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/chat-stream.ts",
+      "bytes": 2256,
+      "sha256": "fcbb1fd7874db7142fd7062e6bd6fa3aa6a92052a02e58e3a0d520f5b30724c7",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/chat.ts",
+      "bytes": 1962,
+      "sha256": "323fe926943cdda272bb4acc961fdcb9386ccc96c4af80dcd82032ac33a6bfdb",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/client-api.ts",
+      "bytes": 813,
+      "sha256": "36cb9737da2139dd992a02f37fbb3d2c5ec1d87b3aa872993c6927644af7343c",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/connection-settings.ts",
+      "bytes": 1975,
+      "sha256": "ac71656b784c3e966a613af4e755c74fb1238dd0464c89d78a2bc13ab6a7991f",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/date-time.ts",
+      "bytes": 1429,
+      "sha256": "552576c00dcef852dbd1894119fee38e886766eeb3ee468a3f961816b89a8a91",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/discovery.ts",
+      "bytes": 7362,
+      "sha256": "7902a344573ce04a565ab2071c4ca5020cf3315caa0a4f46b87c09f0898d038a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/leads.ts",
+      "bytes": 2209,
+      "sha256": "df8f797b8da3fbe60d9f4352fb570759581d1416732c2e7efe63bcff59bdf85c",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/mcp-redirect.ts",
+      "bytes": 641,
+      "sha256": "d7590fe6241fb6a4ad13887c5a6e5e3b6528b132b8534b84b074dd2e8b5cd36e",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/mcp-return.ts",
+      "bytes": 796,
+      "sha256": "ebebc54edb093b5999a380613f830e00b7adcfde4e22b4219a0c143041160a08",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/outreach.ts",
+      "bytes": 1049,
+      "sha256": "ea442c6e80e9e45844f5c015be105708f4c4276d689aafd39b133a5bd494b3be",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/product-tour-dom.ts",
+      "bytes": 6276,
+      "sha256": "cc1a5fd362c13945682ff6c4e76f07393eb5b4c5cea82716a7cee01a0883848f",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/product-tour-state.ts",
+      "bytes": 1398,
+      "sha256": "a145368caf19cde19bab8e86f353d4875b27a1912eb742892018591b4c3ba3cd",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/product-tour-steps.ts",
+      "bytes": 5198,
+      "sha256": "79b017dc4d48459a5c7041b9b9945911cb3e9c48122c75aa70dda4b4ebf422b0",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/request-body.ts",
+      "bytes": 1536,
+      "sha256": "27a2e5ddfc292fe8e671d169990c3ce6d7284a57a749926265f5b11fb4c3f00c",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/sending-schedule.ts",
+      "bytes": 2960,
+      "sha256": "07be378ecf4962e50bd8c6c10b0523bb5d9242d927ea72bd781097745590e054",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/session.ts",
+      "bytes": 112,
+      "sha256": "737cc64455ae5ac326fb945cb5fe86bb271b4a0c45eaf468e33aebc1dd5eb77a",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/setup-wizard.ts",
+      "bytes": 3952,
+      "sha256": "7772237032ef2942ed1ed9170d033b5124ad0218caffc91ed0a96d1059d9b4f8",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/theme.ts",
+      "bytes": 1537,
+      "sha256": "edd4e72499c1feb62512158cd08277a2d7e2c79ecf8ec3835b54642f1ed5203b",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/use-setup-wizard.ts",
+      "bytes": 7411,
+      "sha256": "c36420939a68d56c3c0d483ead81511829603186480251770ab76670baa9e84b",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/use-stored-data.ts",
+      "bytes": 1510,
+      "sha256": "6accc44fcb0c31929463a48fd2b32acc98ec408650180328bc97246bbb0643bc",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/workspace-context.ts",
+      "bytes": 1533,
+      "sha256": "3e9df651be54cb9ab48e24b850a4d8c83928d9e90660a4b5534c3b2f56d45bcd",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/workspace-settings.ts",
+      "bytes": 4127,
+      "sha256": "9b1a2db89dd5dc4b6d0ce6e12791140f45c929b008eec0208933dc8cfa9adfe2",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/lib/workspace-updates.ts",
+      "bytes": 1973,
+      "sha256": "aabf8330aa9f512090d6449ca1cc56e0b2490175a6b865711ab4746e37d2a362",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/next-env.d.ts",
+      "bytes": 288,
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/next.config.ts",
+      "bytes": 667,
+      "sha256": "0adad5bdf6e75cbccafc4dd4a93e0fd0c8b76eeece465bd808aaec68e35765f0",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/package-lock.json",
+      "bytes": 172660,
+      "sha256": "d646e09ab947e293f7e1dd35d8885263ce4a293046eab102a4c0756727bbae34",
+      "kind": "dependency-lock",
+      "review": "lock metadata, dependency graph and lifecycle declarations reviewed; npm audit executed",
+      "checks": [
+        "0 advisory findings",
+        "fsevents optional hasInstallScript metadata but no shipped install script/binding.gyp",
+        "expected CSS/tooling transitive duplicates"
+      ]
+    },
+    {
+      "path": "dashboard/package.json",
+      "bytes": 811,
+      "sha256": "a7af9eda4b3f4f0c68b3b46696cff409b9a1561a073b7c7534f0f4f1eb393e5f",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    },
+    {
+      "path": "dashboard/postcss.config.mjs",
+      "bytes": 63,
+      "sha256": "5a9a2d463507b47b2f2cc17ad55f0128db063912227331e789601d2e5890fb98",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/proxy.ts",
+      "bytes": 2740,
+      "sha256": "cac777cc3ce202e96f148a87200c7c38cdbfc38bc2ada6f108a7b6a6927f2d9d",
+      "kind": "source",
+      "review": "full production source inspected",
+      "checks": [
+        "auth/context boundary",
+        "error/async handling",
+        "bounded resource use",
+        "output/link safety",
+        "browser secret boundary",
+        "accessibility/mobile states as applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/apple-touch-icon.png",
+      "bytes": 10614,
+      "sha256": "0d2dd10f6bd6cb58f839c33f0bb5c3a9668456092f3dd4ee92955eb3bd4557a5",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-by-zyene-approved-light.png",
+      "bytes": 629322,
+      "sha256": "56ad327372392beb9795548b2cddd5153bfca9cef176e75a58da66e9d3d11bac",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-by-zyene-dark.png",
+      "bytes": 336017,
+      "sha256": "35d7b1a041d3088114cf8cbbf85cead0bb4615b52eea795dd5e67a91d2a69279",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-by-zyene-light.png",
+      "bytes": 173405,
+      "sha256": "f94c865b0eca9decda73a065c5bcf7d521a95d7ff52ff10cb28df404780d8838",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-favicon.ico",
+      "bytes": 4222,
+      "sha256": "f4268b8a7626c80e965f0d08f4ede7e898ed98fb640a2917819a945a5f52af21",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-16.png",
+      "bytes": 681,
+      "sha256": "425267a4380f7c75dab16121a8416e03d797e0d7d3835352ec1adb2c39281c70",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-180.png",
+      "bytes": 15719,
+      "sha256": "09f1e17e4a98b712b054e80fccf56e5f6ab0f5cd7400cdfb0983e22fac7c3c73",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-192.png",
+      "bytes": 17689,
+      "sha256": "5bd6d1e7eef0c387b7063630f59653f434fa6e75d207dc098384bf82a6c08068",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-32.png",
+      "bytes": 1329,
+      "sha256": "2e844df0a1188298181601cbd10c64f96ae4daf3ac2e6c307ad1cf4ff0e40a3e",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-48.png",
+      "bytes": 2158,
+      "sha256": "95063316646497b422b9b9a509f2ba2c8e7e5310e00f8b636ff63130db6d6362",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-512.png",
+      "bytes": 145496,
+      "sha256": "9b68158d562f00656e921e035bd8e117fcc76ea8a06924a6519dcc3674efe9ca",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-logo-dark.png",
+      "bytes": 114764,
+      "sha256": "31a10773082772841c2126b48c9b323a078b9b6d69138f6dc1d87054adcbb8cc",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-logo-light.png",
+      "bytes": 70364,
+      "sha256": "e32726c73e414d2c14945ff501bbf656c0b0bb29bcff8223a32ba17a6fb2cbb9",
+      "kind": "asset",
+      "review": "binary format/dimensions and references reviewed; visual behavior part of unverified browser checks",
+      "checks": [
+        "local static file",
+        "no user-upload path",
+        "font licenses retained where applicable"
+      ]
+    },
+    {
+      "path": "dashboard/public/favicon.svg",
+      "bytes": 36317,
+      "sha256": "a73fbe94c5d0c24bd6308b7a12324d1dee65574b369a407c85243c8601da8f06",
+      "kind": "asset",
+      "review": "parsed XML tags/attributes and references reviewed",
+      "checks": [
+        "no script/events/javascript attributes",
+        "embedded raster only"
+      ]
+    },
+    {
+      "path": "dashboard/tests/autopilot.test.tsx",
+      "bytes": 6057,
+      "sha256": "fedb873d8d341f83cdad1145ce17ca2d38757470ca5f4ae27307e94ed2dd491a",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/chat-agent.test.tsx",
+      "bytes": 12911,
+      "sha256": "cce422adfaa1c0b6c861b7b50888910ea5b51c73e10518fb01876667bd56228a",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/chat-experience.test.tsx",
+      "bytes": 19275,
+      "sha256": "1a916ec0ed266232206b2db9fed427b3b6540b3b257f2ce40bdb7c2e5dce5397",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/chat-live-activity.test.tsx",
+      "bytes": 5415,
+      "sha256": "b8394f25a3cfc33c6574b0209e27cce589e59f66b9dc33215b24a98453221084",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/chat-presentation.test.tsx",
+      "bytes": 7355,
+      "sha256": "5d5f5882c39765dcd240e1cd5a6096db80e061b5dbaebe5cdb09f127489671e7",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/chat-stream-protocol.test.ts",
+      "bytes": 2764,
+      "sha256": "f119736371e1d1d1d731a7b945a148f25fbee14e8c08ed1f80b7bdbf1031dd01",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/discovery-ui.test.tsx",
+      "bytes": 10909,
+      "sha256": "7d1fc99372a13585ab4275eb423eddc990458926e3335ca9609dda6ec6421100",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/fixtures.ts",
+      "bytes": 2477,
+      "sha256": "1c58c29b87113cc4cd615e4d69801d5c485e7b9f5f9d43aeed5cea04b59774ec",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/help-tooltip.test.tsx",
+      "bytes": 3706,
+      "sha256": "01a4007665dc70f1a03881db536959d5324f6289339dbeff13a538d13f65fbf5",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/lead-polling.test.tsx",
+      "bytes": 2655,
+      "sha256": "72dd147305e3e64ea5d8b305b8717411f00720deb5dd166a583f560846ff9359",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/mcp-connections.test.tsx",
+      "bytes": 13430,
+      "sha256": "f23f90d687fae186994d33b46ab98d333674a4db1a99b99ca4b48fef859ccd23",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/mcp-return.test.ts",
+      "bytes": 1418,
+      "sha256": "7fd6038379296ea5144c1630003f8845d12e41c19f25f6d15cf39f50ee3d2645",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/new-york-time.test.tsx",
+      "bytes": 5495,
+      "sha256": "9bb13b9c6f634fd4492fb3039ab469df2fc2ab83d0ce51b534a4499308681ba8",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/outreach-flow.test.tsx",
+      "bytes": 8726,
+      "sha256": "4dad33785317e93bd5dd3aede8e91fafc9497b0bc7bc1da8fdc0e21c61124422",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/product-tour-auth.test.ts",
+      "bytes": 8719,
+      "sha256": "200177c0fb349afaec719a41dfabca62b11ad659b779e3f433f6d01bce0ae87e",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/product-tour-integration.test.tsx",
+      "bytes": 10622,
+      "sha256": "e04c225afa1d3fc4301f09623200911f0c72bd14cc33aef3649e14d33fea6072",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/product-tour.test.tsx",
+      "bytes": 30493,
+      "sha256": "36e91e0b186083667dff8dac1f65fafd7140eb4a0b36ce4fadf50200d03b58de",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/production-security.test.ts",
+      "bytes": 8147,
+      "sha256": "a5a72dbcd6c53f129844a880f7a61e9a53881ff5812906ec55a1582799d08d48",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/public-assets.test.ts",
+      "bytes": 1415,
+      "sha256": "74c466cd72ffffbd7969ddbad01cbcca9949798bef657db0b832d8a54548ee0c",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/remaining-controls.test.tsx",
+      "bytes": 8790,
+      "sha256": "3e6ce84a2bcba012f95eeec7b315e2a6df668cc268084fcdf3c489b642b3f2ec",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/request-origin.test.ts",
+      "bytes": 2115,
+      "sha256": "a3aff53ab5324126bf4e1ed06259116cc9b2845655564f6a07769b7e6567210c",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/review-controls.test.tsx",
+      "bytes": 13945,
+      "sha256": "c6491a5b8255a246842a8d19fbe77075f8a967dd59a289f8033ad018e522dfa3",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/sending-schedule.test.tsx",
+      "bytes": 13200,
+      "sha256": "95bc402a928aa8bd051b2f61996edca8f5626bb4289d3c7ad7da5e033e90e8b9",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/setup.tsx",
+      "bytes": 733,
+      "sha256": "d834a02fe6378e4c9881956b89b74c9444730860223e6bd33bbea3918d85a52d",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/theme.test.tsx",
+      "bytes": 7613,
+      "sha256": "5ffa0d6ef7787c0d213c2486cc26edd09a0581ad173a32c9caaf57ada660d2ba",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/user-journeys.test.tsx",
+      "bytes": 6162,
+      "sha256": "af6714abd75d5a6cd07903f1c9e93bf919bcc5d579e521a3c170ae6999add6df",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tests/workspace-controls.test.tsx",
+      "bytes": 20069,
+      "sha256": "2ab48787db511faa0b65eb5e8c668bbb69c9d744aa66a46618c99405557c2dda",
+      "kind": "test",
+      "review": "test contracts and mocks inventoried, critical assertions reviewed, entire suite executed",
+      "checks": [
+        "no skipped/todo/only tests",
+        "synthetic fixtures",
+        "UI/API/security contract coverage",
+        "mocked external providers, not provider end-to-end evidence"
+      ]
+    },
+    {
+      "path": "dashboard/tsconfig.json",
+      "bytes": 699,
+      "sha256": "fc03f713da39db06cbed0b234babdb94547eea9eda6b65ea6ad87cb73e8ef2f8",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    },
+    {
+      "path": "dashboard/vitest.config.mts",
+      "bytes": 413,
+      "sha256": "24c0c67ba5fd0a638385ede553eb609c0a5d51e235e216e4f7a95ecee75559dd",
+      "kind": "configuration-documentation",
+      "review": "read and reviewed",
+      "checks": [
+        "production configuration",
+        "runtime/dev separation",
+        "environment requirements",
+        "repository instructions"
+      ]
+    }
+  ]
+}

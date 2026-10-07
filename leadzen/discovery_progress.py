@@ -1,6 +1,7 @@
 """Observe the pinned finder, without changing its files or parsing human logs."""
 import io
 import json
+import re
 import sys
 from contextlib import ExitStack, contextmanager
 from contextvars import ContextVar
@@ -14,6 +15,29 @@ from django.utils import timezone
 from leadzen.config.models import ChatRun, DiscoveryCandidate, DiscoveryEvent, DiscoveryLookup, DiscoverySession
 
 _current = ContextVar("leadzen_discovery_monitor", default=None)
+
+_CAMPAIGN_RULES = (
+    "\n\nThe campaign target above is the eligibility rule for this search. Product "
+    "documentation describes what is sold; it must not broaden the requested "
+    "audience. Reject a profile when its industry, location, company size, or role "
+    "does not satisfy an explicit campaign restriction, even if the product would "
+    "help that prospect. Do not infer ownership or employee count from a job title "
+    "or a small-sounding company name. If a required fact is unsupported, reject."
+)
+
+_ADMITTED_MISMATCH = (
+    re.compile(r"\b(?:outside|not (?:strictly )?in)\b.{0,160}\b(?:campaign|target|requested|specified)\b", re.I | re.S),
+    re.compile(r"\b(?:campaign|target|requested|specified)\b.{0,100}\b(?:mismatch|outside|does not include|doesn't include)\b", re.I | re.S),
+    re.compile(r"\brather than\b.{0,130}\b(?:campaign|target)\b", re.I | re.S),
+)
+
+
+def _qualify_for_campaign(profile_text, product_docs, campaign_target, qualifier):
+    label, reason = qualifier(profile_text, product_docs=product_docs,
+                              campaign_target=campaign_target + _CAMPAIGN_RULES)
+    if label == 1 and any(pattern.search(reason) for pattern in _ADMITTED_MISMATCH):
+        return 0, "Campaign target mismatch acknowledged by the qualification: " + reason
+    return label, reason
 
 
 class DiscoveryPaused(Exception):
@@ -342,13 +366,13 @@ class Monitor:
             finally:
                 qualification_candidates.reset(token)
 
-        def review(profile_text, *args, **kwargs):
+        def review(profile_text, product_docs, campaign_target):
             self.boundary()
             matches = [lead for lead in qualification_candidates.get() if lead.profile_text == profile_text]
             # Profile text is not a canonical ID. Identical firmographics can
             # belong to several people; show the phase without guessing whom.
             self.evaluating(matches[0] if len(matches) == 1 else None)
-            return original_llm(profile_text, *args, **kwargs)
+            return _qualify_for_campaign(profile_text, product_docs, campaign_target, original_llm)
 
         def verdict(qualifier, lead, *args, **kwargs):
             original_verdict(qualifier, lead, *args, **kwargs)

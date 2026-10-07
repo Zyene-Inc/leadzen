@@ -1,0 +1,13 @@
+{
+  "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+  "durable_directory": "/Users/ashishdikonda/Desktop/Openoutreach/leadzen-release-candidates/f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+  "source_archive_verified": true,
+  "artifact_hashes_verified": true,
+  "evidence_hashes_verified": true,
+  "source_files": 397,
+  "same_host_copy_is_independent_recovery": false,
+  "release_gate_status": "BLOCKED",
+  "invalid_attestations": [],
+  "copy_runtime": "3.12.11",
+  "earlier_system_python_copy_attempt": "Failed safely before source extraction; partial staging preserved, not counted as verified."
+}

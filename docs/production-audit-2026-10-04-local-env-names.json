@@ -1,0 +1,12 @@
+[
+  {
+    "file": "dashboard/.env.local",
+    "variable_names": [
+      "api_key",
+      "model",
+      "ai_url"
+    ],
+    "permission_before_audit": "0o644",
+    "permission_after_audit": "0o600"
+  }
+]

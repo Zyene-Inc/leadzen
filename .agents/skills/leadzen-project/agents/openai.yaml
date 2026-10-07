@@ -1,0 +1,4 @@
+interface:
+  display_name: "LeadZen Project"
+  short_description: "Resume LeadZen architecture, safety, and releases"
+  default_prompt: "Use $leadzen-project to load the current LeadZen context and continue my requested task."

@@ -35,7 +35,7 @@ Example with a large font that is horizontally centered:
 Words that change in a sentence, with a different color for each word:
 ```html
 <span>
-  Providing AI Agents for
+  Providing AI Agents for 
   <span class="text-rotate">
     <span>
       <span class="bg-teal-400 text-teal-800 px-2">Designers</span>

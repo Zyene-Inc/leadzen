@@ -1,0 +1,41 @@
+{
+  "image_id": "sha256:a97a39a229f8b16b629f353ce045fe54361a7cb08000664ba05548c0dcc548d4",
+  "scanner_severity_not_verified_exploit": true,
+  "entries": [
+    {
+      "VulnerabilityID": "CVE-2025-7458",
+      "PkgName": "libsqlite3-0",
+      "InstalledVersion": "3.40.1-2+deb12u2",
+      "FixedVersion": null,
+      "Severity": "CRITICAL"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-13221",
+      "PkgName": "perl-base",
+      "InstalledVersion": "5.36.0-7+deb12u3",
+      "FixedVersion": null,
+      "Severity": "CRITICAL"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-42496",
+      "PkgName": "perl-base",
+      "InstalledVersion": "5.36.0-7+deb12u3",
+      "FixedVersion": null,
+      "Severity": "CRITICAL"
+    },
+    {
+      "VulnerabilityID": "CVE-2026-8376",
+      "PkgName": "perl-base",
+      "InstalledVersion": "5.36.0-7+deb12u3",
+      "FixedVersion": null,
+      "Severity": "CRITICAL"
+    },
+    {
+      "VulnerabilityID": "CVE-2023-45853",
+      "PkgName": "zlib1g",
+      "InstalledVersion": "1:1.2.13.dfsg-1",
+      "FixedVersion": null,
+      "Severity": "CRITICAL"
+    }
+  ]
+}

@@ -151,6 +151,28 @@ function ResultTable({ data }: { data: DiscoveryProgress }) {
   );
 }
 
+function FailurePanel({ data }: { data: DiscoveryProgress }) {
+  const last = data.current_activity ?? null;
+  const activity =
+    last && last.data
+      ? `It was evaluating ${last.data.name || "a profile"}${
+          last.data.company ? ` at ${last.data.company}` : ""
+        } when it stopped.`
+      : "The run stopped mid-evaluation.";
+  return (
+    <section className="discovery-notice" aria-labelledby="failure-title">
+      <h3 id="failure-title">Why did this run fail?</h3>
+      <p>
+        {activity} Check the{" "}
+        <Link className="text-link" href={`/chat/${data.thread_id}`}>
+          run transcript
+        </Link>{" "}
+        for the exact stop reason, then verify Settings before retrying.
+      </p>
+    </section>
+  );
+}
+
 function ProgressSummary({ data }: { data: DiscoveryProgress }) {
   const stats = [
     ["Discovered", data.counts.discovered],
@@ -365,6 +387,7 @@ export default function DiscoveryLive({
                 </p>
               )}
               <ProgressSummary data={data} />
+              {data.status === "failed" && <FailurePanel data={data} />}
               <DiscoveryCurrentActivity data={data} />
               <RunControls data={data} refresh={refresh} />
               <FinishedActions key={data.id} data={data} />

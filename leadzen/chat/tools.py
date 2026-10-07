@@ -133,13 +133,30 @@ class Target(Arguments):
     instructions: str = Field(default="", max_length=5000)
 
 
+class NewContact(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    email: str = Field(min_length=3, max_length=320)
+    first_name: str = Field(default="", max_length=100)
+    last_name: str = Field(default="", max_length=100)
+    company: str = Field(default="", max_length=200)
+    title: str = Field(default="", max_length=200)
+    website: str = Field(default="", max_length=500)
+    profile_text: str = Field(default="", max_length=10000)
+    opted_in: bool = False
+    consent_note: str = Field(default="", max_length=500)
+
+
+class NewContacts(Arguments):
+    contacts: list[NewContact] = Field(min_length=1, max_length=5)
+
+
 SCHEMAS = {
     "get_workspace_status": Empty, "get_workspace_context": Empty, "get_target": Empty, "update_target": Target,
     "stop_discovery": Stop, "get_lead": Lead, "find_work_emails": Leads, "get_credit_usage": Empty,
     "create_drafts": Drafts, "get_draft": Draft, "update_draft": Edit, "regenerate_draft": Regenerate,
     "send_email": Send, "send_emails": SendMany, "sync_mailbox": Empty, "get_thread": Thread,
     "draft_reply": Reply, "send_reply": Send, "suppress_contact": Suppress, "unsuppress_contact": Lead,
-    "get_activity": List,
+    "get_activity": List, "add_contacts": NewContacts,
 }
 CONFIRMED = {"find_work_emails", "send_email", "send_emails", "send_reply", "unsuppress_contact"}
 SEND_TOOLS = {"send_email", "send_emails", "send_reply"}
@@ -432,4 +449,10 @@ def execute(row, tool, args):
         if f["since"]:
             items = [i for i in items if i["at"] >= f["since"]]
         return {"items": items[:f["limit"]], "workspaceUrl": "/activity"}
+    if tool == "add_contacts":
+        from leadzen import campaigns
+        result = invoke(row, campaigns.add_contacts, {"contacts": args["contacts"]}, "POST")
+        ids = result["ids"]
+        remember(row, selectedLeadIds=ids)
+        return {**result, "items": [{**contact_payload(d), "workspaceUrl": f"/contacts/{d.pk}"} for d in (owned_contact(i) for i in ids) if d], "workspaceUrl": "/contacts"}
     raise ValueError("Unsupported Workspace capability")

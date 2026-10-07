@@ -1,0 +1,16 @@
+{
+  "synthetic_only": true,
+  "trusted_tls": true,
+  "login_status": 200,
+  "cookie_attributes": {
+    "Secure": true,
+    "HttpOnly": true,
+    "SameSite=Lax": true,
+    "Path=/": true
+  },
+  "foreign_origin_login": 403,
+  "private_health": 200,
+  "private_readiness": 200,
+  "anonymous_health": 401,
+  "status": "PASS"
+}

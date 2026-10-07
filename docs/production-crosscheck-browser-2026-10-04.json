@@ -1,0 +1,57 @@
+{
+  "release_source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+  "runtime_input_sha256": "9d9b12af13ab4fd73f56804a9d5ea1f94ebd3dafd8565b8cc1092486642914d0",
+  "syntheticOnly": true,
+  "trustedHttps": true,
+  "certificateBypass": false,
+  "archiveExtractedForStaging": true,
+  "nodeRuntime": "24.21.0",
+  "login": true,
+  "logout": true,
+  "privateRedirect": true,
+  "contactCreateEditDelete": true,
+  "settingsSaveReload": true,
+  "mobile": {
+    "height": 812,
+    "overflow": false,
+    "scrollWidth": 375,
+    "signatureVisible": true,
+    "width": 375
+  },
+  "keyboardFocus": {
+    "activeTag": "A",
+    "backgroundColor": "rgb(255, 255, 255)",
+    "outlineStyle": "solid",
+    "outlineWidth": "2px",
+    "textColor": "rgb(10, 16, 21)"
+  },
+  "sampledNavigationContrast": 19.13,
+  "employeeScopedOverlappingIDs": true,
+  "foreignExistingSentinelDenied": {
+    "contactNotFound": true,
+    "foreignOwnerVisible": false,
+    "foreignSentinelVisible": false
+  },
+  "network": {
+    "scope": "Final denied-contact reload only",
+    "truncated": false,
+    "hasMore": false,
+    "eventCount": 35,
+    "responses": 31,
+    "expectedContact404": 1,
+    "unexpectedHttpErrors": 0,
+    "uncanceledTransportErrors": 0,
+    "canceledRequests": 4
+  },
+  "console": {
+    "scope": "Captured final tab session; bounded1000",
+    "capturedWarningsErrors": 0,
+    "limit": 1000,
+    "bufferSaturated": false,
+    "expected404Messages": 0,
+    "unexpectedWarningsErrors": 0
+  },
+  "fullPasswordSetupOnboarding": "BLOCKED_USER_HANDOFF",
+  "activeCspAttackProbes": "UNPERFORMED",
+  "broadAccessibilityCertification": "UNVERIFIED"
+}

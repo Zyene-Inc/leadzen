@@ -1,0 +1,534 @@
+{
+  "audit_date": "2026-10-04",
+  "scope": "Domain/data/background/integrations assigned source; root/backend/frontend own other files. No deployment or live sends/spend/data writes.",
+  "count": 48,
+  "files": [
+    {
+      "path": "leadzen/activity.py",
+      "lines": 167,
+      "sha256": "2ef66b2ba54a3224bb21ccf942b20d18468b98d5bf97d6d6ec72f8716c96e8a4",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Read-only actor/routed workspace feed; bounded tail, no-follow symlink protections and credential-redacted diagnostics; sensitive legacy log retention remains operational."
+    },
+    {
+      "path": "leadzen/ai.py",
+      "lines": 195,
+      "sha256": "3d813319564d139af16dfe6df670fe2c012704436b6e431e6b2e7786f532dabd",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Pinned approved TLS/public addresses, no ambient provider credentials/implicit retries; quotas/revocation at request boundary; bounded streaming and new total nonstream response body reader."
+    },
+    {
+      "path": "leadzen/autopilot.py",
+      "lines": 298,
+      "sha256": "4efce6ef26c1b06e83ece703b739149b5bcb32d61781059ce096cccf763bb300",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Explicit standing policy, setup/clock fingerprints, expiry and server actor guards; persistent conservative daily/monthly provider reservations; duplicate-address recipient gate."
+    },
+    {
+      "path": "leadzen/autopilot_dispatch.py",
+      "lines": 44,
+      "sha256": "40da9e4c2289c2e29371106c5b171e76307542bd8c671d5969aa6ac4c7807d4b",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Isolated max-four child processes, control flock and fair cursor; process deadlines; added generic nonzero-exit/timeout logs."
+    },
+    {
+      "path": "leadzen/autopilot_worker.py",
+      "lines": 294,
+      "sha256": "7eb38db61968b85c57bd123c396ba5b42c44e47138ed6ebefd3d13cb9b338342",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Preparation checkpoints, partial/uncertain held purchases, owned handle polling; canonical verified-only preparation, address dedup, reply-stopped sequence delivery, persisted issue/heartbeat."
+    },
+    {
+      "path": "leadzen/branding.py",
+      "lines": 55,
+      "sha256": "0e0ead133b154b44b29700a607c93856f0d6cacf0738c2062c4f40aebf2acac8",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Central product identity/adapters; no installed-package modifications; GPL/attribution source notices retained."
+    },
+    {
+      "path": "leadzen/campaigns.py",
+      "lines": 547,
+      "sha256": "41b7523f999fbd2d47c77b57dbdacfe0c23f34d42d0b3a13db0330740fa71e70",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Authenticated workspace CRUD, strict counts/categories/templates/opt-in; durable recipient CAS, sink revocation/content/STOP checks; fixed manual cold duplicate-address attempt."
+    },
+    {
+      "path": "leadzen/configuration.py",
+      "lines": 348,
+      "sha256": "caf148fc8034d9bbe51f8c0a836441478ce21362332d18cf28745260eb058f12",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Fernet server key, secret/public validation and approved hosts; supported legacy secrets moved to encrypted storage on save, explicit cleared exports removed, controls rejected."
+    },
+    {
+      "path": "leadzen/crm.py",
+      "lines": 252,
+      "sha256": "81ff78920572210de83598820630d545736df1bad10c87fee68e90f7a7cbb09d",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Exact saved canonical source identity; explicit selected one-credit purchase; authenticated/routed record operations; fixed page N+1 with bounded batch facts."
+    },
+    {
+      "path": "leadzen/discovery.py",
+      "lines": 252,
+      "sha256": "7a26c047d6208a923ba35f5bfb719378c0c5af98144e362c11140f478e9d7b2c",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Actor/thread-owned sessions, exact count/budget/revision and one-active-run uniqueness; idempotent selections/pause/resume/no uncertain replay."
+    },
+    {
+      "path": "leadzen/discovery_progress.py",
+      "lines": 436,
+      "sha256": "fe892398065fb822691cd1e2707fc1844906f9258abab857e2b80f8996062de9",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Observed real finder events and bounded rolling history/candidates; selected identity guards; conservative paid receipt reservations and valid usage reports; no external hub contribution."
+    },
+    {
+      "path": "leadzen/email_api.py",
+      "lines": 68,
+      "sha256": "c80f458ebafb2d49adf2df9c48ae3784ceaf4b1c29fd475f1667d1489f523551",
+      "review": "inspected actual source and relevant tests",
+      "notes": "HTTPS/pinned public TLS, provider response validation and no raw errors; revalidated allowlist at sink, 256KiB payload cap, 64KiB response cap and deadline body reads."
+    },
+    {
+      "path": "leadzen/followups.py",
+      "lines": 98,
+      "sha256": "5aee9fb1a130f316742c0f1707292724da597231ed41922353325769e7ef64b5",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Exact server-selected scoped recipients/fingerprints/expiry; no new first emails; reply sync required; uncertain claimed sends held; follow-up-only service heartbeat gap remains."
+    },
+    {
+      "path": "leadzen/home.py",
+      "lines": 89,
+      "sha256": "1539a6d422cf5a2147583da114ea72641b7adb79098216d99942061994d4dc25",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Read-only saved metrics/credit snapshots, no provider reads; correct distinct acceptance/reply counts; validated target writes using canonical settings."
+    },
+    {
+      "path": "leadzen/mailboxes.py",
+      "lines": 89,
+      "sha256": "d61a7f9a2deed2b50612acbda864f397bad5d8ac899945f49514f38a660baf9c",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Encrypted dashboard mailbox adapter, active sending identity/routed manager, separate IMAP secret; fixed double encryption when settings sync follows worker adapter installation; legacy CLI credential migration requires operator verification."
+    },
+    {
+      "path": "leadzen/outreach.py",
+      "lines": 585,
+      "sha256": "10b54e82df51635ac891be827e0e1ab666d5e9953955e2ec6d3f9496c8ab818f",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Exact per-draft plus final approval, bounded AI generation, durable CAS and acceptance checks; fixed full-pool N+1 eligibility and 501st-conversation STOP omission."
+    },
+    {
+      "path": "leadzen/production_logging.py",
+      "lines": 33,
+      "sha256": "d7fb7f306c055fbce88b3b737f6a552ae768238b3a516195a6ab69891ccdf7e3",
+      "review": "inspected actual source and relevant tests",
+      "notes": "New production-only dependency/provider record factory strips raw PII/secrets/prompts/tracebacks before file/console handlers; levels and logger categories retained."
+    },
+    {
+      "path": "leadzen/provider_io.py",
+      "lines": 50,
+      "sha256": "6d8e5bed0257238d851f50b69e2861c8387a64f42a79285b25805f6c598b2d9b",
+      "review": "inspected actual source and relevant tests",
+      "notes": "New bounded-byte deadline response body reads; timeout shutdown covers detached HTTP response sockets and blocked worker reads."
+    },
+    {
+      "path": "leadzen/scheduler.py",
+      "lines": 87,
+      "sha256": "dd71655dd26e56bff776e5fd33bcef3fb6be227c44c0605537b6bc491da57e40",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Opt-in separate isolated employee worker service, control/workspace flock and bounded passes; generic failure logs added; external monitoring not configured by audit."
+    },
+    {
+      "path": "leadzen/sending_schedule.py",
+      "lines": 179,
+      "sha256": "bc168199062324e3028952408173095c80ceab2d96b3c014732ed15889eccbb1",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Strict fixed New York weekly settings, real UTC comparison, DST gaps/folds, next-open/close arithmetic; malformed stored schedule fails closed."
+    },
+    {
+      "path": "leadzen/suppression.py",
+      "lines": 31,
+      "sha256": "38667d74b55c93f388ef8d0da47c86a17e3c2f8cf202249997a736d08c7fbe67",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Shared canonical case-insensitive terminal blocking, first evidence retained, duplicate contact/campaign queues stopped atomically."
+    },
+    {
+      "path": "leadzen/timeline.py",
+      "lines": 63,
+      "sha256": "7c41f9a0e5ea8d255e19dbfc8c03809224d99b9a3790df9719855df1814cec46",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Read-only bounded real history/acceptance/due evidence; no credential or external calls; estimated future steps clearly distinguished."
+    },
+    {
+      "path": "leadzen/timezone.py",
+      "lines": 27,
+      "sha256": "5116bb0c35e3ec928e34e5976746ab46943ca8594295f2af48939fadf8d37c00",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Fixed New York business adapters; absolute ORM instants retained and no operator/browser timezone authority."
+    },
+    {
+      "path": "leadzen/transports.py",
+      "lines": 262,
+      "sha256": "e09bfad33489cbfcfc6ad45a63d2c994bd41acf55895c2e40cd49518e4ea63cd",
+      "review": "inspected actual source and relevant tests",
+      "notes": "Approved/public pinned SMTP/IMAP TLS, HTTP sink, final delivery guards after TLS/DATA; strict complete inbox read and terminal STOP projection; SDK raw logs masked in production."
+    },
+    {
+      "path": "leadzen/web_worker.py",
+      "lines": 93,
+      "sha256": "6e0dbd0697a253ca6dd0380183a7d854e59e761b94f3b9df668959df88116693",
+      "review": "inspected actual source and relevant tests",
+      "notes": "CAS queued-to-running, same-workspace flock, refuses autonomous legacy jobs; generic persisted errors/cancel hold, exact approval service reuse."
+    },
+    {
+      "path": "leadzen/config/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "review": "inspected actual source",
+      "notes": "Empty Python package marker inspected."
+    },
+    {
+      "path": "leadzen/config/apps.py",
+      "lines": 22,
+      "sha256": "b190c79d5265f1db4e478a0ceee2c20e574116fb5b7e138419177681d885fe82",
+      "review": "inspected actual source",
+      "notes": "Inspected startup adapters; production logging installed before finder/sender configuration."
+    },
+    {
+      "path": "leadzen/config/migrations/0001_initial.py",
+      "lines": 89,
+      "sha256": "539bd513698b141e778983b0b7b68e158aaa04db7a7c09684a707564876b5f3b",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0002_rename_operator_country_code.py",
+      "lines": 18,
+      "sha256": "4f3409e66acf750649a188a952e6d892ea5d011a1933819c8f514adc72dc2384",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0003_outreachjob.py",
+      "lines": 49,
+      "sha256": "90192974bc4f8421bd98e47ccfb295f81ccdf80947c748a93715f6fb1100400b",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0004_runtimesettings.py",
+      "lines": 37,
+      "sha256": "0800fbf1ab2d20110a303f94b5492f55939f090300cf30e1fb707d6a2fbbb4bb",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0005_emailcampaign_outreachjob_campaign_id_and_more.py",
+      "lines": 78,
+      "sha256": "36d47c05a6b768252e824ce22fc18008a63c48e837921cb4e6df691721d98331",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0006_chatthread_chatmessage_chatrun.py",
+      "lines": 59,
+      "sha256": "b11e47bc03a39d35301e0e18cc96da00b1bdbdf7cdf36c12ce69a61101fb1498",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0007_chatrun_deadline_at_chatrun_model_requests.py",
+      "lines": 23,
+      "sha256": "510066493b6cb9ffa64b8335fed8c255db5880f80e33b324d371b6d1539ccd5a",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0008_contactpreferences_deleted_at.py",
+      "lines": 13,
+      "sha256": "18d22e3ff24daf241e7e30fc8840e86b280fcbced808df1db57432917a9d8e27",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0009_onboardingstate.py",
+      "lines": 16,
+      "sha256": "30e59bb4b5ebdcd86caf06782e34d6fe30a7826fda4972a47b65f53b9a149754",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0010_discovery_progress.py",
+      "lines": 39,
+      "sha256": "5ce100ed3c81dd562f79a71f8d35ac811587d2ebd1c3396b94f2fd912fe0d25c",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0011_crm_campaign_offer.py",
+      "lines": 16,
+      "sha256": "9852bcab9086dc40edde6338c50be87d968b7b9276f32d95ee3d13709156427c",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0012_email_review.py",
+      "lines": 33,
+      "sha256": "2b9a05a47e532f828caf2c430307729c3bb807c8969a720e23f0719510ed8c7f",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0013_campaign_followup_approval.py",
+      "lines": 9,
+      "sha256": "4517db931c60c73d247d070116fb6f9e047caba49d9caeb4a4d8faeeb6356e85",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0014_workspacecontext_chatthread_context_and_more.py",
+      "lines": 33,
+      "sha256": "8d44b2088ba5f6797288e754badf6ebd5d36e49042fec18beddbd05c7b6760dd",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0015_chatthread_deleted_at.py",
+      "lines": 6,
+      "sha256": "1a4f845af51501ecc182c3d2aab3e6c69499f7831f3d5ea4b6b84d5d44f21a71",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0016_daily_autopilot.py",
+      "lines": 69,
+      "sha256": "0d7f7e77858066819edb2762a8c049186509bb4c004d9d3b552a727ae3194911",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0017_siteconfig_sending_schedule.py",
+      "lines": 13,
+      "sha256": "fbf7efd5c26ceeac2ed362a39bdbe4fc5b39b7438d517eff90e566947ea24f08",
+      "review": "inspected actual source",
+      "notes": "Inspected additive schema/foreign keys/unique constraints and migration dependencies. Live database contents/application remain UNVERIFIED."
+    },
+    {
+      "path": "leadzen/config/migrations/0018_new_york_time.py",
+      "lines": 29,
+      "sha256": "00ae6ed9c0ed6080a49aff942ab2a7702d5c685974064430e85f0fcb8df514e9",
+      "review": "inspected actual source",
+      "notes": "Inspected alias-bound data normalization; immutable policy scope/absolute timestamps preserved; reverse is noop, requiring backup-based recovery for original wall metadata."
+    },
+    {
+      "path": "leadzen/config/migrations/0019_discoverylookup_source_index.py",
+      "lines": 9,
+      "sha256": "2ccb2b31ffa1fec7b0227d9ff3da34d88ca4edb7ad7d0f6a3af93240ff12da85",
+      "review": "inspected actual source",
+      "notes": "New additive source_id index. No row rewrite or deletion; SQLite index creation needs maintenance write lock."
+    },
+    {
+      "path": "leadzen/config/migrations/__init__.py",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "review": "inspected actual source",
+      "notes": "Empty Python package marker inspected."
+    },
+    {
+      "path": "leadzen/config/models.py",
+      "lines": 448,
+      "sha256": "2d6af9da608836b2ec48200a6892f05397f189d796b33de55923f3225e2b9e13",
+      "review": "inspected actual source",
+      "notes": "Inspected all config/workspace/chat/discovery/review/autopilot models, deletion rules, unique constraints and IDs; added DiscoveryLookup.source_id index."
+    }
+  ],
+  "verification_artifacts": [
+    {
+      "path": "tests/test_production_domain_boundaries.py",
+      "lines": 302,
+      "sha256": "0535a098f0008e0d08397eb8a919d2daa41ab6a11368216807f9c8e3f6c1d88c",
+      "review": "fully authored/read or fully read as stated in notes",
+      "notes": "Fully authored/read; synthetic security, suppression, credentials, scheduler, CRM, logging and response-deadline regressions executed."
+    },
+    {
+      "path": "tests/scenarios/production_domain_measurements.py",
+      "lines": 42,
+      "sha256": "65a3f366e3f1720e0a4377b45ad9d704ec32e0647f89c31c223c628a48f4da72",
+      "review": "fully authored/read or fully read as stated in notes",
+      "notes": "Fully authored/read; disposable CRM/eligibility query measurement executed without provider calls."
+    },
+    {
+      "path": "tests/test_runtime_settings.py",
+      "lines": 148,
+      "sha256": "e05f6963ffc521c0964c3cb59e4875cebdde4795fb31548921d8fa4456258291",
+      "review": "fully authored/read or fully read as stated in notes",
+      "notes": "Fully read; strengthened storage assertion to inspect raw ciphertext and intentional worker in-memory round-trip; focused regressions executed."
+    },
+    {
+      "path": "tests/test_email_transports.py",
+      "lines": 138,
+      "sha256": "591a06d4bb024a0cbfabb09e55a9e295579436396edf4bfafba6e0bc26f277f9",
+      "review": "fully authored/read or fully read as stated in notes",
+      "notes": "Fully read; SMTP/IMAP/HTTP sink fixtures and assertions; focused regressions executed."
+    },
+    {
+      "path": "tests/test_autopilot_send_boundaries.py",
+      "lines": 145,
+      "sha256": "b4d21666c34f5979a60b695677fb5cf4584579384e3d7c21630059733aee64d5",
+      "review": "fully authored/read or fully read as stated in notes",
+      "notes": "Fully read; authored isolated approved synthetic HTTP host fixture; all boundary regressions executed."
+    },
+    {
+      "path": "tests/test_campaigns.py",
+      "lines": 393,
+      "sha256": "1417e0ba9dc230566aec03fd1faf3778e4dee2d014a46b3334347bbd34fed8da",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_reviewed_outreach.py",
+      "lines": 431,
+      "sha256": "18391e944b43d0683b1b71dff3ce72bdf089cc9be87d77207412252c62994d9d",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_automatic_followups.py",
+      "lines": 217,
+      "sha256": "49d29eec861b723721bf429a21a057d8b045b35374b46bdc4c50569ec553bfa9",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_autopilot.py",
+      "lines": 440,
+      "sha256": "bce244eb6748f36b598a08ca48b807295dfbdd2a2710524e76ca2c5090997573",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_autopilot_discovery.py",
+      "lines": 196,
+      "sha256": "1ddb4bee466c3d0425437a9a2b9cc388b879349aef14d96747f266b9a8fa19c5",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_autopilot_regressions.py",
+      "lines": 97,
+      "sha256": "7130555c2a85c3c2cb25147014a705ba7e216c88166a89f372da434e4d99174c",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_discovery.py",
+      "lines": 139,
+      "sha256": "a6d59ce44fe811583e78bef6a81fccdc81cc1fe66fb248f29f11c4a8fe0b5a5a",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_discovery_live.py",
+      "lines": 585,
+      "sha256": "c1ef67d0c5e9686a0ae6a8be9f13c15a0e319974bf72e594a87f5bf182724d86",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_bettercontact_settings.py",
+      "lines": 163,
+      "sha256": "c2ae45851779f7cb9c9c7795edbbed2d60346315f7d2e0e12ec39c1cd6c58a89",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_lead_crm.py",
+      "lines": 201,
+      "sha256": "a4bc48df18ed3a9f517fc646de00d6b0c6ecd0bbf4daac8b3aac476677b57658",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_lead_timeline.py",
+      "lines": 181,
+      "sha256": "801c5f24f15fdbdfaf9edd334b23d4756d1e9ed3feecff84dde2ec61e30bd17b",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_home.py",
+      "lines": 109,
+      "sha256": "31e2134f30f45c3353fcf973e4953b5bada2de8813ace57c2689a089f59556da",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_activity.py",
+      "lines": 174,
+      "sha256": "0e844ff4c8c690477ee0334b0d4abc29b9e00e4570a4400c16fd556f617e1e68",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_branding.py",
+      "lines": 78,
+      "sha256": "7b3f7f251a6bd53a1845a9a6106f74efbe82fa2bb51761cd6271bfed5f781f0b",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_sending_schedule.py",
+      "lines": 218,
+      "sha256": "29a1ca69ba2d8d675e0b96f5461fd75e7e07979aa0cefec45f0456b755f06b0e",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_sending_schedule_boundaries.py",
+      "lines": 161,
+      "sha256": "e3a66cad2b8a6667944122653038ed8e5bf3a98d2c28fcf6c4520c0483c473a2",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_sending_schedule_execution.py",
+      "lines": 275,
+      "sha256": "0933f931eef418eab8f612b475fa1cf6acce3b8c582a43abf3c8930a0364b3e1",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_new_york_time.py",
+      "lines": 236,
+      "sha256": "55626365a6792044eed7077279b39833ea4b71426aabd8d210fb546d138d95f8",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_outreach_workspace.py",
+      "lines": 150,
+      "sha256": "a3a666a4ed42c77460f68f635645655e30ddb65d94665e4c04fbb3a3375bc7fb",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_chat_ai.py",
+      "lines": 174,
+      "sha256": "68d29890ec62d63a21dbfedf7170aa39efe31e4c9f33b0d28db3324ba599488a",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_provider_stream_formats.py",
+      "lines": 423,
+      "sha256": "929a104c8d7abdd0449c52d833c4406d61f13fd680000637f2b025f33863d53b",
+      "review": "executed complete module; critical fixtures/assertions inspected adaptively",
+      "notes": "No claim that every historical test line was manually read. Relevant source was inspected in the source ledger; exact execution groups/results are in the Markdown report."
+    },
+    {
+      "path": "tests/test_mcp_tools.py",
+      "lines": 382,
+      "sha256": "eba563f1fdd3043ed3dfce0317d2291c214ead2495af234d92129fb52beea191",
+      "review": "selected adapter-install send test inspected/executed for test-order reproduction",
+      "notes": "Backend audit owns complete MCP test coverage; domain track inspected only selected send assertion/fixture."
+    }
+  ]
+}

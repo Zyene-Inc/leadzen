@@ -1,0 +1,2540 @@
+{
+  "date": "2026-10-02",
+  "repository": "/Users/ashishdikonda/Desktop/Openoutreach/OpenOutreach",
+  "branch": "main",
+  "baseline_files": 227,
+  "files": 247,
+  "by_category": {
+    "configuration": 27,
+    "documentation": 18,
+    "source": 132,
+    "generated": 4,
+    "asset": 4,
+    "test": 41,
+    "audit_artifact": 3,
+    "migration": 17,
+    "tooling": 1
+  },
+  "by_status": {
+    "inspected": 199,
+    "excluded": 13,
+    "inspected_with_scope_limit": 1,
+    "inspected_and_executed": 7,
+    "generated_audit_artifact": 3,
+    "executed_not_exhaustively_reviewed": 24
+  },
+  "excluded_trees": [
+    ".git/",
+    ".venv/",
+    "dashboard/node_modules/",
+    "dashboard/.next/",
+    "Python and test caches",
+    "private .env files",
+    "real database/WAL/SHM files",
+    "machine metadata (.DS_Store)",
+    "external owner-only credentials and backups"
+  ],
+  "notes": [
+    "Private environment/database/credential content was not inventoried or opened.",
+    "Pre-existing removed openoutreach files remain removed; no reset or restoration.",
+    "An inspected entry means source/context inspection; explicit partial and test-only scopes are retained.",
+    "Results describe local synthetic verification, not live delivery or deployment."
+  ],
+  "entries": [
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "edab6389d63de5991ef99feec4b143ca06d252ab733d40f3ebe8f9001d4438a8",
+      "sha256_after": "edab6389d63de5991ef99feec4b143ca06d252ab733d40f3ebe8f9001d4438a8",
+      "bytes_after": 743
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "660d242a0aef73abf303d68419cfa8c48154bd7a60ee83676df3e4681f26ed06",
+      "sha256_after": "660d242a0aef73abf303d68419cfa8c48154bd7a60ee83676df3e4681f26ed06",
+      "bytes_after": 496
+    },
+    {
+      "path": ".github/FUNDING.yml",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "6ecc97ea42114d1d00cf277d9212b11b757c60b64e25ddb7725ffa7acfb12b43",
+      "sha256_after": "6ecc97ea42114d1d00cf277d9212b11b757c60b64e25ddb7725ffa7acfb12b43",
+      "bytes_after": 62
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "6d56d735f8cd7c03d687b5b4957cd1406df987df433b79cfcf54a11f9d821880",
+      "sha256_after": "6d56d735f8cd7c03d687b5b4957cd1406df987df433b79cfcf54a11f9d821880",
+      "bytes_after": 915
+    },
+    {
+      "path": ".github/workflows/tests.yml",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "35a70d6b48c95358498a065451b200a0d1c0155767248564fa7f34d5f10686c0",
+      "sha256_after": "1671144e79d98f851a84b7d1d581f25c208dc42ae44806ebcc73503662d3ab4d",
+      "bytes_after": 924
+    },
+    {
+      "path": ".gitignore",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "4fcd985453ca9dcaae2fc015e457dc56ea9bfa6387f65a34c9471a1757440a2f",
+      "bytes_after": 526
+    },
+    {
+      "path": "CLAUDE.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "63eaf82909508c3721c3a6e74484a2989a760fab250626580d959d530a1efa4f",
+      "sha256_after": "63eaf82909508c3721c3a6e74484a2989a760fab250626580d959d530a1efa4f",
+      "bytes_after": 1821
+    },
+    {
+      "path": "compose/leadzen/Caddyfile",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "b7a5afd5269432a74105a10815d928e8142322a4b957820317ff16e18f394522",
+      "sha256_after": "b7a5afd5269432a74105a10815d928e8142322a4b957820317ff16e18f394522",
+      "bytes_after": 101
+    },
+    {
+      "path": "compose/leadzen/deploy-accounts.sh",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "fbe5a63bd560d96ba5125f64c5786bd9aa963d4880d7abc7199af2e02da3850e",
+      "sha256_after": "81a44f1e326a30959516458fdee0c3d2f495f4a4bb71149bacb2cc643d09e363",
+      "bytes_after": 4646
+    },
+    {
+      "path": "compose/leadzen/Dockerfile",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "86e08918eef32d8a793f1fbd32c1034dec862d9e6d5895ce68a43c1cbd89b71d",
+      "sha256_after": "86e08918eef32d8a793f1fbd32c1034dec862d9e6d5895ce68a43c1cbd89b71d",
+      "bytes_after": 1787
+    },
+    {
+      "path": "compose/leadzen/entrypoint",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "sha256_after": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "bytes_after": 481
+    },
+    {
+      "path": "compose/leadzen/leadzen-followups.service",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "a22ad262beb565aaaf5a64ca5f01d44a1fb96d2b75231b95c0e62672d3cc2a6a",
+      "bytes_after": 361
+    },
+    {
+      "path": "compose/leadzen/leadzen.service",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "af8d681ec1a188a9ce42fcbc77e749af4d91648bd2a2fdaa52b57903aae1f58d",
+      "sha256_after": "af8d681ec1a188a9ce42fcbc77e749af4d91648bd2a2fdaa52b57903aae1f58d",
+      "bytes_after": 408
+    },
+    {
+      "path": "compose/leadzen/runtime.env.example",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "fbd86d62c0d44e5b926f2c48b545762c30cc40362ea8aca40acae08d5de41800",
+      "sha256_after": "48e7b7b6e225ce5e020983e320d3ed90a7a4c712d6c9f04eac662116a4219730",
+      "bytes_after": 775
+    },
+    {
+      "path": "compose/leadzen/start",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "cb0f006b010ec1a6b21eb44e6287e9f6fcea39ec6809980289ea52ce3958b0d8",
+      "sha256_after": "cb0f006b010ec1a6b21eb44e6287e9f6fcea39ec6809980289ea52ce3958b0d8",
+      "bytes_after": 624
+    },
+    {
+      "path": "compose/openoutreach/Dockerfile",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "268621920ea6323a9837db58b622b66d60184e6f6cc9be28d72f8944369a663f",
+      "sha256_after": "268621920ea6323a9837db58b622b66d60184e6f6cc9be28d72f8944369a663f",
+      "bytes_after": 1805
+    },
+    {
+      "path": "compose/openoutreach/entrypoint",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "sha256_after": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "bytes_after": 481
+    },
+    {
+      "path": "compose/openoutreach/start",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "eef87134c8ac1bae6220406afe7cd54c18eae3ea56a413b799fbd7224dc39577",
+      "sha256_after": "eef87134c8ac1bae6220406afe7cd54c18eae3ea56a413b799fbd7224dc39577",
+      "bytes_after": 634
+    },
+    {
+      "path": "dashboard/.env.example",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "d171f15feb0bf6d9edfe4be0908f9eb36cef11092ff9b2d611d52309092ac3c0",
+      "sha256_after": "7b47cfcd19c296f487c85458774955cb6eea8353a392da611ae965a7e8431c41",
+      "bytes_after": 412
+    },
+    {
+      "path": "dashboard/.gitignore",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "56537ebe03160a28fdb6e59ae18f408d6f8aba609df73c45917c9358fd3bad52",
+      "sha256_after": "56537ebe03160a28fdb6e59ae18f408d6f8aba609df73c45917c9358fd3bad52",
+      "bytes_after": 8
+    },
+    {
+      "path": "dashboard/.vercel/project.json",
+      "category": "configuration",
+      "status": "excluded",
+      "reason": "Local hosting binding metadata; no hosting/deployment changes requested.",
+      "existed_at_baseline": true,
+      "sha256_before": "8a3f68367b2c981610fdac16cde628f01edeb7524739ffa0cfd7e1e4578495db",
+      "sha256_after": "8a3f68367b2c981610fdac16cde628f01edeb7524739ffa0cfd7e1e4578495db",
+      "bytes_after": 123
+    },
+    {
+      "path": "dashboard/.vercel/README.txt",
+      "category": "configuration",
+      "status": "excluded",
+      "reason": "Local hosting binding metadata; no hosting/deployment changes requested.",
+      "existed_at_baseline": true,
+      "sha256_before": "f5d1ed0f5032ae128931f46459b5faa1af6319fc2dfb3e7a5fe54a84bf93dbd6",
+      "sha256_after": "f5d1ed0f5032ae128931f46459b5faa1af6319fc2dfb3e7a5fe54a84bf93dbd6",
+      "bytes_after": 520
+    },
+    {
+      "path": "dashboard/AGENTS.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read repository instructions before edits; preserved without changes.",
+      "existed_at_baseline": true,
+      "sha256_before": "63f2c50380ed6303237cce215ce27af1d620d094c215e28d1b1538a3c070e3bb",
+      "sha256_after": "63f2c50380ed6303237cce215ce27af1d620d094c215e28d1b1538a3c070e3bb",
+      "bytes_after": 678
+    },
+    {
+      "path": "dashboard/app/activity/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "c801e603877cb460f51affbe4af70bd25ffb22997115b08f9428703ab14f01cf",
+      "sha256_after": "c801e603877cb460f51affbe4af70bd25ffb22997115b08f9428703ab14f01cf",
+      "bytes_after": 214
+    },
+    {
+      "path": "dashboard/app/admin/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "8dd081144f8f7e7b072eba7d8cda0ff34f5f1e7d4e818caf48d445193f9f167a",
+      "sha256_after": "8dd081144f8f7e7b072eba7d8cda0ff34f5f1e7d4e818caf48d445193f9f167a",
+      "bytes_after": 218
+    },
+    {
+      "path": "dashboard/app/api/auth/login/route.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "731302c764918bdb190ccf9c11a8f0e8227f66f6e034b842df76659adf397ff6",
+      "sha256_after": "731302c764918bdb190ccf9c11a8f0e8227f66f6e034b842df76659adf397ff6",
+      "bytes_after": 1502
+    },
+    {
+      "path": "dashboard/app/api/auth/logout/route.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "589a28e534a6982f445df6f688d74289e142a1fecab61a50105cb49cc719aed0",
+      "sha256_after": "589a28e534a6982f445df6f688d74289e142a1fecab61a50105cb49cc719aed0",
+      "bytes_after": 979
+    },
+    {
+      "path": "dashboard/app/api/auth/password/route.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "adb765643055a1817a2e315b118640203312afc55de1e67f591d725e0b45b977",
+      "sha256_after": "adb765643055a1817a2e315b118640203312afc55de1e67f591d725e0b45b977",
+      "bytes_after": 1218
+    },
+    {
+      "path": "dashboard/app/api/auth/setup/route.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "6c5ae84d5ca3ce728fd70ea38ffc982977a0f654a8aa4ecdfc4aa3dee92337de",
+      "sha256_after": "6c5ae84d5ca3ce728fd70ea38ffc982977a0f654a8aa4ecdfc4aa3dee92337de",
+      "bytes_after": 812
+    },
+    {
+      "path": "dashboard/app/api/proxy/[...path]/route.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e1e74f8c5dade12b66c700d935f5ba5004358019102b07e02d36e5de35a8c9a5",
+      "sha256_after": "e1e74f8c5dade12b66c700d935f5ba5004358019102b07e02d36e5de35a8c9a5",
+      "bytes_after": 4445
+    },
+    {
+      "path": "dashboard/app/campaigns/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "bd07603691faa53381d0a1d24130951541e1cd78ddefd9bd6d4c21ffc2a22ebd",
+      "sha256_after": "bd07603691faa53381d0a1d24130951541e1cd78ddefd9bd6d4c21ffc2a22ebd",
+      "bytes_after": 205
+    },
+    {
+      "path": "dashboard/app/chat/[threadId]/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "da938e234d28da18911a64af2a85aa2ebfac3b1667f4facf4f4e6b78306c834f",
+      "sha256_after": "da938e234d28da18911a64af2a85aa2ebfac3b1667f4facf4f4e6b78306c834f",
+      "bytes_after": 525
+    },
+    {
+      "path": "dashboard/app/chat/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "c1c0b75aced75d450a8b7265f176e6ec507d02dac347791165940f9c31911cf5",
+      "sha256_after": "c1c0b75aced75d450a8b7265f176e6ec507d02dac347791165940f9c31911cf5",
+      "bytes_after": 990
+    },
+    {
+      "path": "dashboard/app/contacts/[contactId]/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "f8f98d298d455812792b962714a83d05f1274250c396501aefd339505305fa45",
+      "sha256_after": "f8f98d298d455812792b962714a83d05f1274250c396501aefd339505305fa45",
+      "bytes_after": 533
+    },
+    {
+      "path": "dashboard/app/contacts/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "668cb3b297ccf025f5075e37d1906ab56a4ddee57a976af3562cfd63375540a9",
+      "sha256_after": "668cb3b297ccf025f5075e37d1906ab56a4ddee57a976af3562cfd63375540a9",
+      "bytes_after": 202
+    },
+    {
+      "path": "dashboard/app/find-leads/[runId]/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a5c4c0ffd2578a5ef974296996e349066dff20cbf218ec34b7183a41da26005a",
+      "sha256_after": "a5c4c0ffd2578a5ef974296996e349066dff20cbf218ec34b7183a41da26005a",
+      "bytes_after": 524
+    },
+    {
+      "path": "dashboard/app/find-leads/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "95e76d38139a00ba25ad9a5e54f67b665dd600b0f24e434c79995a9f52c94408",
+      "sha256_after": "95e76d38139a00ba25ad9a5e54f67b665dd600b0f24e434c79995a9f52c94408",
+      "bytes_after": 209
+    },
+    {
+      "path": "dashboard/app/globals.css",
+      "category": "source",
+      "status": "inspected_with_scope_limit",
+      "reason": "Focused layout, focus, responsive and review styles plus desktop/mobile browser checks; excluded exhaustive line-by-line CSS review.",
+      "existed_at_baseline": true,
+      "sha256_before": "b44c68126cddc098354f4a48b5c9ee51ef5a331b168a1ea3f8502d7525f02207",
+      "sha256_after": "b44c68126cddc098354f4a48b5c9ee51ef5a331b168a1ea3f8502d7525f02207",
+      "bytes_after": 58730
+    },
+    {
+      "path": "dashboard/app/inbox/messages/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "43b20b72e24858fb49269babc1e3f2e35ebf1a44f62a42718114b5d87919eac8",
+      "sha256_after": "43b20b72e24858fb49269babc1e3f2e35ebf1a44f62a42718114b5d87919eac8",
+      "bytes_after": 212
+    },
+    {
+      "path": "dashboard/app/inbox/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "18d8b2d19a8c3fd50955054e4446b9810161b71adeb7614cf4618614821a7734",
+      "sha256_after": "18d8b2d19a8c3fd50955054e4446b9810161b71adeb7614cf4618614821a7734",
+      "bytes_after": 196
+    },
+    {
+      "path": "dashboard/app/layout.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "c8cb7de80599aaca3025a258e2faa751a4e044b93cbeec91b2aeffdf7c036ddb",
+      "sha256_after": "c8cb7de80599aaca3025a258e2faa751a4e044b93cbeec91b2aeffdf7c036ddb",
+      "bytes_after": 666
+    },
+    {
+      "path": "dashboard/app/login/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "81858b44beabc7cfd9033125c19427f640ec0cf80c6b6d1da011fe5b4160e35d",
+      "sha256_after": "81858b44beabc7cfd9033125c19427f640ec0cf80c6b6d1da011fe5b4160e35d",
+      "bytes_after": 2753
+    },
+    {
+      "path": "dashboard/app/onboarding/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ab0edc23754993c7b90f1fd5704b66f1b9674761795a8750ed8d82ed3aa4b741",
+      "sha256_after": "ab0edc23754993c7b90f1fd5704b66f1b9674761795a8750ed8d82ed3aa4b741",
+      "bytes_after": 725
+    },
+    {
+      "path": "dashboard/app/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a199859322f58e772316811bba2d8bd926b3a1b8431c51e2b530f0feaef9bb20",
+      "sha256_after": "a199859322f58e772316811bba2d8bd926b3a1b8431c51e2b530f0feaef9bb20",
+      "bytes_after": 205
+    },
+    {
+      "path": "dashboard/app/password/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "d904a9e193b288fa939549d4d5a8537fa0003c128948a12d11e0f0b6701e8ffd",
+      "sha256_after": "d904a9e193b288fa939549d4d5a8537fa0003c128948a12d11e0f0b6701e8ffd",
+      "bytes_after": 244
+    },
+    {
+      "path": "dashboard/app/sending/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ad253270e097b86e9474bfbd2b0aea83095c93e3c89019623522ae3844b3bf57",
+      "sha256_after": "ad253270e097b86e9474bfbd2b0aea83095c93e3c89019623522ae3844b3bf57",
+      "bytes_after": 222
+    },
+    {
+      "path": "dashboard/app/settings/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "4ced639f9e0d9b8e014890d171dcaa3fdd59132b6ce1937fdd86b50ea66512b7",
+      "sha256_after": "4ced639f9e0d9b8e014890d171dcaa3fdd59132b6ce1937fdd86b50ea66512b7",
+      "bytes_after": 205
+    },
+    {
+      "path": "dashboard/app/setup/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "8e49fef4cf1826a10d8b36cc233a03f7a65023be17774f9ee367e3e76a490fb8",
+      "sha256_after": "8e49fef4cf1826a10d8b36cc233a03f7a65023be17774f9ee367e3e76a490fb8",
+      "bytes_after": 4225
+    },
+    {
+      "path": "dashboard/app/suppression/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "fc9b423a88b61a45b5071f1e89dc51063cdbff45c8d4630e6b12214a7e9f8814",
+      "sha256_after": "fc9b423a88b61a45b5071f1e89dc51063cdbff45c8d4630e6b12214a7e9f8814",
+      "bytes_after": 224
+    },
+    {
+      "path": "dashboard/app/target/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "480df09d63adfad1cfe1e9507f7660ba5a53d9904cdb4cdb2196e55645e3e980",
+      "sha256_after": "480df09d63adfad1cfe1e9507f7660ba5a53d9904cdb4cdb2196e55645e3e980",
+      "bytes_after": 218
+    },
+    {
+      "path": "dashboard/app/tour/page.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "2e8b3549dec4e7f55a2a36dc299ce3dacea1106707b8c0dbfba77f560b7dffa4",
+      "sha256_after": "2e8b3549dec4e7f55a2a36dc299ce3dacea1106707b8c0dbfba77f560b7dffa4",
+      "bytes_after": 206
+    },
+    {
+      "path": "dashboard/CLAUDE.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read repository instructions before edits; preserved without changes.",
+      "existed_at_baseline": true,
+      "sha256_before": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+      "sha256_after": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+      "bytes_after": 11
+    },
+    {
+      "path": "dashboard/components/activity-feed.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "1ff09cb084a27f62ac27b9ec60d3c617748e798721e9a7c005ee5cf8c5acb0da",
+      "sha256_after": "1ff09cb084a27f62ac27b9ec60d3c617748e798721e9a7c005ee5cf8c5acb0da",
+      "bytes_after": 6075
+    },
+    {
+      "path": "dashboard/components/admin.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "91e284efa5ebb5d2c7e1f01ae958855e569cc328701b9d20b7904d938741e817",
+      "sha256_after": "094df71c4078f387e99dcfa9f0c3946bbaebbd32c603bbdec2bcbb7ab7e3586c",
+      "bytes_after": 8812
+    },
+    {
+      "path": "dashboard/components/ai-connection.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a09d6c6c3239496a0bb985d349db7c577c208b4ffecac6a74d494bab94c4b5e8",
+      "sha256_after": "a09d6c6c3239496a0bb985d349db7c577c208b4ffecac6a74d494bab94c4b5e8",
+      "bytes_after": 3748
+    },
+    {
+      "path": "dashboard/components/avatar.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ff147f4337a939691bbff8d653bdd5823c7170210ad1afa70d256c66e0864315",
+      "sha256_after": "ff147f4337a939691bbff8d653bdd5823c7170210ad1afa70d256c66e0864315",
+      "bytes_after": 328
+    },
+    {
+      "path": "dashboard/components/brand.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "be18c5f1f9e825a4b01d07fb1bfd2d0a4cd87087388dcc030a71aba1da57374f",
+      "sha256_after": "be18c5f1f9e825a4b01d07fb1bfd2d0a4cd87087388dcc030a71aba1da57374f",
+      "bytes_after": 323
+    },
+    {
+      "path": "dashboard/components/campaign-send-review.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "31463350afead83230a0329d91e2a678a76e81ee2ee074bce7a3221285cf5f77",
+      "sha256_after": "11eecfb416d3221ea3bbb7b9e877983ea7b8f0ba753696d21804ac7393cb2fa2",
+      "bytes_after": 5428
+    },
+    {
+      "path": "dashboard/components/campaigns.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "1951ae43ef0f084cc3a449ddce7ebd0fc3747f216282eea5d8b7a6cb8003e7a5",
+      "sha256_after": "4c4e592d55fcfe2c2a6d09e3c690915f4a940838b6cb1cf3f663d53958279e06",
+      "bytes_after": 18710
+    },
+    {
+      "path": "dashboard/components/chat-history.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "3c0ad10cb798f95b118cd59a418c3ff16ba820d478be8d0ca46caa123f591b57",
+      "sha256_after": "3c0ad10cb798f95b118cd59a418c3ff16ba820d478be8d0ca46caa123f591b57",
+      "bytes_after": 2675
+    },
+    {
+      "path": "dashboard/components/chat-results.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "6dbb6e2b5aefb586238dfa32ea4f56ef3487768695b0095cec94b020f95d3111",
+      "sha256_after": "6dbb6e2b5aefb586238dfa32ea4f56ef3487768695b0095cec94b020f95d3111",
+      "bytes_after": 6821
+    },
+    {
+      "path": "dashboard/components/chat.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "dd922cf26cec6e077704244f43641b20aa24035be400300d69c4240db67b2450",
+      "sha256_after": "dd922cf26cec6e077704244f43641b20aa24035be400300d69c4240db67b2450",
+      "bytes_after": 16375
+    },
+    {
+      "path": "dashboard/components/connections.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "b3f8d5e9be902cbbf2424c017f972a9537ce2aaa1d22a17dbf5f095b6447e8b4",
+      "sha256_after": "b3f8d5e9be902cbbf2424c017f972a9537ce2aaa1d22a17dbf5f095b6447e8b4",
+      "bytes_after": 13020
+    },
+    {
+      "path": "dashboard/components/contacts.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a67c5b5ea24946556420bb874b2c7bcc6958dfd8b9cc564473989836a980a399",
+      "sha256_after": "ee752e5416f60720de9ac5aec4b78e167dab666fd854bf1f3e676e14f831063f",
+      "bytes_after": 19369
+    },
+    {
+      "path": "dashboard/components/discovery-email-review.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "f9e5d2986c1752bff30caae7ee770c4b3d143942646437a72f8bec5d02fbbd14",
+      "sha256_after": "f9e5d2986c1752bff30caae7ee770c4b3d143942646437a72f8bec5d02fbbd14",
+      "bytes_after": 5432
+    },
+    {
+      "path": "dashboard/components/discovery-live.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a997a8f454c3279e4e2a1d8e61e01c3773a15fe3cd09f0b665d46d56f95e1ad2",
+      "sha256_after": "a997a8f454c3279e4e2a1d8e61e01c3773a15fe3cd09f0b665d46d56f95e1ad2",
+      "bytes_after": 14275
+    },
+    {
+      "path": "dashboard/components/email-preview.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ccd90b22c62fc574cf8bf5dba44a830028351335a5bcc1da0f6b4ee8384ce774",
+      "sha256_after": "ccd90b22c62fc574cf8bf5dba44a830028351335a5bcc1da0f6b4ee8384ce774",
+      "bytes_after": 3689
+    },
+    {
+      "path": "dashboard/components/employee-row.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "3439ada266bc2d86f5bbc2f1065022bd950933eea0738576c283853011b58c3d",
+      "sha256_after": "3439ada266bc2d86f5bbc2f1065022bd950933eea0738576c283853011b58c3d",
+      "bytes_after": 2485
+    },
+    {
+      "path": "dashboard/components/find-leads.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "190d638e8569e2226e3806213d356a38bb97566d801017b607e4904e411c98c7",
+      "sha256_after": "190d638e8569e2226e3806213d356a38bb97566d801017b607e4904e411c98c7",
+      "bytes_after": 11162
+    },
+    {
+      "path": "dashboard/components/home-summary.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "580f0c48f2ad2365b6cd5967464d4574deb3a027e8f38f06dcf6918081243653",
+      "sha256_after": "580f0c48f2ad2365b6cd5967464d4574deb3a027e8f38f06dcf6918081243653",
+      "bytes_after": 8074
+    },
+    {
+      "path": "dashboard/components/icon.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "552b2af13e86df2573c1ad793ace39f2e989a809ed22c02e0b2c276b2e721b51",
+      "sha256_after": "552b2af13e86df2573c1ad793ace39f2e989a809ed22c02e0b2c276b2e721b51",
+      "bytes_after": 3089
+    },
+    {
+      "path": "dashboard/components/inbox.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "354c1b7273a672a1766dc0c8b5ac21634f59c49cd794ecc65f672fe1c8b5c21a",
+      "sha256_after": "354c1b7273a672a1766dc0c8b5ac21634f59c49cd794ecc65f672fe1c8b5c21a",
+      "bytes_after": 7232
+    },
+    {
+      "path": "dashboard/components/lead-detail.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "587140d6d2e25c5d749a4650c73c98b256c7c3b0f7f4a91a61d1a26538cf4ba6",
+      "sha256_after": "587140d6d2e25c5d749a4650c73c98b256c7c3b0f7f4a91a61d1a26538cf4ba6",
+      "bytes_after": 8810
+    },
+    {
+      "path": "dashboard/components/lead-links.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "34d8a0edcb8f63fa4bea21c5b3be1d0ac7791aca9bfdd8b4543342138a437594",
+      "sha256_after": "34d8a0edcb8f63fa4bea21c5b3be1d0ac7791aca9bfdd8b4543342138a437594",
+      "bytes_after": 614
+    },
+    {
+      "path": "dashboard/components/lead-timeline.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "06e81f73ea4cb36fbc1f5d816c3bcd9926a6e89524e3436320a1c7294304202e",
+      "sha256_after": "f4a4ff27ffe28dfac4ae8e4bdb76bfb146874b7a412f2e28b08a7f55dadc2c54",
+      "bytes_after": 7428
+    },
+    {
+      "path": "dashboard/components/onboarding.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "9c03ac46794ca7f520a29483d59ae09fd25ff601906f5ce19eaa3d8b9862a6e9",
+      "sha256_after": "9c03ac46794ca7f520a29483d59ae09fd25ff601906f5ce19eaa3d8b9862a6e9",
+      "bytes_after": 4915
+    },
+    {
+      "path": "dashboard/components/outreach-review.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "55c76d5d94b0a82a1bb9ec59f6c00c92c50943ba65046c1f61aa8f0756273811",
+      "sha256_after": "628e63bb2ae35b4fdf8e5eeec9d8ee8c6f54a573d1c40370aec9029c542a4e53",
+      "bytes_after": 6916
+    },
+    {
+      "path": "dashboard/components/overview.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "fca460b345800592f72e1b12d760ef0136a72d5aed6f1c8802a972c0f574f815",
+      "sha256_after": "fca460b345800592f72e1b12d760ef0136a72d5aed6f1c8802a972c0f574f815",
+      "bytes_after": 14424
+    },
+    {
+      "path": "dashboard/components/password.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "bd5b4a599c6862ee2088d706a41d8c37e33205928b75124d737195b667615366",
+      "sha256_after": "bd5b4a599c6862ee2088d706a41d8c37e33205928b75124d737195b667615366",
+      "bytes_after": 3119
+    },
+    {
+      "path": "dashboard/components/secret-input.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "833db21da3f95249d044865a59804caa956c1a3f9620d670d65e5cbb15ac06a6",
+      "sha256_after": "833db21da3f95249d044865a59804caa956c1a3f9620d670d65e5cbb15ac06a6",
+      "bytes_after": 1589
+    },
+    {
+      "path": "dashboard/components/sending.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "0e7333edc1305450354ea03811b3d5e7439744e36826fcfe50cf09d86f7bb826",
+      "sha256_after": "0e7333edc1305450354ea03811b3d5e7439744e36826fcfe50cf09d86f7bb826",
+      "bytes_after": 6061
+    },
+    {
+      "path": "dashboard/components/settings-data.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "153df2fe27298e82d242b3a0333903ae47be1cecc2eb330377d0e7d602b1773e",
+      "sha256_after": "153df2fe27298e82d242b3a0333903ae47be1cecc2eb330377d0e7d602b1773e",
+      "bytes_after": 2857
+    },
+    {
+      "path": "dashboard/components/settings-editor.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "410449f0a88b27991f1f5e1e9abce46cc238f68296f8aedfdc6bf743e52101c1",
+      "sha256_after": "410449f0a88b27991f1f5e1e9abce46cc238f68296f8aedfdc6bf743e52101c1",
+      "bytes_after": 6701
+    },
+    {
+      "path": "dashboard/components/settings-test.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "f0c161c80b35c8846096b3b07acff80808bffb68b2fa9a183cbe8eb5280fb08f",
+      "sha256_after": "f0c161c80b35c8846096b3b07acff80808bffb68b2fa9a183cbe8eb5280fb08f",
+      "bytes_after": 3948
+    },
+    {
+      "path": "dashboard/components/settings.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "64c6656670e6e4156003b83e50e46c872d5d4a35c4df5f6fd85edf414a7bd40b",
+      "sha256_after": "64c6656670e6e4156003b83e50e46c872d5d4a35c4df5f6fd85edf414a7bd40b",
+      "bytes_after": 4185
+    },
+    {
+      "path": "dashboard/components/setup-audience.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "4ee5cf1ede34950d8595636e768e526e586851166f1ce952aaafa0764f952764",
+      "sha256_after": "4ee5cf1ede34950d8595636e768e526e586851166f1ce952aaafa0764f952764",
+      "bytes_after": 6332
+    },
+    {
+      "path": "dashboard/components/setup-connection-check.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "232efb01bb257ed8af0787465ee9693bbe39f5fbe7dec8a6d5ee72ce4fe1c4cc",
+      "sha256_after": "232efb01bb257ed8af0787465ee9693bbe39f5fbe7dec8a6d5ee72ce4fe1c4cc",
+      "bytes_after": 2302
+    },
+    {
+      "path": "dashboard/components/setup-mailbox.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e387b33fd2109686780fe0699ed9f8dca6230095ffafeb6ae28d653360ad033a",
+      "sha256_after": "e387b33fd2109686780fe0699ed9f8dca6230095ffafeb6ae28d653360ad033a",
+      "bytes_after": 2798
+    },
+    {
+      "path": "dashboard/components/setup-profile.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "31e95c9a0008b700c199c686d7380d8c4ac383d643c6830f9ee10bf930ec76f4",
+      "sha256_after": "31e95c9a0008b700c199c686d7380d8c4ac383d643c6830f9ee10bf930ec76f4",
+      "bytes_after": 5028
+    },
+    {
+      "path": "dashboard/components/setup-tools.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "72493eb60866f693f6ed917bd30571bcd9d8948dfb2fcb3ebc0aa4014cda6835",
+      "sha256_after": "72493eb60866f693f6ed917bd30571bcd9d8948dfb2fcb3ebc0aa4014cda6835",
+      "bytes_after": 2938
+    },
+    {
+      "path": "dashboard/components/sidebar.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "3d11cfb50fb0fb0b6fac50ccfce3e8c0be3e9b10da8dc09a6b279de57c573f8f",
+      "sha256_after": "3d11cfb50fb0fb0b6fac50ccfce3e8c0be3e9b10da8dc09a6b279de57c573f8f",
+      "bytes_after": 5759
+    },
+    {
+      "path": "dashboard/components/suppression-form.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "cf13cbe442e9ab871bb18e1e914d2fb8314f5ffd2c973126b9bb7943727fe3e9",
+      "sha256_after": "cf13cbe442e9ab871bb18e1e914d2fb8314f5ffd2c973126b9bb7943727fe3e9",
+      "bytes_after": 2349
+    },
+    {
+      "path": "dashboard/components/target-editor.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a2a9cc1571bf4474b8e23d62b8a8221c72722b03eec50e77883d00aab23e7462",
+      "sha256_after": "a2a9cc1571bf4474b8e23d62b8a8221c72722b03eec50e77883d00aab23e7462",
+      "bytes_after": 3981
+    },
+    {
+      "path": "dashboard/components/tour.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "9f5663ad70b6fac3984ecda615fce36fd5c132bd5a02514e6707e505868c6b2b",
+      "sha256_after": "ce5b6ebaaeb302ee3cd7fd39a1de11c48925c1780437df0855b84bd1ba2e73d7",
+      "bytes_after": 3974
+    },
+    {
+      "path": "dashboard/components/workspace-records.tsx",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "f4a8ad02e3b8dff32a2fa2e59ab2014cdccf737e270110862f759eb8172ea283",
+      "sha256_after": "f4a8ad02e3b8dff32a2fa2e59ab2014cdccf737e270110862f759eb8172ea283",
+      "bytes_after": 11397
+    },
+    {
+      "path": "dashboard/lib/activity.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ec33b566152a845de978b75e8c14c5cf1f56b9d9edc608de322bbb4f6967bb8b",
+      "sha256_after": "ec33b566152a845de978b75e8c14c5cf1f56b9d9edc608de322bbb4f6967bb8b",
+      "bytes_after": 523
+    },
+    {
+      "path": "dashboard/lib/auth.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "43c28db57ce29dc25ef256c7369ab86e80fa0947c57909dfa72d2454d8cfda98",
+      "sha256_after": "9b727fef019a5be3feac7733ff7d18bec43bc74d9865e933935bb62349764a5f",
+      "bytes_after": 2735
+    },
+    {
+      "path": "dashboard/lib/chat.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "4fe2b2f47a423f4ada42af870b9e1eddb048b8a35b6f8d2851dca0f546471b84",
+      "sha256_after": "4fe2b2f47a423f4ada42af870b9e1eddb048b8a35b6f8d2851dca0f546471b84",
+      "bytes_after": 836
+    },
+    {
+      "path": "dashboard/lib/client-api.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "1ff9352df4164f576c0ee110de010640c4c4614842066771c977780685b72a53",
+      "sha256_after": "1ff9352df4164f576c0ee110de010640c4c4614842066771c977780685b72a53",
+      "bytes_after": 572
+    },
+    {
+      "path": "dashboard/lib/connection-settings.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ac71656b784c3e966a613af4e755c74fb1238dd0464c89d78a2bc13ab6a7991f",
+      "sha256_after": "ac71656b784c3e966a613af4e755c74fb1238dd0464c89d78a2bc13ab6a7991f",
+      "bytes_after": 1975
+    },
+    {
+      "path": "dashboard/lib/discovery.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "c8e9378040119c96b7041f5827da5e5a58a29fcc33c5b16be03b7f715859b983",
+      "sha256_after": "c8e9378040119c96b7041f5827da5e5a58a29fcc33c5b16be03b7f715859b983",
+      "bytes_after": 3082
+    },
+    {
+      "path": "dashboard/lib/leads.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a6c0b3cad301479e6f086c1e26b4ac66d893a6c4cfaf73241bf8e637aba2b029",
+      "sha256_after": "c304a8bc16781ec3003926e20ffc81998b5516347b822db2ccd265d8674f87c2",
+      "bytes_after": 2505
+    },
+    {
+      "path": "dashboard/lib/outreach.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "add2fc382b09d55890ad94d212617a205fa85c8e3c9350d90b109af66d033d4e",
+      "sha256_after": "add2fc382b09d55890ad94d212617a205fa85c8e3c9350d90b109af66d033d4e",
+      "bytes_after": 1044
+    },
+    {
+      "path": "dashboard/lib/session.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "31e4590538456489f0a6bf8d932322f2339c937dbd9cd7b0679a4f7f9085392c",
+      "sha256_after": "31e4590538456489f0a6bf8d932322f2339c937dbd9cd7b0679a4f7f9085392c",
+      "bytes_after": 244
+    },
+    {
+      "path": "dashboard/lib/setup-wizard.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "7772237032ef2942ed1ed9170d033b5124ad0218caffc91ed0a96d1059d9b4f8",
+      "sha256_after": "7772237032ef2942ed1ed9170d033b5124ad0218caffc91ed0a96d1059d9b4f8",
+      "bytes_after": 3952
+    },
+    {
+      "path": "dashboard/lib/use-setup-wizard.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "2c878d177c06fecdaae49e48be654c2bbe0c70217d6a85e06a86d2e54e51ae64",
+      "sha256_after": "f793793a22a77ad555d6a6a77c1dac8b098e4d577418272f5bfc1d663b24f343",
+      "bytes_after": 7369
+    },
+    {
+      "path": "dashboard/lib/use-stored-data.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "f94b29d4e11b57ca8aa4318bf737eec3dd72407591c4fb46b8408456640aad17",
+      "sha256_after": "f94b29d4e11b57ca8aa4318bf737eec3dd72407591c4fb46b8408456640aad17",
+      "bytes_after": 1375
+    },
+    {
+      "path": "dashboard/lib/workspace-settings.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "0ead22abcbf95b184cd5d19a5d7d7344c0dff42a83af99170a48539259a8905c",
+      "sha256_after": "0ead22abcbf95b184cd5d19a5d7d7344c0dff42a83af99170a48539259a8905c",
+      "bytes_after": 3670
+    },
+    {
+      "path": "dashboard/next-env.d.ts",
+      "category": "generated",
+      "status": "excluded",
+      "reason": "Generated declarations/cache/lockfile or empty data-directory marker; lockfile consistency verified by dependency tooling, not manual dependency-by-dependency source review.",
+      "existed_at_baseline": true,
+      "sha256_before": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc",
+      "sha256_after": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc",
+      "bytes_after": 296
+    },
+    {
+      "path": "dashboard/next.config.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "93c7682978d373c1d579da962205d3769b4485240bdb9cc282a80c92bf3059d1",
+      "sha256_after": "93c7682978d373c1d579da962205d3769b4485240bdb9cc282a80c92bf3059d1",
+      "bytes_after": 540
+    },
+    {
+      "path": "dashboard/package-lock.json",
+      "category": "generated",
+      "status": "excluded",
+      "reason": "Generated declarations/cache/lockfile or empty data-directory marker; lockfile consistency verified by dependency tooling, not manual dependency-by-dependency source review.",
+      "existed_at_baseline": true,
+      "sha256_before": "f7940e24673a9970e9b5b75d98fd1702346714abed059e95355d29bfce01f40b",
+      "sha256_after": "6f344dce3c31600f061623ba861bdc2af572bd72bdd34ea8bcf53161cf42a69d",
+      "bytes_after": 92836
+    },
+    {
+      "path": "dashboard/package.json",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "9fd20a2f435453739e463fe511d49038316a901c8732c4e8204b8e38aa1051b0",
+      "sha256_after": "36bcacf0a7d513f0e962cf6e3ac16f694728592371d1e720967703a29989dc6b",
+      "bytes_after": 656
+    },
+    {
+      "path": "dashboard/proxy.ts",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "525966ed327e60859fd45633066d5cd422ae9896da95a00a1374a9978c891f06",
+      "sha256_after": "525966ed327e60859fd45633066d5cd422ae9896da95a00a1374a9978c891f06",
+      "bytes_after": 1111
+    },
+    {
+      "path": "dashboard/public/favicon.svg",
+      "category": "asset",
+      "status": "excluded",
+      "reason": "Existing binary/vector brand or demo asset; no requested asset edit. Product rendering checked visually.",
+      "existed_at_baseline": true,
+      "sha256_before": "a87ce38df36ebea6f5f84530fced5ecf4ef7598415524db2123365570a91aa6f",
+      "sha256_after": "a87ce38df36ebea6f5f84530fced5ecf4ef7598415524db2123365570a91aa6f",
+      "bytes_after": 280
+    },
+    {
+      "path": "dashboard/README.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "d2153cf5ea89cb16bb5846c3babccdd76bfcdb4da98ffd71f828f934a9bd810e",
+      "sha256_after": "ea38522d45de041a60069575d7add235717811fc18c166d513ca5253715fe483",
+      "bytes_after": 3238
+    },
+    {
+      "path": "dashboard/tests/fixtures.ts",
+      "category": "test",
+      "status": "inspected_and_executed",
+      "reason": "New regression/control tests and fixtures were authored and inspected; their full suites passed with ten repetitions.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "701dce13f9be4961ea9c1936a242841733caf73217ccf14bdbf9b8ab69f3fde0",
+      "bytes_after": 2368
+    },
+    {
+      "path": "dashboard/tests/remaining-controls.test.tsx",
+      "category": "test",
+      "status": "inspected_and_executed",
+      "reason": "New regression/control tests and fixtures were authored and inspected; their full suites passed with ten repetitions.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "334b4a0bc8886bf91220775058d64de2501f8df0d029946daace14941870393e",
+      "bytes_after": 9482
+    },
+    {
+      "path": "dashboard/tests/request-origin.test.ts",
+      "category": "test",
+      "status": "inspected_and_executed",
+      "reason": "New regression/control tests and fixtures were authored and inspected; their full suites passed with ten repetitions.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "a3aff53ab5324126bf4e1ed06259116cc9b2845655564f6a07769b7e6567210c",
+      "bytes_after": 2115
+    },
+    {
+      "path": "dashboard/tests/review-controls.test.tsx",
+      "category": "test",
+      "status": "inspected_and_executed",
+      "reason": "New regression/control tests and fixtures were authored and inspected; their full suites passed with ten repetitions.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "d2e3aaf35b19d7405d7f1806ff350bdd16f1065d23fee509c0b2da94eb5fc99f",
+      "bytes_after": 13987
+    },
+    {
+      "path": "dashboard/tests/setup.tsx",
+      "category": "test",
+      "status": "inspected_and_executed",
+      "reason": "New regression/control tests and fixtures were authored and inspected; their full suites passed with ten repetitions.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "153bed2bab77e9c5afe1a3045571278837e5c53cae5771cb949072bb9007c318",
+      "bytes_after": 561
+    },
+    {
+      "path": "dashboard/tests/workspace-controls.test.tsx",
+      "category": "test",
+      "status": "inspected_and_executed",
+      "reason": "New regression/control tests and fixtures were authored and inspected; their full suites passed with ten repetitions.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "8cbdc6795d74a2fa5d04d30f558f2957cd6f2cb71542b481353f93c45d6af86e",
+      "bytes_after": 18055
+    },
+    {
+      "path": "dashboard/tsconfig.json",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "fc03f713da39db06cbed0b234babdb94547eea9eda6b65ea6ad87cb73e8ef2f8",
+      "sha256_after": "fc03f713da39db06cbed0b234babdb94547eea9eda6b65ea6ad87cb73e8ef2f8",
+      "bytes_after": 699
+    },
+    {
+      "path": "dashboard/tsconfig.tsbuildinfo",
+      "category": "generated",
+      "status": "excluded",
+      "reason": "Generated compiler cache; verified through TypeScript checking, excluded from manual source inspection. Final hash omitted because normal development/type-check runs update this cache.",
+      "existed_at_baseline": true,
+      "sha256_before": "3fbd6c2a9e02d282de7329fd877deb7ea04978f8992013182f03c92991205c28",
+      "sha256_after": null,
+      "bytes_after": 146072
+    },
+    {
+      "path": "dashboard/vitest.config.mts",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "24c0c67ba5fd0a638385ede553eb609c0a5d51e235e216e4f7a95ecee75559dd",
+      "bytes_after": 413
+    },
+    {
+      "path": "data/.gitkeep",
+      "category": "generated",
+      "status": "excluded",
+      "reason": "Generated declarations/cache/lockfile or empty data-directory marker; lockfile consistency verified by dependency tooling, not manual dependency-by-dependency source review.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "docs/automatic-followups.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "3da91ba1207394364290a5119496ffd5a2090f3b7c24108dba0e478b57cd198d",
+      "bytes_after": 4395
+    },
+    {
+      "path": "docs/chat-orchestrator.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "8b9c1e61399b1c6c17d1aab94fcf9e94e3f53e44017a894107e55c3d8e343cbf",
+      "sha256_after": "8b9c1e61399b1c6c17d1aab94fcf9e94e3f53e44017a894107e55c3d8e343cbf",
+      "bytes_after": 12928
+    },
+    {
+      "path": "docs/dashboard.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "b5b02572647db5ee8240a4b194b3ae42bfad802d5dfc2cb4293de9d2d6a65f7c",
+      "sha256_after": "b5b02572647db5ee8240a4b194b3ae42bfad802d5dfc2cb4293de9d2d6a65f7c",
+      "bytes_after": 9908
+    },
+    {
+      "path": "docs/demo.gif",
+      "category": "asset",
+      "status": "excluded",
+      "reason": "Existing binary/vector brand or demo asset; no requested asset edit. Product rendering checked visually.",
+      "existed_at_baseline": true,
+      "sha256_before": "e36103826d8984211e4d880e8234ddf355d52d13ffddfce138d531ca77af91d6",
+      "sha256_after": "e36103826d8984211e4d880e8234ddf355d52d13ffddfce138d531ca77af91d6",
+      "bytes_after": 7296595
+    },
+    {
+      "path": "docs/deployment.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "6b6d6d4482412a20b50ea9a556154b320cb57507f92c9fae71a630d98897addf",
+      "sha256_after": "6b6d6d4482412a20b50ea9a556154b320cb57507f92c9fae71a630d98897addf",
+      "bytes_after": 8072
+    },
+    {
+      "path": "docs/docker.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "056eee68dec1117dc83f877cf0778cecbe07dbe682c555d8462c59210c2577a0",
+      "sha256_after": "056eee68dec1117dc83f877cf0778cecbe07dbe682c555d8462c59210c2577a0",
+      "bytes_after": 1452
+    },
+    {
+      "path": "docs/leadzen-logo.svg",
+      "category": "asset",
+      "status": "excluded",
+      "reason": "Existing binary/vector brand or demo asset; no requested asset edit. Product rendering checked visually.",
+      "existed_at_baseline": true,
+      "sha256_before": "01dc1598aee74223bb960ac0f8b7113c079608d51b12523fc67c0bc23666d93e",
+      "sha256_after": "01dc1598aee74223bb960ac0f8b7113c079608d51b12523fc67c0bc23666d93e",
+      "bytes_after": 758
+    },
+    {
+      "path": "docs/local-validation.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "ddfb52048b97e5021667ebb522faf729bce10020f0c6f81e99d0ff87101b1158",
+      "sha256_after": "ddfb52048b97e5021667ebb522faf729bce10020f0c6f81e99d0ff87101b1158",
+      "bytes_after": 55212
+    },
+    {
+      "path": "docs/logo.png",
+      "category": "asset",
+      "status": "excluded",
+      "reason": "Existing binary/vector brand or demo asset; no requested asset edit. Product rendering checked visually.",
+      "existed_at_baseline": true,
+      "sha256_before": "18d9ffa24a1e4eeb44f330020facacd607028e40749adf375e9714b05558ead2",
+      "sha256_after": "18d9ffa24a1e4eeb44f330020facacd607028e40749adf375e9714b05558ead2",
+      "bytes_after": 99129
+    },
+    {
+      "path": "docs/new-chat-handoff-2026-10-02.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "576623996504566618c30b54b90dcd8680811c16e7b4eba305ddd4f1322f202b",
+      "sha256_after": "576623996504566618c30b54b90dcd8680811c16e7b4eba305ddd4f1322f202b",
+      "bytes_after": 31194
+    },
+    {
+      "path": "docs/production-readiness-audit-2026-10-02.md",
+      "category": "audit_artifact",
+      "status": "generated_audit_artifact",
+      "reason": "Output of this audit, not an input source module. JSON artifact hashes omitted to avoid circular self-reference.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "91470442de091b66a7c128a6f4362516b0d71b5576650c574a93992cd6917d22",
+      "bytes_after": 25899
+    },
+    {
+      "path": "docs/production-readiness-inventory-2026-10-02.json",
+      "category": "audit_artifact",
+      "status": "generated_audit_artifact",
+      "reason": "Output of this audit, not an input source module. JSON artifact hashes omitted to avoid circular self-reference.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": null,
+      "bytes_after": null
+    },
+    {
+      "path": "docs/production-readiness-results-2026-10-02.json",
+      "category": "audit_artifact",
+      "status": "generated_audit_artifact",
+      "reason": "Output of this audit, not an input source module. JSON artifact hashes omitted to avoid circular self-reference.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": null,
+      "bytes_after": null
+    },
+    {
+      "path": "leadzen/__init__.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "leadzen/__main__.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "09f786943c908a9dabfb65362311d22027d1a0a6d54b7505434d3e58d8550e05",
+      "sha256_after": "09f786943c908a9dabfb65362311d22027d1a0a6d54b7505434d3e58d8550e05",
+      "bytes_after": 10195
+    },
+    {
+      "path": "leadzen/accounts/__init__.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "leadzen/accounts/apps.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a00703325d261d2a0dcdd68a3124ed329c1e2aa4749c2f570a74e3d41cc819bb",
+      "sha256_after": "a00703325d261d2a0dcdd68a3124ed329c1e2aa4749c2f570a74e3d41cc819bb",
+      "bytes_after": 168
+    },
+    {
+      "path": "leadzen/accounts/invitations.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "db4b3f281a45fd9d3a3171af70216b9ae6deb832bee0513b5699737d0f48aeab",
+      "sha256_after": "db4b3f281a45fd9d3a3171af70216b9ae6deb832bee0513b5699737d0f48aeab",
+      "bytes_after": 6841
+    },
+    {
+      "path": "leadzen/accounts/management/__init__.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "leadzen/accounts/management/commands/__init__.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "leadzen/accounts/management/commands/bootstrap_admin.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "158ff4fd37714623d9b721b439a7710a3c4ab2a699ff616c67acd41af12649e2",
+      "sha256_after": "158ff4fd37714623d9b721b439a7710a3c4ab2a699ff616c67acd41af12649e2",
+      "bytes_after": 1286
+    },
+    {
+      "path": "leadzen/accounts/migrations/__init__.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "leadzen/accounts/migrations/0001_initial.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "9d2e481ea6cf40faa8007b76b82603fbf218e2159c434bb13202f8b5eca0f0a0",
+      "sha256_after": "9d2e481ea6cf40faa8007b76b82603fbf218e2159c434bb13202f8b5eca0f0a0",
+      "bytes_after": 2703
+    },
+    {
+      "path": "leadzen/accounts/migrations/0002_accountprofile_tour_completed_at_employeeinvitation.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "c420672f1e51e1ba6c8414918dd57075bc05fcf7cdbbfa4230e6da58ac51d470",
+      "sha256_after": "c420672f1e51e1ba6c8414918dd57075bc05fcf7cdbbfa4230e6da58ac51d470",
+      "bytes_after": 1619
+    },
+    {
+      "path": "leadzen/accounts/models.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "62667a290a4718f194a17c1e18ff671530b3e127b6482d24c34b3361d98c90e8",
+      "sha256_after": "62667a290a4718f194a17c1e18ff671530b3e127b6482d24c34b3361d98c90e8",
+      "bytes_after": 2400
+    },
+    {
+      "path": "leadzen/accounts/service.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "1b2f3908acec756e9c5cfbd6a218ce368808f46935e309a8e70ca81dd074c742",
+      "sha256_after": "1b2f3908acec756e9c5cfbd6a218ce368808f46935e309a8e70ca81dd074c742",
+      "bytes_after": 7762
+    },
+    {
+      "path": "leadzen/accounts/views.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "9568a57a688f847a2c064997032cf4b710809d6aa4605f38f2dc2d3bc0f61dc3",
+      "sha256_after": "b7efd21471e85f8216e90ce802e5089f0ddc5782891d45f87b2d392dafb598b6",
+      "bytes_after": 13191
+    },
+    {
+      "path": "leadzen/activity.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "7b11210725ddc4f502b759b6088837e924935cd06827fbabde540a24fc232409",
+      "sha256_after": "7b11210725ddc4f502b759b6088837e924935cd06827fbabde540a24fc232409",
+      "bytes_after": 10017
+    },
+    {
+      "path": "leadzen/ai.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "2caf7a6821e279858bd6571f7e063a24308a656152371fca98dca52d07ab8d25",
+      "sha256_after": "2caf7a6821e279858bd6571f7e063a24308a656152371fca98dca52d07ab8d25",
+      "bytes_after": 6486
+    },
+    {
+      "path": "leadzen/branding.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "1400695ac48737050ee14d85b53bc9ad919058ac4708a07b7c44e92e57c8e2d8",
+      "sha256_after": "1400695ac48737050ee14d85b53bc9ad919058ac4708a07b7c44e92e57c8e2d8",
+      "bytes_after": 1858
+    },
+    {
+      "path": "leadzen/campaigns.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "7b9c1b435e82e1426bc911a29a2aca219a9f1f06bc1a1fc09e35bc5e5ec2dae5",
+      "sha256_after": "40214beb1079b3b52467e34984c472b60cf33fae3c587f7d0100646475dfd753",
+      "bytes_after": 27081
+    },
+    {
+      "path": "leadzen/chat_worker.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "876e58240a84eff674316857ec95c4519282f62b2943b72bba280bd1beb7cf28",
+      "sha256_after": "876e58240a84eff674316857ec95c4519282f62b2943b72bba280bd1beb7cf28",
+      "bytes_after": 842
+    },
+    {
+      "path": "leadzen/chat/__init__.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "1e2c372b3e7bfd9d74c66b046569b8343400b725c27056f0ecbb9f0bd0ccb1a3",
+      "sha256_after": "1e2c372b3e7bfd9d74c66b046569b8343400b725c27056f0ecbb9f0bd0ccb1a3",
+      "bytes_after": 61
+    },
+    {
+      "path": "leadzen/chat/engine.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "b99c33ce86b5123811ee6ad6f69f18d8a886df1cf1db3c6e277c97aea266c0f0",
+      "sha256_after": "b99c33ce86b5123811ee6ad6f69f18d8a886df1cf1db3c6e277c97aea266c0f0",
+      "bytes_after": 29462
+    },
+    {
+      "path": "leadzen/chat/views.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ce3ef4395535f9f8b76d117628c34d523e8e19a4ad3cb74a6a626b6d46b49e04",
+      "sha256_after": "ce3ef4395535f9f8b76d117628c34d523e8e19a4ad3cb74a6a626b6d46b49e04",
+      "bytes_after": 9788
+    },
+    {
+      "path": "leadzen/config/__init__.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "leadzen/config/apps.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "84434a614f6fe09d6209486f1c95ca5c90c85c4709b6a0d9f5e3aa03a0fac7c2",
+      "sha256_after": "84434a614f6fe09d6209486f1c95ca5c90c85c4709b6a0d9f5e3aa03a0fac7c2",
+      "bytes_after": 523
+    },
+    {
+      "path": "leadzen/config/migrations/__init__.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_after": 0
+    },
+    {
+      "path": "leadzen/config/migrations/0001_initial.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "539bd513698b141e778983b0b7b68e158aaa04db7a7c09684a707564876b5f3b",
+      "sha256_after": "539bd513698b141e778983b0b7b68e158aaa04db7a7c09684a707564876b5f3b",
+      "bytes_after": 3408
+    },
+    {
+      "path": "leadzen/config/migrations/0002_rename_operator_country_code.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "4f3409e66acf750649a188a952e6d892ea5d011a1933819c8f514adc72dc2384",
+      "sha256_after": "4f3409e66acf750649a188a952e6d892ea5d011a1933819c8f514adc72dc2384",
+      "bytes_after": 382
+    },
+    {
+      "path": "leadzen/config/migrations/0003_outreachjob.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "90192974bc4f8421bd98e47ccfb295f81ccdf80947c748a93715f6fb1100400b",
+      "sha256_after": "90192974bc4f8421bd98e47ccfb295f81ccdf80947c748a93715f6fb1100400b",
+      "bytes_after": 1704
+    },
+    {
+      "path": "leadzen/config/migrations/0004_runtimesettings.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "0800fbf1ab2d20110a303f94b5492f55939f090300cf30e1fb707d6a2fbbb4bb",
+      "sha256_after": "0800fbf1ab2d20110a303f94b5492f55939f090300cf30e1fb707d6a2fbbb4bb",
+      "bytes_after": 1607
+    },
+    {
+      "path": "leadzen/config/migrations/0005_emailcampaign_outreachjob_campaign_id_and_more.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "36d47c05a6b768252e824ce22fc18008a63c48e837921cb4e6df691721d98331",
+      "sha256_after": "36d47c05a6b768252e824ce22fc18008a63c48e837921cb4e6df691721d98331",
+      "bytes_after": 3476
+    },
+    {
+      "path": "leadzen/config/migrations/0006_chatthread_chatmessage_chatrun.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "b11e47bc03a39d35301e0e18cc96da00b1bdbdf7cdf36c12ce69a61101fb1498",
+      "sha256_after": "b11e47bc03a39d35301e0e18cc96da00b1bdbdf7cdf36c12ce69a61101fb1498",
+      "bytes_after": 3019
+    },
+    {
+      "path": "leadzen/config/migrations/0007_chatrun_deadline_at_chatrun_model_requests.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "510066493b6cb9ffa64b8335fed8c255db5880f80e33b324d371b6d1539ccd5a",
+      "sha256_after": "510066493b6cb9ffa64b8335fed8c255db5880f80e33b324d371b6d1539ccd5a",
+      "bytes_after": 593
+    },
+    {
+      "path": "leadzen/config/migrations/0008_contactpreferences_deleted_at.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "18d22e3ff24daf241e7e30fc8840e86b280fcbced808df1db57432917a9d8e27",
+      "sha256_after": "18d22e3ff24daf241e7e30fc8840e86b280fcbced808df1db57432917a9d8e27",
+      "bytes_after": 378
+    },
+    {
+      "path": "leadzen/config/migrations/0009_onboardingstate.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "30e59bb4b5ebdcd86caf06782e34d6fe30a7826fda4972a47b65f53b9a149754",
+      "sha256_after": "30e59bb4b5ebdcd86caf06782e34d6fe30a7826fda4972a47b65f53b9a149754",
+      "bytes_after": 700
+    },
+    {
+      "path": "leadzen/config/migrations/0010_discovery_progress.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "5ce100ed3c81dd562f79a71f8d35ac811587d2ebd1c3396b94f2fd912fe0d25c",
+      "sha256_after": "5ce100ed3c81dd562f79a71f8d35ac811587d2ebd1c3396b94f2fd912fe0d25c",
+      "bytes_after": 3535
+    },
+    {
+      "path": "leadzen/config/migrations/0011_crm_campaign_offer.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "9852bcab9086dc40edde6338c50be87d968b7b9276f32d95ee3d13709156427c",
+      "sha256_after": "9852bcab9086dc40edde6338c50be87d968b7b9276f32d95ee3d13709156427c",
+      "bytes_after": 1186
+    },
+    {
+      "path": "leadzen/config/migrations/0012_email_review.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": true,
+      "sha256_before": "2b9a05a47e532f828caf2c430307729c3bb807c8969a720e23f0719510ed8c7f",
+      "sha256_after": "2b9a05a47e532f828caf2c430307729c3bb807c8969a720e23f0719510ed8c7f",
+      "bytes_after": 2447
+    },
+    {
+      "path": "leadzen/config/migrations/0013_campaign_followup_approval.py",
+      "category": "migration",
+      "status": "inspected",
+      "reason": "Inspected migration operations and model compatibility; applied only to disposable test databases; drift check passed.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "4517db931c60c73d247d070116fb6f9e047caba49d9caeb4a4d8faeeb6356e85",
+      "bytes_after": 297
+    },
+    {
+      "path": "leadzen/config/models.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "22b0a6f9b95ae7f0538a54ccc821ad09da3f41501358028a792014ed5f5cd405",
+      "sha256_after": "57afbac89168034d1f7ffef02e8d567da84df0047a6e74fdd8c925bfc64fc749",
+      "bytes_after": 20376
+    },
+    {
+      "path": "leadzen/configuration.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "d7c7bd31cde3edec40d71306eceab34ec0f659263f19305277df421837b15843",
+      "sha256_after": "d7c7bd31cde3edec40d71306eceab34ec0f659263f19305277df421837b15843",
+      "bytes_after": 17146
+    },
+    {
+      "path": "leadzen/crm.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "4ea68fe14ae8193c2e2038cd1dfb0e72c344bd8cd4b027730a42be758e666f4f",
+      "sha256_after": "4ea68fe14ae8193c2e2038cd1dfb0e72c344bd8cd4b027730a42be758e666f4f",
+      "bytes_after": 13614
+    },
+    {
+      "path": "leadzen/discovery_progress.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "00d3e4134a815287afaf0d3b52f3e1338ef35cb56a5949a68b3ccb749ec68eb7",
+      "sha256_after": "00d3e4134a815287afaf0d3b52f3e1338ef35cb56a5949a68b3ccb749ec68eb7",
+      "bytes_after": 15800
+    },
+    {
+      "path": "leadzen/discovery.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "053f73752a1c8cd37c8bf17180fa2d78bfb7f2e05359f3b48b76b5a29e34402e",
+      "sha256_after": "053f73752a1c8cd37c8bf17180fa2d78bfb7f2e05359f3b48b76b5a29e34402e",
+      "bytes_after": 16180
+    },
+    {
+      "path": "leadzen/email_api.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "0b42fdedf9567f1d52221c18006d06c6c56bb8d97695d3b3ea842c345ea0625f",
+      "sha256_after": "0b42fdedf9567f1d52221c18006d06c6c56bb8d97695d3b3ea842c345ea0625f",
+      "bytes_after": 2454
+    },
+    {
+      "path": "leadzen/followups.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "6d6d390d7160e7bbaedbbb8f9f6b17816c7eb1a238c5c18a21028f0cc023518f",
+      "bytes_after": 4532
+    },
+    {
+      "path": "leadzen/home.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "1539a6d422cf5a2147583da114ea72641b7adb79098216d99942061994d4dc25",
+      "sha256_after": "1539a6d422cf5a2147583da114ea72641b7adb79098216d99942061994d4dc25",
+      "bytes_after": 5216
+    },
+    {
+      "path": "leadzen/mailboxes.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "79396a767a7de6c33fbf931d3c8892952862b2b6811cc473b24b8e0651442657",
+      "sha256_after": "79396a767a7de6c33fbf931d3c8892952862b2b6811cc473b24b8e0651442657",
+      "bytes_after": 4053
+    },
+    {
+      "path": "leadzen/outreach.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "98a31516d46b337a1a66f457e626be13440daa6f999da03ee056f309adb0be62",
+      "sha256_after": "b4f4aaf9fc22630634ffe32a72211928b72315af6ea1b166ada79d5e584d567b",
+      "bytes_after": 32261
+    },
+    {
+      "path": "leadzen/scheduler.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "8d0520528c9ae00d364b93bb03cd469b68f199ec34a490af4a89d1dbb8c6c46d",
+      "bytes_after": 3170
+    },
+    {
+      "path": "leadzen/settings.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "d37a1f78d785aa9fc9c0541a07842f0ab29472a4253294ab361cc806a7cce96d",
+      "sha256_after": "d37a1f78d785aa9fc9c0541a07842f0ab29472a4253294ab361cc806a7cce96d",
+      "bytes_after": 4885
+    },
+    {
+      "path": "leadzen/setup_wizard.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "bc8554f4fd5c6b8b6c3d4f7227272a3cb129e35868899016681419103e17ed9e",
+      "sha256_after": "bc8554f4fd5c6b8b6c3d4f7227272a3cb129e35868899016681419103e17ed9e",
+      "bytes_after": 20813
+    },
+    {
+      "path": "leadzen/suppression.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "38667d74b55c93f388ef8d0da47c86a17e3c2f8cf202249997a736d08c7fbe67",
+      "sha256_after": "38667d74b55c93f388ef8d0da47c86a17e3c2f8cf202249997a736d08c7fbe67",
+      "bytes_after": 1827
+    },
+    {
+      "path": "leadzen/timeline.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "c5c2d6172ce9545c17734c0f90f27e97a262a1cd7cc261d1dcc96945c11d2945",
+      "sha256_after": "c8d022aba87e8fac1231feb05e44e92be11a3a2f57e32e4f8f583b3b66392606",
+      "bytes_after": 4531
+    },
+    {
+      "path": "leadzen/transports.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "9ebda5328e3b6c89db9f84971bbbf11b5248fefd208062aa84c9ccef9781428f",
+      "sha256_after": "f9d0f7874004080f7cf6393f93ed1e87b4198b53dc4fb3438004d33e580c2267",
+      "bytes_after": 9849
+    },
+    {
+      "path": "leadzen/upgrade.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "f34c0e30f8605ff26f7f98a7061e7eceaed74de2e88783418b3e4e5d8f5cc079",
+      "sha256_after": "f34c0e30f8605ff26f7f98a7061e7eceaed74de2e88783418b3e4e5d8f5cc079",
+      "bytes_after": 2509
+    },
+    {
+      "path": "leadzen/urls.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "6ac442623f007f305c0b40054ba040ad9a4ea6047689da0882712bb243cd625b",
+      "sha256_after": "6ac442623f007f305c0b40054ba040ad9a4ea6047689da0882712bb243cd625b",
+      "bytes_after": 3110
+    },
+    {
+      "path": "leadzen/web_worker.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "6e0dbd0697a253ca6dd0380183a7d854e59e761b94f3b9df668959df88116693",
+      "sha256_after": "6e0dbd0697a253ca6dd0380183a7d854e59e761b94f3b9df668959df88116693",
+      "bytes_after": 4231
+    },
+    {
+      "path": "leadzen/web.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "21a4780249c309e1b7a2aede782f4aeb3d8b56419de99b99a06e80a5d9b14a8f",
+      "sha256_after": "8e589b7d812f8681798008f3e384839821e1b6e913496cc46f6239598d31100c",
+      "bytes_after": 20054
+    },
+    {
+      "path": "leadzen/wizard.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "86acf001dd843a4fb481772bfc609360ae8221bb210d0d7426f277123f8c8520",
+      "sha256_after": "86acf001dd843a4fb481772bfc609360ae8221bb210d0d7426f277123f8c8520",
+      "bytes_after": 16421
+    },
+    {
+      "path": "leadzen/workspace_settings.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "a23eb7a62d9690b31b48d33c9f6f4ad8751290673142f5af8f486ccbd6980763",
+      "sha256_after": "a23eb7a62d9690b31b48d33c9f6f4ad8751290673142f5af8f486ccbd6980763",
+      "bytes_after": 6947
+    },
+    {
+      "path": "leadzen/workspaces.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "0a84f315872fa8334ee257a456a56a428704de578bb6a11f5c94e479ca120937",
+      "sha256_after": "0a84f315872fa8334ee257a456a56a428704de578bb6a11f5c94e479ca120937",
+      "bytes_after": 5831
+    },
+    {
+      "path": "leadzen/wsgi.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "ac04f970a7f089fb1182be53d2214fff504cf99a156eca25b791fc1cfb1a1e7e",
+      "sha256_after": "ac04f970a7f089fb1182be53d2214fff504cf99a156eca25b791fc1cfb1a1e7e",
+      "bytes_after": 168
+    },
+    {
+      "path": "LEGAL_NOTICE.md",
+      "category": "documentation",
+      "status": "excluded",
+      "reason": "Preserved legal/licensing material; legal clearance and current provider-policy review are outside this local software audit.",
+      "existed_at_baseline": true,
+      "sha256_before": "95a9fab11e486de0c02108fd218f8ca595f1a9ecd9273a57a50a9019e3645d1c",
+      "sha256_after": "95a9fab11e486de0c02108fd218f8ca595f1a9ecd9273a57a50a9019e3645d1c",
+      "bytes_after": 13187
+    },
+    {
+      "path": "LICENCE.md",
+      "category": "documentation",
+      "status": "excluded",
+      "reason": "Preserved legal/licensing material; legal clearance and current provider-policy review are outside this local software audit.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "bytes_after": 35149
+    },
+    {
+      "path": "local.yml",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "ce387c2490069230c26fbd32570791e47a728991d3af99bae75aae712063e89e",
+      "sha256_after": "ce387c2490069230c26fbd32570791e47a728991d3af99bae75aae712063e89e",
+      "bytes_after": 675
+    },
+    {
+      "path": "Makefile",
+      "category": "tooling",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "ae18a04da1f3e76ccd431aa8e8a67c7eefc9cfc79bc9e1c19e07238b5ba4e7c3",
+      "bytes_after": 1421
+    },
+    {
+      "path": "manage.py",
+      "category": "source",
+      "status": "inspected",
+      "reason": "Inspected source and relevant callers, trust boundaries and regression coverage.",
+      "existed_at_baseline": true,
+      "sha256_before": "e7532717a5b84a961a93f74333be39444f93aa7f8333410e9adfe251485587fb",
+      "sha256_after": "e7532717a5b84a961a93f74333be39444f93aa7f8333410e9adfe251485587fb",
+      "bytes_after": 427
+    },
+    {
+      "path": "PRIVACY_NOTICE.md",
+      "category": "documentation",
+      "status": "excluded",
+      "reason": "Preserved legal/licensing material; legal clearance and current provider-policy review are outside this local software audit.",
+      "existed_at_baseline": true,
+      "sha256_before": "950c1c3b4adba788b21a40ac3ff1437bce1360e318fc84d08636d0b80f67ca69",
+      "sha256_after": "950c1c3b4adba788b21a40ac3ff1437bce1360e318fc84d08636d0b80f67ca69",
+      "bytes_after": 2124
+    },
+    {
+      "path": "PRODUCT.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "db3f22de68deb87690ee6decb9bffbecda74037f05305f57db916967b9bcaadc",
+      "sha256_after": "db3f22de68deb87690ee6decb9bffbecda74037f05305f57db916967b9bcaadc",
+      "bytes_after": 1767
+    },
+    {
+      "path": "pyproject.toml",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "ec5e424a327f2a610b77a0209e7f1492e1da3fd87a2e7f9b14470c02199e6474",
+      "sha256_after": "ec5e424a327f2a610b77a0209e7f1492e1da3fd87a2e7f9b14470c02199e6474",
+      "bytes_after": 2624
+    },
+    {
+      "path": "pytest.ini",
+      "category": "configuration",
+      "status": "inspected",
+      "reason": "Inspected configuration or script in the current and legacy architecture; side-effecting operational commands were not executed.",
+      "existed_at_baseline": true,
+      "sha256_before": "e3a57889c04197ace85d6862a751fa77a80c4e0a0c2d71865e77c508fd9ef1ec",
+      "sha256_after": "e3a57889c04197ace85d6862a751fa77a80c4e0a0c2d71865e77c508fd9ef1ec",
+      "bytes_after": 84
+    },
+    {
+      "path": "README.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "a5e32130579d8c09240f2ed1807de63b8614d5c317153bbee59647b977d6fcdc",
+      "sha256_after": "5d3226bf92bf0fa889eaf42793111ae6acea8ab50720bfe3c9dcde531b3d718f",
+      "bytes_after": 4242
+    },
+    {
+      "path": "skills/find-leads/SKILL.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "7dcf69dfd0a44dfe3d71a2cb8a2ec91d63efb3afe7e8e11b3320e0b460680ea7",
+      "sha256_after": "7dcf69dfd0a44dfe3d71a2cb8a2ec91d63efb3afe7e8e11b3320e0b460680ea7",
+      "bytes_after": 15143
+    },
+    {
+      "path": "tests/conftest.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "7a83a8d66f737115c5ac7c3b5b99d2c5ff9e327619094b5c47632ceaec2f80ea",
+      "sha256_after": "7a83a8d66f737115c5ac7c3b5b99d2c5ff9e327619094b5c47632ceaec2f80ea",
+      "bytes_after": 1083
+    },
+    {
+      "path": "tests/scenarios/accounts.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "2c6023fc1f820fc5377c3052ddd1c5dede0980b8aa836acd0793464c8b04c327",
+      "sha256_after": "2c6023fc1f820fc5377c3052ddd1c5dede0980b8aa836acd0793464c8b04c327",
+      "bytes_after": 21057
+    },
+    {
+      "path": "tests/scenarios/activity.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "939bbce730f3b125230382f70710eb3a5bc15e78fa143d4173433822da23e7c5",
+      "sha256_after": "939bbce730f3b125230382f70710eb3a5bc15e78fa143d4173433822da23e7c5",
+      "bytes_after": 2908
+    },
+    {
+      "path": "tests/scenarios/chat_worker.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "8c672ff65cb88ecfa32765de814ac6d9163b56ee03a2a823f23a36649b814cf0",
+      "sha256_after": "8c672ff65cb88ecfa32765de814ac6d9163b56ee03a2a823f23a36649b814cf0",
+      "bytes_after": 384
+    },
+    {
+      "path": "tests/scenarios/http_flow.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "4dd2be428b87599fd3f674bac7cc232481a70a10d7574e8a986023b8933b2327",
+      "sha256_after": "980f5de84ddc0bb6dcba244ec4574352ea98355f8adf40f856606e574fbc4d16",
+      "bytes_after": 6206
+    },
+    {
+      "path": "tests/scenarios/lead_timeline.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "626ea2ff9d80edefbc38313fdea3c2c86ef6d7a1e724ead20b9e98b6ce0a7686",
+      "sha256_after": "626ea2ff9d80edefbc38313fdea3c2c86ef6d7a1e724ead20b9e98b6ce0a7686",
+      "bytes_after": 3681
+    },
+    {
+      "path": "tests/scenarios/local_preview.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "d42b13e9dc707f22de69d3d319cab320f48015d9792f28bf7312a2c8202d845d",
+      "sha256_after": "d42b13e9dc707f22de69d3d319cab320f48015d9792f28bf7312a2c8202d845d",
+      "bytes_after": 22500
+    },
+    {
+      "path": "tests/scenarios/local_tls_proxy.mjs",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "a2d00b07efa30d57f873898d5d79347f426194ba231adf3cde870e5189d6d1a8",
+      "sha256_after": "a2d00b07efa30d57f873898d5d79347f426194ba231adf3cde870e5189d6d1a8",
+      "bytes_after": 1647
+    },
+    {
+      "path": "tests/scenarios/preview.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "ef987c1a1053563559990e8b4dcb49112d5c094321cd12bad417218be6ef8f4f",
+      "sha256_after": "ef987c1a1053563559990e8b4dcb49112d5c094321cd12bad417218be6ef8f4f",
+      "bytes_after": 1852
+    },
+    {
+      "path": "tests/scenarios/workspace_settings.py",
+      "category": "test",
+      "status": "inspected",
+      "reason": "Inspected disposable fixtures/scenario drivers and external-effect isolation. HTTP flow, preview and TLS drivers executed directly; other drivers are covered through their regression wrappers where invoked.",
+      "existed_at_baseline": true,
+      "sha256_before": "8b010374ae6e16bd52266948751dbe826fa4b680682a6b825d34e42100ba0d0f",
+      "sha256_after": "8b010374ae6e16bd52266948751dbe826fa4b680682a6b825d34e42100ba0d0f",
+      "bytes_after": 4317
+    },
+    {
+      "path": "tests/test_accounts_integration.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "6c52becc8f00d4575afa628d37ea6c91ef3125b4f064a9f4ce802e4e067710e4",
+      "sha256_after": "6c52becc8f00d4575afa628d37ea6c91ef3125b4f064a9f4ce802e4e067710e4",
+      "bytes_after": 849,
+      "cases_per_backend_pass": 1
+    },
+    {
+      "path": "tests/test_accounts.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "b37c96d56c42af47603fd2af278a5157fe52414263d10c32b90a8b2c3051c664",
+      "sha256_after": "b37c96d56c42af47603fd2af278a5157fe52414263d10c32b90a8b2c3051c664",
+      "bytes_after": 7325,
+      "cases_per_backend_pass": 9
+    },
+    {
+      "path": "tests/test_activity.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "554450949941fe95bd14f48be916b3f97c102300676e73854db0738c390d7772",
+      "sha256_after": "554450949941fe95bd14f48be916b3f97c102300676e73854db0738c390d7772",
+      "bytes_after": 9682,
+      "cases_per_backend_pass": 12
+    },
+    {
+      "path": "tests/test_automatic_followups.py",
+      "category": "test",
+      "status": "inspected_and_executed",
+      "reason": "New regression/control tests and fixtures were authored and inspected; their full suites passed with ten repetitions.",
+      "existed_at_baseline": false,
+      "sha256_before": null,
+      "sha256_after": "49d29eec861b723721bf429a21a057d8b045b35374b46bdc4c50569ec553bfa9",
+      "bytes_after": 12985,
+      "cases_per_backend_pass": 40
+    },
+    {
+      "path": "tests/test_bettercontact_settings.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "c2ae45851779f7cb9c9c7795edbbed2d60346315f7d2e0e12ec39c1cd6c58a89",
+      "sha256_after": "c2ae45851779f7cb9c9c7795edbbed2d60346315f7d2e0e12ec39c1cd6c58a89",
+      "bytes_after": 7723,
+      "cases_per_backend_pass": 15
+    },
+    {
+      "path": "tests/test_branding.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "ec2700ed4c1ceb871d9d9eb6a91e06119b6591e6ed9f6da6276e4a1b3db4adb6",
+      "sha256_after": "ec2700ed4c1ceb871d9d9eb6a91e06119b6591e6ed9f6da6276e4a1b3db4adb6",
+      "bytes_after": 3601,
+      "cases_per_backend_pass": 5
+    },
+    {
+      "path": "tests/test_campaigns.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "fcd6c8b88d2d6f2c6e10be9e59ab1e6917d85ef3b3d30a051cceadd027f9d962",
+      "sha256_after": "fcd6c8b88d2d6f2c6e10be9e59ab1e6917d85ef3b3d30a051cceadd027f9d962",
+      "bytes_after": 24047,
+      "cases_per_backend_pass": 31
+    },
+    {
+      "path": "tests/test_chat_ai.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "2e3201dd0a6e65e86e7faf8c3b4dbc3d64b4ece1eb0199af4fdf259fc3317ed7",
+      "sha256_after": "2e3201dd0a6e65e86e7faf8c3b4dbc3d64b4ece1eb0199af4fdf259fc3317ed7",
+      "bytes_after": 2845,
+      "cases_per_backend_pass": 12
+    },
+    {
+      "path": "tests/test_chat.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "bc4749f01bff3d10c8bb74ea58306e66e2ead1a1c2872b243a417ae4201e1059",
+      "sha256_after": "bc4749f01bff3d10c8bb74ea58306e66e2ead1a1c2872b243a417ae4201e1059",
+      "bytes_after": 13356,
+      "cases_per_backend_pass": 15
+    },
+    {
+      "path": "tests/test_cli.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "ced08bb369165a88d60b3dc83e1acecc40d2fd41ebfb218b44f9c6810047e5f3",
+      "sha256_after": "ced08bb369165a88d60b3dc83e1acecc40d2fd41ebfb218b44f9c6810047e5f3",
+      "bytes_after": 1883,
+      "cases_per_backend_pass": 8
+    },
+    {
+      "path": "tests/test_discovery_live.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "228689133fbd5fc3d07f76c7b3f08fa278fce271534fb7d4998c69785c708f12",
+      "sha256_after": "228689133fbd5fc3d07f76c7b3f08fa278fce271534fb7d4998c69785c708f12",
+      "bytes_after": 23087,
+      "cases_per_backend_pass": 33
+    },
+    {
+      "path": "tests/test_discovery.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "a6d59ce44fe811583e78bef6a81fccdc81cc1fe66fb248f29f11c4a8fe0b5a5a",
+      "sha256_after": "a6d59ce44fe811583e78bef6a81fccdc81cc1fe66fb248f29f11c4a8fe0b5a5a",
+      "bytes_after": 7030,
+      "cases_per_backend_pass": 17
+    },
+    {
+      "path": "tests/test_email_transports.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "591a06d4bb024a0cbfabb09e55a9e295579436396edf4bfafba6e0bc26f277f9",
+      "sha256_after": "591a06d4bb024a0cbfabb09e55a9e295579436396edf4bfafba6e0bc26f277f9",
+      "bytes_after": 7936,
+      "cases_per_backend_pass": 20
+    },
+    {
+      "path": "tests/test_home.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "31e2134f30f45c3353fcf973e4953b5bada2de8813ace57c2689a089f59556da",
+      "sha256_after": "31e2134f30f45c3353fcf973e4953b5bada2de8813ace57c2689a089f59556da",
+      "bytes_after": 7075,
+      "cases_per_backend_pass": 5
+    },
+    {
+      "path": "tests/test_invitations.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "7655edde558aea16ec0370f20b2e53cdc71aaf6611e77791e3af82ba2d04bb48",
+      "sha256_after": "7655edde558aea16ec0370f20b2e53cdc71aaf6611e77791e3af82ba2d04bb48",
+      "bytes_after": 5728,
+      "cases_per_backend_pass": 9
+    },
+    {
+      "path": "tests/test_lead_crm.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "a4bc48df18ed3a9f517fc646de00d6b0c6ecd0bbf4daac8b3aac476677b57658",
+      "sha256_after": "a4bc48df18ed3a9f517fc646de00d6b0c6ecd0bbf4daac8b3aac476677b57658",
+      "bytes_after": 10847,
+      "cases_per_backend_pass": 22
+    },
+    {
+      "path": "tests/test_lead_timeline.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "2fcc242507985db88835cfe5c84c4d733e14ea1174248e79bda0c1e0544cfb65",
+      "sha256_after": "2fcc242507985db88835cfe5c84c4d733e14ea1174248e79bda0c1e0544cfb65",
+      "bytes_after": 9749,
+      "cases_per_backend_pass": 15
+    },
+    {
+      "path": "tests/test_registry.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "611ab0ef713a76ba5c5c25219181f1af2d59ea18fe307403506edf4c8db1e1e3",
+      "sha256_after": "611ab0ef713a76ba5c5c25219181f1af2d59ea18fe307403506edf4c8db1e1e3",
+      "bytes_after": 1673,
+      "cases_per_backend_pass": 3
+    },
+    {
+      "path": "tests/test_reviewed_outreach.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "18391e944b43d0683b1b71dff3ce72bdf089cc9be87d77207412252c62994d9d",
+      "sha256_after": "18391e944b43d0683b1b71dff3ce72bdf089cc9be87d77207412252c62994d9d",
+      "bytes_after": 22708,
+      "cases_per_backend_pass": 43
+    },
+    {
+      "path": "tests/test_runtime_settings.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "e1c423713358925a9d5ed77296ecf6bc469ee4d1b590c67c60ca25280188b2ec",
+      "sha256_after": "e1c423713358925a9d5ed77296ecf6bc469ee4d1b590c67c60ca25280188b2ec",
+      "bytes_after": 4263,
+      "cases_per_backend_pass": 9
+    },
+    {
+      "path": "tests/test_setup_wizard.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "fc80bae0dea899a5d655d473af100cf9754acebed15d8a89e617d991e055d0b6",
+      "sha256_after": "fc80bae0dea899a5d655d473af100cf9754acebed15d8a89e617d991e055d0b6",
+      "bytes_after": 15650,
+      "cases_per_backend_pass": 43
+    },
+    {
+      "path": "tests/test_web.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "0617614ac78d671261f1e6a56fce2d03171565d6e649fa914b20782f08366dd0",
+      "sha256_after": "0617614ac78d671261f1e6a56fce2d03171565d6e649fa914b20782f08366dd0",
+      "bytes_after": 3185,
+      "cases_per_backend_pass": 4
+    },
+    {
+      "path": "tests/test_wizard.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "8386a65581cdd5a4929aaa5261b23c86dc0df165856e859003a8b5250171ea46",
+      "sha256_after": "8386a65581cdd5a4929aaa5261b23c86dc0df165856e859003a8b5250171ea46",
+      "bytes_after": 6434,
+      "cases_per_backend_pass": 12
+    },
+    {
+      "path": "tests/test_workspace_settings.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "770357664abd776776ff97740002843a5712d4c7145cb7030cc0b7764318b7a3",
+      "sha256_after": "770357664abd776776ff97740002843a5712d4c7145cb7030cc0b7764318b7a3",
+      "bytes_after": 7217,
+      "cases_per_backend_pass": 13
+    },
+    {
+      "path": "tests/test_workspace_views.py",
+      "category": "test",
+      "status": "executed_not_exhaustively_reviewed",
+      "reason": "All collected cases passed in each of ten full backend passes; exhaustive assertion-by-assertion manual test-file review excluded. Production callers were inspected separately.",
+      "existed_at_baseline": true,
+      "sha256_before": "12c44f5767a306caf7c66bded71bf04abe1824329f8caa8fd99ef5ec70c4cc29",
+      "sha256_after": "12c44f5767a306caf7c66bded71bf04abe1824329f8caa8fd99ef5ec70c4cc29",
+      "bytes_after": 3724,
+      "cases_per_backend_pass": 13
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "category": "documentation",
+      "status": "inspected",
+      "reason": "Read for product, architecture or operational context; historical verification is not asserted as current production status.",
+      "existed_at_baseline": true,
+      "sha256_before": "e75acc02787581481e199c12d50a43433c720d56e95fd18eca579fcb2505364e",
+      "sha256_after": "e75acc02787581481e199c12d50a43433c720d56e95fd18eca579fcb2505364e",
+      "bytes_after": 994
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "provider_disabled": true,
+  "production_settings": true,
+  "blocked_external_calls": 0,
+  "candidate_runtime_input_sha256": "b68ad9e445054d331f54add155c7f84e163ceba4cf8f3da1d912ca4ff1e7a106"
+}

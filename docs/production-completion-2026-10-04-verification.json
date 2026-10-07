@@ -1,0 +1,702 @@
+{
+  "date": "2026-10-04",
+  "status": "NOT READY",
+  "candidate_directory": "/Users/ashishdikonda/Desktop/Openoutreach/leadzen-release-candidates/73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6",
+  "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6",
+  "source_archive_sha256": "f69ac6d0ae7ebdebc93998dac20e649d21765cec13cb889f315b45a11991de79",
+  "source_files": 396,
+  "included_untracked_files": 360,
+  "git_revision": "0c3fc7a63205069e3380c0b8d5e8bb6738bb2946",
+  "git_revision_is_complete_release": false,
+  "architecture": "linux/amd64",
+  "actual_target_architecture_verified": false,
+  "runtimes": {
+    "native_python": "3.12.11",
+    "image_python": "3.12.15",
+    "tested_node": "22.23.1",
+    "observed_vercel_node": "24.x"
+  },
+  "locks": {
+    "dashboard/package-lock.json": "19637c6b0657750706184dfdecd3dab3d5f2ac32ab168a408e428f29ebf4d27f",
+    "requirements-build.lock": "acf2be7f6d6852556b1f0ed543f3eb5919b9679b68e8514a58e96bcff1497756",
+    "requirements-production.lock": "6dd5eedb04f4d81009afea131a2d738d3ec61b90f4cc84f40b7b165c739705c1"
+  },
+  "artifacts": [
+    {
+      "name": "leadzen-0.1.0-py3-none-any.whl",
+      "kind": "backend-wheel",
+      "bytes": 265130,
+      "sha256": "631794c2c368f8d499bd093b1d99fea88f7b9e16ae70b613f9e7aa76ddeac6f2",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    {
+      "name": "dashboard-standalone.tar.gz",
+      "kind": "dashboard-standalone",
+      "bytes": 17756093,
+      "sha256": "2bc1106d6bd6656fcddda9b378fd89bb4d315458272443c1eb0c6efdc1bdd9df",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    {
+      "name": "leadzen-complete-release-image.tar",
+      "kind": "container-image",
+      "bytes": 665609728,
+      "sha256": "6a41414dcc23e749cf3d28c7bcf33958e43fa947f4c1dd575c54b25227476575",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    }
+  ],
+  "scan_artifact_binding": {
+    "saved_image_tag_present": true,
+    "saved_image_config_sha256": "sha256:14e4081f4f84af51b321f6fff75c2451401bc70b0f56ce57d147d7d261b53713",
+    "scanner_metadata_image_id": "sha256:14e4081f4f84af51b321f6fff75c2451401bc70b0f56ce57d147d7d261b53713",
+    "scanner_metadata_matches_saved_image": true,
+    "architecture": "amd64",
+    "scanner_architecture": "amd64"
+  },
+  "image_id": "sha256:14e4081f4f84af51b321f6fff75c2451401bc70b0f56ce57d147d7d261b53713",
+  "browser_runtime_input_sha256": "b68ad9e445054d331f54add155c7f84e163ceba4cf8f3da1d912ca4ff1e7a106",
+  "gates": {
+    "preflight": {
+      "status": "FAIL",
+      "evidence": "Fresh Vercel production export lacks LEADZEN_DASHBOARD_PUBLIC_URL; current VM settings/key/token/schema/storage unavailable. Older backend export is dated evidence.",
+      "remaining_action": "Current private host/env/schema/ingress observations and no-secret preflight.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "secret_current": {
+      "status": "PASS",
+      "evidence": "Gitleaks 100% redaction: zero findings in exact frozen source archive; private env/cache/database files excluded.",
+      "remaining_action": "Continue enforced new-change scanning; historical disposition remains separate.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "credential_disposition": {
+      "status": "BLOCKED",
+      "evidence": "43 real/unresolved historical exposure locations; owners/revocation unverified. Questionable credentials were not used.",
+      "remaining_action": "Owner classification and administrative revocation/session-termination receipts.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "backend_tests": {
+      "status": "PASS",
+      "evidence": "Fresh hashed build/runtime and installed wheel: 1475 passed, one existing PydanticAI deprecation warning.",
+      "remaining_action": "No local suite failure remains.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "frontend_tests": {
+      "status": "PASS",
+      "evidence": "Fresh npm ci: 1196 tests in 26 files passed, including five new canonical-context cases.",
+      "remaining_action": "Full browser gate has separate unperformed steps.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "npm run lint runs tsc --noEmit; fatal Python Ruff checks passed.",
+      "remaining_action": "No general ESLint or Python static typing certification claimed.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "dependency_audit": {
+      "status": "PASS",
+      "evidence": "Current advisory feeds: 94 runtime and 7 builder Python packages, plus npm, zero known package advisories.",
+      "remaining_action": "OS image findings have a separate FAIL gate.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "image_advisories": {
+      "status": "FAIL",
+      "evidence": "Exact final amd64 image: 0 CRITICAL, 44 HIGH, 61 MEDIUM, 60 LOW, 2 UNKNOWN; no risk acceptances.",
+      "remaining_action": "Compatible tested patches/base or exact expiring owner-reviewed decisions for every HIGH/CRITICAL match.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "production_build": {
+      "status": "PASS",
+      "evidence": "Clean wheel, optimized standalone dashboard and Linux amd64 image built; exact three artifact hashes verified.",
+      "remaining_action": "Actual Vercel/prebuilt artifact and Node version reconciliation remain external gates.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "migrations": {
+      "status": "BLOCKED",
+      "evidence": "Final image clean/prior schema preservation/integrity/FKs/drift passed locally; current production DB graph unavailable.",
+      "remaining_action": "Current read-only whole-namespace schema evidence, matched recovery set and exact forward-migration authorization.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "startup": {
+      "status": "PASS",
+      "evidence": "Final image UID 1000, no pip/pytest/ruff, missing settings fail closed; real Gunicorn synthetic readiness and standalone trusted HTTPS succeed.",
+      "remaining_action": "Actual host startup/configuration remains within blocked preflight/target gates.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "browser": {
+      "status": "BLOCKED",
+      "evidence": "Final trusted-browser subset passed: login/logout, themes, CRUD, settings, employee denial, focus/mobile/console/network; HTTP cookies/CSRF/nonce headers verified.",
+      "remaining_action": "User handoff/full controlled runner for invitation/new passwords/onboarding; live-client consent and active CSP attack probes remain unperformed.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "actual_recovery": {
+      "status": "BLOCKED",
+      "evidence": "Synthetic native backup/restore/drill tests and authorized historical control+one employee drill passed. History lacks signing key/current full deployment/custody.",
+      "remaining_action": "Current authorized matched full production recovery set, independent protected storage and isolated drill.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "alert_delivery": {
+      "status": "BLOCKED",
+      "evidence": "One local synthetic alarm receipt/dedup and timeout/redaction tests passed; no external sink contacted.",
+      "remaining_action": "Exact authorized destination/on-call owner, bounded alarm receipt, independent monitor-of-monitor installation.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "target_capacity": {
+      "status": "BLOCKED",
+      "evidence": "Final local native-volume amd64 test: 20000 contacts/4 employees, 256 requests/32 writes at concurrency16, zero errors, p95 633 ms; integrity intact.",
+      "remaining_action": "Approved budgets and isolated measurement on intended CPU/RAM/storage/ingress; production filesystem unverified.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "enabled_integrations": {
+      "status": "BLOCKED",
+      "evidence": "Real SDK/transport/MCP approval/STOP/duplicate/uncertainty regressions passed; provider-disabled fixture made zero external calls.",
+      "remaining_action": "Exact enabled feature scope, private accounts, named recipients/clients and bounded send/spend/consent authorization.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    },
+    "external_release_controls": {
+      "status": "BLOCKED",
+      "evidence": "Read-only upstream access lacks push/admin; protection 404/rulesets do not prove enforcement. Vercel Node24.x vs tested22.23.1; promotion checks not established.",
+      "remaining_action": "Owning repository/platform admin evidence, required checks and exact tested Vercel artifact/promotion controls.",
+      "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6"
+    }
+  },
+  "commands": [
+    [
+      "clean Python builder/runtime install",
+      "uv build --wheel --no-build-isolation --python \"$builder/bin/python\" --out-dir \"$candidate/build-python\"; uv venv --python \"$repository/.venv/bin/python\" \"$candidate/verification-env\"; VIRTUAL_ENV=\"$candidate/verification-env\" uv pip install --require-hashes -r requirements-production.lock; uv pip install --no-deps \"$candidate/build-python/leadzen-0.1.0-py3-none-any.whl\"",
+      "PASS",
+      "Hashed builder preinstalled from requirements-build.lock; 94 hashed runtime packages; dev test runner isolated."
+    ],
+    [
+      "backend suite",
+      "bash \"$base/verify-complete-backend.sh\" (includes the exact hashed build/install and pytest invocation)",
+      "PASS",
+      "1475 passed, one existing warning, 656.23 seconds."
+    ],
+    [
+      "frontend install",
+      "npm ci",
+      "PASS",
+      "Fresh candidate directory; npm lock integrity; 232 packages installed."
+    ],
+    [
+      "typecheck",
+      "npm run lint",
+      "PASS",
+      "tsc --noEmit, not a general ESLint scan."
+    ],
+    [
+      "frontend suite",
+      "npm test -- --maxWorkers=2",
+      "PASS",
+      "1196 passed, 26 files, 49.13 seconds."
+    ],
+    [
+      "frontend production build",
+      "npm run build",
+      "PASS",
+      "Next16.3.8 optimized standalone, Node22.23.1."
+    ],
+    [
+      "npm advisories",
+      "npm audit --json",
+      "PASS",
+      "Zero advisories."
+    ],
+    [
+      "Python runtime advisories",
+      "uv tool run --from pip-audit pip-audit -r requirements-production.lock --no-deps --disable-pip --format json --output \"$candidate/runtime-dependency-audit.json\"",
+      "PASS",
+      "94 locked packages, zero advisories."
+    ],
+    [
+      "Python builder advisories",
+      "uv tool run --from pip-audit pip-audit -r requirements-build.lock --no-deps --disable-pip --format json --output \"$candidate/build-dependency-audit.json\"",
+      "PASS",
+      "7 locked packages, zero advisories."
+    ],
+    [
+      "fatal Python lint",
+      "uv tool run --from ruff==0.16.10 ruff check --select F821,F822,F823,E9 leadzen tests",
+      "PASS",
+      "Fatal syntax/name errors checked; all checks passed."
+    ],
+    [
+      "React diagnostics",
+      "npx --yes react-doctor@latest --verbose --diff; npx --yes react-doctor@latest --verbose",
+      "PASS",
+      "Diff100/100 over10tracked files; same-tool full before/after70/100, zero errors, warnings30 to31 (one Inbox complexity warning). Dashboard source unchanged afterward."
+    ],
+    [
+      "image build",
+      "docker build --platform linux/amd64 -f compose/leadzen/Dockerfile -t leadzen:complete-release-20261004 .",
+      "PASS",
+      "Pinned base/build/runtime/package inputs; Python3.12.15."
+    ],
+    [
+      "complete image advisories",
+      "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$candidate:/evidence\" -v leadzen-trivy-cache:/root/.cache/trivy aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c image --timeout 20m --no-progress --scanners vuln --format json --output /evidence/image-advisories.json leadzen:complete-release-20261004",
+      "PASS",
+      "Scanner completed; findings retained. This is scan execution, not risk acceptance."
+    ],
+    [
+      "image risk policy",
+      "python -m leadzen.operations.advisories \"$candidate/image-advisories.json\" --architecture linux/amd64 --decisions docs/production-image-risk-decisions.json --output docs/production-completion-complete-image-assessment-2026-10-04.json",
+      "FAIL",
+      "Exit1; 44 unaccepted HIGH matches."
+    ],
+    [
+      "source secrets",
+      "docker run --rm -v \"$candidate/source-scan:/repo:ro\" -v \"$candidate:/evidence\" ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f dir /repo --redact=100 --report-format json --report-path /evidence/current-secrets.json",
+      "PASS",
+      "Exact source.tar extraction, zero findings."
+    ],
+    [
+      "Linux employee isolation",
+      "docker run --rm --network none --platform linux/amd64 -e DJANGO_SETTINGS_MODULE=leadzen.settings -e LEADZEN_ENV=production -e LEADZEN_ALLOWED_HOSTS=testserver -e LEADZEN_WORKSPACE_ROOT=/app/data/workspaces -v \"$volume:/app/data\" -v \"$candidate/source/tests/scenarios:/verification:ro\" leadzen:complete-release-20261004 /opt/venv/bin/python /verification/accounts.py",
+      "PASS",
+      "Fresh owned native Docker volume; actual private file routing, settings, CRUD, Chat and revoked workers."
+    ],
+    [
+      "Linux migrations",
+      "docker run --rm --network none --platform linux/amd64 -v \"$candidate/source/tests/scenarios/production_migrations.py:/verification/migrations.py:ro\" leadzen:complete-release-20261004 /opt/venv/bin/python /verification/migrations.py /app/data/migration-drill",
+      "PASS",
+      "Clean+prior-schema preservation, no drift, WAL/FULL, integrity/FKs."
+    ],
+    [
+      "capacity",
+      "docker run --rm --network none --platform linux/amd64 -e LEADZEN_CAPACITY_NETWORK_ISOLATED=1 -v leadzen-complete-capacity-evidence-20261004:/app/data -v \"$candidate/source/tests/scenarios/production_capacity.py:/verification/capacity.py:ro\" leadzen:complete-release-20261004 /opt/venv/bin/python -c 'from pathlib import Path; import runpy,sys; Path(\"/app/data/leadzen-capacity.exact-command\").mkdir(mode=0o700); sys.argv=[\"/verification/capacity.py\",\"--root\",\"/app/data/leadzen-capacity.exact-command\",\"--employees\",\"4\",\"--contacts\",\"5000\",\"--concurrency\",\"16\",\"--requests\",\"256\"]; runpy.run_path(sys.argv[0],run_name=\"__main__\")'",
+      "PASS",
+      "Fresh exclusively created root on owned native Docker volume; zero networking. Prior final-image sample separately retained; actual host gate BLOCKED."
+    ],
+    [
+      "trusted staging",
+      "\"$candidate/verification-env/bin/python\" dashboard/e2e/stage.py --authorize-public-synthetic-fixture --standalone dashboard/.next/standalone",
+      "PASS",
+      "Exact final artifact, generated provider-disabled fixture and trusted Quick Tunnel; full --test was not run."
+    ],
+    [
+      "trusted HTTP checks",
+      "python3 \"$base/complete-http-fixture-checks.py\"",
+      "PASS",
+      "Exact live synthetic final fixture; standard trust verified, cookie attributes/CSRF/private readiness; no token/cookie values emitted."
+    ],
+    [
+      "full automated browser scenarios",
+      "python dashboard/e2e/stage.py --authorize-public-synthetic-fixture --test",
+      "BLOCKED",
+      "Not executed in this agent environment; supported new-password handoff/controlled runner required."
+    ],
+    [
+      "Compose/shell/source",
+      "docker compose -f local.yml config --quiet; bash -n each entrypoint/start/deploy-accounts.sh; sh -n backup-safe; git diff --check; python -m leadzen.operations.release verify \"$candidate\"",
+      "PASS",
+      "Each actual shell file checked individually; root intended release inputs match final frozen hash."
+    ],
+    [
+      "final gate",
+      "\"$candidate/verification-env/bin/python\" -m leadzen.operations.release gate \"$candidate\" --checks \"$candidate/release-checks.json\"",
+      "PASS",
+      "Exit 2 BLOCKED as expected: 10 not-passed gates, zero missing evidence categories; this is refusal-control validation, not deployment readiness."
+    ],
+    [
+      "release wrapper",
+      "LEADZEN_RELEASE_PYTHON=\"$candidate/verification-env/bin/python\" bash compose/leadzen/deploy-accounts.sh \"$candidate\" \"$candidate/release-checks.json\"",
+      "PASS",
+      "Exit 2 BLOCKED as expected; no live action."
+    ]
+  ],
+  "private_evidence_checksums": [
+    {
+      "name": "backend-tests.log",
+      "bytes": 2251,
+      "sha256": "1e612d8e7f8902455a05d2ed1df0aae3e39729a3f5f347c1706658b8a4a0c05f"
+    },
+    {
+      "name": "python-build.log",
+      "bytes": 214,
+      "sha256": "8bd6d549a5e33bc710df4f9766d4a49268d2bb08fe4cb9682a0c7ad2c83e4b75"
+    },
+    {
+      "name": "python-install.log",
+      "bytes": 3525,
+      "sha256": "10c5f048bd4de3f4782c2d5b26d8bec530681b810772eec59d2d1410e3805878"
+    },
+    {
+      "name": "frontend-install.log",
+      "bytes": 144,
+      "sha256": "8e3e913febd05bd30009e40f5edd88e328ba5df8eaa4a66f9354becee3621a7b"
+    },
+    {
+      "name": "frontend-tests.log",
+      "bytes": 603,
+      "sha256": "ff02e07f24c321197e28701fc0d8b6a9c65c171f796bdcdd1a4baea8b4af03b8"
+    },
+    {
+      "name": "frontend-typecheck.log",
+      "bytes": 48,
+      "sha256": "40e8762cdef116db1352a4425f34a8485648bb78954258ef90cc67197eea9323"
+    },
+    {
+      "name": "frontend-build.log",
+      "bytes": 1232,
+      "sha256": "21f83b50c976157773b983dc418d52a566f3c5e7308e3900a7ca4f03a36708a2"
+    },
+    {
+      "name": "frontend-audit.json",
+      "bytes": 366,
+      "sha256": "ca82f65a6b4a98867aa8367125689e1668dc1cb600c3a07a2d0d8a0c5a73556f"
+    },
+    {
+      "name": "runtime-dependency-audit.json",
+      "bytes": 5395,
+      "sha256": "246355e46aa259d4d3d6ec5841b8cb86b9462a7e22517859e36cd123aeb5a07a"
+    },
+    {
+      "name": "build-dependency-audit.json",
+      "bytes": 429,
+      "sha256": "dd2ad9c17bbf08ab59f26f09a3263734c336f8a912a9827b5c52ee693713c32e"
+    },
+    {
+      "name": "python-lint.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "docker-build.log",
+      "bytes": 8426,
+      "sha256": "3a5cac314f0d2afd1f75f21d8a1ce51193f2c65a7ed5420bbcfe1a4f57dacba9"
+    },
+    {
+      "name": "image-advisories.json",
+      "bytes": 878384,
+      "sha256": "dc7c6779cfed39a2a266514e0be962a45fb8cb78c4590ecfc5caf6d625d11986"
+    },
+    {
+      "name": "image-identity.txt",
+      "bytes": 100,
+      "sha256": "49c2fb911e75149f05144ea6dad86a650a8378a8b013bdefcc9d9b4235b3df60"
+    },
+    {
+      "name": "scan-artifact-binding.json",
+      "bytes": 360,
+      "sha256": "a22a1824c80e354913d405c90e1ac202346761466d1aa00cbcd7b054186a7432"
+    },
+    {
+      "name": "current-secrets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "name": "linux-isolation.log",
+      "bytes": 13334,
+      "sha256": "838155a6cd10b4fba37b5b0f4ca26c73ff3e4fefe0d3cff05d6995a40d1ac8bb"
+    },
+    {
+      "name": "linux-migrations.log",
+      "bytes": 189,
+      "sha256": "468da9b1c53577d629e3300375e42013a28229ea215550309f5bf132b0fbe57c"
+    },
+    {
+      "name": "capacity-result.json",
+      "bytes": 334,
+      "sha256": "d4e05fbe27ccc7ab928f7e2206f1db4143d89871916dc858bcb93e8380af616f"
+    },
+    {
+      "name": "capacity-exact-command-result.json",
+      "bytes": 334,
+      "sha256": "c2207dcc388280055dc59670485262b28ce4b5306c958c081cb06ac43113c8c2"
+    },
+    {
+      "name": "runtime-failclosed.json",
+      "bytes": 104,
+      "sha256": "4e50a6e6925444eac167b76da82375c9a9dca89f025920d8af9deb496aeeabb9"
+    },
+    {
+      "name": "os-reachability.json",
+      "bytes": 151,
+      "sha256": "55a6e792c8e0bea318e3813e06b97b7afb710b26d5961e2758759acca502a943"
+    },
+    {
+      "name": "shell-validation.json",
+      "bytes": 400,
+      "sha256": "abe3bb3365a92cd0cf488c3b8e48b40746e0c36d90995b4cbc2c3d414fbed9a9"
+    },
+    {
+      "name": "compose-validation.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "artifact-hygiene.json",
+      "bytes": 221,
+      "sha256": "f337a667ab3eebeec887d9e3ac2800dfbdae940b0a58c5655ecb0680a6c3091f"
+    },
+    {
+      "name": "verify-complete-backend.sh",
+      "bytes": 1160,
+      "sha256": "1453965f9bcae777ad98b92ea2ba7ecd079cbf617e8317f162fd27fce03d6505"
+    },
+    {
+      "name": "complete-http-fixture-checks.py",
+      "bytes": 2205,
+      "sha256": "679058cf65bc33fdb7de46d759f22578165359acaa284daf0e60a9e18f2b7d9d"
+    },
+    {
+      "name": "release-gate-validation.json",
+      "bytes": 614,
+      "sha256": "d936c05ac59cbfe4de1188fe466ae38be4bfadd86225c4b1744df6702ee7680d"
+    }
+  ],
+  "capacity": {
+    "status": "PASS",
+    "employees": 4,
+    "contacts_per_employee": 5000,
+    "concurrency": 16,
+    "requests": 256,
+    "write_requests": 32,
+    "errors": 0,
+    "integrity": true,
+    "status_counts": {
+      "200": 256
+    },
+    "seconds": 6.625,
+    "requests_per_second": 38.64,
+    "p50_ms": 389,
+    "p95_ms": 633,
+    "max_response_bytes": 14202,
+    "target_host_capacity_verified": false
+  },
+  "previous_final_image_capacity_sample": {
+    "status": "PASS",
+    "employees": 4,
+    "contacts_per_employee": 5000,
+    "concurrency": 16,
+    "requests": 256,
+    "write_requests": 32,
+    "errors": 0,
+    "integrity": true,
+    "status_counts": {
+      "200": 256
+    },
+    "seconds": 6.798,
+    "requests_per_second": 37.66,
+    "p50_ms": 367,
+    "p95_ms": 837,
+    "max_response_bytes": 14202,
+    "target_host_capacity_verified": false
+  },
+  "browser": {
+    "date": "2026-10-04",
+    "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6",
+    "candidate_runtime_input_sha256": "b68ad9e445054d331f54add155c7f84e163ceba4cf8f3da1d912ca4ff1e7a106",
+    "synthetic_only": true,
+    "trusted_https": true,
+    "certificate_errors_bypassed": false,
+    "tested_subset_status": "PASS",
+    "full_browser_gate": "BLOCKED",
+    "checks": {
+      "existing_password_login": "PASS",
+      "logout": "PASS",
+      "protected_route_after_logout": "PASS",
+      "home_hydration": "PASS",
+      "light_and_dark_theme": "PASS",
+      "contact_create": "PASS",
+      "contact_edit_persisted": "PASS",
+      "contact_delete_confirmation_and_success": "PASS",
+      "settings_edit_and_reload_preservation": "PASS",
+      "employee_direct_object_denial_404": "PASS",
+      "denial_canonical_context_200": "PASS",
+      "foreign_record_absent_from_dom": "PASS",
+      "mobile_375x812_navigation_and_no_horizontal_overflow": "PASS",
+      "keyboard_login_focus_and_delete_confirmation": "PASS",
+      "viewport_restored": "PASS"
+    },
+    "accessibility_scope": "Visible labels, practical keyboard/focus, mobile navigation and sign-in contrast only; no complete screen-reader or contrast certification.",
+    "sign_in_button_contrast": 19.13,
+    "screenshots": [
+      "ui-progress-assets/production-complete-mobile-settings-viewport-2026-10-04.jpg",
+      "ui-progress-assets/production-complete-employee-denial-2026-10-04.jpg"
+    ],
+    "console": {
+      "sample_limit": 100,
+      "warnings_or_errors": 0,
+      "complete_session_retention_verified": false
+    },
+    "network": {
+      "earlier_capture_truncated": true,
+      "complete_session_coverage": "UNVERIFIED",
+      "fresh_denial_window_truncated": false,
+      "denial_api_status": 404,
+      "denial_context_statuses": [
+        200,
+        200
+      ],
+      "recent_window_truncated": false,
+      "recent_response_count": 131,
+      "unexpected_http_errors": 0,
+      "canceled_navigation_requests": 7,
+      "noncanceled_loading_failures": 0
+    },
+    "unperformed": [
+      "Invitation/new password setup and onboarding in actual browser",
+      "Password change and browser session revocation",
+      "Real MCP client consent refresh and revocation",
+      "Active CSP attack probes",
+      "Full five-scenario automated browser suite",
+      "Production Vercel artifact and intended-host frontend runtime"
+    ]
+  },
+  "cookie_csrf_readiness": {
+    "synthetic_only": true,
+    "trusted_tls": true,
+    "login_status": 200,
+    "cookie_attributes": {
+      "Secure": true,
+      "HttpOnly": true,
+      "SameSite=Lax": true,
+      "Path=/": true
+    },
+    "foreign_origin_login": 403,
+    "private_health": 200,
+    "private_readiness": 200,
+    "anonymous_health": 401,
+    "status": "PASS"
+  },
+  "nonce_headers": {
+    "script_count": 11,
+    "inline_scripts": 3,
+    "all_script_nonces_match": true,
+    "production_unsafe_eval_absent": true,
+    "strict_dynamic": true,
+    "frame_ancestors_none": true,
+    "hsts_one_year": true,
+    "nosniff": true,
+    "no_referrer": true,
+    "private_no_store_no_transform": true,
+    "status": "PASS"
+  },
+  "os_counts": {
+    "LOW": 60,
+    "HIGH": 44,
+    "MEDIUM": 61,
+    "UNKNOWN": 2
+  },
+  "historical_credentials": "production-credential-disposition-2026-10-04.json",
+  "actual_historical_recovery": "production-historical-recovery-validation-2026-10-04.json",
+  "external_controls": [
+    {
+      "command": [
+        "gh",
+        "api",
+        "repos/eracle/OpenOutreach",
+        "--jq",
+        "{full_name,permissions,default_branch}"
+      ],
+      "exit_code": 0,
+      "metadata": {
+        "default_branch": "main",
+        "full_name": "eracle/OpenOutreach",
+        "permissions": {
+          "admin": false,
+          "maintain": false,
+          "pull": true,
+          "push": false,
+          "triage": false
+        }
+      }
+    },
+    {
+      "command": [
+        "gh",
+        "api",
+        "repos/eracle/OpenOutreach/rulesets"
+      ],
+      "exit_code": 0,
+      "metadata": []
+    },
+    {
+      "provider": "Vercel",
+      "node_version": "24.x",
+      "git_link_present": false,
+      "auto_git_deployments": "enabled",
+      "production_fast_lane": true,
+      "environment_names": [
+        "LEADZEN_API_URL",
+        "LEADZEN_API_TOKEN"
+      ],
+      "deployment_checks_configured": false,
+      "snapshot_utc": "2026-10-04"
+    }
+  ],
+  "production_changed": false,
+  "live_credentials_rotated": false,
+  "real_emails_sent": false,
+  "paid_provider_calls_made": false,
+  "external_alert_delivered": false,
+  "current_actual_recovery_verified": false,
+  "release_gate_validation": {
+    "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6",
+    "gate_status": "BLOCKED",
+    "gate_exit": 2,
+    "missing_gates": [],
+    "not_passed": [
+      "actual_recovery",
+      "alert_delivery",
+      "browser",
+      "credential_disposition",
+      "enabled_integrations",
+      "external_release_controls",
+      "image_advisories",
+      "migrations",
+      "preflight",
+      "target_capacity"
+    ],
+    "release_wrapper_exit": 2,
+    "promotion_occurred": false,
+    "status": "PASS",
+    "scope": "Gate and wrapper correctly reject incomplete production evidence; production readiness remains NOT READY."
+  },
+  "current_service_readonly_check": {
+    "status": "BLOCKED",
+    "code": "CURRENT_SERVICE_ORIGIN_OR_CREDENTIAL_NOT_USABLE_FOR_BOUNDED_TLS_CHECK",
+    "requests_made": false,
+    "configuration_booleans": {
+      "https": false,
+      "hostname_present": false,
+      "embedded_credentials_absent": true,
+      "root_path": false,
+      "query_fragment_absent": true,
+      "api_token_present": true,
+      "origin_control_characters_absent": true,
+      "dashboard_public_origin_present": false
+    },
+    "origin_format": {
+      "empty": false,
+      "contains_https_scheme": false,
+      "contains_http_scheme": false,
+      "contains_literal_backslash": false,
+      "surrounded_by_literal_quotes": false,
+      "contains_whitespace": false
+    },
+    "scope": "Available export values did not form a usable exact HTTPS service origin; no request or credential transmission occurred. Current VM service configuration remains UNVERIFIED; no claim of production endpoint failure."
+  },
+  "original_build_and_browser_directory": "/var/folders/yb/nbmg2v3d3vd1tskfc45dzx600000gn/T/leadzen-production-completion-20261004-6mcq_m_d/candidate-complete-release-20261004",
+  "durable_copy_verified": true,
+  "durable_copy_is_independent_recovery_storage": false,
+  "durable_candidate_gate_validation": {
+    "status": "BLOCKED",
+    "missing": [],
+    "not_passed": [
+      "actual_recovery",
+      "alert_delivery",
+      "browser",
+      "credential_disposition",
+      "enabled_integrations",
+      "external_release_controls",
+      "image_advisories",
+      "migrations",
+      "preflight",
+      "target_capacity"
+    ],
+    "verified_source_and_artifacts": true
+  }
+}

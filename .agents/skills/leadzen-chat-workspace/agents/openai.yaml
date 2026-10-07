@@ -1,0 +1,4 @@
+interface:
+  display_name: "LeadZen Chat and Workspace"
+  short_description: "Build Chat over the same canonical Workspace records"
+  default_prompt: "Use $leadzen-chat-workspace to improve the LeadZen agent while preserving shared records and action approvals."

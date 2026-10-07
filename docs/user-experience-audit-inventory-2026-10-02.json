@@ -1,0 +1,2629 @@
+{
+  "date": "2026-10-02",
+  "repository": "/Users/ashishdikonda/Desktop/Openoutreach/OpenOutreach",
+  "branch": "main",
+  "files": 256,
+  "by_category": {
+    "configuration": 30,
+    "documentation": 17,
+    "tooling": 1,
+    "source": 137,
+    "generated": 2,
+    "asset": 3,
+    "test": 45,
+    "audit_artifact": 3,
+    "migration": 18
+  },
+  "by_status": {
+    "inventory_with_scope_limit": 26,
+    "focused_review": 37,
+    "reference_or_archived_scope": 17,
+    "syntax_only": 1,
+    "prior_review_unchanged_with_fresh_checks": 82,
+    "fresh_checks_with_manual_scope_limit": 14,
+    "browser_layout_scope": 1,
+    "focused_partial_review": 7,
+    "excluded_manual_source_review": 5,
+    "focused_review_and_executed": 5,
+    "executed_with_scope_limit": 40,
+    "generated": 3,
+    "schema_checked": 18
+  },
+  "comparison_source": "docs/production-readiness-inventory-2026-10-02.json",
+  "preserved_preexisting_removed_paths": [
+    "openoutreach/__init__.py",
+    "openoutreach/__main__.py",
+    "openoutreach/config/__init__.py",
+    "openoutreach/config/apps.py",
+    "openoutreach/config/migrations/0001_initial.py",
+    "openoutreach/config/migrations/0002_rename_operator_country_code.py",
+    "openoutreach/config/migrations/0003_outreachjob.py",
+    "openoutreach/config/migrations/__init__.py",
+    "openoutreach/config/models.py",
+    "openoutreach/settings.py",
+    "openoutreach/urls.py",
+    "openoutreach/web.py",
+    "openoutreach/web_worker.py",
+    "openoutreach/wizard.py",
+    "openoutreach/wsgi.py"
+  ],
+  "excluded_trees": [
+    ".git/",
+    ".venv/",
+    "dashboard/node_modules/",
+    "dashboard/.next/",
+    "Python/test caches",
+    "private .env files",
+    "real database/WAL/SHM files",
+    "machine metadata",
+    "external owner credentials and backups"
+  ],
+  "notes": [
+    "Inventory obeys repository ignore rules and includes ordinary untracked project files.",
+    "Hashes compare against the earlier broad audit, not a new clean checkout or a complete start-of-turn hash snapshot.",
+    "Fresh focused inspection and compile/build/test verification are distinct; full test passing does not prove per-file line coverage.",
+    "No untracked file was assumed disposable; no reset, stash, commit, push, deploy, live email or credit purchase."
+  ],
+  "entries": [
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "edab6389d63de5991ef99feec4b143ca06d252ab733d40f3ebe8f9001d4438a8",
+      "sha256_current": "edab6389d63de5991ef99feec4b143ca06d252ab733d40f3ebe8f9001d4438a8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 743
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "660d242a0aef73abf303d68419cfa8c48154bd7a60ee83676df3e4681f26ed06",
+      "sha256_current": "660d242a0aef73abf303d68419cfa8c48154bd7a60ee83676df3e4681f26ed06",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 496
+    },
+    {
+      "path": ".github/FUNDING.yml",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "6ecc97ea42114d1d00cf277d9212b11b757c60b64e25ddb7725ffa7acfb12b43",
+      "sha256_current": "6ecc97ea42114d1d00cf277d9212b11b757c60b64e25ddb7725ffa7acfb12b43",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 62
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "6d56d735f8cd7c03d687b5b4957cd1406df987df433b79cfcf54a11f9d821880",
+      "sha256_current": "6d56d735f8cd7c03d687b5b4957cd1406df987df433b79cfcf54a11f9d821880",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 915
+    },
+    {
+      "path": ".github/workflows/tests.yml",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "1671144e79d98f851a84b7d1d581f25c208dc42ae44806ebcc73503662d3ab4d",
+      "sha256_current": "1671144e79d98f851a84b7d1d581f25c208dc42ae44806ebcc73503662d3ab4d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 924
+    },
+    {
+      "path": ".gitignore",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "4fcd985453ca9dcaae2fc015e457dc56ea9bfa6387f65a34c9471a1757440a2f",
+      "sha256_current": "4fcd985453ca9dcaae2fc015e457dc56ea9bfa6387f65a34c9471a1757440a2f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 526
+    },
+    {
+      "path": "CLAUDE.md",
+      "category": "configuration",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "63eaf82909508c3721c3a6e74484a2989a760fab250626580d959d530a1efa4f",
+      "sha256_current": "63eaf82909508c3721c3a6e74484a2989a760fab250626580d959d530a1efa4f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1821
+    },
+    {
+      "path": "LEGAL_NOTICE.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "95a9fab11e486de0c02108fd218f8ca595f1a9ecd9273a57a50a9019e3645d1c",
+      "sha256_current": "95a9fab11e486de0c02108fd218f8ca595f1a9ecd9273a57a50a9019e3645d1c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 13187
+    },
+    {
+      "path": "LICENCE.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "sha256_current": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 35149
+    },
+    {
+      "path": "Makefile",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "ae18a04da1f3e76ccd431aa8e8a67c7eefc9cfc79bc9e1c19e07238b5ba4e7c3",
+      "sha256_current": "ae18a04da1f3e76ccd431aa8e8a67c7eefc9cfc79bc9e1c19e07238b5ba4e7c3",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1421
+    },
+    {
+      "path": "PRIVACY_NOTICE.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "950c1c3b4adba788b21a40ac3ff1437bce1360e318fc84d08636d0b80f67ca69",
+      "sha256_current": "950c1c3b4adba788b21a40ac3ff1437bce1360e318fc84d08636d0b80f67ca69",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2124
+    },
+    {
+      "path": "PRODUCT.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "db3f22de68deb87690ee6decb9bffbecda74037f05305f57db916967b9bcaadc",
+      "sha256_current": "db3f22de68deb87690ee6decb9bffbecda74037f05305f57db916967b9bcaadc",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1767
+    },
+    {
+      "path": "README.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "5d3226bf92bf0fa889eaf42793111ae6acea8ab50720bfe3c9dcde531b3d718f",
+      "sha256_current": "5d3226bf92bf0fa889eaf42793111ae6acea8ab50720bfe3c9dcde531b3d718f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4242
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "e75acc02787581481e199c12d50a43433c720d56e95fd18eca579fcb2505364e",
+      "sha256_current": "e75acc02787581481e199c12d50a43433c720d56e95fd18eca579fcb2505364e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 994
+    },
+    {
+      "path": "compose/leadzen/Caddyfile",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "b7a5afd5269432a74105a10815d928e8142322a4b957820317ff16e18f394522",
+      "sha256_current": "b7a5afd5269432a74105a10815d928e8142322a4b957820317ff16e18f394522",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 101
+    },
+    {
+      "path": "compose/leadzen/Dockerfile",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "86e08918eef32d8a793f1fbd32c1034dec862d9e6d5895ce68a43c1cbd89b71d",
+      "sha256_current": "86e08918eef32d8a793f1fbd32c1034dec862d9e6d5895ce68a43c1cbd89b71d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1787
+    },
+    {
+      "path": "compose/leadzen/deploy-accounts.sh",
+      "category": "tooling",
+      "status": "syntax_only",
+      "reason": "bash -n passed; deployment/side-effecting operational execution forbidden and not performed.",
+      "sha256_previous_broad_audit": "81a44f1e326a30959516458fdee0c3d2f495f4a4bb71149bacb2cc643d09e363",
+      "sha256_current": "81a44f1e326a30959516458fdee0c3d2f495f4a4bb71149bacb2cc643d09e363",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4646
+    },
+    {
+      "path": "compose/leadzen/entrypoint",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "sha256_current": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 481
+    },
+    {
+      "path": "compose/leadzen/leadzen-followups.service",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "a22ad262beb565aaaf5a64ca5f01d44a1fb96d2b75231b95c0e62672d3cc2a6a",
+      "sha256_current": "a22ad262beb565aaaf5a64ca5f01d44a1fb96d2b75231b95c0e62672d3cc2a6a",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 361
+    },
+    {
+      "path": "compose/leadzen/leadzen.service",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "af8d681ec1a188a9ce42fcbc77e749af4d91648bd2a2fdaa52b57903aae1f58d",
+      "sha256_current": "d22ce04bce39d4b2c4586dd46621c21ba986afa60f4530fbaa38bab5315ba52a",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 408
+    },
+    {
+      "path": "compose/leadzen/runtime.env.example",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "48e7b7b6e225ce5e020983e320d3ed90a7a4c712d6c9f04eac662116a4219730",
+      "sha256_current": "48e7b7b6e225ce5e020983e320d3ed90a7a4c712d6c9f04eac662116a4219730",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 775
+    },
+    {
+      "path": "compose/leadzen/start",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "cb0f006b010ec1a6b21eb44e6287e9f6fcea39ec6809980289ea52ce3958b0d8",
+      "sha256_current": "cb0f006b010ec1a6b21eb44e6287e9f6fcea39ec6809980289ea52ce3958b0d8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 624
+    },
+    {
+      "path": "compose/openoutreach/Dockerfile",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "268621920ea6323a9837db58b622b66d60184e6f6cc9be28d72f8944369a663f",
+      "sha256_current": "268621920ea6323a9837db58b622b66d60184e6f6cc9be28d72f8944369a663f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1805
+    },
+    {
+      "path": "compose/openoutreach/entrypoint",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "sha256_current": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 481
+    },
+    {
+      "path": "compose/openoutreach/start",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "eef87134c8ac1bae6220406afe7cd54c18eae3ea56a413b799fbd7224dc39577",
+      "sha256_current": "eef87134c8ac1bae6220406afe7cd54c18eae3ea56a413b799fbd7224dc39577",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 634
+    },
+    {
+      "path": "dashboard/.env.example",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "7b47cfcd19c296f487c85458774955cb6eea8353a392da611ae965a7e8431c41",
+      "sha256_current": "7b47cfcd19c296f487c85458774955cb6eea8353a392da611ae965a7e8431c41",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 412
+    },
+    {
+      "path": "dashboard/.gitignore",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "56537ebe03160a28fdb6e59ae18f408d6f8aba609df73c45917c9358fd3bad52",
+      "sha256_current": "56537ebe03160a28fdb6e59ae18f408d6f8aba609df73c45917c9358fd3bad52",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 8
+    },
+    {
+      "path": "dashboard/README.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "ea38522d45de041a60069575d7add235717811fc18c166d513ca5253715fe483",
+      "sha256_current": "ea38522d45de041a60069575d7add235717811fc18c166d513ca5253715fe483",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3238
+    },
+    {
+      "path": "dashboard/app/activity/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "c801e603877cb460f51affbe4af70bd25ffb22997115b08f9428703ab14f01cf",
+      "sha256_current": "c801e603877cb460f51affbe4af70bd25ffb22997115b08f9428703ab14f01cf",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 214
+    },
+    {
+      "path": "dashboard/app/admin/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "8dd081144f8f7e7b072eba7d8cda0ff34f5f1e7d4e818caf48d445193f9f167a",
+      "sha256_current": "8dd081144f8f7e7b072eba7d8cda0ff34f5f1e7d4e818caf48d445193f9f167a",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 218
+    },
+    {
+      "path": "dashboard/app/api/auth/login/route.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "731302c764918bdb190ccf9c11a8f0e8227f66f6e034b842df76659adf397ff6",
+      "sha256_current": "731302c764918bdb190ccf9c11a8f0e8227f66f6e034b842df76659adf397ff6",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1502
+    },
+    {
+      "path": "dashboard/app/api/auth/logout/route.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "589a28e534a6982f445df6f688d74289e142a1fecab61a50105cb49cc719aed0",
+      "sha256_current": "589a28e534a6982f445df6f688d74289e142a1fecab61a50105cb49cc719aed0",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 979
+    },
+    {
+      "path": "dashboard/app/api/auth/password/route.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "adb765643055a1817a2e315b118640203312afc55de1e67f591d725e0b45b977",
+      "sha256_current": "adb765643055a1817a2e315b118640203312afc55de1e67f591d725e0b45b977",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1218
+    },
+    {
+      "path": "dashboard/app/api/auth/setup/route.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "6c5ae84d5ca3ce728fd70ea38ffc982977a0f654a8aa4ecdfc4aa3dee92337de",
+      "sha256_current": "6c5ae84d5ca3ce728fd70ea38ffc982977a0f654a8aa4ecdfc4aa3dee92337de",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 812
+    },
+    {
+      "path": "dashboard/app/api/proxy/[...path]/route.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "e1e74f8c5dade12b66c700d935f5ba5004358019102b07e02d36e5de35a8c9a5",
+      "sha256_current": "b6a5d3c6e38934d15309045651c2c351fd93dc53d7fe5c8f3ab34e564809aede",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 4883
+    },
+    {
+      "path": "dashboard/app/campaigns/page.tsx",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "bd07603691faa53381d0a1d24130951541e1cd78ddefd9bd6d4c21ffc2a22ebd",
+      "sha256_current": "1b916e1321a3647833c8aec547c55530b63fac78661b33714f341cb337b3bd31",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 797
+    },
+    {
+      "path": "dashboard/app/chat/[threadId]/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "da938e234d28da18911a64af2a85aa2ebfac3b1667f4facf4f4e6b78306c834f",
+      "sha256_current": "da938e234d28da18911a64af2a85aa2ebfac3b1667f4facf4f4e6b78306c834f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 525
+    },
+    {
+      "path": "dashboard/app/chat/page.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "c1c0b75aced75d450a8b7265f176e6ec507d02dac347791165940f9c31911cf5",
+      "sha256_current": "c1c0b75aced75d450a8b7265f176e6ec507d02dac347791165940f9c31911cf5",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 990
+    },
+    {
+      "path": "dashboard/app/contacts/[contactId]/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "f8f98d298d455812792b962714a83d05f1274250c396501aefd339505305fa45",
+      "sha256_current": "f8f98d298d455812792b962714a83d05f1274250c396501aefd339505305fa45",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 533
+    },
+    {
+      "path": "dashboard/app/contacts/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "668cb3b297ccf025f5075e37d1906ab56a4ddee57a976af3562cfd63375540a9",
+      "sha256_current": "668cb3b297ccf025f5075e37d1906ab56a4ddee57a976af3562cfd63375540a9",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 202
+    },
+    {
+      "path": "dashboard/app/find-leads/[runId]/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "a5c4c0ffd2578a5ef974296996e349066dff20cbf218ec34b7183a41da26005a",
+      "sha256_current": "a5c4c0ffd2578a5ef974296996e349066dff20cbf218ec34b7183a41da26005a",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 524
+    },
+    {
+      "path": "dashboard/app/find-leads/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "95e76d38139a00ba25ad9a5e54f67b665dd600b0f24e434c79995a9f52c94408",
+      "sha256_current": "95e76d38139a00ba25ad9a5e54f67b665dd600b0f24e434c79995a9f52c94408",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 209
+    },
+    {
+      "path": "dashboard/app/globals.css",
+      "category": "source",
+      "status": "browser_layout_scope",
+      "reason": "Existing layout checked in browser and production build; exhaustive stylesheet review excluded.",
+      "sha256_previous_broad_audit": "b44c68126cddc098354f4a48b5c9ee51ef5a331b168a1ea3f8502d7525f02207",
+      "sha256_current": "afa556ca1dc5950c5b25da85855445411d49db979a533c0b134f34fcbd1cd12d",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 59386
+    },
+    {
+      "path": "dashboard/app/inbox/messages/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "43b20b72e24858fb49269babc1e3f2e35ebf1a44f62a42718114b5d87919eac8",
+      "sha256_current": "43b20b72e24858fb49269babc1e3f2e35ebf1a44f62a42718114b5d87919eac8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 212
+    },
+    {
+      "path": "dashboard/app/inbox/page.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "18d8b2d19a8c3fd50955054e4446b9810161b71adeb7614cf4618614821a7734",
+      "sha256_current": "7ad23b68d8973ae749c1a6aa8b47590aeb437c091538cd83b2efd692049bf7c1",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 520
+    },
+    {
+      "path": "dashboard/app/layout.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "c8cb7de80599aaca3025a258e2faa751a4e044b93cbeec91b2aeffdf7c036ddb",
+      "sha256_current": "c8cb7de80599aaca3025a258e2faa751a4e044b93cbeec91b2aeffdf7c036ddb",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 666
+    },
+    {
+      "path": "dashboard/app/login/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "81858b44beabc7cfd9033125c19427f640ec0cf80c6b6d1da011fe5b4160e35d",
+      "sha256_current": "81858b44beabc7cfd9033125c19427f640ec0cf80c6b6d1da011fe5b4160e35d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2753
+    },
+    {
+      "path": "dashboard/app/onboarding/page.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "ab0edc23754993c7b90f1fd5704b66f1b9674761795a8750ed8d82ed3aa4b741",
+      "sha256_current": "ab0edc23754993c7b90f1fd5704b66f1b9674761795a8750ed8d82ed3aa4b741",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 725
+    },
+    {
+      "path": "dashboard/app/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "a199859322f58e772316811bba2d8bd926b3a1b8431c51e2b530f0feaef9bb20",
+      "sha256_current": "a199859322f58e772316811bba2d8bd926b3a1b8431c51e2b530f0feaef9bb20",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 205
+    },
+    {
+      "path": "dashboard/app/password/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "d904a9e193b288fa939549d4d5a8537fa0003c128948a12d11e0f0b6701e8ffd",
+      "sha256_current": "d904a9e193b288fa939549d4d5a8537fa0003c128948a12d11e0f0b6701e8ffd",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 244
+    },
+    {
+      "path": "dashboard/app/sending/page.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "ad253270e097b86e9474bfbd2b0aea83095c93e3c89019623522ae3844b3bf57",
+      "sha256_current": "c0ca109e7417dff4fd780212109bf53701afa7f173aa572cfebd8b89498f1c1c",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 408
+    },
+    {
+      "path": "dashboard/app/settings/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "4ced639f9e0d9b8e014890d171dcaa3fdd59132b6ce1937fdd86b50ea66512b7",
+      "sha256_current": "4ced639f9e0d9b8e014890d171dcaa3fdd59132b6ce1937fdd86b50ea66512b7",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 205
+    },
+    {
+      "path": "dashboard/app/setup/page.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "8e49fef4cf1826a10d8b36cc233a03f7a65023be17774f9ee367e3e76a490fb8",
+      "sha256_current": "8e49fef4cf1826a10d8b36cc233a03f7a65023be17774f9ee367e3e76a490fb8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4225
+    },
+    {
+      "path": "dashboard/app/suppression/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "fc9b423a88b61a45b5071f1e89dc51063cdbff45c8d4630e6b12214a7e9f8814",
+      "sha256_current": "fc9b423a88b61a45b5071f1e89dc51063cdbff45c8d4630e6b12214a7e9f8814",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 224
+    },
+    {
+      "path": "dashboard/app/target/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "480df09d63adfad1cfe1e9507f7660ba5a53d9904cdb4cdb2196e55645e3e980",
+      "sha256_current": "480df09d63adfad1cfe1e9507f7660ba5a53d9904cdb4cdb2196e55645e3e980",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 218
+    },
+    {
+      "path": "dashboard/app/tour/page.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "2e8b3549dec4e7f55a2a36dc299ce3dacea1106707b8c0dbfba77f560b7dffa4",
+      "sha256_current": "2e8b3549dec4e7f55a2a36dc299ce3dacea1106707b8c0dbfba77f560b7dffa4",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 206
+    },
+    {
+      "path": "dashboard/components/activity-feed.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "1ff09cb084a27f62ac27b9ec60d3c617748e798721e9a7c005ee5cf8c5acb0da",
+      "sha256_current": "1ff09cb084a27f62ac27b9ec60d3c617748e798721e9a7c005ee5cf8c5acb0da",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 6075
+    },
+    {
+      "path": "dashboard/components/admin.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "094df71c4078f387e99dcfa9f0c3946bbaebbd32c603bbdec2bcbb7ab7e3586c",
+      "sha256_current": "094df71c4078f387e99dcfa9f0c3946bbaebbd32c603bbdec2bcbb7ab7e3586c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 8812
+    },
+    {
+      "path": "dashboard/components/ai-connection.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "a09d6c6c3239496a0bb985d349db7c577c208b4ffecac6a74d494bab94c4b5e8",
+      "sha256_current": "a09d6c6c3239496a0bb985d349db7c577c208b4ffecac6a74d494bab94c4b5e8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3748
+    },
+    {
+      "path": "dashboard/components/avatar.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "ff147f4337a939691bbff8d653bdd5823c7170210ad1afa70d256c66e0864315",
+      "sha256_current": "ff147f4337a939691bbff8d653bdd5823c7170210ad1afa70d256c66e0864315",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 328
+    },
+    {
+      "path": "dashboard/components/brand.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "be18c5f1f9e825a4b01d07fb1bfd2d0a4cd87087388dcc030a71aba1da57374f",
+      "sha256_current": "be18c5f1f9e825a4b01d07fb1bfd2d0a4cd87087388dcc030a71aba1da57374f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 323
+    },
+    {
+      "path": "dashboard/components/campaign-send-review.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "11eecfb416d3221ea3bbb7b9e877983ea7b8f0ba753696d21804ac7393cb2fa2",
+      "sha256_current": "11eecfb416d3221ea3bbb7b9e877983ea7b8f0ba753696d21804ac7393cb2fa2",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 5428
+    },
+    {
+      "path": "dashboard/components/campaigns.tsx",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "4c4e592d55fcfe2c2a6d09e3c690915f4a940838b6cb1cf3f663d53958279e06",
+      "sha256_current": "d66944cb058efae4e876ff090beb09c6d7148a3ff51e216ef6f8920eb15ac939",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 19127
+    },
+    {
+      "path": "dashboard/components/chat-discovery-card.tsx",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "dbf7af152724420afada285a958670214abb383e80e792e952c14f849c00fe2b",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 1996
+    },
+    {
+      "path": "dashboard/components/chat-history.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "3c0ad10cb798f95b118cd59a418c3ff16ba820d478be8d0ca46caa123f591b57",
+      "sha256_current": "cba0a584df76b039baece4001c044569b28748ce95d9be42173930dde43e1eef",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 2731
+    },
+    {
+      "path": "dashboard/components/chat-rename.tsx",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "55e0ef7c0456320f5e7d50a8c5f967c272ccbc3246a9a62baa7f4885fece6b22",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 934
+    },
+    {
+      "path": "dashboard/components/chat-results.tsx",
+      "category": "source",
+      "status": "focused_partial_review",
+      "reason": "Inspected relevant handlers, effects, guards or changed payload/context paths; full line-by-line reinspection not claimed. Fresh tests/build/compilation also ran.",
+      "sha256_previous_broad_audit": "6dbb6e2b5aefb586238dfa32ea4f56ef3487768695b0095cec94b020f95d3111",
+      "sha256_current": "978cdbff2a960a1ec765e1cdb8f5f1a68f0a075653ebafaa09fcbd111594d542",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 10300
+    },
+    {
+      "path": "dashboard/components/chat.tsx",
+      "category": "source",
+      "status": "focused_partial_review",
+      "reason": "Inspected relevant handlers, effects, guards or changed payload/context paths; full line-by-line reinspection not claimed. Fresh tests/build/compilation also ran.",
+      "sha256_previous_broad_audit": "dd922cf26cec6e077704244f43641b20aa24035be400300d69c4240db67b2450",
+      "sha256_current": "fa3a80a98d7c20856bda901894863586978edbfa5e49622e744b515ce3e66f68",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 18524
+    },
+    {
+      "path": "dashboard/components/connections.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "b3f8d5e9be902cbbf2424c017f972a9537ce2aaa1d22a17dbf5f095b6447e8b4",
+      "sha256_current": "b3f8d5e9be902cbbf2424c017f972a9537ce2aaa1d22a17dbf5f095b6447e8b4",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 13020
+    },
+    {
+      "path": "dashboard/components/contacts.tsx",
+      "category": "source",
+      "status": "focused_partial_review",
+      "reason": "Inspected relevant handlers, effects, guards or changed payload/context paths; full line-by-line reinspection not claimed. Fresh tests/build/compilation also ran.",
+      "sha256_previous_broad_audit": "ee752e5416f60720de9ac5aec4b78e167dab666fd854bf1f3e676e14f831063f",
+      "sha256_current": "0c1330c6d0d8b33ab9ff5626fc85ca4b6a9218560877a1debd520a26cfacfdaa",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 19475
+    },
+    {
+      "path": "dashboard/components/discovery-email-review.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "f9e5d2986c1752bff30caae7ee770c4b3d143942646437a72f8bec5d02fbbd14",
+      "sha256_current": "f9e5d2986c1752bff30caae7ee770c4b3d143942646437a72f8bec5d02fbbd14",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 5432
+    },
+    {
+      "path": "dashboard/components/discovery-live.tsx",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "a997a8f454c3279e4e2a1d8e61e01c3773a15fe3cd09f0b665d46d56f95e1ad2",
+      "sha256_current": "ec774b20c87d6017d041fa068d7536fb71d0904c904dd93c7a593112d958701d",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 14434
+    },
+    {
+      "path": "dashboard/components/email-preview.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "ccd90b22c62fc574cf8bf5dba44a830028351335a5bcc1da0f6b4ee8384ce774",
+      "sha256_current": "63055f610c5d47a1899ced3c46a90233d22049d2e1551e2a9a290f01d30bfeea",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 3961
+    },
+    {
+      "path": "dashboard/components/employee-row.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "3439ada266bc2d86f5bbc2f1065022bd950933eea0738576c283853011b58c3d",
+      "sha256_current": "3439ada266bc2d86f5bbc2f1065022bd950933eea0738576c283853011b58c3d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2485
+    },
+    {
+      "path": "dashboard/components/find-leads.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "190d638e8569e2226e3806213d356a38bb97566d801017b607e4904e411c98c7",
+      "sha256_current": "190d638e8569e2226e3806213d356a38bb97566d801017b607e4904e411c98c7",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 11162
+    },
+    {
+      "path": "dashboard/components/home-summary.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "580f0c48f2ad2365b6cd5967464d4574deb3a027e8f38f06dcf6918081243653",
+      "sha256_current": "580f0c48f2ad2365b6cd5967464d4574deb3a027e8f38f06dcf6918081243653",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 8074
+    },
+    {
+      "path": "dashboard/components/icon.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "552b2af13e86df2573c1ad793ace39f2e989a809ed22c02e0b2c276b2e721b51",
+      "sha256_current": "552b2af13e86df2573c1ad793ace39f2e989a809ed22c02e0b2c276b2e721b51",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3089
+    },
+    {
+      "path": "dashboard/components/inbox.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "354c1b7273a672a1766dc0c8b5ac21634f59c49cd794ecc65f672fe1c8b5c21a",
+      "sha256_current": "eefff5a9d3177f19e289fa3e56bb65606ac9636807420be0aa43634bd40b375e",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 8012
+    },
+    {
+      "path": "dashboard/components/lead-detail.tsx",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "587140d6d2e25c5d749a4650c73c98b256c7c3b0f7f4a91a61d1a26538cf4ba6",
+      "sha256_current": "3f1452b066afcffdc7cb1971411f7e6fb027ec815d5606b59a6b0f152213b762",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 9042
+    },
+    {
+      "path": "dashboard/components/lead-links.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "34d8a0edcb8f63fa4bea21c5b3be1d0ac7791aca9bfdd8b4543342138a437594",
+      "sha256_current": "34d8a0edcb8f63fa4bea21c5b3be1d0ac7791aca9bfdd8b4543342138a437594",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 614
+    },
+    {
+      "path": "dashboard/components/lead-timeline.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "f4a4ff27ffe28dfac4ae8e4bdb76bfb146874b7a412f2e28b08a7f55dadc2c54",
+      "sha256_current": "f4a4ff27ffe28dfac4ae8e4bdb76bfb146874b7a412f2e28b08a7f55dadc2c54",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7428
+    },
+    {
+      "path": "dashboard/components/onboarding.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "9c03ac46794ca7f520a29483d59ae09fd25ff601906f5ce19eaa3d8b9862a6e9",
+      "sha256_current": "9c03ac46794ca7f520a29483d59ae09fd25ff601906f5ce19eaa3d8b9862a6e9",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4915
+    },
+    {
+      "path": "dashboard/components/outreach-review.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "628e63bb2ae35b4fdf8e5eeec9d8ee8c6f54a573d1c40370aec9029c542a4e53",
+      "sha256_current": "c6e5a8ffbdc4925831948a2cb193aa47fd2ebe8fada445c425a1fb303896dc3c",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 7939
+    },
+    {
+      "path": "dashboard/components/overview.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "fca460b345800592f72e1b12d760ef0136a72d5aed6f1c8802a972c0f574f815",
+      "sha256_current": "fca460b345800592f72e1b12d760ef0136a72d5aed6f1c8802a972c0f574f815",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 14424
+    },
+    {
+      "path": "dashboard/components/password.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "bd5b4a599c6862ee2088d706a41d8c37e33205928b75124d737195b667615366",
+      "sha256_current": "bd5b4a599c6862ee2088d706a41d8c37e33205928b75124d737195b667615366",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3119
+    },
+    {
+      "path": "dashboard/components/secret-input.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "833db21da3f95249d044865a59804caa956c1a3f9620d670d65e5cbb15ac06a6",
+      "sha256_current": "833db21da3f95249d044865a59804caa956c1a3f9620d670d65e5cbb15ac06a6",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1589
+    },
+    {
+      "path": "dashboard/components/sending.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "0e7333edc1305450354ea03811b3d5e7439744e36826fcfe50cf09d86f7bb826",
+      "sha256_current": "bbefacb8f66740afde08b2fb4505814b1decbf4c3f93918a322d7a77c807a5ea",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 6450
+    },
+    {
+      "path": "dashboard/components/settings-data.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "153df2fe27298e82d242b3a0333903ae47be1cecc2eb330377d0e7d602b1773e",
+      "sha256_current": "153df2fe27298e82d242b3a0333903ae47be1cecc2eb330377d0e7d602b1773e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2857
+    },
+    {
+      "path": "dashboard/components/settings-editor.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "410449f0a88b27991f1f5e1e9abce46cc238f68296f8aedfdc6bf743e52101c1",
+      "sha256_current": "410449f0a88b27991f1f5e1e9abce46cc238f68296f8aedfdc6bf743e52101c1",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 6701
+    },
+    {
+      "path": "dashboard/components/settings-test.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "f0c161c80b35c8846096b3b07acff80808bffb68b2fa9a183cbe8eb5280fb08f",
+      "sha256_current": "f0c161c80b35c8846096b3b07acff80808bffb68b2fa9a183cbe8eb5280fb08f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3948
+    },
+    {
+      "path": "dashboard/components/settings.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "64c6656670e6e4156003b83e50e46c872d5d4a35c4df5f6fd85edf414a7bd40b",
+      "sha256_current": "64c6656670e6e4156003b83e50e46c872d5d4a35c4df5f6fd85edf414a7bd40b",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4185
+    },
+    {
+      "path": "dashboard/components/setup-audience.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "4ee5cf1ede34950d8595636e768e526e586851166f1ce952aaafa0764f952764",
+      "sha256_current": "4ee5cf1ede34950d8595636e768e526e586851166f1ce952aaafa0764f952764",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 6332
+    },
+    {
+      "path": "dashboard/components/setup-connection-check.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "232efb01bb257ed8af0787465ee9693bbe39f5fbe7dec8a6d5ee72ce4fe1c4cc",
+      "sha256_current": "232efb01bb257ed8af0787465ee9693bbe39f5fbe7dec8a6d5ee72ce4fe1c4cc",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2302
+    },
+    {
+      "path": "dashboard/components/setup-mailbox.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "e387b33fd2109686780fe0699ed9f8dca6230095ffafeb6ae28d653360ad033a",
+      "sha256_current": "e387b33fd2109686780fe0699ed9f8dca6230095ffafeb6ae28d653360ad033a",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2798
+    },
+    {
+      "path": "dashboard/components/setup-profile.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "31e95c9a0008b700c199c686d7380d8c4ac383d643c6830f9ee10bf930ec76f4",
+      "sha256_current": "31e95c9a0008b700c199c686d7380d8c4ac383d643c6830f9ee10bf930ec76f4",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 5028
+    },
+    {
+      "path": "dashboard/components/setup-tools.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "72493eb60866f693f6ed917bd30571bcd9d8948dfb2fcb3ebc0aa4014cda6835",
+      "sha256_current": "72493eb60866f693f6ed917bd30571bcd9d8948dfb2fcb3ebc0aa4014cda6835",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2938
+    },
+    {
+      "path": "dashboard/components/sidebar.tsx",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "3d11cfb50fb0fb0b6fac50ccfce3e8c0be3e9b10da8dc09a6b279de57c573f8f",
+      "sha256_current": "8ef86ae81c8b6299de5e5f04a0b03e9f5e54211006d73423a6cd05568bfb57e5",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 7445
+    },
+    {
+      "path": "dashboard/components/suppression-form.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "cf13cbe442e9ab871bb18e1e914d2fb8314f5ffd2c973126b9bb7943727fe3e9",
+      "sha256_current": "cf13cbe442e9ab871bb18e1e914d2fb8314f5ffd2c973126b9bb7943727fe3e9",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2349
+    },
+    {
+      "path": "dashboard/components/target-editor.tsx",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "a2a9cc1571bf4474b8e23d62b8a8221c72722b03eec50e77883d00aab23e7462",
+      "sha256_current": "a2a9cc1571bf4474b8e23d62b8a8221c72722b03eec50e77883d00aab23e7462",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3981
+    },
+    {
+      "path": "dashboard/components/tour.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "ce5b6ebaaeb302ee3cd7fd39a1de11c48925c1780437df0855b84bd1ba2e73d7",
+      "sha256_current": "5e914bb8447cc96f805e9e06c0301b16d1f68e9265fe5563cbbdacbed254d9f4",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 4053
+    },
+    {
+      "path": "dashboard/components/workspace-records.tsx",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "f4a8ad02e3b8dff32a2fa2e59ab2014cdccf737e270110862f759eb8172ea283",
+      "sha256_current": "f4a8ad02e3b8dff32a2fa2e59ab2014cdccf737e270110862f759eb8172ea283",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 11397
+    },
+    {
+      "path": "dashboard/lib/activity.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "ec33b566152a845de978b75e8c14c5cf1f56b9d9edc608de322bbb4f6967bb8b",
+      "sha256_current": "ec33b566152a845de978b75e8c14c5cf1f56b9d9edc608de322bbb4f6967bb8b",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 523
+    },
+    {
+      "path": "dashboard/lib/auth.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "9b727fef019a5be3feac7733ff7d18bec43bc74d9865e933935bb62349764a5f",
+      "sha256_current": "9b727fef019a5be3feac7733ff7d18bec43bc74d9865e933935bb62349764a5f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2735
+    },
+    {
+      "path": "dashboard/lib/chat-stream.ts",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "018e9e3e1890a9fbcf08574db6ac0ea03747094786315a5483779f99bc596252",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 1301
+    },
+    {
+      "path": "dashboard/lib/chat.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "4fe2b2f47a423f4ada42af870b9e1eddb048b8a35b6f8d2851dca0f546471b84",
+      "sha256_current": "9c66d71a038801734d688b7d6f719f98a11d880d6b1ff7ac8b2a3d0ea33fe9d3",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 1382
+    },
+    {
+      "path": "dashboard/lib/client-api.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "1ff9352df4164f576c0ee110de010640c4c4614842066771c977780685b72a53",
+      "sha256_current": "1ff9352df4164f576c0ee110de010640c4c4614842066771c977780685b72a53",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 572
+    },
+    {
+      "path": "dashboard/lib/connection-settings.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "ac71656b784c3e966a613af4e755c74fb1238dd0464c89d78a2bc13ab6a7991f",
+      "sha256_current": "ac71656b784c3e966a613af4e755c74fb1238dd0464c89d78a2bc13ab6a7991f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1975
+    },
+    {
+      "path": "dashboard/lib/discovery.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "c8e9378040119c96b7041f5827da5e5a58a29fcc33c5b16be03b7f715859b983",
+      "sha256_current": "c8e9378040119c96b7041f5827da5e5a58a29fcc33c5b16be03b7f715859b983",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3082
+    },
+    {
+      "path": "dashboard/lib/leads.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "c304a8bc16781ec3003926e20ffc81998b5516347b822db2ccd265d8674f87c2",
+      "sha256_current": "c304a8bc16781ec3003926e20ffc81998b5516347b822db2ccd265d8674f87c2",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2505
+    },
+    {
+      "path": "dashboard/lib/outreach.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "add2fc382b09d55890ad94d212617a205fa85c8e3c9350d90b109af66d033d4e",
+      "sha256_current": "68aa53aa1c8c900356175e5504804a53fbee7f3a0900e2dbcd797cd622245bed",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 1094
+    },
+    {
+      "path": "dashboard/lib/session.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "31e4590538456489f0a6bf8d932322f2339c937dbd9cd7b0679a4f7f9085392c",
+      "sha256_current": "31e4590538456489f0a6bf8d932322f2339c937dbd9cd7b0679a4f7f9085392c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 244
+    },
+    {
+      "path": "dashboard/lib/setup-wizard.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "7772237032ef2942ed1ed9170d033b5124ad0218caffc91ed0a96d1059d9b4f8",
+      "sha256_current": "7772237032ef2942ed1ed9170d033b5124ad0218caffc91ed0a96d1059d9b4f8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3952
+    },
+    {
+      "path": "dashboard/lib/use-setup-wizard.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "f793793a22a77ad555d6a6a77c1dac8b098e4d577418272f5bfc1d663b24f343",
+      "sha256_current": "f793793a22a77ad555d6a6a77c1dac8b098e4d577418272f5bfc1d663b24f343",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7369
+    },
+    {
+      "path": "dashboard/lib/use-stored-data.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "f94b29d4e11b57ca8aa4318bf737eec3dd72407591c4fb46b8408456640aad17",
+      "sha256_current": "f94b29d4e11b57ca8aa4318bf737eec3dd72407591c4fb46b8408456640aad17",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1375
+    },
+    {
+      "path": "dashboard/lib/workspace-context.ts",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "3e9df651be54cb9ab48e24b850a4d8c83928d9e90660a4b5534c3b2f56d45bcd",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 1533
+    },
+    {
+      "path": "dashboard/lib/workspace-settings.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "0ead22abcbf95b184cd5d19a5d7d7344c0dff42a83af99170a48539259a8905c",
+      "sha256_current": "0ead22abcbf95b184cd5d19a5d7d7344c0dff42a83af99170a48539259a8905c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3670
+    },
+    {
+      "path": "dashboard/next-env.d.ts",
+      "category": "generated",
+      "status": "excluded_manual_source_review",
+      "reason": "Next.js generated type references; build/type checks passed; generated dev/build reference changes are expected.",
+      "sha256_previous_broad_audit": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc",
+      "sha256_current": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 296
+    },
+    {
+      "path": "dashboard/next.config.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "93c7682978d373c1d579da962205d3769b4485240bdb9cc282a80c92bf3059d1",
+      "sha256_current": "93c7682978d373c1d579da962205d3769b4485240bdb9cc282a80c92bf3059d1",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 540
+    },
+    {
+      "path": "dashboard/package-lock.json",
+      "category": "generated",
+      "status": "excluded_manual_source_review",
+      "reason": "Generated dependency/build material; type/build execution checked, not hand-edited.",
+      "sha256_previous_broad_audit": "6f344dce3c31600f061623ba861bdc2af572bd72bdd34ea8bcf53161cf42a69d",
+      "sha256_current": "6f344dce3c31600f061623ba861bdc2af572bd72bdd34ea8bcf53161cf42a69d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 92836
+    },
+    {
+      "path": "dashboard/package.json",
+      "category": "configuration",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "36bcacf0a7d513f0e962cf6e3ac16f694728592371d1e720967703a29989dc6b",
+      "sha256_current": "36bcacf0a7d513f0e962cf6e3ac16f694728592371d1e720967703a29989dc6b",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 656
+    },
+    {
+      "path": "dashboard/proxy.ts",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "525966ed327e60859fd45633066d5cd422ae9896da95a00a1374a9978c891f06",
+      "sha256_current": "525966ed327e60859fd45633066d5cd422ae9896da95a00a1374a9978c891f06",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1111
+    },
+    {
+      "path": "dashboard/public/favicon.svg",
+      "category": "asset",
+      "status": "excluded_manual_source_review",
+      "reason": "Binary or static asset; visual browser checks cover displayed identity/layout, not exhaustive asset validation.",
+      "sha256_previous_broad_audit": "a87ce38df36ebea6f5f84530fced5ecf4ef7598415524db2123365570a91aa6f",
+      "sha256_current": "a87ce38df36ebea6f5f84530fced5ecf4ef7598415524db2123365570a91aa6f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 280
+    },
+    {
+      "path": "dashboard/tests/chat-agent.test.tsx",
+      "category": "test",
+      "status": "focused_review_and_executed",
+      "reason": "New or extended meaningful journey/link assertions reviewed; full suite executed, with ten repetitions for these cases.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "c050d14029fc07f4ad8ec21020b88e74ca4428d3680c2aad57fdb39e7736085e",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 12920
+    },
+    {
+      "path": "dashboard/tests/fixtures.ts",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "701dce13f9be4961ea9c1936a242841733caf73217ccf14bdbf9b8ab69f3fde0",
+      "sha256_current": "701dce13f9be4961ea9c1936a242841733caf73217ccf14bdbf9b8ab69f3fde0",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2368
+    },
+    {
+      "path": "dashboard/tests/remaining-controls.test.tsx",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "334b4a0bc8886bf91220775058d64de2501f8df0d029946daace14941870393e",
+      "sha256_current": "334b4a0bc8886bf91220775058d64de2501f8df0d029946daace14941870393e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 9482
+    },
+    {
+      "path": "dashboard/tests/request-origin.test.ts",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "a3aff53ab5324126bf4e1ed06259116cc9b2845655564f6a07769b7e6567210c",
+      "sha256_current": "a3aff53ab5324126bf4e1ed06259116cc9b2845655564f6a07769b7e6567210c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2115
+    },
+    {
+      "path": "dashboard/tests/review-controls.test.tsx",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "d2e3aaf35b19d7405d7f1806ff350bdd16f1065d23fee509c0b2da94eb5fc99f",
+      "sha256_current": "d2e3aaf35b19d7405d7f1806ff350bdd16f1065d23fee509c0b2da94eb5fc99f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 13987
+    },
+    {
+      "path": "dashboard/tests/setup.tsx",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "153bed2bab77e9c5afe1a3045571278837e5c53cae5771cb949072bb9007c318",
+      "sha256_current": "d834a02fe6378e4c9881956b89b74c9444730860223e6bd33bbea3918d85a52d",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 733
+    },
+    {
+      "path": "dashboard/tests/user-journeys.test.tsx",
+      "category": "test",
+      "status": "focused_review_and_executed",
+      "reason": "New or extended meaningful journey/link assertions reviewed; full suite executed, with ten repetitions for these cases.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "58ecaf957da6cc74a4869656c2c5b82fbf4c3ce92c2ab78acd14c8cf0f08c29b",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 7149
+    },
+    {
+      "path": "dashboard/tests/workspace-controls.test.tsx",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "8cbdc6795d74a2fa5d04d30f558f2957cd6f2cb71542b481353f93c45d6af86e",
+      "sha256_current": "a48c21a4b429056fff13631797f65270ae3d5fb6708b4569da1c5003b1c8e081",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 18053
+    },
+    {
+      "path": "dashboard/tsconfig.json",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "fc03f713da39db06cbed0b234babdb94547eea9eda6b65ea6ad87cb73e8ef2f8",
+      "sha256_current": "fc03f713da39db06cbed0b234babdb94547eea9eda6b65ea6ad87cb73e8ef2f8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 699
+    },
+    {
+      "path": "dashboard/vitest.config.mts",
+      "category": "configuration",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "24c0c67ba5fd0a638385ede553eb609c0a5d51e235e216e4f7a95ecee75559dd",
+      "sha256_current": "24c0c67ba5fd0a638385ede553eb609c0a5d51e235e216e4f7a95ecee75559dd",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 413
+    },
+    {
+      "path": "docs/automatic-followups.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "3da91ba1207394364290a5119496ffd5a2090f3b7c24108dba0e478b57cd198d",
+      "sha256_current": "3da91ba1207394364290a5119496ffd5a2090f3b7c24108dba0e478b57cd198d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4395
+    },
+    {
+      "path": "docs/chat-orchestrator.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "8b9c1e61399b1c6c17d1aab94fcf9e94e3f53e44017a894107e55c3d8e343cbf",
+      "sha256_current": "e07299d9e0751e917cf21043867ed454ac88dba2a3683912524328fce95d1282",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 15244
+    },
+    {
+      "path": "docs/chat-workspace-validation-2026-10-02.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "65a6f684792452806959ae08707be7e594ebfaa0fb7021c0e1aa0116700ce734",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 6626
+    },
+    {
+      "path": "docs/dashboard.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "b5b02572647db5ee8240a4b194b3ae42bfad802d5dfc2cb4293de9d2d6a65f7c",
+      "sha256_current": "b5b02572647db5ee8240a4b194b3ae42bfad802d5dfc2cb4293de9d2d6a65f7c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 9908
+    },
+    {
+      "path": "docs/demo.gif",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "e36103826d8984211e4d880e8234ddf355d52d13ffddfce138d531ca77af91d6",
+      "sha256_current": "e36103826d8984211e4d880e8234ddf355d52d13ffddfce138d531ca77af91d6",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7296595
+    },
+    {
+      "path": "docs/deployment.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "6b6d6d4482412a20b50ea9a556154b320cb57507f92c9fae71a630d98897addf",
+      "sha256_current": "6b6d6d4482412a20b50ea9a556154b320cb57507f92c9fae71a630d98897addf",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 8072
+    },
+    {
+      "path": "docs/docker.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "056eee68dec1117dc83f877cf0778cecbe07dbe682c555d8462c59210c2577a0",
+      "sha256_current": "056eee68dec1117dc83f877cf0778cecbe07dbe682c555d8462c59210c2577a0",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1452
+    },
+    {
+      "path": "docs/leadzen-logo.svg",
+      "category": "asset",
+      "status": "excluded_manual_source_review",
+      "reason": "Binary or static asset; visual browser checks cover displayed identity/layout, not exhaustive asset validation.",
+      "sha256_previous_broad_audit": "01dc1598aee74223bb960ac0f8b7113c079608d51b12523fc67c0bc23666d93e",
+      "sha256_current": "01dc1598aee74223bb960ac0f8b7113c079608d51b12523fc67c0bc23666d93e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 758
+    },
+    {
+      "path": "docs/local-validation.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "ddfb52048b97e5021667ebb522faf729bce10020f0c6f81e99d0ff87101b1158",
+      "sha256_current": "ddfb52048b97e5021667ebb522faf729bce10020f0c6f81e99d0ff87101b1158",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 55212
+    },
+    {
+      "path": "docs/logo.png",
+      "category": "asset",
+      "status": "excluded_manual_source_review",
+      "reason": "Binary or static asset; visual browser checks cover displayed identity/layout, not exhaustive asset validation.",
+      "sha256_previous_broad_audit": "18d9ffa24a1e4eeb44f330020facacd607028e40749adf375e9714b05558ead2",
+      "sha256_current": "18d9ffa24a1e4eeb44f330020facacd607028e40749adf375e9714b05558ead2",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 99129
+    },
+    {
+      "path": "docs/new-chat-handoff-2026-10-02.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "576623996504566618c30b54b90dcd8680811c16e7b4eba305ddd4f1322f202b",
+      "sha256_current": "576623996504566618c30b54b90dcd8680811c16e7b4eba305ddd4f1322f202b",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 31194
+    },
+    {
+      "path": "docs/production-readiness-audit-2026-10-02.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "91470442de091b66a7c128a6f4362516b0d71b5576650c574a93992cd6917d22",
+      "sha256_current": "91470442de091b66a7c128a6f4362516b0d71b5576650c574a93992cd6917d22",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 25899
+    },
+    {
+      "path": "docs/production-readiness-inventory-2026-10-02.json",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "46d8c7b9899d14aae48490aaf2e6def3170d32e4b0c537e9b0c691bdcdbb6415",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 122295
+    },
+    {
+      "path": "docs/production-readiness-results-2026-10-02.json",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "9e26c9416dd0a3b1860d1ff73e701d0430b2a0be86bd80561bbe72bea3839ff3",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 16792
+    },
+    {
+      "path": "docs/user-experience-audit-2026-10-02.md",
+      "category": "audit_artifact",
+      "status": "generated",
+      "reason": "Audit evidence; inventory self-hash omitted to avoid recursion.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "0fb9ee736f38c0f471af1ea2e7d8072d1b3633c471b8eadc74bfef771e879128",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 11265
+    },
+    {
+      "path": "docs/user-experience-audit-inventory-2026-10-02.json",
+      "category": "audit_artifact",
+      "status": "generated",
+      "reason": "Audit evidence; inventory self-hash omitted to avoid recursion.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": null,
+      "unchanged_since_broad_audit": false,
+      "bytes_current": null
+    },
+    {
+      "path": "docs/user-experience-audit-results-2026-10-02.json",
+      "category": "audit_artifact",
+      "status": "generated",
+      "reason": "Audit evidence; inventory self-hash omitted to avoid recursion.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "cdf907cb4d8ccd7c13697c747262c251b66c304cfa5124b5368d3057f13dba55",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 2132
+    },
+    {
+      "path": "leadzen/__init__.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 0
+    },
+    {
+      "path": "leadzen/__main__.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "09f786943c908a9dabfb65362311d22027d1a0a6d54b7505434d3e58d8550e05",
+      "sha256_current": "09f786943c908a9dabfb65362311d22027d1a0a6d54b7505434d3e58d8550e05",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 10195
+    },
+    {
+      "path": "leadzen/accounts/__init__.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 0
+    },
+    {
+      "path": "leadzen/accounts/apps.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "a00703325d261d2a0dcdd68a3124ed329c1e2aa4749c2f570a74e3d41cc819bb",
+      "sha256_current": "a00703325d261d2a0dcdd68a3124ed329c1e2aa4749c2f570a74e3d41cc819bb",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 168
+    },
+    {
+      "path": "leadzen/accounts/invitations.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "db4b3f281a45fd9d3a3171af70216b9ae6deb832bee0513b5699737d0f48aeab",
+      "sha256_current": "db4b3f281a45fd9d3a3171af70216b9ae6deb832bee0513b5699737d0f48aeab",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 6841
+    },
+    {
+      "path": "leadzen/accounts/management/__init__.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 0
+    },
+    {
+      "path": "leadzen/accounts/management/commands/__init__.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 0
+    },
+    {
+      "path": "leadzen/accounts/management/commands/bootstrap_admin.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "158ff4fd37714623d9b721b439a7710a3c4ab2a699ff616c67acd41af12649e2",
+      "sha256_current": "158ff4fd37714623d9b721b439a7710a3c4ab2a699ff616c67acd41af12649e2",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1286
+    },
+    {
+      "path": "leadzen/accounts/migrations/0001_initial.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "9d2e481ea6cf40faa8007b76b82603fbf218e2159c434bb13202f8b5eca0f0a0",
+      "sha256_current": "9d2e481ea6cf40faa8007b76b82603fbf218e2159c434bb13202f8b5eca0f0a0",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2703
+    },
+    {
+      "path": "leadzen/accounts/migrations/0002_accountprofile_tour_completed_at_employeeinvitation.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "c420672f1e51e1ba6c8414918dd57075bc05fcf7cdbbfa4230e6da58ac51d470",
+      "sha256_current": "c420672f1e51e1ba6c8414918dd57075bc05fcf7cdbbfa4230e6da58ac51d470",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1619
+    },
+    {
+      "path": "leadzen/accounts/migrations/__init__.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 0
+    },
+    {
+      "path": "leadzen/accounts/models.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "62667a290a4718f194a17c1e18ff671530b3e127b6482d24c34b3361d98c90e8",
+      "sha256_current": "62667a290a4718f194a17c1e18ff671530b3e127b6482d24c34b3361d98c90e8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2400
+    },
+    {
+      "path": "leadzen/accounts/service.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "1b2f3908acec756e9c5cfbd6a218ce368808f46935e309a8e70ca81dd074c742",
+      "sha256_current": "1b2f3908acec756e9c5cfbd6a218ce368808f46935e309a8e70ca81dd074c742",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7762
+    },
+    {
+      "path": "leadzen/accounts/views.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "b7efd21471e85f8216e90ce802e5089f0ddc5782891d45f87b2d392dafb598b6",
+      "sha256_current": "b7efd21471e85f8216e90ce802e5089f0ddc5782891d45f87b2d392dafb598b6",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 13191
+    },
+    {
+      "path": "leadzen/activity.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "7b11210725ddc4f502b759b6088837e924935cd06827fbabde540a24fc232409",
+      "sha256_current": "7b11210725ddc4f502b759b6088837e924935cd06827fbabde540a24fc232409",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 10017
+    },
+    {
+      "path": "leadzen/ai.py",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "2caf7a6821e279858bd6571f7e063a24308a656152371fca98dca52d07ab8d25",
+      "sha256_current": "0eb9a5708282a1f9ef39ec442d492ffbfb39222b41879b21ef3137992a6e8401",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 9472
+    },
+    {
+      "path": "leadzen/branding.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "1400695ac48737050ee14d85b53bc9ad919058ac4708a07b7c44e92e57c8e2d8",
+      "sha256_current": "1400695ac48737050ee14d85b53bc9ad919058ac4708a07b7c44e92e57c8e2d8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1858
+    },
+    {
+      "path": "leadzen/campaigns.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "40214beb1079b3b52467e34984c472b60cf33fae3c587f7d0100646475dfd753",
+      "sha256_current": "40214beb1079b3b52467e34984c472b60cf33fae3c587f7d0100646475dfd753",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 27081
+    },
+    {
+      "path": "leadzen/chat/__init__.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "1e2c372b3e7bfd9d74c66b046569b8343400b725c27056f0ecbb9f0bd0ccb1a3",
+      "sha256_current": "1e2c372b3e7bfd9d74c66b046569b8343400b725c27056f0ecbb9f0bd0ccb1a3",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 61
+    },
+    {
+      "path": "leadzen/chat/context.py",
+      "category": "source",
+      "status": "focused_partial_review",
+      "reason": "Inspected relevant handlers, effects, guards or changed payload/context paths; full line-by-line reinspection not claimed. Fresh tests/build/compilation also ran.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "0a4b70352223340a6c8a51174ee4f04177039ba943a6a437a434dee057f2bc5d",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 4708
+    },
+    {
+      "path": "leadzen/chat/engine.py",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "b99c33ce86b5123811ee6ad6f69f18d8a886df1cf1db3c6e277c97aea266c0f0",
+      "sha256_current": "f9f87e86e1fe7b002fce2c3937d3f18f38629a70c4353de40e390a2a3eaa9908",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 39703
+    },
+    {
+      "path": "leadzen/chat/tools.py",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "26198aad212528abbd90a3672564bb86a2ba64dff14c244716e9882a8a67a5bb",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 22173
+    },
+    {
+      "path": "leadzen/chat/views.py",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "ce3ef4395535f9f8b76d117628c34d523e8e19a4ad3cb74a6a626b6d46b49e04",
+      "sha256_current": "90d974bb0d97adcfeca065b9f178a70f3c190c3ad8fe52b8cedfc9ef7cc76933",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 15662
+    },
+    {
+      "path": "leadzen/chat_worker.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "876e58240a84eff674316857ec95c4519282f62b2943b72bba280bd1beb7cf28",
+      "sha256_current": "876e58240a84eff674316857ec95c4519282f62b2943b72bba280bd1beb7cf28",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 842
+    },
+    {
+      "path": "leadzen/config/__init__.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 0
+    },
+    {
+      "path": "leadzen/config/apps.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "84434a614f6fe09d6209486f1c95ca5c90c85c4709b6a0d9f5e3aa03a0fac7c2",
+      "sha256_current": "84434a614f6fe09d6209486f1c95ca5c90c85c4709b6a0d9f5e3aa03a0fac7c2",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 523
+    },
+    {
+      "path": "leadzen/config/migrations/0001_initial.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "539bd513698b141e778983b0b7b68e158aaa04db7a7c09684a707564876b5f3b",
+      "sha256_current": "539bd513698b141e778983b0b7b68e158aaa04db7a7c09684a707564876b5f3b",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3408
+    },
+    {
+      "path": "leadzen/config/migrations/0002_rename_operator_country_code.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "4f3409e66acf750649a188a952e6d892ea5d011a1933819c8f514adc72dc2384",
+      "sha256_current": "4f3409e66acf750649a188a952e6d892ea5d011a1933819c8f514adc72dc2384",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 382
+    },
+    {
+      "path": "leadzen/config/migrations/0003_outreachjob.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "90192974bc4f8421bd98e47ccfb295f81ccdf80947c748a93715f6fb1100400b",
+      "sha256_current": "90192974bc4f8421bd98e47ccfb295f81ccdf80947c748a93715f6fb1100400b",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1704
+    },
+    {
+      "path": "leadzen/config/migrations/0004_runtimesettings.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "0800fbf1ab2d20110a303f94b5492f55939f090300cf30e1fb707d6a2fbbb4bb",
+      "sha256_current": "0800fbf1ab2d20110a303f94b5492f55939f090300cf30e1fb707d6a2fbbb4bb",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1607
+    },
+    {
+      "path": "leadzen/config/migrations/0005_emailcampaign_outreachjob_campaign_id_and_more.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "36d47c05a6b768252e824ce22fc18008a63c48e837921cb4e6df691721d98331",
+      "sha256_current": "36d47c05a6b768252e824ce22fc18008a63c48e837921cb4e6df691721d98331",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3476
+    },
+    {
+      "path": "leadzen/config/migrations/0006_chatthread_chatmessage_chatrun.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "b11e47bc03a39d35301e0e18cc96da00b1bdbdf7cdf36c12ce69a61101fb1498",
+      "sha256_current": "b11e47bc03a39d35301e0e18cc96da00b1bdbdf7cdf36c12ce69a61101fb1498",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3019
+    },
+    {
+      "path": "leadzen/config/migrations/0007_chatrun_deadline_at_chatrun_model_requests.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "510066493b6cb9ffa64b8335fed8c255db5880f80e33b324d371b6d1539ccd5a",
+      "sha256_current": "510066493b6cb9ffa64b8335fed8c255db5880f80e33b324d371b6d1539ccd5a",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 593
+    },
+    {
+      "path": "leadzen/config/migrations/0008_contactpreferences_deleted_at.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "18d22e3ff24daf241e7e30fc8840e86b280fcbced808df1db57432917a9d8e27",
+      "sha256_current": "18d22e3ff24daf241e7e30fc8840e86b280fcbced808df1db57432917a9d8e27",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 378
+    },
+    {
+      "path": "leadzen/config/migrations/0009_onboardingstate.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "30e59bb4b5ebdcd86caf06782e34d6fe30a7826fda4972a47b65f53b9a149754",
+      "sha256_current": "30e59bb4b5ebdcd86caf06782e34d6fe30a7826fda4972a47b65f53b9a149754",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 700
+    },
+    {
+      "path": "leadzen/config/migrations/0010_discovery_progress.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "5ce100ed3c81dd562f79a71f8d35ac811587d2ebd1c3396b94f2fd912fe0d25c",
+      "sha256_current": "5ce100ed3c81dd562f79a71f8d35ac811587d2ebd1c3396b94f2fd912fe0d25c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3535
+    },
+    {
+      "path": "leadzen/config/migrations/0011_crm_campaign_offer.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "9852bcab9086dc40edde6338c50be87d968b7b9276f32d95ee3d13709156427c",
+      "sha256_current": "9852bcab9086dc40edde6338c50be87d968b7b9276f32d95ee3d13709156427c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1186
+    },
+    {
+      "path": "leadzen/config/migrations/0012_email_review.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "2b9a05a47e532f828caf2c430307729c3bb807c8969a720e23f0719510ed8c7f",
+      "sha256_current": "2b9a05a47e532f828caf2c430307729c3bb807c8969a720e23f0719510ed8c7f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2447
+    },
+    {
+      "path": "leadzen/config/migrations/0013_campaign_followup_approval.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "4517db931c60c73d247d070116fb6f9e047caba49d9caeb4a4d8faeeb6356e85",
+      "sha256_current": "4517db931c60c73d247d070116fb6f9e047caba49d9caeb4a4d8faeeb6356e85",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 297
+    },
+    {
+      "path": "leadzen/config/migrations/0014_workspacecontext_chatthread_context_and_more.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "8d44b2088ba5f6797288e754badf6ebd5d36e49042fec18beddbd05c7b6760dd",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 1078
+    },
+    {
+      "path": "leadzen/config/migrations/__init__.py",
+      "category": "migration",
+      "status": "schema_checked",
+      "reason": "System/model consistency checked; additive migrations applied only in disposable preview/test databases, not existing user data.",
+      "sha256_previous_broad_audit": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_current": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 0
+    },
+    {
+      "path": "leadzen/config/models.py",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "57afbac89168034d1f7ffef02e8d567da84df0047a6e74fdd8c925bfc64fc749",
+      "sha256_current": "38b25b07d240f0b7aecf7a35356c166d6e6eb7c845962b64c9a31aa1776427c9",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 20810
+    },
+    {
+      "path": "leadzen/configuration.py",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "d7c7bd31cde3edec40d71306eceab34ec0f659263f19305277df421837b15843",
+      "sha256_current": "d7c7bd31cde3edec40d71306eceab34ec0f659263f19305277df421837b15843",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 17146
+    },
+    {
+      "path": "leadzen/crm.py",
+      "category": "source",
+      "status": "fresh_checks_with_manual_scope_limit",
+      "reason": "Changed or added since earlier broad inventory; fresh applicable full-suite/build/type/compilation checks. Earlier Chat validation supplies context; fresh exhaustive manual inspection not claimed.",
+      "sha256_previous_broad_audit": "4ea68fe14ae8193c2e2038cd1dfb0e72c344bd8cd4b027730a42be758e666f4f",
+      "sha256_current": "404a60805f9fa6a869d3e31b61ce5f6457e1b32f050badd94edce31114f8cd7d",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 13903
+    },
+    {
+      "path": "leadzen/discovery.py",
+      "category": "source",
+      "status": "focused_partial_review",
+      "reason": "Inspected relevant handlers, effects, guards or changed payload/context paths; full line-by-line reinspection not claimed. Fresh tests/build/compilation also ran.",
+      "sha256_previous_broad_audit": "053f73752a1c8cd37c8bf17180fa2d78bfb7f2e05359f3b48b76b5a29e34402e",
+      "sha256_current": "adb9d9aadbd42efd6dda1c982f56388eb0af36f19247686f7778cf1db0c4ecd6",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 16238
+    },
+    {
+      "path": "leadzen/discovery_progress.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "00d3e4134a815287afaf0d3b52f3e1338ef35cb56a5949a68b3ccb749ec68eb7",
+      "sha256_current": "00d3e4134a815287afaf0d3b52f3e1338ef35cb56a5949a68b3ccb749ec68eb7",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 15800
+    },
+    {
+      "path": "leadzen/email_api.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "0b42fdedf9567f1d52221c18006d06c6c56bb8d97695d3b3ea842c345ea0625f",
+      "sha256_current": "0b42fdedf9567f1d52221c18006d06c6c56bb8d97695d3b3ea842c345ea0625f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2454
+    },
+    {
+      "path": "leadzen/followups.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "6d6d390d7160e7bbaedbbb8f9f6b17816c7eb1a238c5c18a21028f0cc023518f",
+      "sha256_current": "6d6d390d7160e7bbaedbbb8f9f6b17816c7eb1a238c5c18a21028f0cc023518f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4532
+    },
+    {
+      "path": "leadzen/home.py",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "1539a6d422cf5a2147583da114ea72641b7adb79098216d99942061994d4dc25",
+      "sha256_current": "1539a6d422cf5a2147583da114ea72641b7adb79098216d99942061994d4dc25",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 5216
+    },
+    {
+      "path": "leadzen/mailboxes.py",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "79396a767a7de6c33fbf931d3c8892952862b2b6811cc473b24b8e0651442657",
+      "sha256_current": "72c70eb3d29f522cf89e2684ed45606902f09f22fc4e8d2a429c371195a383ad",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 4389
+    },
+    {
+      "path": "leadzen/outreach.py",
+      "category": "source",
+      "status": "focused_partial_review",
+      "reason": "Inspected relevant handlers, effects, guards or changed payload/context paths; full line-by-line reinspection not claimed. Fresh tests/build/compilation also ran.",
+      "sha256_previous_broad_audit": "b4f4aaf9fc22630634ffe32a72211928b72315af6ea1b166ada79d5e584d567b",
+      "sha256_current": "7949850cecb3aa76e332bcdc19508ce47acc1b1fbbf2f2b8e5e8ae2d1f166b2e",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 34290
+    },
+    {
+      "path": "leadzen/scheduler.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "8d0520528c9ae00d364b93bb03cd469b68f199ec34a490af4a89d1dbb8c6c46d",
+      "sha256_current": "8d0520528c9ae00d364b93bb03cd469b68f199ec34a490af4a89d1dbb8c6c46d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3170
+    },
+    {
+      "path": "leadzen/settings.py",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "d37a1f78d785aa9fc9c0541a07842f0ab29472a4253294ab361cc806a7cce96d",
+      "sha256_current": "d37a1f78d785aa9fc9c0541a07842f0ab29472a4253294ab361cc806a7cce96d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4885
+    },
+    {
+      "path": "leadzen/setup_wizard.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "bc8554f4fd5c6b8b6c3d4f7227272a3cb129e35868899016681419103e17ed9e",
+      "sha256_current": "bc8554f4fd5c6b8b6c3d4f7227272a3cb129e35868899016681419103e17ed9e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 20813
+    },
+    {
+      "path": "leadzen/suppression.py",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "38667d74b55c93f388ef8d0da47c86a17e3c2f8cf202249997a736d08c7fbe67",
+      "sha256_current": "38667d74b55c93f388ef8d0da47c86a17e3c2f8cf202249997a736d08c7fbe67",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1827
+    },
+    {
+      "path": "leadzen/timeline.py",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "c8d022aba87e8fac1231feb05e44e92be11a3a2f57e32e4f8f583b3b66392606",
+      "sha256_current": "c8d022aba87e8fac1231feb05e44e92be11a3a2f57e32e4f8f583b3b66392606",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4531
+    },
+    {
+      "path": "leadzen/transports.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "f9d0f7874004080f7cf6393f93ed1e87b4198b53dc4fb3438004d33e580c2267",
+      "sha256_current": "f9d0f7874004080f7cf6393f93ed1e87b4198b53dc4fb3438004d33e580c2267",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 9849
+    },
+    {
+      "path": "leadzen/upgrade.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "f34c0e30f8605ff26f7f98a7061e7eceaed74de2e88783418b3e4e5d8f5cc079",
+      "sha256_current": "f34c0e30f8605ff26f7f98a7061e7eceaed74de2e88783418b3e4e5d8f5cc079",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2509
+    },
+    {
+      "path": "leadzen/urls.py",
+      "category": "source",
+      "status": "focused_review",
+      "reason": "Focused current source/config inspection for user setup, routing, persistence, connection guards and local test harness; execution described in the report.",
+      "sha256_previous_broad_audit": "6ac442623f007f305c0b40054ba040ad9a4ea6047689da0882712bb243cd625b",
+      "sha256_current": "c8831cfe16f3faa4c87dc2959ebba114522a03e75e2705e88ac5ab208d43b07e",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 3231
+    },
+    {
+      "path": "leadzen/web.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "8e589b7d812f8681798008f3e384839821e1b6e913496cc46f6239598d31100c",
+      "sha256_current": "8e589b7d812f8681798008f3e384839821e1b6e913496cc46f6239598d31100c",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 20054
+    },
+    {
+      "path": "leadzen/web_worker.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "6e0dbd0697a253ca6dd0380183a7d854e59e761b94f3b9df668959df88116693",
+      "sha256_current": "6e0dbd0697a253ca6dd0380183a7d854e59e761b94f3b9df668959df88116693",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4231
+    },
+    {
+      "path": "leadzen/wizard.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "86acf001dd843a4fb481772bfc609360ae8221bb210d0d7426f277123f8c8520",
+      "sha256_current": "86acf001dd843a4fb481772bfc609360ae8221bb210d0d7426f277123f8c8520",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 16421
+    },
+    {
+      "path": "leadzen/workspace_settings.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "a23eb7a62d9690b31b48d33c9f6f4ad8751290673142f5af8f486ccbd6980763",
+      "sha256_current": "a23eb7a62d9690b31b48d33c9f6f4ad8751290673142f5af8f486ccbd6980763",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 6947
+    },
+    {
+      "path": "leadzen/workspaces.py",
+      "category": "source",
+      "status": "focused_partial_review",
+      "reason": "Inspected relevant handlers, effects, guards or changed payload/context paths; full line-by-line reinspection not claimed. Fresh tests/build/compilation also ran.",
+      "sha256_previous_broad_audit": "0a84f315872fa8334ee257a456a56a428704de578bb6a11f5c94e479ca120937",
+      "sha256_current": "0a84f315872fa8334ee257a456a56a428704de578bb6a11f5c94e479ca120937",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 5831
+    },
+    {
+      "path": "leadzen/wsgi.py",
+      "category": "source",
+      "status": "prior_review_unchanged_with_fresh_checks",
+      "reason": "Unchanged since earlier broad inventory; prior inspection retained, with fresh applicable full-suite/build/type/compilation checks.",
+      "sha256_previous_broad_audit": "ac04f970a7f089fb1182be53d2214fff504cf99a156eca25b791fc1cfb1a1e7e",
+      "sha256_current": "ac04f970a7f089fb1182be53d2214fff504cf99a156eca25b791fc1cfb1a1e7e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 168
+    },
+    {
+      "path": "local.yml",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "ce387c2490069230c26fbd32570791e47a728991d3af99bae75aae712063e89e",
+      "sha256_current": "ce387c2490069230c26fbd32570791e47a728991d3af99bae75aae712063e89e",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 675
+    },
+    {
+      "path": "manage.py",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "e7532717a5b84a961a93f74333be39444f93aa7f8333410e9adfe251485587fb",
+      "sha256_current": "e7532717a5b84a961a93f74333be39444f93aa7f8333410e9adfe251485587fb",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 427
+    },
+    {
+      "path": "pyproject.toml",
+      "category": "configuration",
+      "status": "inventory_with_scope_limit",
+      "reason": "Inventoried and compared with prior audit where available. No claim of production operational execution or complete fresh configuration audit.",
+      "sha256_previous_broad_audit": "ec5e424a327f2a610b77a0209e7f1492e1da3fd87a2e7f9b14470c02199e6474",
+      "sha256_current": "ec5e424a327f2a610b77a0209e7f1492e1da3fd87a2e7f9b14470c02199e6474",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2624
+    },
+    {
+      "path": "pytest.ini",
+      "category": "configuration",
+      "status": "focused_review",
+      "reason": "Test settings entry point changed to isolate Django startup before test database creation.",
+      "sha256_previous_broad_audit": "e3a57889c04197ace85d6862a751fa77a80c4e0a0c2d71865e77c508fd9ef1ec",
+      "sha256_current": "6f456d7a04c594dc8ecee80c52f150437034133474823c858e719a6d3a303359",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 82
+    },
+    {
+      "path": "skills/find-leads/SKILL.md",
+      "category": "documentation",
+      "status": "reference_or_archived_scope",
+      "reason": "Requirements/reference or historical documentation. Not a current legal clearance or standing authorization for external actions.",
+      "sha256_previous_broad_audit": "7dcf69dfd0a44dfe3d71a2cb8a2ec91d63efb3afe7e8e11b3320e0b460680ea7",
+      "sha256_current": "7dcf69dfd0a44dfe3d71a2cb8a2ec91d63efb3afe7e8e11b3320e0b460680ea7",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 15143
+    },
+    {
+      "path": "tests/conftest.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "7a83a8d66f737115c5ac7c3b5b99d2c5ff9e327619094b5c47632ceaec2f80ea",
+      "sha256_current": "f6104679fed543c616888d8378c53246e12d6849d0b719303c749f37843955b0",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 1588
+    },
+    {
+      "path": "tests/scenarios/accounts.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "2c6023fc1f820fc5377c3052ddd1c5dede0980b8aa836acd0793464c8b04c327",
+      "sha256_current": "2c6023fc1f820fc5377c3052ddd1c5dede0980b8aa836acd0793464c8b04c327",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 21057
+    },
+    {
+      "path": "tests/scenarios/activity.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "939bbce730f3b125230382f70710eb3a5bc15e78fa143d4173433822da23e7c5",
+      "sha256_current": "939bbce730f3b125230382f70710eb3a5bc15e78fa143d4173433822da23e7c5",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 2908
+    },
+    {
+      "path": "tests/scenarios/chat_worker.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "8c672ff65cb88ecfa32765de814ac6d9163b56ee03a2a823f23a36649b814cf0",
+      "sha256_current": "8c672ff65cb88ecfa32765de814ac6d9163b56ee03a2a823f23a36649b814cf0",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 384
+    },
+    {
+      "path": "tests/scenarios/http_flow.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "980f5de84ddc0bb6dcba244ec4574352ea98355f8adf40f856606e574fbc4d16",
+      "sha256_current": "980f5de84ddc0bb6dcba244ec4574352ea98355f8adf40f856606e574fbc4d16",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 6206
+    },
+    {
+      "path": "tests/scenarios/lead_timeline.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "626ea2ff9d80edefbc38313fdea3c2c86ef6d7a1e724ead20b9e98b6ce0a7686",
+      "sha256_current": "626ea2ff9d80edefbc38313fdea3c2c86ef6d7a1e724ead20b9e98b6ce0a7686",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3681
+    },
+    {
+      "path": "tests/scenarios/local_preview.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "d42b13e9dc707f22de69d3d319cab320f48015d9792f28bf7312a2c8202d845d",
+      "sha256_current": "1913adfd11e9e8cbe23e924c85a136ad661cc71669e865cbc413602b61751452",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 24773
+    },
+    {
+      "path": "tests/scenarios/local_tls_proxy.mjs",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "a2d00b07efa30d57f873898d5d79347f426194ba231adf3cde870e5189d6d1a8",
+      "sha256_current": "a2d00b07efa30d57f873898d5d79347f426194ba231adf3cde870e5189d6d1a8",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1647
+    },
+    {
+      "path": "tests/scenarios/preview.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "ef987c1a1053563559990e8b4dcb49112d5c094321cd12bad417218be6ef8f4f",
+      "sha256_current": "ef987c1a1053563559990e8b4dcb49112d5c094321cd12bad417218be6ef8f4f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1852
+    },
+    {
+      "path": "tests/scenarios/workspace_settings.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "8b010374ae6e16bd52266948751dbe826fa4b680682a6b825d34e42100ba0d0f",
+      "sha256_current": "8b010374ae6e16bd52266948751dbe826fa4b680682a6b825d34e42100ba0d0f",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 4317
+    },
+    {
+      "path": "tests/settings.py",
+      "category": "test",
+      "status": "focused_review_and_executed",
+      "reason": "Test-only Django bootstrap selects disposable paths before production settings imports; sentinel preservation checked in ten subprocess runs.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "225c4a65a8bff0985b0ed7d19a3f95b98b3870c4beb63933b2dd55ad01f12e06",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 693
+    },
+    {
+      "path": "tests/test_accounts.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "b37c96d56c42af47603fd2af278a5157fe52414263d10c32b90a8b2c3051c664",
+      "sha256_current": "b37c96d56c42af47603fd2af278a5157fe52414263d10c32b90a8b2c3051c664",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7325
+    },
+    {
+      "path": "tests/test_accounts_integration.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "6c52becc8f00d4575afa628d37ea6c91ef3125b4f064a9f4ce802e4e067710e4",
+      "sha256_current": "6c52becc8f00d4575afa628d37ea6c91ef3125b4f064a9f4ce802e4e067710e4",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 849
+    },
+    {
+      "path": "tests/test_activity.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "554450949941fe95bd14f48be916b3f97c102300676e73854db0738c390d7772",
+      "sha256_current": "554450949941fe95bd14f48be916b3f97c102300676e73854db0738c390d7772",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 9682
+    },
+    {
+      "path": "tests/test_automatic_followups.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "49d29eec861b723721bf429a21a057d8b045b35374b46bdc4c50569ec553bfa9",
+      "sha256_current": "49d29eec861b723721bf429a21a057d8b045b35374b46bdc4c50569ec553bfa9",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 12985
+    },
+    {
+      "path": "tests/test_bettercontact_settings.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "c2ae45851779f7cb9c9c7795edbbed2d60346315f7d2e0e12ec39c1cd6c58a89",
+      "sha256_current": "c2ae45851779f7cb9c9c7795edbbed2d60346315f7d2e0e12ec39c1cd6c58a89",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7723
+    },
+    {
+      "path": "tests/test_branding.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "ec2700ed4c1ceb871d9d9eb6a91e06119b6591e6ed9f6da6276e4a1b3db4adb6",
+      "sha256_current": "ec2700ed4c1ceb871d9d9eb6a91e06119b6591e6ed9f6da6276e4a1b3db4adb6",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3601
+    },
+    {
+      "path": "tests/test_campaigns.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "fcd6c8b88d2d6f2c6e10be9e59ab1e6917d85ef3b3d30a051cceadd027f9d962",
+      "sha256_current": "1417e0ba9dc230566aec03fd1faf3778e4dee2d014a46b3334347bbd34fed8da",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 24237
+    },
+    {
+      "path": "tests/test_chat.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "bc4749f01bff3d10c8bb74ea58306e66e2ead1a1c2872b243a417ae4201e1059",
+      "sha256_current": "9070472b0c4d53a72c8963a6c8bf644ffc3f03d16a57320417e1db794692f923",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 13354
+    },
+    {
+      "path": "tests/test_chat_ai.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "2e3201dd0a6e65e86e7faf8c3b4dbc3d64b4ece1eb0199af4fdf259fc3317ed7",
+      "sha256_current": "b43983bf439f72958a9bc1c724d059371557c66e6584a66301f5a6b910f0526d",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 5725
+    },
+    {
+      "path": "tests/test_chat_workspace.py",
+      "category": "test",
+      "status": "focused_review_and_executed",
+      "reason": "New or extended meaningful journey/link assertions reviewed; full suite executed, with ten repetitions for these cases.",
+      "sha256_previous_broad_audit": null,
+      "sha256_current": "5a93ef4f0b4b699a3f17325820afe9a2c0a3dd11c6aed481966f8d0cf4a721bf",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 27246
+    },
+    {
+      "path": "tests/test_cli.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "ced08bb369165a88d60b3dc83e1acecc40d2fd41ebfb218b44f9c6810047e5f3",
+      "sha256_current": "ced08bb369165a88d60b3dc83e1acecc40d2fd41ebfb218b44f9c6810047e5f3",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 1883
+    },
+    {
+      "path": "tests/test_discovery.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "a6d59ce44fe811583e78bef6a81fccdc81cc1fe66fb248f29f11c4a8fe0b5a5a",
+      "sha256_current": "a6d59ce44fe811583e78bef6a81fccdc81cc1fe66fb248f29f11c4a8fe0b5a5a",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7030
+    },
+    {
+      "path": "tests/test_discovery_live.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "228689133fbd5fc3d07f76c7b3f08fa278fce271534fb7d4998c69785c708f12",
+      "sha256_current": "228689133fbd5fc3d07f76c7b3f08fa278fce271534fb7d4998c69785c708f12",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 23087
+    },
+    {
+      "path": "tests/test_email_transports.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "591a06d4bb024a0cbfabb09e55a9e295579436396edf4bfafba6e0bc26f277f9",
+      "sha256_current": "591a06d4bb024a0cbfabb09e55a9e295579436396edf4bfafba6e0bc26f277f9",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7936
+    },
+    {
+      "path": "tests/test_home.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "31e2134f30f45c3353fcf973e4953b5bada2de8813ace57c2689a089f59556da",
+      "sha256_current": "31e2134f30f45c3353fcf973e4953b5bada2de8813ace57c2689a089f59556da",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7075
+    },
+    {
+      "path": "tests/test_invitations.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "7655edde558aea16ec0370f20b2e53cdc71aaf6611e77791e3af82ba2d04bb48",
+      "sha256_current": "7655edde558aea16ec0370f20b2e53cdc71aaf6611e77791e3af82ba2d04bb48",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 5728
+    },
+    {
+      "path": "tests/test_lead_crm.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "a4bc48df18ed3a9f517fc646de00d6b0c6ecd0bbf4daac8b3aac476677b57658",
+      "sha256_current": "a4bc48df18ed3a9f517fc646de00d6b0c6ecd0bbf4daac8b3aac476677b57658",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 10847
+    },
+    {
+      "path": "tests/test_lead_timeline.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "2fcc242507985db88835cfe5c84c4d733e14ea1174248e79bda0c1e0544cfb65",
+      "sha256_current": "2fcc242507985db88835cfe5c84c4d733e14ea1174248e79bda0c1e0544cfb65",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 9749
+    },
+    {
+      "path": "tests/test_registry.py",
+      "category": "test",
+      "status": "focused_review_and_executed",
+      "reason": "Registry checks inspected; new inherited-database preservation regression repeated ten times using subprocesses and a disposable legacy-schema sentinel.",
+      "sha256_previous_broad_audit": "611ab0ef713a76ba5c5c25219181f1af2d59ea18fe307403506edf4c8db1e1e3",
+      "sha256_current": "be32f0d7f4e88a2ff5660765baff9626de8e926df83cbee8742afda9e93835cb",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 2758
+    },
+    {
+      "path": "tests/test_reviewed_outreach.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "18391e944b43d0683b1b71dff3ce72bdf089cc9be87d77207412252c62994d9d",
+      "sha256_current": "18391e944b43d0683b1b71dff3ce72bdf089cc9be87d77207412252c62994d9d",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 22708
+    },
+    {
+      "path": "tests/test_runtime_settings.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "e1c423713358925a9d5ed77296ecf6bc469ee4d1b590c67c60ca25280188b2ec",
+      "sha256_current": "bbf6dc79a98bf1d210157f3925fd63b183de2c96fbd49889500d4b84f4e15c94",
+      "unchanged_since_broad_audit": false,
+      "bytes_current": 4338
+    },
+    {
+      "path": "tests/test_setup_wizard.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "fc80bae0dea899a5d655d473af100cf9754acebed15d8a89e617d991e055d0b6",
+      "sha256_current": "fc80bae0dea899a5d655d473af100cf9754acebed15d8a89e617d991e055d0b6",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 15650
+    },
+    {
+      "path": "tests/test_web.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "0617614ac78d671261f1e6a56fce2d03171565d6e649fa914b20782f08366dd0",
+      "sha256_current": "0617614ac78d671261f1e6a56fce2d03171565d6e649fa914b20782f08366dd0",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3185
+    },
+    {
+      "path": "tests/test_wizard.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "8386a65581cdd5a4929aaa5261b23c86dc0df165856e859003a8b5250171ea46",
+      "sha256_current": "8386a65581cdd5a4929aaa5261b23c86dc0df165856e859003a8b5250171ea46",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 6434
+    },
+    {
+      "path": "tests/test_workspace_settings.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "770357664abd776776ff97740002843a5712d4c7145cb7030cc0b7764318b7a3",
+      "sha256_current": "770357664abd776776ff97740002843a5712d4c7145cb7030cc0b7764318b7a3",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 7217
+    },
+    {
+      "path": "tests/test_workspace_views.py",
+      "category": "test",
+      "status": "executed_with_scope_limit",
+      "reason": "Tests/fixtures exercised by the full suites or HTTP/browser harness; exhaustive manual assertion review and every scenario script execution are not claimed.",
+      "sha256_previous_broad_audit": "12c44f5767a306caf7c66bded71bf04abe1824329f8caa8fd99ef5ec70c4cc29",
+      "sha256_current": "12c44f5767a306caf7c66bded71bf04abe1824329f8caa8fd99ef5ec70c4cc29",
+      "unchanged_since_broad_audit": true,
+      "bytes_current": 3724
+    }
+  ]
+}

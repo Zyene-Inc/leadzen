@@ -1,0 +1,243 @@
+{
+  "stopSent": true,
+  "samples": [
+    {
+      "active": false,
+      "count": 4,
+      "cursor": false,
+      "length": 188,
+      "time": 1791127087873
+    },
+    {
+      "active": true,
+      "count": 4,
+      "cursor": false,
+      "length": 188,
+      "time": 1791127088401
+    },
+    {
+      "active": true,
+      "count": 4,
+      "cursor": false,
+      "length": 188,
+      "time": 1791127088768
+    },
+    {
+      "active": true,
+      "count": 4,
+      "cursor": false,
+      "length": 188,
+      "time": 1791127089636
+    },
+    {
+      "active": true,
+      "count": 4,
+      "cursor": false,
+      "length": 188,
+      "time": 1791127090511
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 54,
+      "time": 1791127090818
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 60,
+      "time": 1791127091081
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 73,
+      "time": 1791127091107
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 75,
+      "time": 1791127091133
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 88,
+      "time": 1791127091158
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 95,
+      "time": 1791127091185
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 96,
+      "time": 1791127091211
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 107,
+      "time": 1791127091342
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 128,
+      "time": 1791127091379
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 138,
+      "time": 1791127091406
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 159,
+      "time": 1791127091432
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 172,
+      "time": 1791127091459
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 174,
+      "time": 1791127091616
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 175,
+      "time": 1791127091642
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 176,
+      "time": 1791127091668
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 177,
+      "time": 1791127091695
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 197,
+      "time": 1791127091878
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 209,
+      "time": 1791127091904
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 232,
+      "time": 1791127091931
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 258,
+      "time": 1791127091958
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 260,
+      "time": 1791127091985
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 273,
+      "time": 1791127092141
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 281,
+      "time": 1791127092168
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 293,
+      "time": 1791127092193
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 301,
+      "time": 1791127092220
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 468,
+      "time": 1791127092949
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 479,
+      "time": 1791127092974
+    },
+    {
+      "active": true,
+      "count": 5,
+      "cursor": true,
+      "length": 499,
+      "time": 1791127092999
+    },
+    {
+      "active": false,
+      "count": 6,
+      "cursor": false,
+      "length": 188,
+      "time": 1791127093033
+    }
+  ]
+}

@@ -88,7 +88,7 @@ test("settings persist and mobile navigation/forms fit a 375px viewport", async 
   const signature = "Synthetic browser signature " + fixture.fixture_id.slice(0, 8);
   await page.getByRole("textbox", { name: "Email signature", exact: true }).fill(signature);
   await page.getByRole("button", { name: "Save changes", exact: true }).click();
-  await expect(page.getByRole("status").filter({ hasText: "Settings updated." })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /^Settings updated\.$/ })).toBeVisible();
   await page.reload();
   await expect(page.getByText(signature, { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 375, height: 812 });

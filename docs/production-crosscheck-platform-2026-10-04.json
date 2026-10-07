@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-04",
+  "scope": "Read-only Vercel connector metadata for the configured existing project",
+  "project": {
+    "id": "prj_xqdt7BYiD9RnVTUZx613mnlP2kFU",
+    "name": "leadzen-dashboard",
+    "node_version": "24.x",
+    "framework": "nextjs"
+  },
+  "production_environment_names": [
+    "LEADZEN_API_TOKEN",
+    "LEADZEN_API_URL"
+  ],
+  "required_public_origin_configured": false,
+  "sensitive_variable_values_retrievable": false,
+  "service_origin_and_token_equality": "UNVERIFIED",
+  "latest_deployment": {
+    "id": "dpl_GmNa3MiHoPVsXHHSntmyX4BA5GUM",
+    "url": "leadzen-dashboard-eh3cq9dvy-zyenes-projects.vercel.app",
+    "state": "READY",
+    "target": "production"
+  },
+  "release_checks_exposed_by_connector": false,
+  "external_promotion_controls": "UNVERIFIED",
+  "production_changed": false,
+  "credentials_transmitted_to_service": false
+}

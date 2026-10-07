@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-02",
+  "scope": "Fresh local user-experience audit; synthetic providers and disposable databases only",
+  "baseline": {
+    "backend_passed": 826,
+    "backend_failed": 12,
+    "dashboard_passed": 780,
+    "react_doctor_full_score": 71,
+    "react_doctor_full_warnings": 19,
+    "database_scope_note": "Initial Django startup probes the configured SQLite schema before pytest creates the test database. Final test settings isolate this bootstrap."
+  },
+  "final": {
+    "backend_passed": 898,
+    "backend_warning": "SDK event-loop deprecation",
+    "dashboard_passed": 870,
+    "dashboard_files": 6,
+    "new_ui_cases": 9,
+    "new_ui_repetitions": 10,
+    "new_backend_cases": 5,
+    "new_backend_repetitions": 10,
+    "types": "passed",
+    "build": "passed",
+    "development_http": "passed",
+    "production_https_http": "passed",
+    "django_system_issues": 0,
+    "pending_model_changes": 0,
+    "disposable_control_pending_migrations": 0,
+    "python_compilation": "passed",
+    "deployment_script_syntax": "passed",
+    "diff_whitespace": "passed",
+    "react_doctor_full_score": 71,
+    "react_doctor_full_errors": 0,
+    "react_doctor_full_warnings": 19,
+    "new_bootstrap_cases": 1,
+    "new_bootstrap_repetitions": 10,
+    "standalone_https_http": "passed",
+    "backend_seconds": 273.49,
+    "dashboard_seconds": 22.16
+  },
+  "limits": [
+    "No live provider/model requests, emails, paid enrichment or deployment.",
+    "Existing user records were not inspected. Explicit migrations used disposable databases; initial pytest startup performed the idempotent registry schema probe, now isolated.",
+    "Browser setup used existing synthetic credentials.",
+    "Blob backup download was triggered with success feedback but downloaded file was not captured by browser automation.",
+    "Full source line-by-line reinspection and every possible button/input/outage were not claimed."
+  ],
+  "evidence": {
+    "report": "docs/user-experience-audit-2026-10-02.md",
+    "browser_restoration": "/tmp/leadzen-user-audit-inbox-proof.png",
+    "browser_revision": "/tmp/leadzen-user-audit-proof.png"
+  }
+}

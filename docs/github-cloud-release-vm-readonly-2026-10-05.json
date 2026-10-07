@@ -1,0 +1,113 @@
+{
+  "architecture": "x86_64",
+  "capacity": {
+    "disk": {
+      "free_bytes": 23098310656,
+      "total_bytes": 30083776512,
+      "used_bytes": 6968688640
+    },
+    "memory_total_kib": 976460
+  },
+  "control_database": {
+    "foreign_key_errors": 0,
+    "integrity_ok": true,
+    "migration_heads": {
+      "leadzen_accounts": "0002_accountprofile_tour_completed_at_employeeinvitation",
+      "leadzen_config": "0014_workspacecontext_chatthread_context_and_more"
+    },
+    "mode": "0o644",
+    "owner_uid": 1001,
+    "readable": true
+  },
+  "current_authenticated_api_health_status": 200,
+  "employee_database_samples": [
+    {
+      "foreign_key_errors": 0,
+      "integrity_ok": true,
+      "migration_heads": {
+        "leadzen_accounts": "0002_accountprofile_tour_completed_at_employeeinvitation",
+        "leadzen_config": "0014_workspacecontext_chatthread_context_and_more"
+      },
+      "mode": "0o600",
+      "owner_uid": 1001,
+      "readable": true
+    }
+  ],
+  "environment_file": {
+    "mode": "0o600",
+    "owner_uid": 0,
+    "present": true
+  },
+  "initialized_employee_databases": 1,
+  "loaded_environment_is_production": false,
+  "loaded_required_names_missing": [
+    "LEADZEN_ENV",
+    "LEADZEN_SECRET_KEY"
+  ],
+  "loaded_required_names_present": [
+    "LEADZEN_DB",
+    "LEADZEN_WORKSPACE_ROOT",
+    "LEADZEN_SETTINGS_KEY",
+    "LEADZEN_DASHBOARD_TOKEN",
+    "LEADZEN_ALLOWED_HOSTS",
+    "LEADZEN_PUBLIC_URL",
+    "LEADZEN_DASHBOARD_ORIGINS"
+  ],
+  "namespace_sample_is_matched_recovery": false,
+  "read_only_scope": true,
+  "service_units": {
+    "caddy.service": {
+      "ActiveState": "active",
+      "FragmentPath": "/usr/lib/systemd/system/caddy.service",
+      "Group": "caddy",
+      "LoadState": "loaded",
+      "MainPID": "3966",
+      "SubState": "running",
+      "User": "caddy",
+      "WorkingDirectory": ""
+    },
+    "leadzen-autopilot.service": {
+      "ActiveState": "inactive",
+      "FragmentPath": "",
+      "Group": "",
+      "LoadState": "not-found",
+      "MainPID": "0",
+      "SubState": "dead",
+      "User": "",
+      "WorkingDirectory": ""
+    },
+    "leadzen-followups.service": {
+      "ActiveState": "active",
+      "EnvironmentFiles": "/etc/leadzen.env (ignore_errors=no)",
+      "FragmentPath": "/etc/systemd/system/leadzen-followups.service",
+      "Group": "zyene_inc",
+      "LoadState": "loaded",
+      "MainPID": "29148",
+      "SubState": "running",
+      "User": "zyene_inc",
+      "WorkingDirectory": "/opt/leadzen"
+    },
+    "leadzen-mcp.service": {
+      "ActiveState": "inactive",
+      "FragmentPath": "",
+      "Group": "",
+      "LoadState": "not-found",
+      "MainPID": "0",
+      "SubState": "dead",
+      "User": "",
+      "WorkingDirectory": ""
+    },
+    "leadzen.service": {
+      "ActiveState": "active",
+      "EnvironmentFiles": "/etc/leadzen.env (ignore_errors=no)",
+      "FragmentPath": "/etc/systemd/system/leadzen.service",
+      "Group": "zyene_inc",
+      "LoadState": "loaded",
+      "MainPID": "29101",
+      "SubState": "running",
+      "User": "zyene_inc",
+      "WorkingDirectory": "/opt/leadzen"
+    }
+  },
+  "settings_key_loaded_file_equal": true
+}

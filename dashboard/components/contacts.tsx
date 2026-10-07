@@ -409,21 +409,24 @@ export default function Contacts({ user }: { user: Account }) {
                         >
                           Edit
                         </button>
-                        <button
-                          type="button"
-                          className="button ghost"
-                          disabled={busy || item.state === "Completed"}
-                          onClick={() =>
-                            void mutate(
-                              `contacts/${item.id}`,
-                              "PUT",
-                              { stop: true },
-                              "Outreach stopped; history retained.",
-                            )
-                          }
-                        >
-                          Stop
-                        </button>
+                        {(item.state === "Ready to Email" ||
+                          item.state === "Emailed") && (
+                          <button
+                            type="button"
+                            className="button ghost"
+                            disabled={busy}
+                            onClick={() =>
+                              void mutate(
+                                `contacts/${item.id}`,
+                                "PUT",
+                                { stop: true },
+                                "Outreach stopped; history retained.",
+                              )
+                            }
+                          >
+                            Stop
+                          </button>
+                        )}
                         <button
                           type="button"
                           className="button ghost danger-button"

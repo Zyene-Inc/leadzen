@@ -22,7 +22,7 @@ from leadzen.config.models import CampaignRecipient, ChatMessage, ChatRun, ChatT
 from leadzen.configuration import SettingsError, effective
 from leadzen.workspaces import assert_worker_access
 
-TOOLS = Literal["answer", "connections", "overview", "list_leads", "list_replies", "list_campaigns", "find_leads", "draft_campaign", "send_campaign", "pause_campaign", "sync_replies", "get_workspace_status", "get_workspace_context", "get_target", "update_target", "stop_discovery", "get_lead", "find_work_emails", "get_credit_usage", "create_drafts", "get_draft", "update_draft", "regenerate_draft", "send_email", "send_emails", "sync_mailbox", "get_thread", "draft_reply", "send_reply", "suppress_contact", "unsuppress_contact", "get_activity"]
+TOOLS = Literal["answer", "connections", "overview", "list_leads", "list_replies", "list_campaigns", "find_leads", "draft_campaign", "send_campaign", "pause_campaign", "sync_replies", "get_workspace_status", "get_workspace_context", "get_target", "update_target", "stop_discovery", "get_lead", "find_work_emails", "get_credit_usage", "create_drafts", "get_draft", "update_draft", "regenerate_draft", "send_email", "send_emails", "sync_mailbox", "get_thread", "draft_reply", "send_reply", "suppress_contact", "unsuppress_contact", "get_activity", "add_contacts"]
 MAX_STEPS = 8
 MAX_ACTION_COUNT = 25
 
@@ -116,6 +116,18 @@ Never ask for secrets in chat: direct the employee to Settings. No arbitrary URL
 commands or scheduling. At most 8 model steps, 25 verified-credit reservations and
 25 email reservations per turn. Prefer small batches. A draft is not activated/sent.
 Use tool 'answer' when finished or needing clarification, text is the visible reply.
+Responding as a person comes first: greetings (hi, hello, thanks, bye), small talk,
+meta questions ("what can you do", "how are you", "who are you") and similar always
+take the 'answer' tool directly — no tool ever runs for them. Reply warmly and
+briefly; offer one concrete next step if a task might follow ("Tell me which
+audience and I'll pull leads"). Tools exist only to fulfill a stated task.
+For multi-step work (find + enrich + draft + send), your FIRST 'answer' text always
+states the plan in one short paragraph before any tool runs: what you will do, in
+what order, which step needs their confirmation, and what is out of scope. Then
+continue with the tools. Never silently chain tools for a non-trivial request —
+say "Plan: …" first so the user can interrupt. Long-running work (find_leads with
+background discovery) ends this turn with a saved-progress note; do not invent
+results for steps you have not actually executed this turn.
 Canonical Workspace context is supplied on every step, refreshed from the database.
 Use selectedLeadIds for "these"; currentLeadId for "her/him"; currentDraftId for
 "it", and currentThreadId for a reply. Use get_workspace_context when needed.
@@ -150,6 +162,12 @@ send_campaign {campaign_id:UUID,count:1..25}; approval shows exact recipients an
 sequence. Sending-window, pacing, consent, suppression and reply guards stay active.
 pause_campaign {campaign_id:UUID}; pauses only existing workspace campaign.
 sync_replies {}; explicit approval before external mailbox access and AI classification.
+add_contacts {contacts:[{email,first_name,last_name,company,title,website,profile_text,opted_in,consent_note}]};
+up to 5 per call. Use it when the employee supplies a real email address to remember
+("add client@x.com", "save this contact"). Always require a valid email; first_name,
+last_name, company and title are nice-to-have, never invented. If the employee marks
+opted_in, ask for a one-line note on when/how consent was given; a blank consent_note
+with opted_in:true is rejected by the workspace.
 """
 
 
@@ -335,8 +353,6 @@ def find_leads(args, *, poll_only=False):
     apply_to_environment(SiteConfig.load())
     if args["audience"]:
         os.environ["OPENOUTFIND_CAMPAIGN_TARGET"] = args["audience"]
-    output, metadata = ProgressOutput(monitor) if monitor else io.StringIO(), io.StringIO()
-    partial = paused = False
     # Guard the child provider in memory, without altering its installed files.
     # No POST retry or redirect can silently resubmit a paid lookup.
     import requests
@@ -368,6 +384,11 @@ def find_leads(args, *, poll_only=False):
         headers = dict(session.headers)
         headers["Content-Type"] = "application/json"
         status, response_headers, raw = pinned_request(method, url, headers, content, "app.bettercontact.rocks", kind="BETTERCONTACT")
+        # BetterContact documents HTTP 202 as a normal pending poll. Some responses
+        # omit its JSON body; the pinned finder expects a status object to distinguish
+        # that accepted job from a malformed response.
+        if method == "GET" and status == 202 and not raw.strip():
+            raw = b'{"status":"processing"}'
         response = requests.Response()
         response.status_code, response._content, response.url = status, raw, url
         response.headers.update(dict(response_headers))
@@ -377,20 +398,99 @@ def find_leads(args, *, poll_only=False):
         elif monitor and method == "GET" and path.startswith("/api/v2/async/"):
             monitor.report_lookup(path.rsplit("/", 1)[-1], response.json())
         return response
-    try:
-        # This noun is the engine's verified-credit cap, not --emails on leads.
-        with patch("openoutfind.enrichment.bettercontact._request", bounded_provider), monitor.adapters(poll_only=poll_only) if monitor else nullcontext():
-            call_command("find", str(args["count"]), "emails" if args["emails"] else "leads", "--json", "--new", stdout=output, stderr=metadata)
-    except DiscoveryPaused:
-        paused = True
-    except Exception:
-        # Retain complete JSONL records even when a provider/SDK failure is not
-        # one of the child's typed refusals. Never echo its exception or metadata.
-        partial = True
-    output.seek(0)
-    result = ingest(output)
-    return {"stored": result.stored, "suppressed": result.suppressed, "skipped": result.skipped, "partial": partial, "paused": paused,
-            "note": "Paused at a saved action boundary. No new work will run until Resume." if paused else "Stored partial results; review Connections and discovery status before retrying." if partial else "Lead discovery completed. No emails sent."}
+    def run_once(*, only_poll):
+        output = ProgressOutput(monitor) if monitor else io.StringIO()
+        metadata = io.StringIO()
+        partial = paused = False
+        try:
+            # This noun is the engine's verified-credit cap, not --emails on leads.
+            with patch("openoutfind.enrichment.bettercontact._request", bounded_provider), monitor.adapters(poll_only=only_poll) if monitor else nullcontext():
+                call_command("find", str(args["count"]), "emails" if args["emails"] else "leads", "--json", "--new", stdout=output, stderr=metadata)
+        except DiscoveryPaused:
+            paused = True
+        except Exception:
+            # Retain complete JSONL records even when a provider/SDK failure is not
+            # one of the child's typed refusals. Never echo its exception or metadata.
+            partial = True
+        output.seek(0)
+        stored = ingest(output)
+        return {"stored": stored.stored, "suppressed": stored.suppressed, "skipped": stored.skipped,
+                "partial": partial, "paused": paused,
+                "note": "Paused at a saved action boundary. No new work will run until Resume." if paused else "Stored partial results; review Connections and discovery status before retrying." if partial else "Lead discovery completed. No emails sent."}
+
+    result = run_once(only_poll=poll_only)
+    if not poll_only and monitor and args["emails"] and monitor.session.source_ids and not result["paused"]:
+        result = collect_owned_email_lookups(monitor, result, run_once)
+    if monitor:
+        from leadzen.discovery import progress_payload
+        result.update(discovery=progress_payload(monitor.session), workspaceUrl=f"/find-leads/{monitor.session.run_id}")
+    return result
+
+
+def collect_owned_email_lookups(monitor, result, run_once):
+    """Wait for selected async lookups to settle without ever submitting another one."""
+    import time
+    from openoutfind.crm.models import Deal as SourceDeal, DealState as SourceDealState
+    from leadzen.discovery_progress import DiscoveryPaused
+
+    session = monitor.session
+    source_ids = list(session.source_ids)
+    if not source_ids:
+        return result
+
+    no_progress = 0
+    while True:
+        session.refresh_from_db()
+        receipts = list(session.lookups.all().order_by("pk"))
+        active = [receipt for receipt in receipts if receipt.request_id and receipt.state != "terminated"]
+        if not active:
+            settled = len(receipts) == len(source_ids) and all(receipt.state == "terminated" for receipt in receipts)
+            if settled:
+                result = {**result, "partial": False, "paused": False,
+                          "note": "Email lookup completed. Review the saved lead for a verified work email."}
+            return result
+
+        handles = [receipt.request_id for receipt in active]
+        pending = list(SourceDeal.objects.filter(
+            state=SourceDealState.FINDING_EMAIL,
+            lead_id__in=source_ids,
+            lookup_request_id__in=handles,
+        ).order_by("pk").values("pk", "lookup_attempt", "not_before"))
+        if len(pending) != len(active) or session.provider_calls >= 200:
+            return {**result, "partial": True}
+
+        try:
+            monitor.boundary()
+        except DiscoveryPaused:
+            return {**result, "paused": True,
+                    "note": "Paused at a saved action boundary. No new work will run until Resume."}
+        due = min(item["not_before"] or timezone.now() for item in pending)
+        delay = (due - timezone.now()).total_seconds()
+        if delay > 0:
+            time.sleep(min(delay, 1))
+            continue
+
+        polled = run_once(only_poll=True)
+        result = {**result,
+                  "stored": result.get("stored", 0) + polled.get("stored", 0),
+                  "suppressed": result.get("suppressed", 0) + polled.get("suppressed", 0),
+                  "skipped": result.get("skipped", 0) + polled.get("skipped", 0)}
+        if polled.get("paused"):
+            return {**result, "partial": polled.get("partial", False), "paused": True,
+                    "note": polled.get("note", "Paused at a saved action boundary.")}
+
+        after = list(SourceDeal.objects.filter(
+            state=SourceDealState.FINDING_EMAIL,
+            lead_id__in=source_ids,
+            lookup_request_id__in=handles,
+        ).order_by("pk").values("pk", "lookup_attempt", "not_before"))
+        if after == pending:
+            # A poll that did not advance its saved handle is uncertain. Stop safely;
+            # retrying a GET is unnecessary and retrying the purchase is never allowed.
+            return {**result, "partial": True}
+        no_progress = no_progress + 1 if [item["lookup_attempt"] for item in after] == [item["lookup_attempt"] for item in pending] else 0
+        if no_progress >= 3:
+            return {**result, "partial": True}
 
 
 def execute(tool, args, row):

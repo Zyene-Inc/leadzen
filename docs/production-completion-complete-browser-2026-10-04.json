@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-04",
+  "source_sha256": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6",
+  "candidate_runtime_input_sha256": "b68ad9e445054d331f54add155c7f84e163ceba4cf8f3da1d912ca4ff1e7a106",
+  "synthetic_only": true,
+  "trusted_https": true,
+  "certificate_errors_bypassed": false,
+  "tested_subset_status": "PASS",
+  "full_browser_gate": "BLOCKED",
+  "checks": {
+    "existing_password_login": "PASS",
+    "logout": "PASS",
+    "protected_route_after_logout": "PASS",
+    "home_hydration": "PASS",
+    "light_and_dark_theme": "PASS",
+    "contact_create": "PASS",
+    "contact_edit_persisted": "PASS",
+    "contact_delete_confirmation_and_success": "PASS",
+    "settings_edit_and_reload_preservation": "PASS",
+    "employee_direct_object_denial_404": "PASS",
+    "denial_canonical_context_200": "PASS",
+    "foreign_record_absent_from_dom": "PASS",
+    "mobile_375x812_navigation_and_no_horizontal_overflow": "PASS",
+    "keyboard_login_focus_and_delete_confirmation": "PASS",
+    "viewport_restored": "PASS"
+  },
+  "accessibility_scope": "Visible labels, practical keyboard/focus, mobile navigation and sign-in contrast only; no complete screen-reader or contrast certification.",
+  "sign_in_button_contrast": 19.13,
+  "screenshots": [
+    "ui-progress-assets/production-complete-mobile-settings-viewport-2026-10-04.jpg",
+    "ui-progress-assets/production-complete-employee-denial-2026-10-04.jpg"
+  ],
+  "console": {
+    "sample_limit": 100,
+    "warnings_or_errors": 0,
+    "complete_session_retention_verified": false
+  },
+  "network": {
+    "earlier_capture_truncated": true,
+    "complete_session_coverage": "UNVERIFIED",
+    "fresh_denial_window_truncated": false,
+    "denial_api_status": 404,
+    "denial_context_statuses": [
+      200,
+      200
+    ],
+    "recent_window_truncated": false,
+    "recent_response_count": 131,
+    "unexpected_http_errors": 0,
+    "canceled_navigation_requests": 7,
+    "noncanceled_loading_failures": 0
+  },
+  "unperformed": [
+    "Invitation/new password setup and onboarding in actual browser",
+    "Password change and browser session revocation",
+    "Real MCP client consent refresh and revocation",
+    "Active CSP attack probes",
+    "Full five-scenario automated browser suite",
+    "Production Vercel artifact and intended-host frontend runtime"
+  ]
+}

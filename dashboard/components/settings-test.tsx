@@ -73,12 +73,18 @@ export function SettingsTest({
   return (
     <div className="central-settings-test">
       <div className="central-test-status">
-        <span className={check.connected ? "connected" : ""}>
-          {check.connected
-            ? "Connected ✓"
-            : configured
-              ? "Needs test"
-              : "Not configured"}
+        <span
+          className={check.connected ? "connected" : ""}
+          role={busy ? "status" : undefined}
+          aria-live={busy ? "polite" : undefined}
+        >
+          {busy
+            ? "Testing…"
+            : check.connected
+              ? "Connected ✓"
+              : configured
+                ? "Needs test"
+                : "Not configured"}
         </span>
         {check.tested_at && (
           <span>

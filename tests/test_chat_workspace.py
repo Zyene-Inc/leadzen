@@ -384,6 +384,67 @@ def test_selected_enrichment_requires_confirmation_and_updates_same_lead(discove
     other.lead.refresh_from_db(); assert not other.lead.email
 
 
+def test_selected_async_email_lookup_polls_accepted_request_until_terminal(discovery_client):
+    import requests
+    from openoutfind.enrichment import bettercontact
+    from openoutfind.crm.models import Deal as Qualification, DealState
+    from openoutfind.core.export import lead_record
+    from leadzen.discovery_progress import current
+
+    source, deal = qualified_contact()
+    thread, row = tool_turn(discovery_client, "find_work_emails", {"leadIds": [deal.pk]}, "Get Sarah's work email")
+    approval(discovery_client, row)
+    calls = []
+    terminal = json.dumps({"status": "terminated", "credits_consumed": 1, "data": [{
+        "contact_email_address": "sarah@example.com", "contact_email_address_status": "valid",
+        "contact_first_name": "Sarah", "contact_last_name": "Johnson",
+    }]}).encode()
+    replies = [(202, {}, b'{"id":"synthetic-request"}'), (202, {}, b""), (200, {}, terminal)]
+
+    def command(*args, stdout, stderr):
+        assert args[:3] == ("find", "1", "emails")
+        calls.append(args)
+        decision = Qualification.objects.get(lead=source)
+        if len(calls) == 1:
+            bettercontact._request(requests.Session(), "POST", "https://app.bettercontact.rocks/api/v2/async",
+                                   json={"data": [{"linkedin_url": source.profile_url}], "enrich_email_address": True})
+            receipt = current().session.lookups.get(source_id=source.pk)
+            decision.state = DealState.FINDING_EMAIL
+            decision.lookup_request_id = receipt.request_id
+            decision.lookup_attempt = 0
+            decision.not_before = timezone.now() - timedelta(seconds=1)
+            decision.save()
+            raise RuntimeError("The accepted lookup is still processing")
+
+        response = bettercontact._request(requests.Session(), "GET",
+                                          "https://app.bettercontact.rocks/api/v2/async/synthetic-request")
+        if response.json().get("status") != "terminated":
+            decision.lookup_attempt += 1
+            decision.not_before = timezone.now() + timedelta(milliseconds=1)
+            decision.save()
+            raise RuntimeError("The accepted lookup is still processing")
+
+        source.email = "sarah@example.com"
+        source.save(update_fields=["email"])
+        decision.state = DealState.RESOLVED
+        decision.lookup_request_id = ""
+        decision.not_before = None
+        decision.save()
+        stdout.write(json.dumps(lead_record(decision)) + "\n")
+
+    with patch("django.core.management.call_command", side_effect=command), \
+         patch("leadzen.ai.pinned_request", side_effect=replies) as transport, \
+         patch("leadzen.chat.engine.decide", return_value=Decision(tool="answer", text="Lookup finished.")):
+        drive(row.pk)
+
+    row.refresh_from_db()
+    assert row.status == "succeeded"
+    assert [call.args[0] for call in transport.call_args_list] == ["POST", "GET", "GET"]
+    assert len(calls) == 3
+    assert result(thread)["items"][0]["email"] == "sarah@example.com"
+    assert result(thread)["credits"]["used"] == 1
+
+
 def test_uncertain_purchase_is_not_repeated(discovery_client):
     from leadzen.config.models import DiscoveryLookup
     source, deal = qualified_contact()

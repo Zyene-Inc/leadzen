@@ -1,0 +1,27 @@
+{
+  "scan_stage": "exact final image after all runtime fixes",
+  "image_id": "sha256:a97a39a229f8b16b629f353ce045fe54361a7cb08000664ba05548c0dcc548d4",
+  "architecture": "arm64",
+  "image_bytes": 677175002,
+  "scanner": "Trivy 0.69.3",
+  "results": [
+    {
+      "target": "leadzen:production-audit-20261004 (debian 12.15)",
+      "counts": {
+        "LOW": 100,
+        "HIGH": 57,
+        "MEDIUM": 116,
+        "CRITICAL": 5,
+        "UNKNOWN": 1
+      },
+      "total": 279,
+      "entries_with_fixed_version": 0
+    },
+    {
+      "target": "Python",
+      "counts": {},
+      "total": 0,
+      "entries_with_fixed_version": 0
+    }
+  ]
+}

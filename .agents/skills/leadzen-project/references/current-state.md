@@ -1,10 +1,127 @@
 # Last verified project state
 
-Updated October 4, 2026 during production completion and controlled-release validation, following
+Updated October 7, 2026 after the discovery correction release. The October 6
+installation summary below remains relevant but its VM sizing and deployed
+discovery module are superseded by the newer sections. This is a dated
+observation, not continuous health assurance.
+
+## Discovery target mismatch — October 7, 2026
+
+The live employee discovery run for US restaurant/hospitality and home-service
+decision-makers saved four dental-practice leads. Its own qualification reasons
+acknowledged the industry mismatch and favored broader product fit; the run
+evaluated ten pre-existing candidates and discovered zero new profiles. An
+earlier Chat run's audience explicitly included Dentist and Healthcare &
+Dental, so its dental results were appropriate for that older target. A
+target-precedence instruction and contradiction guard were added to the
+qualification adapter, with focused synthetic regressions. Syntax and an
+isolated five-case safeguard check passed. The four targeted Django regression
+cases later passed locally. GitHub PR #6 and the post-merge `main` workflow passed
+their checks. The PR was squash-merged to `main`
+at `60936f74c6fd0747bfc17140ef27c213154a7b9b`. The live Google backend
+still uses the October 6 installation, with only its discovery module updated
+to the exact merged file; both API and scheduler were active, authenticated
+health and readiness passed, and anonymous health returned 401. Vercel's new
+ready production deployment `dpl_3yQhgRRMePMtaZRNtNQWbxZ1u1vt` was assigned
+to `leadzen.zyene.com`; public login returned HTTP 200 with that deployment ID.
+The existing four dental contacts were not changed. [Investigation and release](../../../../docs/discovery-campaign-mismatch-2026-10-07.md).
+
+## Sign-in outage and VM recovery — October 7, 2026
+
+The public login showed a temporary-unavailability error while the backend
+timed out. The `leadzen-api` Google VM was an `e2-micro` (about 1 GB RAM, no
+swap); systemd recorded an OOM kill of `leadzen.service` at 14:25:55 UTC.
+The follow-up scheduler also recorded a worker exit and timeout beforehand,
+but their root cause is unproven. With owner approval, a fresh ready-for-use
+snapshot (`leadzen-api-pre-resize-20261007`) was taken, then the stopped VM
+was resized to `e2-small` (2 GB RAM) and restarted with the same static IP.
+The dashboard login page returned HTTP 200, a synthetic invalid login returned
+the expected HTTP 401 instead of a gateway error, and both API and scheduler
+services were active. At 15:05 UTC about 1275 MB RAM was available.
+Google Cloud Ops Agent is installed for host metrics, and the owner-approved
+email channel `support@zyene.com` exists. Memory metric export is currently
+denied by IAM; the narrow metric-writer grant and alert policy await completion
+and verification. No test notification, real login, real send, paid provider
+operation, or code deployment was performed. See the
+[incident report](../../../../docs/production-login-capacity-incident-2026-10-07.md).
+
+Updated October 6, 2026 after a fresh Google backend installation, scheduler
+activation, and removal of the old installation. Earlier
+sections record production completion and controlled-release validation after
 interactive product-tour implementation, provider streaming validation and
 employee Chat bubble refinement. This is a dated snapshot,
 not a live health check. Current source, later user instructions and later verified
 releases can supersede it.
+
+## Fresh Google backend — October 6, 2026
+
+With the owner's explicit instruction to replace rather than migrate old data,
+the existing Google VM now runs the complete GitHub `main` backend at `f1d8cfe`
+from `/opt/leadzen-f1d8cfe-20261006` against a fresh SQLite database. All current
+migrations were applied. The owner entered the generated password for the new
+`support@zyene.com` administrator at the private bootstrap prompt; its owner-only
+TXT file remains outside the repository. Public authenticated API health and
+readiness returned HTTP 200, anonymous health 401, and the Vercel admin login
+with the new credential returned HTTP 200 and routed to `/admin`; its verification
+session was signed out. `leadzen.service` is active. On the owner's October 6
+instruction, automatic follow-ups were enabled in the current root-owned
+environment and `leadzen-followups.service` became active and enabled; its
+scheduler heartbeat reported `ok`. No send or paid provider operation was run,
+and the fresh database has no employee workspace. Protected VM and local
+recovery copies of the new installation passed SQLite integrity verification.
+The 24 enumerated old VM paths, including the old runtime and databases, were
+removed after the owner's October 6 instruction; a repeat inventory found zero
+superseded paths. The old employee workspace's 103 leads and 20 chat messages
+were intentionally excluded from the fresh database and are now deleted with
+that old workspace. Obsolete local backups and old credentials were removed;
+the current administrator TXT and backup remain private and outside the repo.
+Authenticated public API readiness returned HTTP 200 after cleanup.
+[Installation report](../../../../docs/google-fresh-backend-2026-10-06.md).
+
+## Deleted employee re-invitation — October 6, 2026
+
+A backend fix now permits a new invitation for an email held by a soft-deleted
+employee while retaining the old account and workspace separately. It was
+merged through GitHub PR #5 into `main` at commit `f1d8cfe` and mirrored into
+this working tree. The temporary branch was deleted. Focused account/invitation
+tests passed (21), and GitHub Actions required checks passed. A narrow matching
+hotfix was applied to the live Google backend with fresh user approval;
+`leadzen.service` is active and authenticated health returned `ok: true`.
+The rest of the live backend remains on its existing baseline. No real
+invitation was sent or tested in production. [Incident note](../../../../docs/admin-reinvite-2026-10-06.md).
+
+## Earlier main, Vercel, and Google VM sync check — October 6, 2026
+
+The intended application source in this dirty checkout matches Zyene GitHub
+`main` at `f1d8cfe`; a complete release-input comparison found only older local
+README/CI/security-decision content and two test-only variations. GitHub remote
+lists only `main`. The ready Vercel production deployment for `f1d8cfe`,
+`dpl_E14WyTSQh5W4bKtUPtUKYTPYsoAL`, is now assigned to
+`leadzen.zyene.com`; public login returned HTTP 200 with that deployment ID.
+A private linux/amd64 source candidate from main was captured and verified at
+`/Users/ashishdikonda/Desktop/Openoutreach/leadzen-main-release-f1d8cfe-20261006`
+with source SHA-256 `2754d2cdddca10e3bed26b822a343f1a20dc1895a3274d6119a11d81cb4cf892`.
+Its source archive and manifest were uploaded to the VM's root-only
+`/srv/private/leadzen-staged-f1d8cfe-20261006/` and byte-verified there.
+This is staging only; no service was pointed at it.
+
+At the time of that sync check, the full Google VM backend was **not** updated
+to main. It ran the October 3 baseline plus the narrow invitation hotfix. Its
+old databases had accounts migration 0002 and configuration migration 0014;
+main required 0004 and 0019. Its environment lacked `LEADZEN_ENV` and
+`LEADZEN_SECRET_KEY`. That assessment was superseded by the owner's later
+direction to use a fresh database and the verified installation above.
+[Sync report](../../../../docs/main-vercel-google-sync-2026-10-06.md).
+
+## Later verified production login state — October 5, 2026
+
+The live API and current main Vercel deployment now use the same service token.
+With fresh user approval, `leadzen.zyene.com` was assigned to the current main
+deployment. The public login page loaded, a synthetic login reached password
+validation, and the administrator signed in through Chrome and opened `/admin`.
+This is a narrow login-path verification; the release gates and local-only
+features recorded below retain their dated scope.
+[Incident validation](../../../../docs/admin-login-production-2026-10-05.md).
 
 ## Local implementation
 

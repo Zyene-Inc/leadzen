@@ -1,0 +1,578 @@
+{
+  "date": "2026-10-04",
+  "status": "NOT READY",
+  "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+  "source_archive_sha256": "15b8e93a32ddba0f7b30a5db309083450ba1e52dfacab3fe2f93646bf80cd005",
+  "source_files": 397,
+  "included_untracked_files": 361,
+  "git_revision": "0c3fc7a63205069e3380c0b8d5e8bb6738bb2946",
+  "git_revision_is_complete_release": false,
+  "architecture": "linux/amd64",
+  "actual_target_architecture_verified": false,
+  "frontend_artifact_build_architecture": "darwin/arm64",
+  "vercel_prebuilt_artifact": "UNVERIFIED",
+  "backend_image_id": "sha256:ba1bafae3d354891897035dd528d7ecfcea983025af7b30ca67390797f5b6947",
+  "artifacts": [
+    {
+      "name": "leadzen-0.1.0-py3-none-any.whl",
+      "kind": "backend-wheel",
+      "bytes": 272382,
+      "sha256": "37996323ad16fbd030d2e198964559ecdf5c6d7b2f30fe357baeb8310c1d5211",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e"
+    },
+    {
+      "name": "dashboard-standalone.tar.gz",
+      "kind": "dashboard-standalone",
+      "bytes": 14364342,
+      "sha256": "1097c9879d664f6673e6b5a8eb77c62f9dfcfc700d86f188d9a8986bad509652",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e"
+    },
+    {
+      "name": "leadzen-crosschecked-image.tar",
+      "kind": "container-image",
+      "bytes": 665636864,
+      "sha256": "670736d70b578d9f5f1d459a159b7de651245061a3321bfebadd2b77a9a5e87a",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e"
+    }
+  ],
+  "locks": {
+    "dashboard/package-lock.json": "19637c6b0657750706184dfdecd3dab3d5f2ac32ab168a408e428f29ebf4d27f",
+    "requirements-build.lock": "acf2be7f6d6852556b1f0ed543f3eb5919b9679b68e8514a58e96bcff1497756",
+    "requirements-production.lock": "6dd5eedb04f4d81009afea131a2d738d3ec61b90f4cc84f40b7b165c739705c1"
+  },
+  "backend_tests": {
+    "passed": 1649,
+    "warnings": 1,
+    "seconds": 526.33,
+    "previous_completed_candidate_passed": 1475,
+    "new_collected_cases": 174
+  },
+  "frontend_tests": {
+    "passed": 1196,
+    "files": 26,
+    "seconds": 39.5,
+    "node": "24.21.0"
+  },
+  "gates": {
+    "actual_recovery": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Stronger synthetic full restore/regressions passed; authorized historical recovery evidence is incomplete. No current matched production set/independent custody/drill.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "alert_delivery": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Local delivery/redaction/deadline regressions passed; exact authorized destination and external on-call receipt/monitor-of-monitor installation unavailable.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "backend_tests": {
+      "status": "PASS",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Clean hashed builder/runtime install and same-source wheel: 1649 passed, one existing PydanticAI deprecation warning in526.33s; no skipped check claimed.",
+      "attestation": {
+        "observed_at": "2026-10-04T22:53:08.068717+00:00",
+        "expires_at": "2026-10-05T22:53:08.068717+00:00",
+        "evidence_files": [
+          {
+            "path": "evidence/backend-tests.log",
+            "sha256": "2c9f7ea84173fb3394cbd52b1855b8ba1b3b789dcb1b725a87eeef3afa30b37f"
+          },
+          {
+            "path": "evidence/python-install.log",
+            "sha256": "28ead82f6252e4f6cfbbf2b9c2d8d945ef394249a4f21c703adb96a4522a8351"
+          },
+          {
+            "path": "evidence/builder-install.log",
+            "sha256": "6a8bdadb19c57df5e3b39e1c9351bbe6321a4ed334f29160bfc98194e02d4e5f"
+          },
+          {
+            "path": "evidence/installed-package-source-binding.json",
+            "sha256": "eec480357b5d574f33d9d92a8f11966f906c23186d44776bc38ff779d49febbb"
+          }
+        ]
+      }
+    },
+    "browser": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Final trustedHTTPS subset passed login/logout/private routes, CRUD, settings, mobile/focus/contrast, foreign sentinel denial; full password/setup/onboarding and activeCSP attack probes unperformed.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "credential_disposition": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "43 real/unresolved historical exposure locations require owner classification/revocation receipts; no questionable credentials used.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "dependency_audit": {
+      "status": "PASS",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Fresh current advisory feeds: 94 runtimePython +7buildPython +npm zero package advisories; OS scan separateFAIL.",
+      "attestation": {
+        "observed_at": "2026-10-04T22:49:11.527783+00:00",
+        "expires_at": "2026-10-05T22:49:11.527783+00:00",
+        "evidence_files": [
+          {
+            "path": "evidence/runtime-dependency-audit.json",
+            "sha256": "246355e46aa259d4d3d6ec5841b8cb86b9462a7e22517859e36cd123aeb5a07a"
+          },
+          {
+            "path": "evidence/build-dependency-audit.json",
+            "sha256": "dd2ad9c17bbf08ab59f26f09a3263734c336f8a912a9827b5c52ee693713c32e"
+          },
+          {
+            "path": "evidence/frontend-audit.json",
+            "sha256": "ca82f65a6b4a98867aa8367125689e1668dc1cb600c3a07a2d0d8a0c5a73556f"
+          }
+        ]
+      }
+    },
+    "enabled_integrations": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Provider-disabled candidate made0blocked external calls; STOP/approval/duplicate/uncertainty/MCP protocol regressions passed. No authorized real provider/client sandbox identity/recipient/costcap consent flow.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "external_release_controls": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "GitHub upstream pull-only protection404/rulesets0, owningrepo unclear; Vercel currentNode24match tested locally but required promotion checks/exact prebuiltLinuxplatform artifact UNVERIFIED.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "frontend_tests": {
+      "status": "PASS",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Fresh npm ci, Node24.21.0: 1196 tests/26files passed39.50s. Full browser/password workflows separately BLOCKED.",
+      "attestation": {
+        "observed_at": "2026-10-04T22:40:59.540869+00:00",
+        "expires_at": "2026-10-05T22:40:59.540869+00:00",
+        "evidence_files": [
+          {
+            "path": "evidence/frontend-tests.log",
+            "sha256": "dc924e65e49527346acc98d6f4ddca1dc8b212cc012c7a5640b102e0f500a976"
+          },
+          {
+            "path": "evidence/frontend-install.log",
+            "sha256": "136efae147aae0c6daa52c85340658bb13c0999a7ca2332370465bc5c88bbb2a"
+          },
+          {
+            "path": "evidence/frontend-node-version.txt",
+            "sha256": "f2ec568164f99546161909b0189b57bb5be3e80f8e2ccd8a51a4aed8c4055a04"
+          }
+        ]
+      }
+    },
+    "image_advisories": {
+      "status": "FAIL",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Fresh exact ImageID-bound Trivy scan retains44HIGH61MEDIUM60LOW2UNKNOWN,0CRITICAL; no risk decisions approved.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "migrations": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Current production namespace/schema unavailable. Final Linux clean/prior-schema/integrity/FK/data-preservation scenarios passed locally only.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "preflight": {
+      "status": "FAIL",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Current authorized Vercel production export lacks LEADZEN_DASHBOARD_PUBLIC_URL; available sensitive values unusable for safe probe. CurrentVM config/schema/storage/key equality remainUNVERIFIED.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "production_build": {
+      "status": "PASS",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Clean Python wheel, Node24optimized standalone(darwin/arm64 local verification), no-cache Linuxamd64 backend image. Exact Vercel/prebuilt target artifact remains externalBLOCKED.",
+      "attestation": {
+        "observed_at": "2026-10-04T22:58:05.538375+00:00",
+        "expires_at": "2026-10-05T22:58:05.538375+00:00",
+        "evidence_files": [
+          {
+            "path": "evidence/python-build.log",
+            "sha256": "4a5cc86796ea90843760f2c7e78b1e9193574ecaae05fe6d285d254cb2a49902"
+          },
+          {
+            "path": "evidence/frontend-build.log",
+            "sha256": "cd80283b14296beafbae28bb8fa4125d876e220c7546779f43d84b6f7ef6ab8c"
+          },
+          {
+            "path": "evidence/docker-build.log",
+            "sha256": "11dc2d9a59eb052aaba95f8339f2765744836c5472047b45295b29fdaa3e8656"
+          },
+          {
+            "path": "evidence/artifact-hygiene.json",
+            "sha256": "8a9640c5449840bb59db681e791b29125699c9bb40eef30caad971377e170dd4"
+          },
+          {
+            "path": "evidence/scan-artifact-binding.json",
+            "sha256": "fd0cdfe88de72a458727e573454c5bae50911b964028a854a30c6739244d0373"
+          }
+        ]
+      }
+    },
+    "secret_current": {
+      "status": "PASS",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Exact final source archive Gitleaks full redaction: zero findings. Historical credentials separate.",
+      "attestation": {
+        "observed_at": "2026-10-04T22:41:35.661551+00:00",
+        "expires_at": "2026-10-05T22:41:35.661551+00:00",
+        "evidence_files": [
+          {
+            "path": "evidence/current-secrets.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          {
+            "path": "evidence/gitleaks.log",
+            "sha256": "211d112b5163dbc3883fbd87bc7b3396db6180c243159a47180e452f9fb584ff"
+          }
+        ]
+      }
+    },
+    "startup": {
+      "status": "PASS",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Exact Linuxamd64 backend UID1000/no pip,pytest,ruff, invalid config rejected beforeDB creation; real syntheticGunicorn readiness +trustedHTTPS standalone run Node24.",
+      "attestation": {
+        "observed_at": "2026-10-04T22:56:31.694695+00:00",
+        "expires_at": "2026-10-05T22:56:31.694695+00:00",
+        "evidence_files": [
+          {
+            "path": "evidence/runtime-failclosed.json",
+            "sha256": "e3d5c5cdd5a9bf27a1530e553e9ee5b557025328254f5730f32feac1a7f422bb"
+          },
+          {
+            "path": "evidence/capacity-result.json",
+            "sha256": "c9519739076f332f27d5860b81f3606d0ff3a4d45061f64e6d87d81efdc02c22"
+          },
+          {
+            "path": "evidence/trusted-http.json",
+            "sha256": "3a88962381dc58b730e0dcd1eb428764a377e4ec007c6893f63d32728af8a7c0"
+          },
+          {
+            "path": "evidence/fixture-identity.json",
+            "sha256": "345d041b80b171d13ca065cda6a0f5286d2689a4e6957ff1a64cd55d9516258e"
+          },
+          {
+            "path": "evidence/staging-runtime-binding.json",
+            "sha256": "345d3d9017950c1530a244b34c9be516a0ee05af510b49a12fe614886a6ebb1a"
+          }
+        ]
+      }
+    },
+    "target_capacity": {
+      "status": "BLOCKED",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "Final local Linuxamd64 emulated native-volume workload:4employees20kcontacts256requests32writes concurrency16,0errors,p95 1060ms. Actual CPU/RAM/storage/proxy budgets unknown.",
+      "attestation": {
+        "observed_at": "2026-10-04T23:00:06.352297+00:00",
+        "expires_at": "2026-10-05T23:00:06.352297+00:00",
+        "evidence_files": []
+      }
+    },
+    "typecheck": {
+      "status": "PASS",
+      "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+      "evidence": "tsc --noEmit and fatal Ruff F821/F822/F823/E9 passed; not general Python typing or ESLint certification.",
+      "attestation": {
+        "observed_at": "2026-10-04T22:49:04.490910+00:00",
+        "expires_at": "2026-10-05T22:49:04.490910+00:00",
+        "evidence_files": [
+          {
+            "path": "evidence/frontend-typecheck.log",
+            "sha256": "40e8762cdef116db1352a4425f34a8485648bb78954258ef90cc67197eea9323"
+          },
+          {
+            "path": "evidence/python-lint.log",
+            "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+          }
+        ]
+      }
+    }
+  },
+  "commands": [
+    [
+      "backend clean install/build/full test",
+      "bash \"$base/verify-crosscheck-backend.sh\"",
+      "PASS",
+      "1649 passed,1warning,526.33s; freshbuilder/runtime hashes + installed same-source wheel"
+    ],
+    [
+      "frontend clean install/typecheck/test/build",
+      "bash \"$base/verify-crosscheck-frontend.sh\"",
+      "PASS",
+      "Node24.21.0; npmci,tsc,1196tests26files39.50s,npmadvisories0,optimizedNext16.3.8 build"
+    ],
+    [
+      "no-cache image build/save",
+      "bash \"$base/verify-crosscheck-image.sh\"",
+      "PASS",
+      "Linuxamd64 pinnedbase; actualimage/archivescanbindingPASS"
+    ],
+    [
+      "fatal Python lint",
+      "uv tool run --from ruff==0.16.10 ruff check --select F821,F822,F823,E9 leadzen tests",
+      "PASS",
+      "No fatal lint findings; not whole Python typecheck certification"
+    ],
+    [
+      "Python advisory feeds",
+      "uv tool run --from pip-audit pip-audit -r requirements-production.lock --no-deps --disable-pip --format json --output \"$candidate/evidence/runtime-dependency-audit.json\"; same command with requirements-build.lock",
+      "PASS",
+      "94runtime+7builder,zero findings"
+    ],
+    [
+      "current-source secret scan",
+      "docker run --rm -v \"$candidate/source-scan:/repo:ro\" -v \"$candidate/evidence:/evidence\" ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f dir /repo --redact=100 --report-format json --report-path /evidence/current-secrets.json",
+      "PASS",
+      "Exact source.tar extraction,zero findings; historicdispositionseparate"
+    ],
+    [
+      "complete actual-image advisory scan",
+      "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$candidate/evidence:/evidence\" -v leadzen-trivy-cache:/root/.cache/trivy aquasec/trivy@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c image --timeout 20m --no-progress --scanners vuln --format json --output /evidence/image-advisories.json leadzen:crosschecked-final-20261004",
+      "PASS",
+      "Execution passed;scan Metadata.ImageID/archiveconfigactualDockerIDallmatch; riskFAILseparate"
+    ],
+    [
+      "image risk gate",
+      "python -m leadzen.operations.advisories \"$candidate/evidence/image-advisories.json\" --image-id sha256:ba1bafae3d354891897035dd528d7ecfcea983025af7b30ca67390797f5b6947 --architecture linux/amd64 --decisions docs/production-image-risk-decisions.json --output \"$candidate/evidence/image-assessment.json\"",
+      "FAIL",
+      "Exit1,44unacceptedHIGH; completefindingsretained"
+    ],
+    [
+      "Linux isolation/revocation",
+      "docker run --rm --network none --platform linux/amd64 -e DJANGO_SETTINGS_MODULE=leadzen.settings -e LEADZEN_ENV=production -e LEADZEN_ALLOWED_HOSTS=testserver -e LEADZEN_WORKSPACE_ROOT=/app/data/workspaces -v leadzen-crosscheck-final-isolation-20261004-f3498c95:/app/data -v \"$candidate/source/tests/scenarios:/verification:ro\" leadzen:crosschecked-final-20261004 /opt/venv/bin/python /verification/accounts.py",
+      "PASS",
+      "Disposable ownednativevolume, realprivatefiles/routing/auth/workersettings/Chatrevocation"
+    ],
+    [
+      "Linux clean/prior migrations",
+      "docker run --rm --network none --platform linux/amd64 -v \"$candidate/source/tests/scenarios/production_migrations.py:/verification/migrations.py:ro\" leadzen:crosschecked-final-20261004 /opt/venv/bin/python /verification/migrations.py /app/data/migration-drill",
+      "PASS",
+      "Clean+priorrecordpreservation,integrity/FKs,systemchecks,nodrift; noactualproductionDB"
+    ],
+    [
+      "local native-volume capacity",
+      "docker run --rm --network none --platform linux/amd64 -e LEADZEN_CAPACITY_NETWORK_ISOLATED=1 -v leadzen-crosscheck-final-capacity-20261004-f3498c95:/app/data -v \"$candidate/source/tests/scenarios/production_capacity.py:/verification/capacity.py:ro\" leadzen:crosschecked-final-20261004 /opt/venv/bin/python -c 'from pathlib import Path; import runpy,sys; Path(\"/app/data/leadzen-capacity.final-crosscheck\").mkdir(mode=0o700); sys.argv=[\"/verification/capacity.py\",\"--root\",\"/app/data/leadzen-capacity.final-crosscheck\",\"--employees\",\"4\",\"--contacts\",\"5000\",\"--concurrency\",\"16\",\"--requests\",\"256\"]; runpy.run_path(sys.argv[0],run_name=\"__main__\")'",
+      "PASS",
+      "256HTTP200/32writes/20kcontacts/concurrency16/integritytrue;p951060ms; actualhostBLOCKED"
+    ],
+    [
+      "trusted exact-archive staging",
+      "PATH=\"$base/node24/node-v24.21.0-darwin-arm64/bin:$PATH\" \"$candidate/verification-env/bin/python\" dashboard/e2e/stage.py --authorize-public-synthetic-fixture --standalone \"$candidate/standalone-tested\"",
+      "PASS",
+      "Extractedexactstandalonetar,actualNode24binaryloaded,TLSverified,providersdisabled0blockedexternalcalls"
+    ],
+    [
+      "HTTP/cookie/CSRF/nonce readiness",
+      "python3 \"$candidate/evidence/trusted-http-checks.py\"",
+      "PASS",
+      "Allcookieattrs,foreignOrigin403,privatehealth/ready200anonymous401,11nonce-matching scripts; noactiveCSPattackprobe"
+    ],
+    [
+      "real browser subset",
+      "cua_repl native/DOM browser operations against exact trusted synthetic candidate",
+      "PASS",
+      "Login/logout/privateroute/CRUD/settings/mobile/focus/19.13contrast/foreignsentinel denial; boundednetwork+console scopesexplicit"
+    ],
+    [
+      "full five browser scenarios",
+      "python dashboard/e2e/stage.py --authorize-public-synthetic-fixture --standalone \"$candidate/standalone-tested\" --test",
+      "BLOCKED",
+      "Not executed by agent; newpassword/setuphandoff/user-controlledrunnerrequired"
+    ],
+    [
+      "Compose/shell/git",
+      "docker compose -f local.yml config --quiet; bash -n entrypoint/start/deploy-accounts.sh individually; sh -n backup-safe; git diff --check in originalcheckout",
+      "PASS",
+      "Every actual command separatelyexit0; initial Gitcheck in nonGitarchivefailed129andcorrected,notcountedasPASS"
+    ],
+    [
+      "workflow syntax/types",
+      "official checksum-verified actionlint1.7.12 -color -shellcheck= -pyflakes= .github/workflows/*.yml",
+      "PASS",
+      "0findings; pinnedofficialcommitrefs; actualGitHubjobs/enforcementUNVERIFIED"
+    ],
+    [
+      "release gate",
+      "python -m leadzen.operations.release gate \"$candidate\" --checks \"$candidate/release-checks.v2.json\"",
+      "BLOCKED",
+      "ActualCLIexit2,no missing/invalidattestations,10notpassedgates; refusalcontrolworks"
+    ],
+    [
+      "deployment wrapper",
+      "LEADZEN_RELEASE_PYTHON=\"$candidate/verification-env/bin/python\" bash compose/leadzen/deploy-accounts.sh \"$candidate\" \"$candidate/release-checks.v2.json\"",
+      "BLOCKED",
+      "Actualwrapperexit2,no liveaction"
+    ]
+  ],
+  "capacity": {
+    "status": "PASS",
+    "employees": 4,
+    "contacts_per_employee": 5000,
+    "concurrency": 16,
+    "requests": 256,
+    "write_requests": 32,
+    "errors": 0,
+    "integrity": true,
+    "status_counts": {
+      "200": 256
+    },
+    "seconds": 5.989,
+    "requests_per_second": 42.74,
+    "p50_ms": 285,
+    "p95_ms": 1060,
+    "max_response_bytes": 14202,
+    "target_host_capacity_verified": false
+  },
+  "browser": {
+    "release_source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+    "runtime_input_sha256": "9d9b12af13ab4fd73f56804a9d5ea1f94ebd3dafd8565b8cc1092486642914d0",
+    "syntheticOnly": true,
+    "trustedHttps": true,
+    "certificateBypass": false,
+    "archiveExtractedForStaging": true,
+    "nodeRuntime": "24.21.0",
+    "login": true,
+    "logout": true,
+    "privateRedirect": true,
+    "contactCreateEditDelete": true,
+    "settingsSaveReload": true,
+    "mobile": {
+      "height": 812,
+      "overflow": false,
+      "scrollWidth": 375,
+      "signatureVisible": true,
+      "width": 375
+    },
+    "keyboardFocus": {
+      "activeTag": "A",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "outlineStyle": "solid",
+      "outlineWidth": "2px",
+      "textColor": "rgb(10, 16, 21)"
+    },
+    "sampledNavigationContrast": 19.13,
+    "employeeScopedOverlappingIDs": true,
+    "foreignExistingSentinelDenied": {
+      "contactNotFound": true,
+      "foreignOwnerVisible": false,
+      "foreignSentinelVisible": false
+    },
+    "network": {
+      "scope": "Final denied-contact reload only",
+      "truncated": false,
+      "hasMore": false,
+      "eventCount": 35,
+      "responses": 31,
+      "expectedContact404": 1,
+      "unexpectedHttpErrors": 0,
+      "uncanceledTransportErrors": 0,
+      "canceledRequests": 4
+    },
+    "console": {
+      "scope": "Captured final tab session; bounded1000",
+      "capturedWarningsErrors": 0,
+      "limit": 1000,
+      "bufferSaturated": false,
+      "expected404Messages": 0,
+      "unexpectedWarningsErrors": 0
+    },
+    "fullPasswordSetupOnboarding": "BLOCKED_USER_HANDOFF",
+    "activeCspAttackProbes": "UNPERFORMED",
+    "broadAccessibilityCertification": "UNVERIFIED"
+  },
+  "release_gate": {
+    "status": "BLOCKED",
+    "missing": [],
+    "not_passed": [
+      "actual_recovery",
+      "alert_delivery",
+      "browser",
+      "credential_disposition",
+      "enabled_integrations",
+      "external_release_controls",
+      "image_advisories",
+      "migrations",
+      "preflight",
+      "target_capacity"
+    ],
+    "invalid_attestations": [],
+    "source_sha256": "f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+    "operator_attestations_are_independent_proof": false,
+    "automatic_deployment": false
+  },
+  "external_controls": {
+    "vercel_project": "READ_ONLY_OBSERVED",
+    "missing_required_dashboard_public_origin": true,
+    "github_owning_repository": "UNVERIFIED",
+    "github_enforcement": "UNVERIFIED",
+    "sensitive_export_current_service_probe": "UNVERIFIED_NO_USABLE_PUBLIC_ORIGIN_OR_CREDENTIALS_NO_TRANSMISSION"
+  },
+  "current_actual_recovery_verified": false,
+  "current_credential_revocation_verified": false,
+  "external_alert_delivery_verified": false,
+  "production_changed": false,
+  "live_credentials_rotated": false,
+  "real_emails_sent": false,
+  "paid_provider_calls_made": false,
+  "git_reset_discard_commit_or_history_rewrite": false,
+  "superseded_candidate": {
+    "source_sha256": "5ecab15b090021ab2b18a09c84661962b2f187d2d96aa0b817a6e1d81a33a7ed",
+    "backend_suite": "INTERRUPTED_SUPERSEDED_NOT_PASS",
+    "artifacts_preserved": true
+  },
+  "older_completed_candidate": "73eb35d6be24bed880bef74ed1c237b2d649d6985ed8bb2d1753a965c7830af6",
+  "durable_directory": "/Users/ashishdikonda/Desktop/Openoutreach/leadzen-release-candidates/f3498c958bb7b5f290e4d8f1a294915a153870b6007c13b7d1552624faec3e3e",
+  "durable_copy_verified": true,
+  "release_cli_exit_code": 2,
+  "deployment_wrapper_exit_code": 2,
+  "independent_evidence_crosscheck": "PASS for binding and honest scope; production gate remains BLOCKED",
+  "password_handoff": {
+    "status": "BLOCKED_USER_ENTRY",
+    "url": "https://temple-discounted-comparing-leu.trycloudflare.com/password",
+    "synthetic_only": true,
+    "new_credentials_entered_by_agent": false,
+    "new_password_workflow_completed": false,
+    "existing_temporary_password_entered_and_masked": true,
+    "policy": "Computer Use Confirmation Policy: user must enter, confirm and submit new authentication credentials."
+  }
+}

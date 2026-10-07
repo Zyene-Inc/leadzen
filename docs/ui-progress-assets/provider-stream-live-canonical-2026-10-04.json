@@ -1,0 +1,200 @@
+[
+  {
+    "elapsedMs": 13,
+    "run": "56a04111-cd34-4aab-af24-231c8a9df9cd",
+    "status": "failed",
+    "assistantCount": 4,
+    "message": "c7e5ac98-fc8f-4c5a-9d4a-dbe06110d8c7",
+    "length": 181,
+    "streaming": null
+  },
+  {
+    "elapsedMs": 29211,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "queued",
+    "assistantCount": 4,
+    "message": "c7e5ac98-fc8f-4c5a-9d4a-dbe06110d8c7",
+    "length": 181,
+    "streaming": null
+  },
+  {
+    "elapsedMs": 30227,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 4,
+    "message": "c7e5ac98-fc8f-4c5a-9d4a-dbe06110d8c7",
+    "length": 181,
+    "streaming": null
+  },
+  {
+    "elapsedMs": 31412,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 17,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 31647,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 48,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 31769,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 79,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 31885,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 95,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32000,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 157,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32120,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 171,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32238,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 176,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32357,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 219,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32594,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 263,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32708,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 276,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32827,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 319,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 32941,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 356,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 33056,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 388,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 33171,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 419,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 33287,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 460,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 33405,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 472,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 33520,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 520,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 33663,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "running",
+    "assistantCount": 5,
+    "message": "7485e4a2-57a1-4095-ba87-995d3603a248",
+    "length": 552,
+    "streaming": true
+  },
+  {
+    "elapsedMs": 33789,
+    "run": "c99427cd-9d4e-4c6b-89f5-634079433253",
+    "status": "cancelled",
+    "assistantCount": 6,
+    "message": "d8bde9fb-5a7c-4b57-adfb-06963339fcd0",
+    "length": 181,
+    "streaming": null
+  }
+]

@@ -1,0 +1,3096 @@
+{
+  "snapshot": "working tree; not HEAD",
+  "initial_entries": [
+    {
+      "path": "pyproject.toml",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "8ef0a17e363b5a15da9b169a26c5ba4bc265a997402acec204d2db4d5a9fbc2c"
+    },
+    {
+      "path": "pytest.ini",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "6f456d7a04c594dc8ecee80c52f150437034133474823c858e719a6d3a303359"
+    },
+    {
+      "path": "Makefile",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "c050839b470944b7dd41d2761aba88ba7cead2b0596f46dae8a72854ca1003d6"
+    },
+    {
+      "path": "LICENCE.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "PRIVACY_NOTICE.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "950c1c3b4adba788b21a40ac3ff1437bce1360e318fc84d08636d0b80f67ca69"
+    },
+    {
+      "path": "local.yml",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "68d8f3cb83edca9c661c70c4420eb8184a3a59277f66c727a0fdef77ba02016e"
+    },
+    {
+      "path": "PRODUCT.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "555945f0628b8ae9afe8de86f3a6d46ff2ee802269c6a48315f9909e844bc5fd"
+    },
+    {
+      "path": "skills-lock.json",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "c9b35939d94d035a1b8870b39504e620e9a3f8bb8bd86626e5b76d83283b8eff"
+    },
+    {
+      "path": "CLAUDE.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c6ec13d4324f136c27e003ff82e876db1169d81e598806d0321ad30f3aa941d4"
+    },
+    {
+      "path": "tests/test_sending_schedule_execution.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "0933f931eef418eab8f612b475fa1cf6acce3b8c582a43abf3c8930a0364b3e1"
+    },
+    {
+      "path": "tests/test_invitations.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "7655edde558aea16ec0370f20b2e53cdc71aaf6611e77791e3af82ba2d04bb48"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "ced08bb369165a88d60b3dc83e1acecc40d2fd41ebfb218b44f9c6810047e5f3"
+    },
+    {
+      "path": "tests/test_runtime_settings.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "bbf6dc79a98bf1d210157f3925fd63b183de2c96fbd49889500d4b84f4e15c94"
+    },
+    {
+      "path": "tests/test_campaigns.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "1417e0ba9dc230566aec03fd1faf3778e4dee2d014a46b3334347bbd34fed8da"
+    },
+    {
+      "path": "tests/test_lead_timeline.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "11b3fee51ac584dda26c136319498ed28d1af41cb2524da60dfe4ff4bc1a7412"
+    },
+    {
+      "path": "tests/test_provider_stream_formats.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "929a104c8d7abdd0449c52d833c4406d61f13fd680000637f2b025f33863d53b"
+    },
+    {
+      "path": "tests/test_product_tour.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "c6711f8afd3bd07da8c9f2a0bfc5a44095dcc953f89f85b0ef5b523baaa48cb4"
+    },
+    {
+      "path": "tests/settings.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "225c4a65a8bff0985b0ed7d19a3f95b98b3870c4beb63933b2dd55ad01f12e06"
+    },
+    {
+      "path": ".gitignore",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "51c2f170ce46c5e8d3a93b21b48e66ad9fec0e3eccd35819c99a957880b279f1"
+    },
+    {
+      "path": "LEGAL_NOTICE.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "95a9fab11e486de0c02108fd218f8ca595f1a9ecd9273a57a50a9019e3645d1c"
+    },
+    {
+      "path": "AGENTS.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "158be8252dc447abc68905c517f53115507a2f9ff99858fc510dcb1d09e4c026"
+    },
+    {
+      "path": "DESIGN.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8efa5cb275b3c4f8cf19fa3b4eb2205390e061d327ef19df24964de4396a39f6"
+    },
+    {
+      "path": "tests/scenarios/lead_timeline.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "626ea2ff9d80edefbc38313fdea3c2c86ef6d7a1e724ead20b9e98b6ce0a7686"
+    },
+    {
+      "path": "tests/scenarios/workspace_settings.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "6cc35ed7b4268da36385f320db8e3b4dc93d79965bc5cc34092d9e90cf49fca5"
+    },
+    {
+      "path": "tests/scenarios/activity.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "939bbce730f3b125230382f70710eb3a5bc15e78fa143d4173433822da23e7c5"
+    },
+    {
+      "path": "tests/scenarios/mcp_auth.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "2159285195693acc33b02fee79264371dc283e752e30ca0d79fee6e5bdb0e6d3"
+    },
+    {
+      "path": "tests/scenarios/accounts.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "30d6c8245a210fc8608efa7170d70ddbd38c0cd4f15f4b1431e84f46679883a0"
+    },
+    {
+      "path": "tests/scenarios/chat_worker.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "8c672ff65cb88ecfa32765de814ac6d9163b56ee03a2a823f23a36649b814cf0"
+    },
+    {
+      "path": "tests/scenarios/local_preview.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "1eaea16cb98ebc8e009e09afd35dfe7e1f63b322c640fcb156cc9a1392272b1b"
+    },
+    {
+      "path": "tests/scenarios/http_flow.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "980f5de84ddc0bb6dcba244ec4574352ea98355f8adf40f856606e574fbc4d16"
+    },
+    {
+      "path": "tests/scenarios/provider_stream_preview.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "fd1b6b8d0e4a5facbced1f2e8ced97d09cdc84d6f90a41490d1d01aa5fb8f8f6"
+    },
+    {
+      "path": "tests/scenarios/preview.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "ef987c1a1053563559990e8b4dcb49112d5c094321cd12bad417218be6ef8f4f"
+    },
+    {
+      "path": "tests/scenarios/local_tls_proxy.mjs",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "a2d00b07efa30d57f873898d5d79347f426194ba231adf3cde870e5189d6d1a8"
+    },
+    {
+      "path": "tests/test_bettercontact_settings.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "c2ae45851779f7cb9c9c7795edbbed2d60346315f7d2e0e12ec39c1cd6c58a89"
+    },
+    {
+      "path": "tests/test_autopilot.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "bce244eb6748f36b598a08ca48b807295dfbdd2a2710524e76ca2c5090997573"
+    },
+    {
+      "path": "tests/test_lead_crm.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "a4bc48df18ed3a9f517fc646de00d6b0c6ecd0bbf4daac8b3aac476677b57658"
+    },
+    {
+      "path": "tests/test_setup_wizard.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "fc80bae0dea899a5d655d473af100cf9754acebed15d8a89e617d991e055d0b6"
+    },
+    {
+      "path": "tests/test_reviewed_outreach.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "18391e944b43d0683b1b71dff3ce72bdf089cc9be87d77207412252c62994d9d"
+    },
+    {
+      "path": "tests/test_discovery_live.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "c1ef67d0c5e9686a0ae6a8be9f13c15a0e319974bf72e594a87f5bf182724d86"
+    },
+    {
+      "path": "tests/test_email_transports.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "591a06d4bb024a0cbfabb09e55a9e295579436396edf4bfafba6e0bc26f277f9"
+    },
+    {
+      "path": "tests/test_chat.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "ecd77903a96fd4c571fd4473b2208b10482f632e52e274d62c57f96e842ff16a"
+    },
+    {
+      "path": "tests/test_outreach_workspace.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "a3a666a4ed42c77460f68f635645655e30ddb65d94665e4c04fbb3a3375bc7fb"
+    },
+    {
+      "path": "tests/test_accounts_integration.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "6c52becc8f00d4575afa628d37ea6c91ef3125b4f064a9f4ce802e4e067710e4"
+    },
+    {
+      "path": "tests/test_workspace_views.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "12c44f5767a306caf7c66bded71bf04abe1824329f8caa8fd99ef5ec70c4cc29"
+    },
+    {
+      "path": "tests/test_discovery.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "a6d59ce44fe811583e78bef6a81fccdc81cc1fe66fb248f29f11c4a8fe0b5a5a"
+    },
+    {
+      "path": "tests/test_mcp_transport.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "0043b4d0c89774f7a5997b67d0e26091b0f328b884a8e5bb775addfe0cb24c0b"
+    },
+    {
+      "path": "tests/test_autopilot_regressions.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "7130555c2a85c3c2cb25147014a705ba7e216c88166a89f372da434e4d99174c"
+    },
+    {
+      "path": "tests/test_mcp_auth_integration.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "694f80fba9115daae788fde18b5c92384c002396ade74a30f7a2375f8e2d30b8"
+    },
+    {
+      "path": "tests/test_autopilot_send_boundaries.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "0aada2010e72ce80781c75ab9d35e977910e3b7df00408a3b0da38c985513d87"
+    },
+    {
+      "path": "tests/test_branding.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "ec2700ed4c1ceb871d9d9eb6a91e06119b6591e6ed9f6da6276e4a1b3db4adb6"
+    },
+    {
+      "path": "tests/test_accounts.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "b37c96d56c42af47603fd2af278a5157fe52414263d10c32b90a8b2c3051c664"
+    },
+    {
+      "path": "tests/test_workspace_settings.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "770357664abd776776ff97740002843a5712d4c7145cb7030cc0b7764318b7a3"
+    },
+    {
+      "path": "tests/test_sending_schedule_boundaries.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "e3a66cad2b8a6667944122653038ed8e5bf3a98d2c28fcf6c4520c0483c473a2"
+    },
+    {
+      "path": "tests/test_web.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "0617614ac78d671261f1e6a56fce2d03171565d6e649fa914b20782f08366dd0"
+    },
+    {
+      "path": "tests/test_autopilot_discovery.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "1ddb4bee466c3d0425437a9a2b9cc388b879349aef14d96747f266b9a8fa19c5"
+    },
+    {
+      "path": "tests/test_mcp_tools.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "eba563f1fdd3043ed3dfce0317d2291c214ead2495af234d92129fb52beea191"
+    },
+    {
+      "path": "tests/test_chat_ai.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "68d29890ec62d63a21dbfedf7170aa39efe31e4c9f33b0d28db3324ba599488a"
+    },
+    {
+      "path": "tests/test_automatic_followups.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "49d29eec861b723721bf429a21a057d8b045b35374b46bdc4c50569ec553bfa9"
+    },
+    {
+      "path": "tests/test_new_york_time.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "55626365a6792044eed7077279b39833ea4b71426aabd8d210fb546d138d95f8"
+    },
+    {
+      "path": "tests/test_activity.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "498a2ddecbf8389b9cf0825e94b670401e59c38a82f092b362cd71a970117e21"
+    },
+    {
+      "path": "tests/test_chat_workspace.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "5a93ef4f0b4b699a3f17325820afe9a2c0a3dd11c6aed481966f8d0cf4a721bf"
+    },
+    {
+      "path": "tests/test_mcp_auth.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "7593c7692d00409d6b32b6c16a971ec86340bd2afd264b18aeaa2405448260c0"
+    },
+    {
+      "path": "tests/test_home.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "31e2134f30f45c3353fcf973e4953b5bada2de8813ace57c2689a089f59556da"
+    },
+    {
+      "path": "tests/test_sending_schedule.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "29a1ca69ba2d8d675e0b96f5461fd75e7e07979aa0cefec45f0456b755f06b0e"
+    },
+    {
+      "path": "tests/conftest.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "f6104679fed543c616888d8378c53246e12d6849d0b719303c749f37843955b0"
+    },
+    {
+      "path": "tests/test_registry.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "be32f0d7f4e88a2ff5660765baff9626de8e926df83cbee8742afda9e93835cb"
+    },
+    {
+      "path": "tests/test_wizard.py",
+      "owner": "tests",
+      "category": "source",
+      "sha256": "8386a65581cdd5a4929aaa5261b23c86dc0df165856e859003a8b5250171ea46"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "65152bf9d241a182ddad3ec2f2a785ad5fc45d842decc9a61b12eb8f7da5d418"
+    },
+    {
+      "path": "README.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "44a2a8a0bc9eda95fd7060df3d38f66170e92bdd277c9922acbf06d59513cd26"
+    },
+    {
+      "path": "skills/find-leads/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "7dcf69dfd0a44dfe3d71a2cb8a2ec91d63efb3afe7e8e11b3320e0b460680ea7"
+    },
+    {
+      "path": "manage.py",
+      "owner": "root",
+      "category": "source",
+      "sha256": "e7532717a5b84a961a93f74333be39444f93aa7f8333410e9adfe251485587fb"
+    },
+    {
+      "path": "leadzen/workspaces.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "0a84f315872fa8334ee257a456a56a428704de578bb6a11f5c94e479ca120937"
+    },
+    {
+      "path": "leadzen/wsgi.py",
+      "owner": "root",
+      "category": "source",
+      "sha256": "ac04f970a7f089fb1182be53d2214fff504cf99a156eca25b791fc1cfb1a1e7e"
+    },
+    {
+      "path": "leadzen/autopilot_dispatch.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "f1afcb349b363a3f6800b993047057d9a9f1fdac13e6958cf8d92edc5d97dcaf"
+    },
+    {
+      "path": "leadzen/discovery_progress.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "fe892398065fb822691cd1e2707fc1844906f9258abab857e2b80f8996062de9"
+    },
+    {
+      "path": "leadzen/__main__.py",
+      "owner": "root",
+      "category": "source",
+      "sha256": "09f786943c908a9dabfb65362311d22027d1a0a6d54b7505434d3e58d8550e05"
+    },
+    {
+      "path": "leadzen/urls.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "f2977d379713103c932af0094d1564d6a0897fc63ef7d3f877cbcfaf0eef2e55"
+    },
+    {
+      "path": "leadzen/timezone.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "5116bb0c35e3ec928e34e5976746ab46943ca8594295f2af48939fadf8d37c00"
+    },
+    {
+      "path": "leadzen/sending_schedule.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "bc168199062324e3028952408173095c80ceab2d96b3c014732ed15889eccbb1"
+    },
+    {
+      "path": "leadzen/scheduler.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "f8231191adfa6ffae0d98691e3625dfa7d2fca3898f0aba069ebff232002faf0"
+    },
+    {
+      "path": "leadzen/transports.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "e09bfad33489cbfcfc6ad45a63d2c994bd41acf55895c2e40cd49518e4ea63cd"
+    },
+    {
+      "path": "leadzen/workspace_settings.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "d50719687998192eb3cc0bc34ab187be20ba0ddca4219e367b048fff50e35b79"
+    },
+    {
+      "path": "leadzen/settings.py",
+      "owner": "root",
+      "category": "source",
+      "sha256": "a53bbc44a3870bab8af7a32a59e94b8f3220fb81c11872b6f679f1232a97e90c"
+    },
+    {
+      "path": "compose/leadzen/leadzen.service",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "d22ce04bce39d4b2c4586dd46621c21ba986afa60f4530fbaa38bab5315ba52a"
+    },
+    {
+      "path": "compose/leadzen/entrypoint",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "ab07c88ac600487c64ee56aa327a06f9eb240264ad17b6910152a9a0e91d1f9e"
+    },
+    {
+      "path": "compose/leadzen/Caddyfile",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "b7a5afd5269432a74105a10815d928e8142322a4b957820317ff16e18f394522"
+    },
+    {
+      "path": "compose/leadzen/start",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "a6782a246d902796eda1318f4ff5836b106a06452ef2221cb616cf597aa454a2"
+    },
+    {
+      "path": "compose/leadzen/runtime.env.example",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "145dd012c66984b8be11cd66c309eb82af4ad15825ace26bfa8764e93e96ada5"
+    },
+    {
+      "path": "compose/leadzen/Dockerfile",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "53e1126d221de072d85a7d9f533cc5741e6ca61c455df47d8a84d567b989f011"
+    },
+    {
+      "path": "compose/leadzen/leadzen-followups.service",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "a22ad262beb565aaaf5a64ca5f01d44a1fb96d2b75231b95c0e62672d3cc2a6a"
+    },
+    {
+      "path": "compose/leadzen/deploy-accounts.sh",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "cdbf499a21990a5a4cc7bb0a212f92a21670c9dc770a1fc4d7350785b2249fed"
+    },
+    {
+      "path": "leadzen/mailboxes.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "2d8df318376af07e61aad09f29b45a47a750d5fb123cecb348916bf1ad37b97b"
+    },
+    {
+      "path": "leadzen/ai.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "3519b35047f7542b97e85f83c6494c1cfab3cb627641ebcf952402f5564b2245"
+    },
+    {
+      "path": "leadzen/workspace_actions.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "639f3f0ed9de6d945bce65fb3fa8eb18d1f9b9ceb7ab3eb0063f9c75f8669fe1"
+    },
+    {
+      "path": "leadzen/crm.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "52fc8abb076602832f86ac0f57b4247cf500be0f377f9405a8e97a399efe894f"
+    },
+    {
+      "path": "leadzen/accounts/views.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "f092863adc330041bf66014d73b00007dd1f61e4fb444a96c79715b0f8224188"
+    },
+    {
+      "path": "leadzen/accounts/invitations.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "fce1396bfe5881a808fa4bc150c4f960fe5e1a86a728781a07f21bd22d7b3610"
+    },
+    {
+      "path": "leadzen/accounts/apps.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "a00703325d261d2a0dcdd68a3124ed329c1e2aa4749c2f570a74e3d41cc819bb"
+    },
+    {
+      "path": "leadzen/accounts/__init__.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/repository-cleanup-inventory-2026-10-03.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "884950417574900a37bf4c8d38ebebed40b191680b004f16f4e3a29539f803c9"
+    },
+    {
+      "path": "docs/repository-cleanup-audit-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "7b42ee3975f5cb78ea924aaffc2935b80c076553e0c22d8d8ba59e29e660b9a0"
+    },
+    {
+      "path": "docs/production-readiness-inventory-2026-10-02.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "46d8c7b9899d14aae48490aaf2e6def3170d32e4b0c537e9b0c691bdcdbb6415"
+    },
+    {
+      "path": "docs/demo.gif",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e36103826d8984211e4d880e8234ddf355d52d13ffddfce138d531ca77af91d6"
+    },
+    {
+      "path": "docs/user-experience-audit-2026-10-02.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "0fb9ee736f38c0f471af1ea2e7d8072d1b3633c471b8eadc74bfef771e879128"
+    },
+    {
+      "path": "docs/logo-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d48d105af135337d942eee38c13bbb5604722dc552689fa28d38d71378ac056a"
+    },
+    {
+      "path": "docs/ui-chat-discovery-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "29b13a785faf517c2311816b5d60ffdddadbed41c80675bddd95a08d2cbe84de"
+    },
+    {
+      "path": "docs/docker.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a07e4c21f5a13ed26065e3a313f046d29f49835242fb0b70b70e90194db6b37c"
+    },
+    {
+      "path": "docs/daily-autopilot-crosscheck-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8877000fcfc55d2313aa59857cd76c750b6a40cf83f73ffaaa4b5c574c81eb2c"
+    },
+    {
+      "path": "docs/production-readiness-results-2026-10-02.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "9e26c9416dd0a3b1860d1ff73e701d0430b2a0be86bd80561bbe72bea3839ff3"
+    },
+    {
+      "path": "docs/provider-streaming-validation-2026-10-04.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "49c2fb401b541eb0bd576611b13c9d914a281dd5b8b797e6273f9028fa18e956"
+    },
+    {
+      "path": "docs/employee-chat-bubble-validation-2026-10-04.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "1bfffe08f91bfb34f155e02134745ac1f22d20e8f85a200c21fe5f3a3567fe26"
+    },
+    {
+      "path": "docs/leadzen-logo.svg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "01dc1598aee74223bb960ac0f8b7113c079608d51b12523fc67c0bc23666d93e"
+    },
+    {
+      "path": "docs/chat-presentation-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e4e3eab984aa446c5d22125dc0d1fbcfcbb9c8bba92493016539150cb82b0611"
+    },
+    {
+      "path": "docs/new-chat-handoff-2026-10-02.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c29c6f0e9a16beb61969c9de6829f3ff9c4e71c45c97894050e9c95ac62d1684"
+    },
+    {
+      "path": "docs/chat-live-activity-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "59d85d0ce7ca637e7715f286ea0b769d9e9ec81ff9804b243e2cc5973c1ab551"
+    },
+    {
+      "path": "docs/logo.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "18d9ffa24a1e4eeb44f330020facacd607028e40749adf375e9714b05558ead2"
+    },
+    {
+      "path": "docs/deployment.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "804cfc4f52de8dd6777ff936c9aa23e313dd3c11c1f4096604993f78bfeead4f"
+    },
+    {
+      "path": "docs/new-york-time-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "399b6d8b2bc5da2444e54f6372369bf69e85cbe2b5513425e5b3c50a043be806"
+    },
+    {
+      "path": "leadzen/timeline.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "7c41f9a0e5ea8d255e19dbfc8c03809224d99b9a3790df9719855df1814cec46"
+    },
+    {
+      "path": "leadzen/web.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "7f5189f62863c465ad5163a50ec9402449ec241cb408b561415049e1993a2ecb"
+    },
+    {
+      "path": "leadzen/autopilot.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "4efce6ef26c1b06e83ece703b739149b5bcb32d61781059ce096cccf763bb300"
+    },
+    {
+      "path": "leadzen/email_api.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "2c598c2550f4be92e8951f841afb97a8c67a5c6dc11cef49ba2f4dbbba109ce3"
+    },
+    {
+      "path": "leadzen/configuration.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "931b62282c8373a971b9d79295a6cd864a234e5589561b980887b9d6cedbd36e"
+    },
+    {
+      "path": "leadzen/suppression.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "38667d74b55c93f388ef8d0da47c86a17e3c2f8cf202249997a736d08c7fbe67"
+    },
+    {
+      "path": "leadzen/branding.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "0e0ead133b154b44b29700a607c93856f0d6cacf0738c2062c4f40aebf2acac8"
+    },
+    {
+      "path": "leadzen/home.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "1539a6d422cf5a2147583da114ea72641b7adb79098216d99942061994d4dc25"
+    },
+    {
+      "path": "leadzen/chat_worker.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "876e58240a84eff674316857ec95c4519282f62b2943b72bba280bd1beb7cf28"
+    },
+    {
+      "path": "leadzen/config/apps.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "a73fb866da68b2d52d48e598557f3a9c9f5e795e5463be36fa34edd6411ebe40"
+    },
+    {
+      "path": "leadzen/config/__init__.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "leadzen/config/models.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "43c180a5ccf0cc064faae408eadbfe4529625bc0635728b2d7b8450bc0523d22"
+    },
+    {
+      "path": "leadzen/chat/views.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "de92139c8b177dd4c7f3e0df28fab4f771026702223a6654f749e4681844c77f"
+    },
+    {
+      "path": "leadzen/chat/context.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "aa4a51c3ad84dfc4959e6113a2cc475e95fc7eae1ae37fac9e51f2d96e23532c"
+    },
+    {
+      "path": "leadzen/chat/engine.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "331f500caa27d088e1716c1ac6669b4d5b19a1eab1f9ed49f93c9764bf0968b8"
+    },
+    {
+      "path": "leadzen/chat/__init__.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "1e2c372b3e7bfd9d74c66b046569b8343400b725c27056f0ecbb9f0bd0ccb1a3"
+    },
+    {
+      "path": "leadzen/chat/tools.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "592163c039c4c6ce21dc01bc08422e2e7e25450582b0578a0ae3e83e1e9f565a"
+    },
+    {
+      "path": "leadzen/discovery.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "7a26c047d6208a923ba35f5bfb719378c0c5af98144e362c11140f478e9d7b2c"
+    },
+    {
+      "path": "leadzen/campaigns.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "21fc6360ae8dd172344ee3dd1f4cca6780b6f36a8c82ec0a916f1af82085f51e"
+    },
+    {
+      "path": ".github/workflows/tests.yml",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "8af05e38778c6c7a7288ef9803037901a2f8132a01cdc017da2015860577c697"
+    },
+    {
+      "path": ".github/FUNDING.yml",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "6ecc97ea42114d1d00cf277d9212b11b757c60b64e25ddb7725ffa7acfb12b43"
+    },
+    {
+      "path": ".agents/skills/leadzen-chat-workspace/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "2cd67c4362d15f26b551b43ca307c21e8680502f5789af45b0aed8935ec82079"
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "660d242a0aef73abf303d68419cfa8c48154bd7a60ee83676df3e4681f26ed06"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "owner": "root",
+      "category": "config/assets",
+      "sha256": "edab6389d63de5991ef99feec4b143ca06d252ab733d40f3ebe8f9001d4438a8"
+    },
+    {
+      "path": "dashboard/next.config.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "93c7682978d373c1d579da962205d3769b4485240bdb9cc282a80c92bf3059d1"
+    },
+    {
+      "path": "dashboard/.env.example",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "7b47cfcd19c296f487c85458774955cb6eea8353a392da611ae965a7e8431c41"
+    },
+    {
+      "path": "dashboard/tsconfig.json",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "fc03f713da39db06cbed0b234babdb94547eea9eda6b65ea6ad87cb73e8ef2f8"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-mark-master.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "037113ca24c958ad56f8b4e87d0257b380c7498099ef018c32eff9e7fb6e47ef"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-production-login-2026-10-03.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d48dd75464d7b3282a5b5f40c715c230c713231449cc2266b240e3a0314df4dd"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-logo-dark-master.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d5e27fe0c6102d469ec07c278206b1733848b1835b605dc398ad098d4c01a03d"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-by-zyene-light-master.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5aba5ef150f8f63ce160112c8ed1eace908d0b573a6a84bb67c23b8c43b723fa"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-by-zyene-app-light-preview.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5898fa7cf2ce5646fc5276fc1ca5fb624b0d969a2e1ad4864bfbaa7343fdf051"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-dashboard-light-preview.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a5eda8e8925666d0357c71c88975d454c1c30e1f0ea991974c700e809efb4e40"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-logo-light-master.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "22bd5ab6251bb0209eb8def6b4c95cb34c924bf7d0787b9d05164b91d8b159d2"
+    },
+    {
+      "path": "docs/brand-assets/README.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "2ca56c3ac15b10243545057dd7f593acc28c9edb736f0bbaa2acfa0e4a27cff8"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-approved-logo-production-2026-10-03.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8e423379af0cd63f50c69137255896c9ba7e24ce79274be88770bdd6f0754f9d"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-approved-logo-mobile-2026-10-03.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5d5883dd3b8132d58cb1b26a8f3dda5d9250d38be12568d18e0115640f6a56cd"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-user-reference.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b5656d93eb5528ca275bc93f0cb53955a4e766c388c406d37aa763f6a5339e4c"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-approved-logo-dark-2026-10-03.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a256537b52f3798caa584a0233ce245df45517a432a05420d248b08ce2b55a64"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-vercel-production-2026-10-03.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "660917ea408b9573bc6fbd6bc43cfb2cc1fcb8ab44b7d44beebf3ae71020df1e"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-by-zyene-app-dark-preview.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "71b97442cd0d9e331c65559336652ec25ac3cda8427180ea21508a5a90e33baf"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-dashboard-dark-preview.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e5b18f0be350d7d5e947e08e280483507ec88cda5fcf21da5560323b9d463913"
+    },
+    {
+      "path": "docs/brand-assets/leadzen-by-zyene-dark-master.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "7d8aca3070e523849f8f797dc9821490429d952a64e1fc067b12189ed217789f"
+    },
+    {
+      "path": "docs/user-experience-audit-inventory-2026-10-02.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a5e4d0e21f8b666bbeec48bfc8990bc2cd9049dc2e3b6a04b33d528b3ffbee12"
+    },
+    {
+      "path": "docs/dashboard.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "da71400ddc3515e890350b194bac4dd633db24b4ed6e3f43ef38770bc587535a"
+    },
+    {
+      "path": "docs/mcp-connections.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8f56bceebc9658ac0d0e56dbb88c5bf4039b74037416deb8e091e41dfe6d568b"
+    },
+    {
+      "path": "docs/product-tour-validation-2026-10-04.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5d20d1c75578033db591f09cb243730bdce6c606b3b2d4f03a1b668efdfebd67"
+    },
+    {
+      "path": "docs/production-readiness-audit-2026-10-02.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "91470442de091b66a7c128a6f4362516b0d71b5576650c574a93992cd6917d22"
+    },
+    {
+      "path": "docs/repository-maintenance-followup-2026-10-04.patch",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "885196d9e295151ce2ae221d24d20b35ed900410e922a2689e7566c4e1ff98ba"
+    },
+    {
+      "path": "docs/daily-autopilot-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "15b82d9f483dc29ecd86d49877a6a7d149b3b5ff5e7659c488cfeb65084a2a44"
+    },
+    {
+      "path": "docs/chat-workspace-validation-2026-10-02.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "65a6f684792452806959ae08707be7e594ebfaa0fb7021c0e1aa0116700ce734"
+    },
+    {
+      "path": "docs/agent-start-here.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "2dabe309d821fef5dedd36a8d3b663d76dc4de91ce643789267a3c16f4d67f4c"
+    },
+    {
+      "path": "docs/ui-theme-validation-2026-10-02.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d0cd068ccff7fafbb1bf4df8983df8d0a4171ba222a47f600013e75cb3ff727b"
+    },
+    {
+      "path": "docs/sidebar-density-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "83caed30b0f49f14731db058ded4e628a9424b190820beac597a19575756a0f9"
+    },
+    {
+      "path": "docs/local-validation.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "ddfb52048b97e5021667ebb522faf729bce10020f0c6f81e99d0ff87101b1158"
+    },
+    {
+      "path": "docs/daily-autopilot.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "2c51c0063160d6dd3daf61e0cecef5dff85444e938f0d556767f995b34cec846"
+    },
+    {
+      "path": "docs/zyene-materials-validation-2026-10-02.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8d40025583ea031e8222273ce24af1735313f991266425e27437ce16b53b7520"
+    },
+    {
+      "path": "docs/chat-orchestrator.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "db12f7a86946426f4c5a02c598872dc2e528e90d140833dfdd45606b3bd947ce"
+    },
+    {
+      "path": "docs/sending-schedule-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5febaff5c5290fd9819258e97a85d6e8f16d6db172f5fdf74b9f962788f1cdd7"
+    },
+    {
+      "path": "docs/unified-outreach-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "cf6646697364858aeac7e38e388e72ac271c7391339968b165eb136abaaf5292"
+    },
+    {
+      "path": "docs/mcp-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b2f0431f9f26443679f4e9587ecd48e928ac7367bd0fb86c3fdd24683d63165c"
+    },
+    {
+      "path": "docs/automatic-followups.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "07503abfbcb08fd847c1dc7846b682bda0d63e27f95700a429a4d25a09ddfc71"
+    },
+    {
+      "path": "docs/user-experience-audit-results-2026-10-02.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "cdf907cb4d8ccd7c13697c747262c251b66c304cfa5124b5368d3057f13dba55"
+    },
+    {
+      "path": "docs/ponytail-cleanup-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b8b20430d31e2d6775410d39f06e4b528e66b1580fa3a88286f724d37907896b"
+    },
+    {
+      "path": "docs/compact-ui-validation-2026-10-03.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "00b78af38fbb1248ce75ad2b8f222201798ec16995938237de91784220c5f91f"
+    },
+    {
+      "path": "docs/repository-maintenance-followup-2026-10-04.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "285a2b03675e228126f002876e9453cca164c28f4d0731fc343d97ede9581d06"
+    },
+    {
+      "path": "dashboard/lib/auth.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "c103a0489519f4d174146f252f22cb97e69e3112516685181b286e78d2f937b9"
+    },
+    {
+      "path": "dashboard/lib/mcp-return.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "ebebc54edb093b5999a380613f830e00b7adcfde4e22b4219a0c143041160a08"
+    },
+    {
+      "path": "dashboard/lib/theme.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "edd4e72499c1feb62512158cd08277a2d7e2c79ecf8ec3835b54642f1ed5203b"
+    },
+    {
+      "path": "dashboard/lib/discovery.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "7902a344573ce04a565ab2071c4ca5020cf3315caa0a4f46b87c09f0898d038a"
+    },
+    {
+      "path": "dashboard/lib/sending-schedule.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "07be378ecf4962e50bd8c6c10b0523bb5d9242d927ea72bd781097745590e054"
+    },
+    {
+      "path": "dashboard/lib/product-tour-state.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "a145368caf19cde19bab8e86f353d4875b27a1912eb742892018591b4c3ba3cd"
+    },
+    {
+      "path": "dashboard/lib/workspace-settings.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "9b1a2db89dd5dc4b6d0ce6e12791140f45c929b008eec0208933dc8cfa9adfe2"
+    },
+    {
+      "path": "dashboard/lib/client-api.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "36cb9737da2139dd992a02f37fbb3d2c5ec1d87b3aa872993c6927644af7343c"
+    },
+    {
+      "path": "dashboard/lib/setup-wizard.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "7772237032ef2942ed1ed9170d033b5124ad0218caffc91ed0a96d1059d9b4f8"
+    },
+    {
+      "path": "dashboard/lib/outreach.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "ea442c6e80e9e45844f5c015be105708f4c4276d689aafd39b133a5bd494b3be"
+    },
+    {
+      "path": "dashboard/lib/activity.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "33aba271062ade396da2f418999bf9a6ee74e377a326d1d32a797e05cabae004"
+    },
+    {
+      "path": "dashboard/lib/session.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "737cc64455ae5ac326fb945cb5fe86bb271b4a0c45eaf468e33aebc1dd5eb77a"
+    },
+    {
+      "path": "dashboard/lib/workspace-updates.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "aabf8330aa9f512090d6449ca1cc56e0b2490175a6b865711ab4746e37d2a362"
+    },
+    {
+      "path": "dashboard/lib/chat-stream.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "fcbb1fd7874db7142fd7062e6bd6fa3aa6a92052a02e58e3a0d520f5b30724c7"
+    },
+    {
+      "path": "dashboard/lib/use-setup-wizard.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "c36420939a68d56c3c0d483ead81511829603186480251770ab76670baa9e84b"
+    },
+    {
+      "path": "dashboard/lib/campaign.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "5f478e10da1956d7ab949187a63b8b5ee1575a17a93dfa926fffc8808eab5c4d"
+    },
+    {
+      "path": "dashboard/lib/chat.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "323fe926943cdda272bb4acc961fdcb9386ccc96c4af80dcd82032ac33a6bfdb"
+    },
+    {
+      "path": "dashboard/lib/leads.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "df8f797b8da3fbe60d9f4352fb570759581d1416732c2e7efe63bcff59bdf85c"
+    },
+    {
+      "path": "dashboard/lib/date-time.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "552576c00dcef852dbd1894119fee38e886766eeb3ee468a3f961816b89a8a91"
+    },
+    {
+      "path": "dashboard/lib/workspace-context.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "3e9df651be54cb9ab48e24b850a4d8c83928d9e90660a4b5534c3b2f56d45bcd"
+    },
+    {
+      "path": "dashboard/lib/product-tour-steps.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "79b017dc4d48459a5c7041b9b9945911cb3e9c48122c75aa70dda4b4ebf422b0"
+    },
+    {
+      "path": "dashboard/lib/product-tour-dom.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "cc1a5fd362c13945682ff6c4e76f07393eb5b4c5cea82716a7cee01a0883848f"
+    },
+    {
+      "path": "dashboard/lib/connection-settings.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "ac71656b784c3e966a613af4e755c74fb1238dd0464c89d78a2bc13ab6a7991f"
+    },
+    {
+      "path": "dashboard/lib/mcp-redirect.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d7590fe6241fb6a4ad13887c5a6e5e3b6528b132b8534b84b074dd2e8b5cd36e"
+    },
+    {
+      "path": "dashboard/lib/use-stored-data.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "6accc44fcb0c31929463a48fd2b32acc98ec408650180328bc97246bbb0643bc"
+    },
+    {
+      "path": "dashboard/proxy.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "30287e718784dda6b7495a3bddd0554eedb2cbbca11e294e5ea2000dc865fc9f"
+    },
+    {
+      "path": "dashboard/package.json",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "5cce7024c51ada4233ca4f3e8ca70c4a825215541d454bc5bae62c195d787c9d"
+    },
+    {
+      "path": "dashboard/package-lock.json",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "5706c44806c17ae02cbda5dfdd1002127d69b376ef10c4cdc21748782aef4369"
+    },
+    {
+      "path": "dashboard/.gitignore",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "36cc3adb0b71465833febbf7a15c2df26c2e1f3868fc2ffb349f38a0fb8dde0b"
+    },
+    {
+      "path": "leadzen/config/migrations/0005_emailcampaign_outreachjob_campaign_id_and_more.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "36d47c05a6b768252e824ce22fc18008a63c48e837921cb4e6df691721d98331"
+    },
+    {
+      "path": "leadzen/config/migrations/0015_chatthread_deleted_at.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "1a4f845af51501ecc182c3d2aab3e6c69499f7831f3d5ea4b6b84d5d44f21a71"
+    },
+    {
+      "path": "leadzen/config/migrations/0013_campaign_followup_approval.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "4517db931c60c73d247d070116fb6f9e047caba49d9caeb4a4d8faeeb6356e85"
+    },
+    {
+      "path": "leadzen/config/migrations/0003_outreachjob.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "90192974bc4f8421bd98e47ccfb295f81ccdf80947c748a93715f6fb1100400b"
+    },
+    {
+      "path": "leadzen/config/migrations/0001_initial.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "539bd513698b141e778983b0b7b68e158aaa04db7a7c09684a707564876b5f3b"
+    },
+    {
+      "path": "leadzen/config/migrations/0011_crm_campaign_offer.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "9852bcab9086dc40edde6338c50be87d968b7b9276f32d95ee3d13709156427c"
+    },
+    {
+      "path": "leadzen/config/migrations/0016_daily_autopilot.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "0d7f7e77858066819edb2762a8c049186509bb4c004d9d3b552a727ae3194911"
+    },
+    {
+      "path": "leadzen/config/migrations/0007_chatrun_deadline_at_chatrun_model_requests.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "510066493b6cb9ffa64b8335fed8c255db5880f80e33b324d371b6d1539ccd5a"
+    },
+    {
+      "path": "leadzen/config/migrations/0002_rename_operator_country_code.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "4f3409e66acf750649a188a952e6d892ea5d011a1933819c8f514adc72dc2384"
+    },
+    {
+      "path": "leadzen/config/migrations/0009_onboardingstate.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "30e59bb4b5ebdcd86caf06782e34d6fe30a7826fda4972a47b65f53b9a149754"
+    },
+    {
+      "path": "leadzen/config/migrations/0014_workspacecontext_chatthread_context_and_more.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "8d44b2088ba5f6797288e754badf6ebd5d36e49042fec18beddbd05c7b6760dd"
+    },
+    {
+      "path": "leadzen/config/migrations/0012_email_review.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "2b9a05a47e532f828caf2c430307729c3bb807c8969a720e23f0719510ed8c7f"
+    },
+    {
+      "path": "leadzen/config/migrations/__init__.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "leadzen/config/migrations/0018_new_york_time.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "00ae6ed9c0ed6080a49aff942ab2a7702d5c685974064430e85f0fcb8df514e9"
+    },
+    {
+      "path": "leadzen/config/migrations/0010_discovery_progress.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "5ce100ed3c81dd562f79a71f8d35ac811587d2ebd1c3396b94f2fd912fe0d25c"
+    },
+    {
+      "path": "leadzen/config/migrations/0004_runtimesettings.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "0800fbf1ab2d20110a303f94b5492f55939f090300cf30e1fb707d6a2fbbb4bb"
+    },
+    {
+      "path": "leadzen/config/migrations/0017_siteconfig_sending_schedule.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "fbf7efd5c26ceeac2ed362a39bdbe4fc5b39b7438d517eff90e566947ea24f08"
+    },
+    {
+      "path": "leadzen/config/migrations/0006_chatthread_chatmessage_chatrun.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "b11e47bc03a39d35301e0e18cc96da00b1bdbdf7cdf36c12ce69a61101fb1498"
+    },
+    {
+      "path": "leadzen/config/migrations/0008_contactpreferences_deleted_at.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "18d22e3ff24daf241e7e30fc8840e86b280fcbced808df1db57432917a9d8e27"
+    },
+    {
+      "path": "leadzen/wizard.py",
+      "owner": "root",
+      "category": "source",
+      "sha256": "86acf001dd843a4fb481772bfc609360ae8221bb210d0d7426f277123f8c8520"
+    },
+    {
+      "path": "leadzen/upgrade.py",
+      "owner": "root",
+      "category": "source",
+      "sha256": "f34c0e30f8605ff26f7f98a7061e7eceaed74de2e88783418b3e4e5d8f5cc079"
+    },
+    {
+      "path": "leadzen/setup_wizard.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "bc8554f4fd5c6b8b6c3d4f7227272a3cb129e35868899016681419103e17ed9e"
+    },
+    {
+      "path": "leadzen/followups.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "5aee9fb1a130f316742c0f1707292724da597231ed41922353325769e7ef64b5"
+    },
+    {
+      "path": ".agents/skills/leadzen-chat-workspace/agents/openai.yaml",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e6bc8220ac1cc703119ac96194b7b7fc5bf76c8e0aeb24bd22bea3918aa6d08b"
+    },
+    {
+      "path": "leadzen/accounts/migrations/0001_initial.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "9d2e481ea6cf40faa8007b76b82603fbf218e2159c434bb13202f8b5eca0f0a0"
+    },
+    {
+      "path": "leadzen/accounts/migrations/0004_accountprofile_tour_state.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "caa272f5ae21d56acd46ad53f99bebb33e8438c7dd2a197f233b2c4b85c4c270"
+    },
+    {
+      "path": "leadzen/accounts/migrations/__init__.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "leadzen/accounts/migrations/0002_accountprofile_tour_completed_at_employeeinvitation.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "c420672f1e51e1ba6c8414918dd57075bc05fcf7cdbbfa4230e6da58ac51d470"
+    },
+    {
+      "path": "leadzen/accounts/migrations/0003_mcp_oauth.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "efa6ca1794b75c2889d551c0f2494a60e7be7da551d286aa860f5c34faa737fd"
+    },
+    {
+      "path": "leadzen/accounts/service.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "e9e38827f90b8260966083e8dfbf259e813d9bbba994083bbe09e5dfcd94b936"
+    },
+    {
+      "path": "leadzen/accounts/models.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "372f17ff063676eaebc2734250c700710267e54bbc3bb0e458628f0425d6fd96"
+    },
+    {
+      "path": "leadzen/mcp/views.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "d3a14f3b0621522f2a2791907162548b680070f2d7c2e48b7d19693bb37994de"
+    },
+    {
+      "path": "leadzen/mcp/guard.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "de42d5262c8d95fb1ff0f1c4532e2afa4519782b5e0487e6514f423099e9b134"
+    },
+    {
+      "path": "leadzen/mcp/__init__.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "leadzen/mcp/tools.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "2838c34e243367bbd50d3479e7d10ebce8452ba11b72fea984b2dc72b5158911"
+    },
+    {
+      "path": "leadzen/mcp/transport.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "32dc7fcb588494cd47ef505ab0dda53557a6ca861fe367eb9277a08a0038512b"
+    },
+    {
+      "path": "leadzen/mcp/models.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "9be4813fab9224c74741747202ae07e555e0b41c0860b84e9655770de9a2b31e"
+    },
+    {
+      "path": "leadzen/mcp/auth.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "2e9766e6a012bdc93bff84ea7283a34fc20fc45e0fb08d45a2436c049806e0f7"
+    },
+    {
+      "path": "leadzen/mcp/worker.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "cfc96c9a4842aa3d3ceae96e33b1702b7cc50201a09bce47f928696cc9e69bd4"
+    },
+    {
+      "path": "leadzen/__init__.py",
+      "owner": "root",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "leadzen/activity.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "2ef66b2ba54a3224bb21ccf942b20d18468b98d5bf97d6d6ec72f8716c96e8a4"
+    },
+    {
+      "path": "leadzen/outreach.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "0077f858746df6727e57b3b299753b08ea49db4a8697328e316a225546d9398f"
+    },
+    {
+      "path": "leadzen/web_worker.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "6e0dbd0697a253ca6dd0380183a7d854e59e761b94f3b9df668959df88116693"
+    },
+    {
+      "path": "leadzen/autopilot_worker.py",
+      "owner": "jobs_data",
+      "category": "source",
+      "sha256": "7eb38db61968b85c57bd123c396ba5b42c44e47138ed6ebefd3d13cb9b338342"
+    },
+    {
+      "path": "dashboard/public/favicon.svg",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "a73fbe94c5d0c24bd6308b7a12324d1dee65574b369a407c85243c8601da8f06"
+    },
+    {
+      "path": ".agents/skills/leadzen-ui-quality/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "940f09c114893858bfce4d39b9b1be5ffe32aebe4ee3eca8af970d4afc654ef3"
+    },
+    {
+      "path": ".agents/skills/leadzen-project/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "1013c73f9562ff5f88fdbde15231d44ff32edf160e75dde5d6e31a5979d947b9"
+    },
+    {
+      "path": ".agents/skills/leadzen-ui-quality/agents/openai.yaml",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d5be58d9081b24a7e052ff916f50d01e5f7cc442ef2cfdf75edf427f5e4f92f9"
+    },
+    {
+      "path": "dashboard/README.md",
+      "owner": "frontend",
+      "category": "docs",
+      "sha256": "ea38522d45de041a60069575d7add235717811fc18c166d513ca5253715fe483"
+    },
+    {
+      "path": "dashboard/next-env.d.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "0f70629890b72a0a82e91972cc032c04b658b26c265373cb711cf576bfbf8fcc"
+    },
+    {
+      "path": "dashboard/tests/user-journeys.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "af6714abd75d5a6cd07903f1c9e93bf919bcc5d579e521a3c170ae6999add6df"
+    },
+    {
+      "path": "dashboard/tests/product-tour-integration.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "e04c225afa1d3fc4301f09623200911f0c72bd14cc33aef3649e14d33fea6072"
+    },
+    {
+      "path": "dashboard/tests/chat-experience.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "1a916ec0ed266232206b2db9fed427b3b6540b3b257f2ce40bdb7c2e5dce5397"
+    },
+    {
+      "path": "dashboard/tests/chat-live-activity.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "b8394f25a3cfc33c6574b0209e27cce589e59f66b9dc33215b24a98453221084"
+    },
+    {
+      "path": "dashboard/tests/help-tooltip.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "01a4007665dc70f1a03881db536959d5324f6289339dbeff13a538d13f65fbf5"
+    },
+    {
+      "path": "dashboard/tests/remaining-controls.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "3e6ce84a2bcba012f95eeec7b315e2a6df668cc268084fcdf3c489b642b3f2ec"
+    },
+    {
+      "path": "dashboard/tests/theme.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "5ffa0d6ef7787c0d213c2486cc26edd09a0581ad173a32c9caaf57ada660d2ba"
+    },
+    {
+      "path": "dashboard/tests/mcp-return.test.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "7fd6038379296ea5144c1630003f8845d12e41c19f25f6d15cf39f50ee3d2645"
+    },
+    {
+      "path": "dashboard/tests/review-controls.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "c6491a5b8255a246842a8d19fbe77075f8a967dd59a289f8033ad018e522dfa3"
+    },
+    {
+      "path": "dashboard/tests/chat-presentation.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "5d5f5882c39765dcd240e1cd5a6096db80e061b5dbaebe5cdb09f127489671e7"
+    },
+    {
+      "path": "dashboard/tests/mcp-connections.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "f23f90d687fae186994d33b46ab98d333674a4db1a99b99ca4b48fef859ccd23"
+    },
+    {
+      "path": "dashboard/tests/setup.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d834a02fe6378e4c9881956b89b74c9444730860223e6bd33bbea3918d85a52d"
+    },
+    {
+      "path": "dashboard/tests/product-tour-auth.test.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "200177c0fb349afaec719a41dfabca62b11ad659b779e3f433f6d01bce0ae87e"
+    },
+    {
+      "path": "dashboard/tests/new-york-time.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "9bb13b9c6f634fd4492fb3039ab469df2fc2ab83d0ce51b534a4499308681ba8"
+    },
+    {
+      "path": "dashboard/tests/sending-schedule.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "95bc402a928aa8bd051b2f61996edca8f5626bb4289d3c7ad7da5e033e90e8b9"
+    },
+    {
+      "path": "dashboard/tests/chat-agent.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "cce422adfaa1c0b6c861b7b50888910ea5b51c73e10518fb01876667bd56228a"
+    },
+    {
+      "path": "dashboard/tests/workspace-controls.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "b39525ad5ab5cf03b6eecc81e0b55ae872d39fc25956a6f43be78b8f36f1efe3"
+    },
+    {
+      "path": "dashboard/tests/public-assets.test.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "74c466cd72ffffbd7969ddbad01cbcca9949798bef657db0b832d8a54548ee0c"
+    },
+    {
+      "path": "dashboard/tests/discovery-ui.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "7d1fc99372a13585ab4275eb423eddc990458926e3335ca9609dda6ec6421100"
+    },
+    {
+      "path": "dashboard/tests/product-tour.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "36e91e0b186083667dff8dac1f65fafd7140eb4a0b36ce4fadf50200d03b58de"
+    },
+    {
+      "path": "dashboard/tests/outreach-flow.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "4dad33785317e93bd5dd3aede8e91fafc9497b0bc7bc1da8fdc0e21c61124422"
+    },
+    {
+      "path": "dashboard/tests/autopilot.test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "fedb873d8d341f83cdad1145ce17ca2d38757470ca5f4ae27307e94ed2dd491a"
+    },
+    {
+      "path": "dashboard/tests/chat-stream-protocol.test.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "f119736371e1d1d1d731a7b945a148f25fbee14e8c08ed1f80b7bdbf1031dd01"
+    },
+    {
+      "path": "dashboard/tests/fixtures.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "1c58c29b87113cc4cd615e4d69801d5c485e7b9f5f9d43aeed5cea04b59774ec"
+    },
+    {
+      "path": "dashboard/tests/request-origin.test.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "a3aff53ab5324126bf4e1ed06259116cc9b2845655564f6a07769b7e6567210c"
+    },
+    {
+      "path": "dashboard/postcss.config.mjs",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "5a9a2d463507b47b2f2cc17ad55f0128db063912227331e789601d2e5890fb98"
+    },
+    {
+      "path": ".agents/skills/leadzen-project/agents/openai.yaml",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e5e60762e77a90ed6b51d8360638d98ed07f2ee45e2c473a6503d9917f4f8792"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-by-zyene-light.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "f94c865b0eca9decda73a065c5bcf7d521a95d7ff52ff10cb28df404780d8838"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-logo-light.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "e32726c73e414d2c14945ff501bbf656c0b0bb29bcff8223a32ba17a6fb2cbb9"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-192.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "5bd6d1e7eef0c387b7063630f59653f434fa6e75d207dc098384bf82a6c08068"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-32.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "2e844df0a1188298181601cbd10c64f96ae4daf3ac2e6c307ad1cf4ff0e40a3e"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-logo-dark.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "31a10773082772841c2126b48c9b323a078b9b6d69138f6dc1d87054adcbb8cc"
+    },
+    {
+      "path": ".agents/skills/daisyui/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b4f20b48d444b18c0ac3506cc063a22e996bf5b717a7b9cd1b2dabc1bc98a7c7"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-180.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "09f1e17e4a98b712b054e80fccf56e5f6ab0f5cd7400cdfb0983e22fac7c3c73"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-by-zyene-approved-light.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "56ad327372392beb9795548b2cddd5153bfca9cef176e75a58da66e9d3d11bac"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-16.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "425267a4380f7c75dab16121a8416e03d797e0d7d3835352ec1adb2c39281c70"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-favicon.ico",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "f4268b8a7626c80e965f0d08f4ede7e898ed98fb640a2917819a945a5f52af21"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-by-zyene-dark.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "35d7b1a041d3088114cf8cbbf85cead0bb4615b52eea795dd5e67a91d2a69279"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-48.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "95063316646497b422b9b9a509f2ba2c8e7e5310e00f8b636ff63130db6d6362"
+    },
+    {
+      "path": "dashboard/public/brand/leadzen-icon-512.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "9b68158d562f00656e921e035bd8e117fcc76ea8a06924a6519dcc3674efe9ca"
+    },
+    {
+      "path": "dashboard/public/apple-touch-icon.png",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "0d2dd10f6bd6cb58f839c33f0bb5c3a9668456092f3dd4ee92955eb3bd4557a5"
+    },
+    {
+      "path": "dashboard/vitest.config.mts",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "24c0c67ba5fd0a638385ede553eb609c0a5d51e235e216e4f7a95ecee75559dd"
+    },
+    {
+      "path": "leadzen/accounts/management/commands/bootstrap_admin.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "158ff4fd37714623d9b721b439a7710a3c4ab2a699ff616c67acd41af12649e2"
+    },
+    {
+      "path": ".agents/skills/daisyui/colors/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "655e2eef74d8f1f6f517044d58fd7115c4384687148a99073ff179da7f1b482f"
+    },
+    {
+      "path": "leadzen/accounts/management/commands/__init__.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "leadzen/accounts/management/__init__.py",
+      "owner": "backend_security",
+      "category": "source",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "dashboard/components/settings-data.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "664901cabb0b7bb4ca9617265d43a65e119ac7e5ab3ed60177124b9400671cc1"
+    },
+    {
+      "path": "dashboard/components/activity-feed.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d5a45b88d43d5335aabcdde4b7190dcfb5ca779cfe9ef6389d91541a00bae539"
+    },
+    {
+      "path": "dashboard/components/product-tour-provider.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "22840f4201c7ce599855d3ad1e1d4cc8fc01ae2b5c9fd2dea28c5b86ea7a9abf"
+    },
+    {
+      "path": "dashboard/components/find-leads.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "3db1605af642041aabfe64d7342237719cbe9b5412589325daa1003affd387da"
+    },
+    {
+      "path": "dashboard/components/inbox-check.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "15212a17816a262668787731f5daa47db96a852f7cb969c1bc737aefadae6229"
+    },
+    {
+      "path": "dashboard/components/sending-schedule-editor.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "0ff70a20f38d145a68c9578dece2556a628ec824c4a884c29942cc54dfea7dce"
+    },
+    {
+      "path": "dashboard/components/icon.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "3e23e2b956ab8853929ce6a7ea3824d437d3f468388cda22e52596eefecb70d6"
+    },
+    {
+      "path": "dashboard/components/campaigns.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "ba9b1ea25e9d27fa34d9e14726fbfb8f594a30be3e71fb187a826c5564c82bc7"
+    },
+    {
+      "path": "dashboard/components/target-editor.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "544facbd23c598c9d69841cb4e371dfeca68e82168cf5f4957a3204b35146384"
+    },
+    {
+      "path": "dashboard/components/page-heading.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "105214e12dc380184efd64465de258e16e89bf3db6d9b2b3c1e83d57f3117604"
+    },
+    {
+      "path": "dashboard/components/mcp-consent.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "e0a53e3f6845ce3ac49d26a1754bd91b64b69008c12ebecf56b4ca16e91bcf8b"
+    },
+    {
+      "path": "dashboard/components/setup-profile.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d50b546b8ae5e198e75e0ed7cfe12f50215962e6509be8b18d1cab6270b03a0d"
+    },
+    {
+      "path": "dashboard/components/chat-results.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "23c2ccf4c646a78d4582223b9d3a0f588c39bd2cfd45d9e0e24b9b81ecb20d8e"
+    },
+    {
+      "path": "dashboard/components/chat-rename.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "55e0ef7c0456320f5e7d50a8c5f967c272ccbc3246a9a62baa7f4885fece6b22"
+    },
+    {
+      "path": "dashboard/components/tour.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "544193074b1d8f8715100d434ce14b0e231846b61ee2414261e468d64bfc311d"
+    },
+    {
+      "path": "dashboard/components/home-summary.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d80270296b6d23df161d3f63d4ba65e3330779b3bcbdb013fd3ac40f436a5c73"
+    },
+    {
+      "path": "dashboard/components/settings-editor.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "56de0305a926a3efebcb45768a5e67453793dab8ff5ac566d5ee58f780e791db"
+    },
+    {
+      "path": "dashboard/components/lead-links.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "34d8a0edcb8f63fa4bea21c5b3be1d0ac7791aca9bfdd8b4543342138a437594"
+    },
+    {
+      "path": "dashboard/components/settings.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d0335f9c1da8b863831a1810e6aff1562785697712167fd54ecbfd3bbea7fbbb"
+    },
+    {
+      "path": "dashboard/components/chat-discovery-card.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "2f1a9ae64979c0c3e9be2306bf042c09213c9c2f3930aef8dd2f8ddc22f694db"
+    },
+    {
+      "path": "dashboard/components/needs-attention.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "1ed18b2c774b98046e0e1d582e91b3e60c14f3eaca2d64c17a77c58ccc07cc3b"
+    },
+    {
+      "path": "dashboard/components/campaign-send-review.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "e5464f6df80b3ef22bda9b8cb80d8d6f810b8ec6413d0d78bad551e8479f7998"
+    },
+    {
+      "path": "dashboard/components/overview.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "1743df2fc7248dde76081b96fb0977507a6b82ece9027382e98d2ce8ac77bb8a"
+    },
+    {
+      "path": "dashboard/components/discovery-email-review.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "f9e5d2986c1752bff30caae7ee770c4b3d143942646437a72f8bec5d02fbbd14"
+    },
+    {
+      "path": "dashboard/components/discovery-activity.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "5dffae5f20d2d1fa08de0242c5c7a9cfed1b02e3da2eeee778114a97efba7fa2"
+    },
+    {
+      "path": "dashboard/components/settings-test.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "767001e7c903df04342bd54b447dfb44b834bb2758b619034c0b72e56e410c3f"
+    },
+    {
+      "path": "dashboard/components/connections.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "b14b196b4362e85731a3ce8d98b2ab98d809f1cc604ee09bfa49eca998bed7cf"
+    },
+    {
+      "path": "dashboard/components/inbox.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "b9c742d7bbc3c7275e85c93793c23e82247855ed6182ee32009ff5a2baab3c14"
+    },
+    {
+      "path": "dashboard/components/employee-row.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "3439ada266bc2d86f5bbc2f1065022bd950933eea0738576c283853011b58c3d"
+    },
+    {
+      "path": "dashboard/components/chat-history.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "f23d83d28d83f16f976dc2ce8e9a67e9845991ec0c4003a5fc6bacb0e37bd346"
+    },
+    {
+      "path": "dashboard/components/setup-tools.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "72493eb60866f693f6ed917bd30571bcd9d8948dfb2fcb3ebc0aa4014cda6835"
+    },
+    {
+      "path": "dashboard/components/discovery-live.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "5012452f2196aaa7abc3a6f516411eb466f9fd39f00ea9e9849987a993274039"
+    },
+    {
+      "path": "dashboard/components/lead-timeline.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "bb326e67144cda4d43c3d148f02bbd82d4f75e8c96e3145e83629da302a22d93"
+    },
+    {
+      "path": "dashboard/components/setup-audience.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "4ee5cf1ede34950d8595636e768e526e586851166f1ce952aaafa0764f952764"
+    },
+    {
+      "path": "dashboard/components/chat-response.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "effeba0273f0b631e89100eaf5ce357cf3b1afcff7e9aba064f60243c55f970f"
+    },
+    {
+      "path": "dashboard/components/email-preview.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "9aae84a716bc344da6896c6fd68846beee92608ec38e167a6dbfc4fbf22d9063"
+    },
+    {
+      "path": "dashboard/components/suppression-form.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "cf13cbe442e9ab871bb18e1e914d2fb8314f5ffd2c973126b9bb7943727fe3e9"
+    },
+    {
+      "path": "dashboard/components/ask-leadzen.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "4dc4df95ff66628d8933f054e7f2050e61bb9e44cfb5933f31103431747cc9c9"
+    },
+    {
+      "path": "dashboard/components/secret-input.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "833db21da3f95249d044865a59804caa956c1a3f9620d670d65e5cbb15ac06a6"
+    },
+    {
+      "path": "dashboard/components/avatar.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "ff147f4337a939691bbff8d653bdd5823c7170210ad1afa70d256c66e0864315"
+    },
+    {
+      "path": ".agents/skills/leadzen-project/references/current-state.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c32e2227be611f5cb19d467ef9195e704b316d737aeb24d13d3a970f389fe1c7"
+    },
+    {
+      "path": ".agents/skills/leadzen-project/references/verification.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5dd26f1dd71347bfb81f1f7727b419506110915f1af1cfb5d3bb5a9324b22006"
+    },
+    {
+      "path": ".agents/skills/leadzen-project/references/architecture.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "bb7a59c9545630eb5ef3dd6728dda679423a2e28197a868527b8eb2d5ce19924"
+    },
+    {
+      "path": "dashboard/components/chat.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "37e2ac6ca214eb3f6bfd6da00bdd3ae2ecf934124eee822b02769731e737bc9d"
+    },
+    {
+      "path": "dashboard/components/setup-mailbox.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "840da7090908b50a8e86755812e30adaf21d77763c3943e7a7d3ac813afbd3bc"
+    },
+    {
+      "path": "dashboard/components/sidebar.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "c4500d92c2f539265097da769ac7a95f0c01b6ba3209940ef5cccc438925c06a"
+    },
+    {
+      "path": "dashboard/components/setup-connection-check.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "232efb01bb257ed8af0787465ee9693bbe39f5fbe7dec8a6d5ee72ce4fe1c4cc"
+    },
+    {
+      "path": "dashboard/components/password.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "bd5b4a599c6862ee2088d706a41d8c37e33205928b75124d737195b667615366"
+    },
+    {
+      "path": "dashboard/components/mcp-connections.module.css",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "0cf8436311caf3c1f8f7483c193a71efb88986ab0d97c5987f36bb4079411b3d"
+    },
+    {
+      "path": "dashboard/components/onboarding.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "8792350750b8b26173ca0e419aac6f025a3e35ed8cd97da24824a2c64034b812"
+    },
+    {
+      "path": "dashboard/components/help-tooltip.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "000340dd4b6a3d46721d343e4b9de3d0c9ca1d1bcdbd1221a48bd4d89d04cdd3"
+    },
+    {
+      "path": "dashboard/components/autopilot.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "80614a3feb5f925acdf11f6fccbd0a56e7a9dd9d4b6b9fda93780da55d8e004a"
+    },
+    {
+      "path": "dashboard/components/outreach-composer.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "249e18593094b2cfc53413785748cbf8329dc79c0bbdc5b9b427647e8f45377c"
+    },
+    {
+      "path": "dashboard/components/mcp-connections.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "94e3150faf4cbf59f546f210c75a56760f422df8dec379952eacd2ca045ba1b2"
+    },
+    {
+      "path": "dashboard/components/theme-toggle.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d736d25ccc40328b7cc1242c3f012ad500ee48db2305d8d0f060f8902107427e"
+    },
+    {
+      "path": "dashboard/components/brand.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "09f6e010ec662bbeac72dc2e25201fc3572738f860db7d9795b0a29ec617b199"
+    },
+    {
+      "path": "dashboard/components/ai-connection.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "552f3bb11b50338d4cb58a9aef855ee21bb1088645e246704a763edb3297653f"
+    },
+    {
+      "path": "dashboard/components/workspace-records.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "f24a8ea6c777ee30a8ab79c7b7f274c60c7a9bcb433578f7d79d3c1c7c44fcd3"
+    },
+    {
+      "path": "dashboard/components/outreach-review.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "958f2cae6fc2fc6afe45ae27eea9f2b154a8f13a22c079d14afe98a9e500bef2"
+    },
+    {
+      "path": "dashboard/components/lead-detail.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "7917f6717d0ca723e3e948ac7c4212d064eecb0f9ef40bbd9e8ea4f748e1e153"
+    },
+    {
+      "path": "dashboard/components/admin.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "828cbe1e660a61ea9d47a83fd509b7e55186bcf16154cc1b1b10e776239d9bbe"
+    },
+    {
+      "path": "dashboard/app/onboarding/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "ab0edc23754993c7b90f1fd5704b66f1b9674761795a8750ed8d82ed3aa4b741"
+    },
+    {
+      "path": "dashboard/components/contacts.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "ff0f20733832c3b4e278780e153688742fdd3c20c0b3d13e2cd7338fe0592018"
+    },
+    {
+      "path": "dashboard/components/chat-live-activity.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "3b1c5db745a601be69e7f0f3e936892bb650509ef78aba99316e46df806c1973"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-live-stopped-mobile-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "3fd1442ccd686e879049e162587e5f522e509d01482bfd19c5771d970ae1f17d"
+    },
+    {
+      "path": "docs/ui-progress-assets/compact-settings-mobile-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "321a7e456bf42d4c21b1ff848d5ae719186e3adf9c1bb4a1a609a300414d4cf7"
+    },
+    {
+      "path": "dashboard/app/find-leads/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "95e76d38139a00ba25ad9a5e54f67b665dd600b0f24e434c79995a9f52c94408"
+    },
+    {
+      "path": "docs/ui-progress-assets/provider-stream-live-browser-2026-10-04.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "6828820e9a0be63631b77df402c246c50568d8f6c9a4e0caba35168c21da1b59"
+    },
+    {
+      "path": "docs/ui-progress-assets/ponytail-outreach-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "fefc80d20fe527dec52a48d749536d4c3dbc240b899febae648d35e9e9afaad4"
+    },
+    {
+      "path": "docs/ui-progress-assets/compact-chat-mobile-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "81da59477ce0ad08b76526bce5689245ea208b55b0d7b5ec68165035e3ceb348"
+    },
+    {
+      "path": "docs/ui-progress-assets/employee-chat-bubble-mobile-2026-10-04.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "ad0ee6a777651a68d8a3f9c4df8670e04e16780e6189725313c0673fd9ff8da2"
+    },
+    {
+      "path": "docs/ui-progress-assets/compact-settings-help-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "53158b638093dbf5cc3fe1b4bff3ab8e51877be01e06ceb19c2ea4e0edee3d51"
+    },
+    {
+      "path": "docs/ui-progress-assets/provider-stream-live-reload-2026-10-04.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c58c04dcadb78e5efe7f06c1801a45f41670e78f1d2d3ddf40375abf1b36f107"
+    },
+    {
+      "path": "docs/ui-progress-assets/ponytail-outreach-mobile-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "eecc49947ac74d952bbb1701f3ac4aa1e9c73d4cb1073e28d7eeed89d5a274c8"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-mobile-dark.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "36fccfd048058ca798e61165b59b82354d6afa376dfe88e0dfc238a659f7ffce"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-live-expanded-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a0cca03840919995647ba55f66efbd0d96c93bb842e31d6dacc8bf5bd3365d43"
+    },
+    {
+      "path": "docs/ui-progress-assets/compact-dashboard-dark-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "1695b778fefcd79574e48a9c96520949c300f792a07bd605d4d4ae0bd682005f"
+    },
+    {
+      "path": "docs/ui-progress-assets/ponytail-stored-inbox-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "1a37b5d5f8edc98d819d72778ffbde1f00e7f9651cc6dc403d853b12df295303"
+    },
+    {
+      "path": "docs/ui-progress-assets/ponytail-stored-inbox-mobile-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "2922e829c9a9d5170a93a1ad0b0ad9d32e47ac28f562691a2b8bc4368b9b6a7d"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-live-complete-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b2c8adbb11a6f7f4ccb0edbcff366c1afb4ed883fc5b8fccc38e226d48a6c43d"
+    },
+    {
+      "path": "docs/ui-progress-assets/employee-chat-bubble-light-2026-10-04.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e723d63aab82ea40df62bb46009ea449d1c84022d3b71a0c76e4bf2f628afe97"
+    },
+    {
+      "path": "docs/ui-progress-assets/employee-chat-bubble-dark-2026-10-04.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e5ac25cb8727d05b5b2760b4483ebc838251429ffc386bc5a43e9264bd4c2fa2"
+    },
+    {
+      "path": "docs/ui-progress-assets/provider-stream-live-canonical-2026-10-04.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b97649ef0052d1dc15ddebcaca6de2a3f1366dfb5c31fcfbf896525c2eba9689"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-live-collapsed-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a761f9d7581ebe2065723891a613bc55c96708474f9be2f211bbe1265763e8c0"
+    },
+    {
+      "path": "docs/ui-progress-assets/provider-stream-live-wire-2026-10-04.jsonl",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8c2f55e1e1b626ee629c41299dc59bbc54b6bf79c0321ffed5dbf2799f64917c"
+    },
+    {
+      "path": "docs/ui-progress-assets/compact-discovery-mobile-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "14374118cc5c989f41ef0936100c41ca7e6568f1ce8cfdc4c6b73b80f64bda2e"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-live-mobile-dark-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "392670816ed2d1101af044ad5da5fbfc12d3ebab50ed884f0f0a39ae04816f13"
+    },
+    {
+      "path": "docs/ui-progress-assets/ponytail-suppression-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c2c38251a108da46ae1f39cf6f2410061d968844052d741ab7498ea280d19634"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-formatted-mobile.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "25a3d1a2a3a193625a26eaeff49fc4e74cfc0574907ca636f8c73e7b2f2a6377"
+    },
+    {
+      "path": "docs/ui-progress-assets/compact-dashboard-desktop-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e8a322138ad964521f7879cb3ef65040ec42ab45adfd6ad71a0b1a3b93417803"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-formatted-response.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d7f9356367a81337a345975d4ccf1332fbdb1ec5921f6a4e3be46008ac9dc144"
+    },
+    {
+      "path": "docs/ui-progress-assets/compact-dashboard-dark-mobile-2026-10-03.jpg",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e3a23be0d3efa82ae8039ed8fc5a78a7036ee22ea7cd6ffd9340e3d4ee29d9cf"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-mobile-light.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "0fa879c05ae537762a9925d0411c164dc8196465a0455e5fef064a39f6af00cf"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-live-light.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "56b8951323c4570eb8ce7bd1a5e6f04bd9e90e525c3b01dd0a089b28d938d4ea"
+    },
+    {
+      "path": "docs/ui-progress-assets/discovery-live-light.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d56cd6d97415e3d1c6deb33f40a17c1334e62de1aacdcd025ddbebb5a0666d92"
+    },
+    {
+      "path": "docs/ui-progress-assets/employee-chat-bubble-layout-2026-10-04.json",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "41947a364a297e74fa9f50ebf585105f179c1e9f937654cbc84d0323ce4aca0a"
+    },
+    {
+      "path": "docs/ui-progress-assets/provider-stream-live-stopped-2026-10-04.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "d85783473be1bc29d98c13c86d37d617a918b00f852ea22b2cc6e03b8f316ca9"
+    },
+    {
+      "path": "docs/ui-progress-assets/provider-stream-live-retained-2026-10-04.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "17c170a9a3a37b56dcaf0cb415a56d0ee3da6f6f9cac923d331a2128cd195d1b"
+    },
+    {
+      "path": "docs/ui-progress-assets/chat-delete-confirmation.png",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "1f9b8a94b891730789602635b8176d6416f6f7ba1bfeedb657c283042eb8bdd0"
+    },
+    {
+      "path": "dashboard/app/campaigns/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "4a40ae32ba90a994354ef7e66e1b3a7ae04a16369e6dd1adb7e8b04b25fdaddd"
+    },
+    {
+      "path": "dashboard/app/find-leads/[runId]/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "a5c4c0ffd2578a5ef974296996e349066dff20cbf218ec34b7183a41da26005a"
+    },
+    {
+      "path": "dashboard/app/sending/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d56afe4929aba223f8d88f3c58e3fb5b24156e7eb32e0c20d5ecfdb9cffc5420"
+    },
+    {
+      "path": "dashboard/app/layout.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "689e21abb98da187c31b8bcc03ec57bf4746558cb4452f36a3783d9e8f2da764"
+    },
+    {
+      "path": "dashboard/app/suppression/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "fc9b423a88b61a45b5071f1e89dc51063cdbff45c8d4630e6b12214a7e9f8814"
+    },
+    {
+      "path": "dashboard/app/login/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "fd06bc8805b4ce37bdcbf437c9d81f1000a5380d4c650cf87afa67c442aface2"
+    },
+    {
+      "path": "dashboard/app/tour/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "2e8b3549dec4e7f55a2a36dc299ce3dacea1106707b8c0dbfba77f560b7dffa4"
+    },
+    {
+      "path": "dashboard/app/globals.css",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "b3a09a3168915e0cfc3196afe705d5926bf71ec1dfd5a61062eaca1d2c67f99c"
+    },
+    {
+      "path": "dashboard/app/api/auth/login/route.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "978702fc0bd68fc694f1759048f9a870ecf3fb9a1cfffeb729d2881158cb56e1"
+    },
+    {
+      "path": "dashboard/app/outreach/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "196098e249dfd29bdc30869c1f0fef7e8ecdcaf77e24288870dfece4bb92604b"
+    },
+    {
+      "path": "dashboard/app/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "a199859322f58e772316811bba2d8bd926b3a1b8431c51e2b530f0feaef9bb20"
+    },
+    {
+      "path": "dashboard/app/api/auth/logout/route.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "589a28e534a6982f445df6f688d74289e142a1fecab61a50105cb49cc719aed0"
+    },
+    {
+      "path": "dashboard/app/fonts/geist-OFL.txt",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "1781d2806a07d91c4edf4740b88449fab7d0eadad53f7c351b94cd4d4eb8c00f"
+    },
+    {
+      "path": "dashboard/app/fonts/geistmono.woff2",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "282839943ad9665568491e220c706eb1b093bce7e745320082a18a7a39949285"
+    },
+    {
+      "path": "dashboard/app/fonts/archivo-OFL.txt",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "108b4e57c9c796d3d38d0428ca7ee39de47ad93187302718d9b2d8864b9b716b"
+    },
+    {
+      "path": "dashboard/app/fonts/geistmono-OFL.txt",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "1781d2806a07d91c4edf4740b88449fab7d0eadad53f7c351b94cd4d4eb8c00f"
+    },
+    {
+      "path": "dashboard/app/fonts/archivo.woff2",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "75d338ae5434d8f46c5e3500233cf9a5f9a0a832d60e428923c9f7a44d55af7d"
+    },
+    {
+      "path": "dashboard/app/fonts/geist.woff2",
+      "owner": "frontend",
+      "category": "config/assets",
+      "sha256": "0e3ada0675161c563fb9353243249415cc5c63db67744d8de67fbfbae9fe11da"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/card.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "14a5e171efa7bb820e06be71e44fce3497ee3eda7afb1c49a30e6951f6cd7632"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/menu.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "3b4284018892a4e0bec1c5c6bcd91f99067e5f6e8b8cc1484f60b4fba56081e5"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/calendar.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "bf813442999d904cd2619fc70d509d9348addad72d9647a15337c3829a78e5d7"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/aura.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e79f2604b216bcfd9892233736771d125adaa485ee8bee359299e56b8b017e6e"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/fab.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "fb302f812dc66f4349e0469c14dcd6cc804a21f7288f47f1520bb4997a989502"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/radial-progress.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "16053d835468ede6635c4722d61d8434ea4f17670169cac5e9264075727e239e"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/text-rotate.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5d6f45e2fe139a2b5558934f446ba1fca437b95eeb3f33558faaa96e59e96af2"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/toast.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e7a86e894678741a87dab5230bb4f7cc4ebac1ca8ca932f72b6e535ed94e74c5"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/hover-3d.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b1c2e9e8235aefb212a029b6e573397a60684be9b5596b54b35bdcf2c1c3ebf1"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/modal.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c733f8cb6ed61536c946fb0d41c8f18c2d683a789928da768880b9dd3b17131b"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/diff.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "15e9d4d81f102c656f2e2712518fd39bf2e603ff67e34487909e6bd8b26ae5a4"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/radio.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "4f784839220f02f8c0c068ddec5570e35b9a85b6ca61bd8ee626ca1ede000233"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/filter.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e31214db92eb7de1fd53b8dd6e9e9eb91d89849fc65caa6df15965ee3675e9da"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/mockup-window.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "36574440f0f6e9ab9f1af5d6e78216bf70bb8dc6410fea2c7192a0de336c586e"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/accordion.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "7b512112b3299a33ca3f00508f9ea710d013bebf53361696faf41770bf118e65"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/stack.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "1b4801fedecfefd64fa559f30c77ddf949b9314ba1b17ad7d1224d187de807dc"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/stat.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "bdd8b345d32a973d3dff3d82e13866c1a2162493aa2af70da1d26b3ca688572f"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/input.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "205bca4564b29128c437279e89889fd2c7415d80f9b5881a3bb927049504ca8a"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/label.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "60d2dff32d7b57a2d8029bd2e94abf5c44ba01ced831696d50e926e2d5c0cf04"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/footer.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a3a163465d9e5a8d758564b96df3f35dcd4d3b7b6f04c96c094f887969f368d3"
+    },
+    {
+      "path": "dashboard/app/api/auth/password/route.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "adb765643055a1817a2e315b118640203312afc55de1e67f591d725e0b45b977"
+    },
+    {
+      "path": "dashboard/app/api/auth/setup/route.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "6c5ae84d5ca3ce728fd70ea38ffc982977a0f654a8aa4ecdfc4aa3dee92337de"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/drawer.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "6cc9a0c076f88947337171178805627eb3a6b5dc43d51b8c64b32515b60118bc"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/timeline.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "868d77e06948a3dfc2b65db7d3ff594fd7f2deba32b17dcf57d689d9c699f1ef"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/list.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "80244aee4a1407081c972378b1922ce464b86305bad43b3f92eae7b7a59c3411"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/tab.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e11691e2e0794f37aa7ae44139a8a7f53eab711ccdf27040cec9cc1194174bf0"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/dropdown.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "f84c6432d30db95a15655d69e2b171cd9f222e9b4a29f768d35504656f02d1ee"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/table.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "ac01be952af86382fe3adee825ac0cdfcd9390ebd191d90241e4d3dfac4e52c8"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/mockup-code.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "69bce3e7d784b6c87f48740d84b999b3acb358775bcfecfdf1a98147dea278af"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/theme-controller.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "113c1dd8eacf3f871768e722444a67150da14181353ee49c17d5301f07e5f533"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/select.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b1954f2dcb2beccb7373196d593cad3c186c627063126779a535ade458571d7e"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/fieldset.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "43a2a5c2fae535eb2e2bf80044f8252a2d950548fb4d1ca9fb8cbb53467f071f"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/progress.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "fdce451838e29c6033bec164492a4269c96dd7ec95737cea19e15b57a4646d8b"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/pagination.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8d238b0fd2a71518c1acc17bc938298c22b23d8e5365739a859890ee9ef2af8d"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/mockup-browser.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "212e7c3f2dc49cec8ea6515273477fc5f9338a0c76941a0b84c8db5e957aa5cc"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/checkbox.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "20f08a7f88c72224809ce3b979826c55719557a711a0e7d337848b186e2f02ca"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/status.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "76f8fd7d897bba168331e9619bd0b23de114b18c7a9ae72d9c6c6a0fe70692db"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/megamenu.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "fc0810622d641ac9ce77d1cc374455e841acc96fe463ca63709c9194e1272cef"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/breadcrumbs.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e8f96e65b27fce5f5d1f0efe4f68c776492320ece58f6d8d4f2dcc6338cd146c"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/alert.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "eddce4ce0a6257a63936610a7f104e5c2b673f20658c68764120776bb1a9caa0"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/countdown.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "3a91617a6f0eab1e2f98ec5a1586793b053544da7cd23dd7a14e29c076eca370"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/hero.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e3e8cfa1c576d1504b247eee08c5cada2cd0e5fe7b90234c3949abb973df87dc"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/button.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "ab050f53e7533af7dc7e8a2d1acad48d9e856fcb6ac5ff0419a974bf21dae9ba"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/carousel.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c3cf89802b5d975822edfe8e86b07ffa1a1133242dd7af11675c9d2e9b3ce409"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/chat.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "3f6bcd8cd40b415c19b69d17142010510e23e0d7a18c08d0fd64de5b42f340e2"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/navbar.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a4f5de05a7dab05d5282504cd68412e1b5853e9e142ea0be6691109e7f2a0535"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/collapse.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "54a00dd28cf47e318f71dde66f70d7338a7a3bdddc7e7e5a0e02beca90624b69"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/dock.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "f798d4874af9aa38adda77d142923f91d1fbc40994e025e5e0d08cc204dac3b9"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/textarea.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e4a135603fd4b8ca5a95f8500e6c54ed1ea9d5c84c4937d9650799d4d6a58651"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/file-input.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "2fb7ba8f64140d5dcce7cbe0ddc54b453cb5e5e1e538708b3e71f41cfa4f4cab"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/loading.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "ea70cf0f8b782c8f9bc02c50a06c5580ff2ab7f45aea35a3f08bece25e07df2b"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/validator.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b0e213ae04eccb8131fdfdfeb80a1e59d923ec1671328ac2b54b6e9ed4c7758e"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/link.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "2058aa7a7cca8379ef85535bb576cb7035f718ed3ea4b08511909935eff542d1"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/toggle.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "361257c6e77a71030a1039242264db720525a81fa075472872b7dcad36d805d2"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/steps.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a1787f1782625714e40b68fa5991dbf37667f5b09d7321c5fa3a2b1be5487ebe"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/mask.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "ccff2c01d1f7e4e803845d34ecefdc22e6eb86f233c76ac9f3accbb257ab9a5b"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/mockup-phone.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "391dfaee279d7ec3f7b55801c7f6561cd3430ba62debc749f11c8511e0621181"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/hover-gallery.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "f3180f926131a4698f87a8a71197eec45a1d900e0fa5a7f7beca9be6b1ce1e39"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/rating.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "393863e6a28e5750603fa0d8fe5697fb4e2aa11da9bc32bd6b021af035dbfb6c"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/kbd.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "3a75366686aaa855d2925e0ea0c34265816dce0430c2b7b9a4e5a03842984a90"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/badge.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "e7d29bb07d4281af3eea7f15c504db82dbdedfe69c4934b96ce5abc4695f3953"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/tooltip.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "7b886def19a734f73d5066644a8166f80cfe7f903aa77363c99fbba9d73e192e"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/join.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "fc91d78a391e08c55a9265eb63397c968deea4f6f0266cdd45b9969effb661b1"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/avatar.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "714bff5a0efd10fc5915321d8aa4d1f10f74422258fdf78072691a1d28de4f23"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/indicator.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "a525d74667c92ca81628b1511d297528cfadac19a96dd5fefe614e6cb1ba573d"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/skeleton.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "8397e07a65d3c66a1ca03a682b8f8bf2705a89819cacccaab21309e019e1f562"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/swap.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "16e7d41d62a4f973f33402c13d87c84a60305d98c2a6fbf06fad54d6ebe88471"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/range.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "5d439f2680e9d3952fc6fd14ac863896d01cb60fab2de8fe058f3fba249ad8d7"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/otp.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "62e8ba584283d67b0b929c8adfacadc3395bb41aa5793f086b6e443251b1e60b"
+    },
+    {
+      "path": ".agents/skills/daisyui/components/divider.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "b1010020a7b6f7b53cd11685b441030c5af7febc07331db9376d0274620c8d1c"
+    },
+    {
+      "path": "dashboard/app/mcp/connect/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "e3ecb18cc48ed7dfe0ffba28ada6e19919741a2616a9da0665f73d7f3c5b853e"
+    },
+    {
+      "path": ".agents/skills/daisyui/usage/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "9a0cb9e36d263c67c0442cbd2bf3c2fcc36d327d9fac6bbf883615f402b7cca9"
+    },
+    {
+      "path": "dashboard/app/activity/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "c801e603877cb460f51affbe4af70bd25ffb22997115b08f9428703ab14f01cf"
+    },
+    {
+      "path": "dashboard/app/target/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "480df09d63adfad1cfe1e9507f7660ba5a53d9904cdb4cdb2196e55645e3e980"
+    },
+    {
+      "path": "dashboard/app/contacts/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "668cb3b297ccf025f5075e37d1906ab56a4ddee57a976af3562cfd63375540a9"
+    },
+    {
+      "path": "dashboard/app/admin/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "8dd081144f8f7e7b072eba7d8cda0ff34f5f1e7d4e818caf48d445193f9f167a"
+    },
+    {
+      "path": "dashboard/app/setup/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "8e49fef4cf1826a10d8b36cc233a03f7a65023be17774f9ee367e3e76a490fb8"
+    },
+    {
+      "path": "dashboard/app/chat/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "c1c0b75aced75d450a8b7265f176e6ec507d02dac347791165940f9c31911cf5"
+    },
+    {
+      "path": "dashboard/app/contacts/[contactId]/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "f8f98d298d455812792b962714a83d05f1274250c396501aefd339505305fa45"
+    },
+    {
+      "path": "dashboard/app/settings/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "4ced639f9e0d9b8e014890d171dcaa3fdd59132b6ce1937fdd86b50ea66512b7"
+    },
+    {
+      "path": "dashboard/app/chat/[threadId]/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "da938e234d28da18911a64af2a85aa2ebfac3b1667f4facf4f4e6b78306c834f"
+    },
+    {
+      "path": "dashboard/app/inbox/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "7ad23b68d8973ae749c1a6aa8b47590aeb437c091538cd83b2efd692049bf7c1"
+    },
+    {
+      "path": ".agents/skills/daisyui/install/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "c5fc3f4e97a62eaca1e215bef6149b5fc1f0fbb875a755ed57865c145192ca5b"
+    },
+    {
+      "path": ".agents/skills/daisyui/config/SKILL.md",
+      "owner": "root",
+      "category": "docs",
+      "sha256": "1097716fa7385259ab53d2fb7f50e7c548d0362457fbd0b93d8a39050b91d0a5"
+    },
+    {
+      "path": "dashboard/app/api/proxy/[...path]/route.ts",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "c1e3b12af131ada0b7d3860941184988d2f5903e1c93fa8fa4efece634d9fc21"
+    },
+    {
+      "path": "dashboard/app/password/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "d904a9e193b288fa939549d4d5a8537fa0003c128948a12d11e0f0b6701e8ffd"
+    },
+    {
+      "path": "dashboard/app/inbox/messages/page.tsx",
+      "owner": "frontend",
+      "category": "source",
+      "sha256": "43b20b72e24858fb49269babc1e3f2e35ebf1a44f62a42718114b5d87919eac8"
+    }
+  ],
+  "generated_vendor_exclusions": [
+    ".git",
+    ".venv",
+    "node_modules",
+    "dashboard/node_modules",
+    "dashboard/.next",
+    "data",
+    "media",
+    ".cache",
+    "__pycache__",
+    ".pytest_cache"
+  ],
+  "audit_temp": "/var/folders/yb/nbmg2v3d3vd1tskfc45dzx600000gn/T/leadzen-production-audit-20261004-zcwmpuwb"
+}

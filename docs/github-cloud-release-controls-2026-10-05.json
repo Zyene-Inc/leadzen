@@ -1,0 +1,39 @@
+{
+  "database_permissions": {
+    "files": [
+      {
+        "file_kind": "control",
+        "before": "0o644",
+        "after": "0o600"
+      },
+      {
+        "file_kind": "wal",
+        "before": "0o644",
+        "after": "0o600"
+      },
+      {
+        "file_kind": "shm",
+        "before": "0o644",
+        "after": "0o600"
+      }
+    ],
+    "service_owner_preserved": true,
+    "database_records_or_schema_changed": false,
+    "environment_or_keys_changed": false
+  },
+  "branch_protection": {
+    "enforce_admins": true,
+    "required_contexts": [
+      "test",
+      "dashboard (22)",
+      "dashboard (24)",
+      "security / secrets",
+      "security / image",
+      "browser / browser",
+      "build"
+    ],
+    "approval_count": 1,
+    "allow_force_pushes": false,
+    "allow_deletions": false
+  }
+}

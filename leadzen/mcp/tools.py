@@ -159,7 +159,7 @@ ENTRIES = {
     "update_lead": (UpdateContact, "Edit contact details, preserving email identity and consent.", True, False),
     "delete_lead": (Lead, "Remove a contact from the employee list and stop pending outreach.", True, False),
     "import_leads": (ImportContacts, "Import up to 25 contacts atomically, with no email sending.", True, False),
-    "find_leads": (Find, "Prepare free-profile discovery (no email purchases); portal approval covers model/provider use.", True, True),
+    "find_leads": (Find, "Prepare profile discovery without email purchases; portal approval shows the selected provider and any profile-search credit budget.", True, True),
     "find_work_emails": (Leads, "Prepare paid verified-email lookup for selected saved profiles; requires portal approval.", True, True),
     "stop_discovery": (StopDiscovery, "Stop a canonical employee discovery run; retain saved results.", True, False),
     "get_credit_usage": (Empty, "Read saved credit usage and uncertain lookups without a provider request.", False, False),

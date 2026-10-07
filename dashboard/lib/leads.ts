@@ -38,6 +38,7 @@ export type Contact = {
   consent_note: string;
   timeline?: OutreachTimeline;
   lookup: null | {
+    provider_name?: string;
     run_id: string | null;
     status: string;
     receipt_state: string;

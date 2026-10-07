@@ -192,10 +192,9 @@ def test_env_reader_rejects_permissive_modes_symlinks_duplicates_substitution(tm
 
 def test_old_schema_pending_is_never_release_pass(fixture):
     with sqlite3.connect(fixture["employee"]) as db:
-        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name='0019_discoverylookup_source_index'")
-        index = next(row[1] for row in db.execute("PRAGMA index_list('leadzen_config_discoverylookup')")
-                     if [item[2] for item in db.execute('PRAGMA index_info("' + row[1] + '")')] == ["source_id"])
-        db.execute('DROP INDEX "' + index + '"')
+        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name='0020_lead_finder_provider'")
+        db.execute("DROP TABLE leadzen_config_discoverysearch")
+        db.execute("ALTER TABLE leadzen_config_runtimesettings DROP COLUMN lead_finder_provider")
     strict = fixture["run"]()
     assert strict["status"] == "FAIL"
     assert "SCHEMA_PENDING" in codes(strict)
@@ -546,7 +545,7 @@ def test_real_graph_child_does_not_load_application_settings_or_touch_selected_d
     assert result.returncode == 0
     payload = json.loads(result.stdout)
     assert ["leadzen_accounts", "0004_accountprofile_tour_state"] in payload["leaves"]
-    assert ["leadzen_config", "0019_discoverylookup_source_index"] in payload["leaves"]
+    assert ["leadzen_config", "0020_lead_finder_provider"] in payload["leaves"]
     assert original.read_bytes() == b"not-a-database"
     assert str(original) not in result.stdout + result.stderr
 

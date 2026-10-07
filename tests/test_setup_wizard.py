@@ -164,7 +164,7 @@ def test_identity_defaults_are_employee_not_legacy_sender(wizard):
 def test_discovery_adapter_reads_actual_balance_without_search(raw, expected):
     from leadzen.setup_wizard import probe_discovery
     with patch("leadzen.ai.pinned_request", return_value=(200, {}, raw)) as request:
-        assert probe_discovery(SimpleNamespace(bettercontact_api_key="synthetic-finder")) == {"credits": expected}
+        assert probe_discovery(SimpleNamespace(lead_finder_provider="bettercontact", bettercontact_api_key="synthetic-finder")) == {"credits": expected}
         assert request.call_args.args[0:2] == ("GET", "https://app.bettercontact.rocks/api/v2/account")
         assert request.call_args.args[2]["X-API-Key"] == "synthetic-finder"
         assert request.call_count == 1
@@ -174,7 +174,7 @@ def test_discovery_adapter_reads_actual_balance_without_search(raw, expected):
 def test_discovery_adapter_never_invents_a_credit_balance(raw):
     from leadzen.setup_wizard import probe_discovery
     with patch("leadzen.ai.pinned_request", return_value=(200, {}, raw)), pytest.raises((ValueError, TypeError)):
-        probe_discovery(SimpleNamespace(bettercontact_api_key="synthetic-finder"))
+        probe_discovery(SimpleNamespace(lead_finder_provider="bettercontact", bettercontact_api_key="synthetic-finder"))
 
 
 def test_mailbox_probe_authenticates_readonly_without_sending():

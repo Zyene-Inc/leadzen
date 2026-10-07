@@ -23,8 +23,10 @@ from pytz import country_names
 from leadzen.accounts.models import LoginThrottle
 from leadzen.accounts.service import access, audit, email_address, error, payload, session_user
 from leadzen.config.models import OnboardingState, SiteConfig
-from leadzen.configuration import EffectiveSettings, SettingsError, _fernet, effective, save_dashboard_settings, validate_bettercontact_key, validate_public
+from leadzen.configuration import EffectiveSettings, SettingsError, _fernet, effective, save_dashboard_settings, validate_public
 from leadzen import workspaces
+from leadzen.configuration import finder_settings
+from leadzen.lead_finder import key as finder_key, label as finder_label
 
 KINDS = {1: "ai", 2: "discovery", 4: "mailbox"}
 SENIORITY = {"owner", "founder", "c_suite", "partner", "vp", "head", "director", "manager", "senior", "mid-level", "entry", "intern"}
@@ -61,10 +63,11 @@ def candidate(body, kind):
         same = (values["provider"], values["base_url"].rstrip("/")) == (current.provider, current.base_url.rstrip("/"))
         values["llm_api_key"] = key or (current.llm_api_key if same else "")
     elif kind == "discovery":
-        finder = body.get("lead_finder", {})
-        if not isinstance(finder, dict) or finder.get("provider", "bettercontact") != "bettercontact":
-            raise SettingsError("Choose BetterContact for discovery")
-        values["bettercontact_api_key"] = validate_bettercontact_key(finder.get("api_key")) or current.bettercontact_api_key
+        change = finder_settings(body, current)
+        provider = change["lead_finder_provider"]
+        field = f"{provider}_api_key"
+        values["lead_finder_provider"] = provider
+        values[field] = "" if change[f"clear_{field}"] else change[field] or getattr(current, field)
     else:
         mailbox = body.get("mailbox", {})
         if not isinstance(mailbox, dict):
@@ -85,7 +88,7 @@ def candidate(body, kind):
 def fingerprint(values, kind):
     fields = {
         "ai": ["ai_enabled", "provider", "model", "base_url", "llm_api_key"],
-        "discovery": ["bettercontact_api_key"],
+        "discovery": ["lead_finder_provider", f"{values.lead_finder_provider}_api_key"],
         "mailbox": ["mail_transport", "mail_api_url", "mail_api_key", "mailbox_address", "smtp_host", "smtp_port", "smtp_username", "mailbox_password", "imap_host", "imap_port", "imap_password", "signature"],
     }[kind]
     data = json.dumps({field: getattr(values, field) for field in fields}, sort_keys=True).encode()
@@ -98,7 +101,7 @@ def checked(state, values, kind):
 
 
 def save_candidate(values):
-    return save_dashboard_settings(asdict(values), llm_api_key=values.llm_api_key, mailbox_password=values.mailbox_password, mail_api_key=values.mail_api_key, imap_password=values.imap_password, bettercontact_api_key=values.bettercontact_api_key)
+    return save_dashboard_settings(asdict(values), llm_api_key=values.llm_api_key, mailbox_password=values.mailbox_password, mail_api_key=values.mail_api_key, imap_password=values.imap_password, bettercontact_api_key=values.bettercontact_api_key, ai_ark_api_key=values.ai_ark_api_key)
 
 
 def probe_ai(values):
@@ -120,6 +123,9 @@ def probe_ai(values):
 
 def probe_discovery(values):
     from leadzen.ai import pinned_request
+    if values.lead_finder_provider == "ai_ark":
+        from leadzen.ai_ark import credit_balance
+        return {"credits": credit_balance(values)}
     status, _, raw = pinned_request("GET", "https://app.bettercontact.rocks/api/v2/account", {"X-API-Key": values.bettercontact_api_key, "Accept": "application/json", "User-Agent": "Mozilla/5.0"}, b"", "app.bettercontact.rocks", kind="BETTERCONTACT", timeout=7)
     if status != 200:
         raise SettingsError("BetterContact did not accept the connection")
@@ -184,7 +190,7 @@ def validate_step(step, values, state, settings):
         if not isinstance(enabled, bool):
             raise SettingsError("Choose whether to enable discovery")
         if enabled and not checked(state, settings, "discovery"):
-            raise PermissionError("Test BetterContact before continuing, or choose manual contacts")
+            raise PermissionError("Test your selected lead provider before continuing, or choose manual contacts")
         return {"discovery_enabled": enabled}
     if step == 3:
         name = text(values.get("operator_name"), "Your name", 200)
@@ -268,8 +274,8 @@ def test_connection(request):
         values = candidate(body, kind)
         if kind == "ai" and (not values.ai_enabled or not values.llm_api_key or not values.model):
             return error("Enter an AI provider, model and API key")
-        if kind == "discovery" and not values.bettercontact_api_key:
-            return error("Enter your BetterContact API key")
+        if kind == "discovery" and not finder_key(values):
+            return error(f"Enter your {finder_label(values)} API key")
         if kind == "mailbox" and (not values.mailbox_address or not values.imap_host or not (values.imap_password or values.mailbox_password) or (values.mail_transport == "smtp" and (not values.smtp_host or not values.mailbox_password)) or (values.mail_transport != "smtp" and not values.mail_api_key)):
             return error("Connect your sender and its IMAP inbox with the required credentials")
         state, _ = OnboardingState.objects.get_or_create(pk=1)
@@ -303,7 +309,7 @@ def test_connection(request):
             return JsonResponse(state_payload(state, request.actor))
         except Exception:
             # Never echo SDK/server exception messages, credentials or mailbox data.
-            return error({"ai": "AI connection failed. Check the key, model and approved endpoint.", "discovery": "BetterContact connection failed. Check the API key and account access.", "mailbox": "Mailbox test failed. Check SMTP/IMAP, app passwords and INBOX access."}[kind])
+            return error({"ai": "AI connection failed. Check the key, model and approved endpoint.", "discovery": f"{finder_label(values)} connection failed. Check the API key and account access.", "mailbox": "Mailbox test failed. Check SMTP/IMAP, app passwords and INBOX access."}[kind])
         finally:
             OnboardingState.objects.filter(pk=1, testing_until=lease_until).update(testing_until=None)
 

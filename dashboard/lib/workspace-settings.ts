@@ -83,7 +83,7 @@ export function settingSummary(
     case "finder": {
       const credits = workspace.checks.discovery.credits;
       return {
-        main: "BetterContact",
+        main: data.lead_finder.provider === "ai_ark" ? "AI Ark" : "BetterContact",
         detail:
           credits === undefined
             ? "Balance not checked"

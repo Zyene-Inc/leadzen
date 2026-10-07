@@ -24,7 +24,7 @@ from django.views.decorators.http import require_http_methods
 from cold_outreach.emails.models import Direction, Message, Mailbox
 from cold_outreach.leads.models import Deal, DealState, Suppression
 from leadzen.config.models import OutreachJob, SiteConfig
-from leadzen.configuration import SettingsError, effective, lead_finder_credentials, save_dashboard_settings
+from leadzen.configuration import SettingsError, effective, finder_settings, lead_finder_credentials, save_dashboard_settings
 from leadzen.branding import PRODUCT_TITLE, display_text
 from leadzen.accounts.service import access
 from leadzen.accounts.service import payload
@@ -109,6 +109,7 @@ def _mailbox_payload(mailbox: Mailbox) -> dict:
 
 def _settings_payload() -> dict:
     values = effective()
+    from leadzen.lead_finder import public
     return {
         "llm": {
             "enabled": values.ai_enabled,
@@ -132,8 +133,7 @@ def _settings_payload() -> dict:
             "password_configured": bool(values.mailbox_password),
         },
         "lead_finder": {
-            "provider": "bettercontact",
-            "api_key_configured": bool(values.bettercontact_api_key),
+            **public(values),
         },
         "settings_key_configured": bool(os.environ.get("LEADZEN_SETTINGS_KEY", "").strip()),
     }
@@ -217,7 +217,7 @@ def runtime_settings(request):
         for section, flag in ((llm, "clear_api_key"), (mailbox, "clear_password"), (mailbox, "clear_api_key"), (mailbox, "clear_imap_password")):
             if flag in section and type(section[flag]) is not bool:
                 raise SettingsError("Credential removal must be a boolean")
-        finder_key, clear_finder_key = lead_finder_credentials(body)
+        lead_finder_credentials(body)
         with transaction.atomic(using=alias):
             if not any(key in body for key in ("llm", "mailbox", "lead_finder")):
                 apply_changes(changes)
@@ -249,8 +249,7 @@ def runtime_settings(request):
                 clear_mailbox_password=mailbox.get("clear_password") is True,
                 clear_mail_api_key=mailbox.get("clear_api_key") is True,
                 clear_imap_password=mailbox.get("clear_imap_password") is True,
-                bettercontact_api_key=finder_key,
-                clear_bettercontact_api_key=clear_finder_key,
+                **finder_settings(body, current),
             )
             apply_changes(changes)
         return JsonResponse({**_settings_payload(), **settings_payload(request.actor)})

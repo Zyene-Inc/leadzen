@@ -7,7 +7,7 @@ import { checkedDate, type WorkspaceSettings } from "@/lib/workspace-settings";
 const testDetails: Record<CheckKind, string> = {
   ai: "Send one short model request using your saved AI connection. Your provider may charge for this test.",
   discovery:
-    "Check the BetterContact account balance using your saved key. This does not buy verified emails.",
+    "Check the selected lead provider’s account balance using your saved key. This does not buy profiles or verified emails.",
   mailbox:
     "Sign in to your saved sending connection and reply inbox. This does not send emails or read message bodies.",
 };

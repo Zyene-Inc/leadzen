@@ -216,7 +216,7 @@ def admin_user(request, user_id):
 @access()
 def onboarding(request):
     from leadzen.config.models import SiteConfig
-    from leadzen.configuration import SettingsError, _fernet, effective, lead_finder_credentials, save_dashboard_settings, validate_public
+    from leadzen.configuration import SettingsError, _fernet, effective, finder_settings, lead_finder_credentials, save_dashboard_settings, validate_public
     from leadzen.workspaces import database_path, initialize_workspace, workspace_scope
     profile = request.actor.leadzen_profile
     if request.method == "GET":
@@ -252,7 +252,7 @@ def onboarding(request):
     try:
         from leadzen.setup_wizard import validate_booking_link
         booking_link = validate_booking_link(body.get("booking_link", ""))
-        finder_key, clear_finder_key = lead_finder_credentials(body)
+        lead_finder_credentials(body)
         public = validate_public(public)
         if not public["mailbox_address"]:
             raise SettingsError("A sending email address is required")
@@ -275,7 +275,7 @@ def onboarding(request):
             config.accepted_legal_notice = True
             config.booking_link = booking_link
             config.save()
-            save_dashboard_settings(public, llm_api_key=llm.get("api_key"), mailbox_password=mailbox.get("password"), mail_api_key=mailbox.get("api_key"), imap_password=mailbox.get("imap_password"), bettercontact_api_key=finder_key, clear_bettercontact_api_key=clear_finder_key)
+            save_dashboard_settings(public, llm_api_key=llm.get("api_key"), mailbox_password=mailbox.get("password"), mail_api_key=mailbox.get("api_key"), imap_password=mailbox.get("imap_password"), **finder_settings(body, effective()))
             current = effective()
             if (current.ai_enabled and not current.llm_api_key) or not (current.mailbox_password if current.mail_transport == "smtp" else current.mail_api_key):
                 raise SettingsError("Changing provider, endpoint or mailbox requires new credentials")

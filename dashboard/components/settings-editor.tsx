@@ -7,6 +7,7 @@ import { SendingScheduleEditor } from "@/components/sending-schedule-editor";
 import { defaultSendingSchedule, normalizeSendingSchedule, scheduleError } from "@/lib/sending-schedule";
 import {
   emptyCredentials,
+  settingsBody,
   type Settings,
 } from "@/lib/connection-settings";
 import { api } from "@/lib/client-api";
@@ -80,7 +81,7 @@ export function SettingsEditor({
     // Only the open editor may update its section. A stale snapshot from another
     // tab must not overwrite unrelated connections or the signature.
     if (section === "ai") body = { llm: { enabled: connections.llm.enabled, provider: connections.llm.provider, model: connections.llm.model, base_url: connections.llm.base_url, api_key: credentials.ai } };
-    else if (section === "finder") body = { lead_finder: { provider: "bettercontact", api_key: credentials.bettercontact, clear_api_key: credentials.clearBettercontact } };
+    else if (section === "finder") body = { lead_finder: settingsBody(connections, credentials).lead_finder };
     else if (section === "signature") body = { mailbox: { signature: connections.mailbox.signature } };
     else if (section === "mailbox") {
       const { transport, api_url, smtp_username, address, smtp_host, smtp_port, imap_host, imap_port } = connections.mailbox;

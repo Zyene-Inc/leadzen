@@ -11,6 +11,9 @@ import { api } from "@/lib/client-api";
 
 type DiscoverySetup = {
   max_count: number;
+  max_email_count?: number;
+  provider_name?: string;
+  profile_budget_per_lead?: number;
   target: string;
   ready: boolean;
   blockers: string[];
@@ -81,6 +84,8 @@ function DiscoveryContext({
 }
 
 type DiscoveryChoices = {
+  providerName: string;
+  profileBudget: number;
   quantity: string;
   count: number;
   maximum: number;
@@ -90,6 +95,8 @@ type DiscoveryChoices = {
 };
 
 function DiscoveryOptions({
+  providerName,
+  profileBudget,
   quantity,
   count,
   maximum,
@@ -159,7 +166,7 @@ function DiscoveryOptions({
           />
           <span>
             <strong>Don’t find emails</strong>
-            <span>Free discovery</span>
+            <span>{profileBudget ? "Paid profile search; no email lookup" : "Free discovery"}</span>
           </span>
         </label>
         <label className={`discovery-choice${emails ? " selected" : ""}`}>
@@ -173,7 +180,7 @@ function DiscoveryOptions({
             <strong>Find verified emails</strong>
             <span>
               {valid
-                ? `Uses up to ${count} BetterContact credit${count === 1 ? "" : "s"}`
+                ? `Email lookup: up to ${count} ${providerName} credit${count === 1 ? "" : "s"}`
                 : "Choose a lead count to see the credit limit"}
             </span>
           </span>
@@ -184,15 +191,17 @@ function DiscoveryOptions({
 }
 
 function DiscoveryReview({
+  providerName,
+  profileBudget,
   count,
   valid,
   emails,
   busy,
   canStart,
-}: Pick<DiscoveryChoices, "count" | "valid" | "emails" | "busy"> & {
+}: Pick<DiscoveryChoices, "count" | "valid" | "emails" | "busy" | "providerName" | "profileBudget"> & {
   canStart: boolean;
 }) {
-  const credits = emails ? count : 0;
+  const credits = count * (profileBudget + (emails ? 1 : 0));
   return (
     <section className="discovery-review" aria-label="Discovery cost preview">
       <p className="eyebrow">Review before you start</p>
@@ -203,11 +212,11 @@ function DiscoveryReview({
             : "Choose a valid lead count"}
         </h2>
         <dl className="discovery-cost">
-          <dt>Estimated BetterContact email cost</dt>
+          <dt>{profileBudget ? `Maximum ${providerName} search + email budget` : `Estimated ${providerName} email cost`}</dt>
           <dd>
             {!valid
               ? "Not estimated"
-              : `${emails ? "Up to " : ""}${credits} credit${credits === 1 ? "" : "s"}`}
+              : `${credits ? "Up to " : ""}${credits} credit${credits === 1 ? "" : "s"}`}
           </dd>
         </dl>
         <p className="settings-help">
@@ -215,6 +224,7 @@ function DiscoveryReview({
             ? "The verified-email run stops at the requested address limit. Some qualified profiles may have no available email."
             : "Profile discovery only. No email addresses will be purchased."}
         </p>
+        {profileBudget > 0 && <p className="settings-help">AI Ark charges 0.5 credits per returned profile, including rejected and duplicate profiles. This run searches one batch of up to {count * 2} profiles for up to {count} search credits, plus optional email credits. You may receive fewer qualified leads.</p>}
       </div>
       <p className="discovery-safety">
         <Icon name="check" />
@@ -251,9 +261,11 @@ export default function FindLeads({ user }: { user: Account }) {
   const submitting = useRef(false);
   const request = useRef<{ selection: string; id: string } | null>(null);
   const count = Number(quantity);
-  const maximum = setup?.max_count ?? 25;
+  const maximum = (emails ? setup?.max_email_count : setup?.max_count) ?? 25;
+  const providerName = setup?.provider_name ?? "BetterContact";
+  const profileBudget = setup?.profile_budget_per_lead ?? 0;
   const valid = Number.isInteger(count) && count >= 1 && count <= maximum;
-  const credits = emails ? count : 0;
+  const credits = count * (profileBudget + (emails ? 1 : 0));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -330,6 +342,8 @@ export default function FindLeads({ user }: { user: Account }) {
           <DiscoveryContext setup={setup} loading={loading} />
           <form className="discovery-form" onSubmit={start} aria-busy={busy}>
             <DiscoveryOptions
+              providerName={providerName}
+              profileBudget={profileBudget}
               quantity={quantity}
               count={count}
               maximum={maximum}
@@ -340,6 +354,8 @@ export default function FindLeads({ user }: { user: Account }) {
               setEmails={setEmails}
             />
             <DiscoveryReview
+              providerName={providerName}
+              profileBudget={profileBudget}
               count={count}
               valid={valid}
               emails={emails}

@@ -26,10 +26,13 @@ export function Connections({
   const mail = (key: keyof Settings["mailbox"], value: string) =>
     onChange({ ...settings, mailbox: { ...settings.mailbox, [key]: value } });
   const credential = (
-    key: keyof Omit<Credentials, "clearBettercontact">,
+    key: "ai" | "smtp" | "mailApi" | "imap" | "bettercontact" | "aiArk",
     value: string,
   ) => onCredentials({ ...credentials, [key]: value });
   const smtp = settings.mailbox.transport === "smtp";
+  const ark = settings.lead_finder.provider === "ai_ark";
+  const providerName = ark ? "AI Ark" : "BetterContact";
+  const removing = ark ? credentials.clearAiArk : credentials.clearBettercontact;
   function transport(value: string) {
     const url =
       value === "resend"
@@ -56,7 +59,7 @@ export function Connections({
         <section className="panel settings-card">
           <div className="panel-head">
             <h2 className="panel-title">Lead finding</h2>
-            <span className="panel-meta">BetterContact</span>
+            <span className="panel-meta">{providerName}</span>
           </div>
           <p className="settings-help" id="bettercontact-help">
             {setupMode ? (
@@ -68,53 +71,64 @@ export function Connections({
             )}
           </p>
           <div className="form-grid">
+            <label className="wide">Lead provider
+              <select className="select" value={settings.lead_finder.provider} onChange={(event) => {
+                const provider = event.target.value as Settings["lead_finder"]["provider"];
+                onChange({ ...settings, lead_finder: { ...settings.lead_finder, provider,
+                  api_key_configured: settings.lead_finder.configured_providers?.[provider] ?? false } });
+              }}>
+                <option value="bettercontact">BetterContact</option>
+                <option value="ai_ark">AI Ark</option>
+              </select>
+            </label>
             <SecretInput
-              label="BetterContact API key"
+              label={`${providerName} API key`}
               containerClassName="wide"
               className="input"
               autoComplete="new-password"
-              value={credentials.bettercontact}
-              onChange={(e) => credential("bettercontact", e.target.value)}
+              value={ark ? credentials.aiArk ?? "" : credentials.bettercontact}
+              onChange={(e) => credential(ark ? "aiArk" : "bettercontact", e.target.value)}
               maxLength={2000}
-              disabled={credentials.clearBettercontact}
+              disabled={removing}
               aria-describedby="bettercontact-help bettercontact-status"
               placeholder={
                 settings.lead_finder?.api_key_configured
                   ? "Blank keeps the saved key"
-                  : "Paste your BetterContact API key"
+                  : `Paste your ${providerName} API key`
               }
             />
           </div>
           <p className="settings-help" id="bettercontact-status">
-            {credentials.clearBettercontact
+            {removing
               ? "The saved key will be removed when you save."
               : settings.lead_finder?.api_key_configured
                 ? "Key saved securely. Enter a new key to replace it."
                 : "No key saved. You can add it now or later in Connections."}{" "}
             <a
-              href="https://app.bettercontact.rocks/api_requests"
+              href={ark ? "https://app.ai-ark.com/" : "https://app.bettercontact.rocks/api_requests"}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Get your BetterContact API key
+              Get your {providerName} API key
             </a>
           </p>
           {!setupMode && settings.lead_finder?.api_key_configured && (
             <label className="check-row">
               <input
                 type="checkbox"
-                checked={credentials.clearBettercontact}
+                checked={removing ?? false}
                 onChange={(e) =>
                   onCredentials({
                     ...credentials,
-                    clearBettercontact: e.target.checked,
-                    bettercontact: "",
+                    [ark ? "clearAiArk" : "clearBettercontact"]: e.target.checked,
+                    [ark ? "aiArk" : "bettercontact"]: "",
                   })
                 }
               />
-              Remove the saved BetterContact key when I save
+              Remove the saved {providerName} key when I save
             </label>
           )}
+          <p className="settings-help">Switching keeps the other provider’s saved key. Only the selected provider is used; there is no automatic fallback.{ark && " AI Ark searches cost 0.5 credits per returned profile, and verified email lookup costs up to 1 credit per person. Review the budget in Find Leads or Chat. Daily Autopilot requires BetterContact."}</p>
         </section>
       )}
       {sections.includes("ai") && (

@@ -16,6 +16,7 @@ from leadzen.chat import views as chat
 from leadzen.chat.engine import MAX_ACTION_COUNT, normalize, prepare, snapshot
 from leadzen.config.models import ChatMessage, ChatRun, ChatThread, DiscoverySession, SiteConfig
 from leadzen.configuration import effective
+from leadzen.lead_finder import key as finder_key, label as finder_label, budget
 from leadzen.discovery_progress import candidate_payload, counts, credits, selected_identity
 
 
@@ -24,14 +25,25 @@ def context(actor_id):
     blockers = []
     if not (values.ai_enabled and values.llm_api_key and values.model):
         blockers.append("Connect an AI provider and enable AI in Settings.")
-    if not values.bettercontact_api_key:
-        blockers.append("Add your BetterContact API key in Settings, including for free profile discovery.")
+    if not finder_key(values):
+        blockers.append(f"Add your {finder_label(values)} API key in Settings.")
+    if values.lead_finder_provider == "ai_ark":
+        from leadzen.config.models import OnboardingState
+        from leadzen.ai_ark import search_filters
+        from leadzen.home import current_target
+        state = OnboardingState.objects.filter(pk=1).first()
+        try:
+            search_filters(current_target(config, state)["audience"])
+        except ValueError as exc:
+            blockers.append(str(exc))
     if not (config.product_docs.strip() and config.campaign_target.strip()):
         blockers.append("Complete your product and target audience in Purpose & setup.")
     if not (config.operator_email and config.operator_country_code and config.accepted_legal_notice):
         blockers.append("Complete your identity and legal acknowledgment in Purpose & setup.")
     active = ChatRun.objects.filter(actor_id=actor_id, thread__actor_id=actor_id, status__in=chat.ACTIVE).select_related("thread").first()
-    return {"max_count": MAX_ACTION_COUNT, "target": config.campaign_target,
+    return {"max_count": MAX_ACTION_COUNT, "max_email_count": 12 if values.lead_finder_provider == "ai_ark" else MAX_ACTION_COUNT,
+            "provider": values.lead_finder_provider, "provider_name": finder_label(values),
+            "profile_budget_per_lead": 1 if values.lead_finder_provider == "ai_ark" else 0, "target": config.campaign_target,
             "ready": not blockers, "blockers": blockers,
             "revision": snapshot("find_leads", {}),
             "active_run": {"thread_id": str(active.thread_id), "status": active.status,
@@ -47,9 +59,11 @@ def discovery(request):
         return JsonResponse(context(request.actor.pk))
     body = payload(request)
     args = normalize("find_leads", {"count": body.get("count"), "emails": body.get("emails")})
-    credits = args["count"] if args["emails"] else 0
+    credits = budget(args["count"], args["emails"])
+    if credits > 25:
+        return error("Use at most 12 leads with email lookup for AI Ark's 25-credit per-run limit")
     if type(body.get("estimated_credits")) is not int or body["estimated_credits"] != credits:
-        return error("The displayed email-credit estimate does not match your choices. Review and retry.")
+        return error("The displayed provider-credit estimate does not match your choices. Review and retry.")
     try:
         request_id = uuid.UUID(str(body.get("request_id", "")))
     except ValueError:
@@ -90,7 +104,7 @@ def discovery(request):
             row.save(update_fields=["pending", "status", "updated_at"])
             DiscoverySession.objects.create(run=row, action=row.pending, goal=args["count"],
                                             unit="emails" if args["emails"] else "leads", target=current["target"])
-            ChatMessage.objects.create(thread=thread, role="user", content=f"Find {args['count']} qualified leads. " + (f"Verified email budget: up to {credits} BetterContact credits." if args["emails"] else "Do not buy email addresses. BetterContact email budget: 0 credits.") + " Do not send emails.", data=selection)
+            ChatMessage.objects.create(thread=thread, role="user", content=f"Find {args['count']} qualified leads. Provider budget: up to {credits} {finder_label()} credits." + (" Include verified email lookup." if args["emails"] else " Do not buy email addresses.") + " Do not send emails.", data=selection)
             ChatMessage.objects.create(thread=thread, role="approval", content="You approved: " + row.pending["summary"], data={"approval": {key: row.pending[key] for key in ("id", "tool", "credits", "emails", "preview")}})
     except IntegrityError:
         return error("Another task was started. Refresh and review your active task.", 409)
@@ -189,7 +203,7 @@ def email_review(session):
     items = [candidate_payload(c) for c in candidates if c.source_id in eligible]
     identity = selected_identity([c["source_id"] for c in items])
     revision = hashlib.sha256(json.dumps({"setup": snapshot("find_leads", {}), "identity": identity, "items": items}, sort_keys=True).encode()).hexdigest()
-    return {"items": items, "revision": revision, "max_count": MAX_ACTION_COUNT,
+    return {"items": items, "revision": revision, "max_count": MAX_ACTION_COUNT, "provider_name": finder_label(),
             "note": "Only selected qualified leads from this run. No discovery or email sending. AI-provider charges may apply separately."}
 
 
@@ -238,7 +252,7 @@ def emails(request, run_id):
             args = normalize("find_leads", {"count": len(ids), "emails": True})
             thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Find emails for {len(ids)} selected leads")
             row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id)
-            prepare(row, "find_leads", args)
+            prepare(row, "find_leads", args, selected=True)
             row.refresh_from_db()
             row.pending = {**row.pending, "approved": True, "single_action": True, "source_identity": selected_identity(source_ids)}
             row.status = "queued"

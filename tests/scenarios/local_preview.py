@@ -162,7 +162,8 @@ for profile in AccountProfile.objects.using("default").select_related("user").al
 
 
 def synthetic_probe(values, kind):
-    keys = {"ai": values.llm_api_key, "discovery": values.bettercontact_api_key, "mailbox": values.imap_password or values.mailbox_password}
+    from leadzen.lead_finder import key
+    keys = {"ai": values.llm_api_key, "discovery": key(values), "mailbox": values.imap_password or values.mailbox_password}
     if not keys[kind].startswith("synthetic-"):
         raise ValueError("Only synthetic test credentials are accepted in this disposable preview")
     return {"synthetic": True, **{"ai": {"answered": True}, "discovery": {"credits": 40}, "mailbox": {"smtp": values.mail_transport == "smtp", "imap": True}}[kind]}

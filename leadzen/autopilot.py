@@ -48,6 +48,8 @@ def setup(actor_id):
     from leadzen.sending_schedule import get_schedule
     values, config = effective(), SiteConfig.load()
     blockers = list(context(actor_id)["blockers"])
+    if values.lead_finder_provider == "ai_ark":
+        blockers.append("AI Ark requires per-run profile-search approval. Use Find Leads or Chat; Daily Autopilot currently requires BetterContact.")
     if not values.mailbox_address or not (values.mailbox_password if values.mail_transport == "smtp" else values.mail_api_key):
         blockers.append("Connect a sending mailbox in Settings.")
     if not values.imap_host or not (values.imap_password or values.mailbox_password):

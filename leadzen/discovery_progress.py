@@ -84,11 +84,15 @@ def counts(session):
 
 def credits(session):
     receipts = list(session.lookups.all())
+    from leadzen.config.models import DiscoverySearch
+    searches = list(DiscoverySearch.objects.filter(session=session))
+    receipts += searches
     uncertain = any(r.credits is None for r in receipts)
     used = sum((r.credits or Decimal(0) for r in receipts), Decimal(0))
     return {"used": None if uncertain else float(used), "reported": float(used),
             "pending": sum(r.state != "terminated" for r in receipts),
-            "approved": session.goal if session.unit == "emails" else 0}
+            "approved": session.action.get("credits", session.goal if session.unit == "emails" else 0),
+            "provider": session.action.get("provider", "bettercontact")}
 
 
 def selected_identity(source_ids):
@@ -117,6 +121,8 @@ class Monitor:
             raise PermissionError("Discovery stopped or exceeded its deadline")
         if snapshot("find_leads", self.session.action["arguments"]) != self.session.action["snapshot"]:
             raise PermissionError("Discovery setup changed")
+        if self.session.action.get("provider") == "ai_ark" and (not row.approval_expires_at or row.approval_expires_at <= timezone.now()):
+            raise PermissionError("AI Ark approval expired")
         if self.session.source_ids and selected_identity(self.session.source_ids) != self.session.action.get("source_identity"):
             raise PermissionError("Selected lead identity or deletion state changed")
 

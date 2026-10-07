@@ -289,6 +289,12 @@ def setup_session(row, tool, args):
     sources = enrichment(args["leadIds"]) if tool == "find_work_emails" else []
     engine = engine_find_args(args) if tool == "find_leads" else {"count": len(sources), "emails": True, "audience": ""}
     action = {"id": str(uuid.uuid4()), "tool": "find_leads", "summary": "Continue the remaining discovery goal", "arguments": engine, "snapshot": snapshot("find_leads", engine), "approved": True, "single_action": True}
+    from leadzen.configuration import effective
+    if effective().lead_finder_provider == "ai_ark":
+        capability = approved.get()
+        if not capability or capability["tool"] != tool or capability["arguments"] != args or capability["actor_id"] != row.actor_id or capability["run_id"] != str(row.pk):
+            raise PermissionError("AI Ark requires an exact server-issued approval")
+        action.update(provider="ai_ark", credits=capability["credits"])
     if sources:
         action["source_identity"] = selected_identity(sources)
     DiscoverySession.objects.create(run=row, goal=engine["count"], unit="emails" if engine["emails"] else "leads", source_ids=sources, action=action, target=engine["audience"] or SiteConfig.load().campaign_target)
@@ -376,9 +382,15 @@ def execute(row, tool, args):
         return summary()
     if tool == "get_credit_usage":
         from leadzen.home import summary
-        from leadzen.config.models import DiscoveryLookup
-        from django.db.models import Sum
-        return {"balance": summary()["credits"], "reported_usage": float(DiscoveryLookup.objects.aggregate(total=Sum("credits"))["total"] or 0), "uncertain_lookups": DiscoveryLookup.objects.filter(credits__isnull=True).count()}
+        from leadzen.config.models import DiscoveryLookup, DiscoverySearch
+        from django.db.models import Sum, Q
+        from leadzen.configuration import effective
+        selected = effective().lead_finder_provider
+        lookups = DiscoveryLookup.objects.filter(session__action__provider="ai_ark") if selected == "ai_ark" else DiscoveryLookup.objects.filter(Q(session__action__provider="bettercontact") | ~Q(session__action__has_key="provider"))
+        searches = DiscoverySearch.objects.all() if selected == "ai_ark" else DiscoverySearch.objects.none()
+        return {"balance": summary()["credits"], "provider": selected,
+                "reported_usage": float((lookups.aggregate(total=Sum("credits"))["total"] or 0) + (searches.aggregate(total=Sum("credits"))["total"] or 0)),
+                "uncertain_lookups": lookups.filter(credits__isnull=True).count(), "uncertain_searches": searches.filter(credits__isnull=True).count()}
     if tool in {"get_target", "update_target"}:
         from leadzen.home import target
         return invoke(row, target, {"audience": args, "confirmed": True, "accepted_legal_notice": SiteConfig.load().accepted_legal_notice}, "PUT") if tool == "update_target" else invoke(row, target)

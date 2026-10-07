@@ -55,6 +55,7 @@ export type DiscoveryProgress = {
   phase?: string;
 };
 export type EmailReview = {
+  provider_name?: string;
   items: Candidate[];
   revision: string;
   note: string;

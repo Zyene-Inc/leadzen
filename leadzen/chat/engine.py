@@ -335,8 +335,6 @@ def find_leads(args, *, poll_only=False):
     apply_to_environment(SiteConfig.load())
     if args["audience"]:
         os.environ["OPENOUTFIND_CAMPAIGN_TARGET"] = args["audience"]
-    output, metadata = ProgressOutput(monitor) if monitor else io.StringIO(), io.StringIO()
-    partial = paused = False
     # Guard the child provider in memory, without altering its installed files.
     # No POST retry or redirect can silently resubmit a paid lookup.
     import requests
@@ -368,6 +366,11 @@ def find_leads(args, *, poll_only=False):
         headers = dict(session.headers)
         headers["Content-Type"] = "application/json"
         status, response_headers, raw = pinned_request(method, url, headers, content, "app.bettercontact.rocks", kind="BETTERCONTACT")
+        # BetterContact documents HTTP 202 as a normal pending poll. Some responses
+        # omit its JSON body; the pinned finder expects a status object to distinguish
+        # that accepted job from a malformed response.
+        if method == "GET" and status == 202 and not raw.strip():
+            raw = b'{"status":"processing"}'
         response = requests.Response()
         response.status_code, response._content, response.url = status, raw, url
         response.headers.update(dict(response_headers))
@@ -377,20 +380,99 @@ def find_leads(args, *, poll_only=False):
         elif monitor and method == "GET" and path.startswith("/api/v2/async/"):
             monitor.report_lookup(path.rsplit("/", 1)[-1], response.json())
         return response
-    try:
-        # This noun is the engine's verified-credit cap, not --emails on leads.
-        with patch("openoutfind.enrichment.bettercontact._request", bounded_provider), monitor.adapters(poll_only=poll_only) if monitor else nullcontext():
-            call_command("find", str(args["count"]), "emails" if args["emails"] else "leads", "--json", "--new", stdout=output, stderr=metadata)
-    except DiscoveryPaused:
-        paused = True
-    except Exception:
-        # Retain complete JSONL records even when a provider/SDK failure is not
-        # one of the child's typed refusals. Never echo its exception or metadata.
-        partial = True
-    output.seek(0)
-    result = ingest(output)
-    return {"stored": result.stored, "suppressed": result.suppressed, "skipped": result.skipped, "partial": partial, "paused": paused,
-            "note": "Paused at a saved action boundary. No new work will run until Resume." if paused else "Stored partial results; review Connections and discovery status before retrying." if partial else "Lead discovery completed. No emails sent."}
+    def run_once(*, only_poll):
+        output = ProgressOutput(monitor) if monitor else io.StringIO()
+        metadata = io.StringIO()
+        partial = paused = False
+        try:
+            # This noun is the engine's verified-credit cap, not --emails on leads.
+            with patch("openoutfind.enrichment.bettercontact._request", bounded_provider), monitor.adapters(poll_only=only_poll) if monitor else nullcontext():
+                call_command("find", str(args["count"]), "emails" if args["emails"] else "leads", "--json", "--new", stdout=output, stderr=metadata)
+        except DiscoveryPaused:
+            paused = True
+        except Exception:
+            # Retain complete JSONL records even when a provider/SDK failure is not
+            # one of the child's typed refusals. Never echo its exception or metadata.
+            partial = True
+        output.seek(0)
+        stored = ingest(output)
+        return {"stored": stored.stored, "suppressed": stored.suppressed, "skipped": stored.skipped,
+                "partial": partial, "paused": paused,
+                "note": "Paused at a saved action boundary. No new work will run until Resume." if paused else "Stored partial results; review Connections and discovery status before retrying." if partial else "Lead discovery completed. No emails sent."}
+
+    result = run_once(only_poll=poll_only)
+    if not poll_only and monitor and args["emails"] and monitor.session.source_ids and not result["paused"]:
+        result = collect_owned_email_lookups(monitor, result, run_once)
+    if monitor:
+        from leadzen.discovery import progress_payload
+        result.update(discovery=progress_payload(monitor.session), workspaceUrl=f"/find-leads/{monitor.session.run_id}")
+    return result
+
+
+def collect_owned_email_lookups(monitor, result, run_once):
+    """Wait for selected async lookups to settle without ever submitting another one."""
+    import time
+    from openoutfind.crm.models import Deal as SourceDeal, DealState as SourceDealState
+    from leadzen.discovery_progress import DiscoveryPaused
+
+    session = monitor.session
+    source_ids = list(session.source_ids)
+    if not source_ids:
+        return result
+
+    no_progress = 0
+    while True:
+        session.refresh_from_db()
+        receipts = list(session.lookups.all().order_by("pk"))
+        active = [receipt for receipt in receipts if receipt.request_id and receipt.state != "terminated"]
+        if not active:
+            settled = len(receipts) == len(source_ids) and all(receipt.state == "terminated" for receipt in receipts)
+            if settled:
+                result = {**result, "partial": False, "paused": False,
+                          "note": "Email lookup completed. Review the saved lead for a verified work email."}
+            return result
+
+        handles = [receipt.request_id for receipt in active]
+        pending = list(SourceDeal.objects.filter(
+            state=SourceDealState.FINDING_EMAIL,
+            lead_id__in=source_ids,
+            lookup_request_id__in=handles,
+        ).order_by("pk").values("pk", "lookup_attempt", "not_before"))
+        if len(pending) != len(active) or session.provider_calls >= 200:
+            return {**result, "partial": True}
+
+        try:
+            monitor.boundary()
+        except DiscoveryPaused:
+            return {**result, "paused": True,
+                    "note": "Paused at a saved action boundary. No new work will run until Resume."}
+        due = min(item["not_before"] or timezone.now() for item in pending)
+        delay = (due - timezone.now()).total_seconds()
+        if delay > 0:
+            time.sleep(min(delay, 1))
+            continue
+
+        polled = run_once(only_poll=True)
+        result = {**result,
+                  "stored": result.get("stored", 0) + polled.get("stored", 0),
+                  "suppressed": result.get("suppressed", 0) + polled.get("suppressed", 0),
+                  "skipped": result.get("skipped", 0) + polled.get("skipped", 0)}
+        if polled.get("paused"):
+            return {**result, "partial": polled.get("partial", False), "paused": True,
+                    "note": polled.get("note", "Paused at a saved action boundary.")}
+
+        after = list(SourceDeal.objects.filter(
+            state=SourceDealState.FINDING_EMAIL,
+            lead_id__in=source_ids,
+            lookup_request_id__in=handles,
+        ).order_by("pk").values("pk", "lookup_attempt", "not_before"))
+        if after == pending:
+            # A poll that did not advance its saved handle is uncertain. Stop safely;
+            # retrying a GET is unnecessary and retrying the purchase is never allowed.
+            return {**result, "partial": True}
+        no_progress = no_progress + 1 if [item["lookup_attempt"] for item in after] == [item["lookup_attempt"] for item in pending] else 0
+        if no_progress >= 3:
+            return {**result, "partial": True}
 
 
 def execute(tool, args, row):

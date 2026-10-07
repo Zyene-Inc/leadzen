@@ -133,6 +133,49 @@ def test_actual_selected_candidate_is_visible_before_qualification_finishes(disc
         assert data["candidates"][0]["contact_id"] is not None
 
 
+@pytest.mark.parametrize("reason", [
+    "Strong product fit despite a partial campaign-industry mismatch: this dentist serves local patients.",
+    "Dental clinics fall outside the campaign's stated Restaurants and Home Services industries.",
+    "This owner is not strictly in the verticals named in the campaign, but needs reviews.",
+    "The practice is healthcare rather than the campaign's hospitality target.",
+])
+def test_explicit_campaign_mismatch_cannot_be_saved_as_qualified(discovery_client, reason):
+    import numpy as np
+    from types import SimpleNamespace
+    from openoutfind.core.pipeline import qualify
+    from openoutfind.crm.models import Deal
+    from leadzen.discovery_progress import Monitor
+    from leadzen.config.models import DiscoverySession
+
+    run = start(discovery_client)
+    monitor = Monitor(DiscoverySession.objects.get(run_id=run))
+    lead = profile()
+    lead.embedding_array = np.zeros(2)
+    lead.save()
+    labels = []
+    qualifier = SimpleNamespace(predict=lambda embedding: None, n_obs=0,
+                                update=lambda embedding, label: labels.append(label))
+    captured = {}
+
+    def llm(profile_text, **kwargs):
+        captured.update(kwargs)
+        return 1, reason
+
+    target = "Owners at Restaurants & Hospitality & Home Services in the United States, 1-10 employees"
+    with patch.object(monitor, "boundary"), patch("openoutfind.core.ml.qualifier.qualify_with_llm", side_effect=llm):
+        with monitor.adapters():
+            qualify.run_qualification(SimpleNamespace(product_docs="Reviews for restaurants and dentists",
+                                                      campaign_target=target), qualifier)
+
+    decision = Deal.objects.get(lead=lead)
+    candidate = discovery_client.get(f"/api/discovery/{run}").json()["candidates"][0]
+    assert captured["campaign_target"].startswith(target)
+    assert "must not broaden the requested audience" in captured["campaign_target"]
+    assert labels == [0]
+    assert decision.state == "Failed" and candidate["outcome"] == "rejected"
+    assert candidate["contact_id"] is None
+
+
 def test_live_events_continue_after_storage_limit_and_candidate_history_is_bounded(discovery_client):
     from leadzen.discovery_progress import Monitor
     from leadzen.config.models import DiscoverySession, DiscoveryEvent, DiscoveryCandidate

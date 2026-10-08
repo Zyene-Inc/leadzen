@@ -1,5 +1,60 @@
 # Last verified project state
 
+## Deployed to production — October 8, 2026
+
+Commit `b6f350c1839874584371329256475f16970fc55f` (Merge PR #9, selectable AI
+Ark / BetterContact lead providers) is now live on the Google VM backend.
+
+### Opt-in flags enabled (same day, 17:50 UTC)
+
+Following owner approval, these flags were added to `/etc/leadzen-b6f350c.env`
+(snapshot preserved at `/etc/leadzen-b6f350c.env.pre-enables-20261008`):
+
+- `LEADZEN_AUTOPILOT_ENABLED=1` — Daily Autopilot can run as soon as an employee
+  authorizes a policy (server-side worker is now live)
+- `LEADZEN_MAIL_HOSTS=*` and `LEADZEN_EMAIL_HOSTS=*` — mailbox/IMAP/SMTP allow-lists
+- `LEADZEN_MCP_PUBLIC_URL=https://leadzen-api.zyene.com` — public MCP connector surface
+- `LEADZEN_CHAT_PROMPTED_OUTPUT_HOSTS=https://leadzen.zyene.com` — additional LLM output allow-list
+
+Both services restarted cleanly; `production.py` fail-closed validation passed;
+scheroes and re-record. **Activation does not equal delivery:** the first email still waits for the per-employee approval and the next open delivery window. If they activate today **after** their kickoff window has passed, the first email will be scheduled for tomorrow 10:00 AM. **Contact the employee when ready to activate it** — a real paid outbound flow begins the moment they authorize.
+
+### Now / later layers
+
+- **Autopilot ON**: server-side automation can initiate *new* outreach.
+- **Follow-ups ON**: already approved follow-ups continue on schedule.
+- **Mailbox/IMAP allowed**: without restriction; allow-list is open.
+- **MCP connector**: live.
+- **Invitation email**: NOT enabled. `LEADZEN_RESEND_API_KEY` is empty — admin must add the key to send invitation emails._public_url, campaign_target empty)
+- First email **cannot go out today** unless employee authorized before
+  12:00 noon NY; otherwise earliest is the next workday 10:00–17:00 NY.
+- No real emails sent, no paid provider calls made as part of enabling.
+
+## Earlier dated evidence
+
+## Application addresses recorded on October 3
+
+Commit `b6f350c1839874584371329256475f16970fc55f` (Merge PR #9, selectable AI
+Ark / BetterContact lead providers) is now live on the Google VM backend.
+
+- Vercel `leadzen.zyene.com` already served deployment
+  `dpl_8sGCGAoK4qSq1rMoMG9iWhvzf14p` (built from `b6f350c`) before the backend
+  was upgraded, so no Vercel action was needed.
+- Backend moved from commit `f1d8cfe` to `b6f350c`; runtime path changed from
+  `/opt/leadzen-f1d8cfe-20261006` to `/opt/leadzen-b6f350c-20261008`.
+- Migration `0020_lead_finder_provider` applied to control DB (already had 0020
+  from a pre-flight system check) and workspace DB
+  `97bd43a2-0025-4e48-b9f1-dcd4b796c331` (0019 → 0020). SQLite integrity `ok`.
+- Brief (~30 s) follow-ups scheduler errors after first restart were traced to
+  `LEADZEN_DB`/`LEADZEN_WORKSPACE_ROOT` still pointing at the old path; fixed by
+  patching `/etc/leadzen-b6f350c.env` and restarting. Scheduler now silent.
+- Snapshot: `leadzen-api-pre-b6f350c-20261008` (recovery point).
+- Backup: `/srv/private/leadzen-pre-upgrade-20261008` on the VM.
+- Rollback: see `docs/deployment.md` October 8 section.
+
+All previous notes below are **dated evidence**; nothing should be inferred
+about the current live state without re-checking the VM.
+
 ## Selectable lead providers — local source, October 7, 2026
 
 Employees can choose BetterContact or AI Ark in Settings/onboarding, with separate

@@ -109,12 +109,15 @@ def probe_ai(values):
     from pydantic_ai.usage import UsageLimits
     from leadzen.ai import build_model
     async def run():
-        agent = Agent(build_model(values.provider, values.model, values.llm_api_key, values.base_url, request_timeout=5), retries=0)
+        agent = Agent(build_model(values.provider, values.model, values.llm_api_key, values.base_url, request_timeout=30), retries=0)
         model_settings = {"max_tokens": 256}
         if values.provider == "groq" and values.model in {"openai/gpt-oss-120b", "openai/gpt-oss-20b"}:
             model_settings["groq_reasoning_effort"] = "low"
         async with agent:
-            result = await asyncio.wait_for(agent.run("Connection check only. Reply with the single word OK.", model_settings=model_settings, usage_limits=UsageLimits(request_limit=1)), timeout=7)
+            # Cold providers (Kimi, akashml, openai_compatible with remote backends) can
+            # exceed 10s on the first TLS+model-load. Allow ample headroom instead of
+            # failing the wizard on a healthy connection.
+            result = await asyncio.wait_for(agent.run("Connection check only. Reply with the single word OK.", model_settings=model_settings, usage_limits=UsageLimits(request_limit=1)), timeout=30)
         if not isinstance(result.output, str) or not result.output.strip():
             raise SettingsError("The model did not answer")
     asyncio.run(run())

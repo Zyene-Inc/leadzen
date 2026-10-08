@@ -1,16 +1,107 @@
 # LeadZen production deployment
 
-Historical deployment evidence verified on 3 October 2026. LeadZen is Zyene's internal tool for
-outreach about its products and services, not the Zyene Reviews company.
+LeadZen is Zyene's internal tool for outreach about its products and services,
+not the Zyene Reviews company.
 
-The October 4 production audit changes are local and have not been deployed.
-Service status, environment values and deployment IDs below describe the dated
-October 3 checks; they are not a current live-state guarantee or continuing
-authorization to deploy, send emails or spend provider credits. Follow the
-[October 4 production audit](production-readiness-audit-2026-10-04.md) for the
-current release requirements and final verification evidence.
+The most recent deployment is the **October 8, 2026** backend update to commit
+`b6f350c1839874584371329256475f16970fc55f`, described in the next section.
+Earlier release notes below remain dated evidence, not a current live-state
+guarantee or continuing authorization to deploy, send emails or spend provider
+credits.
 
-## Application addresses recorded on October 3
+## October 8, 2026 — backend `b6f350c` (selectable lead providers)
+
+**Source released:** `main` at `b6f350c` (Merge PR #9, selectable AI Ark /
+BetterContact providers). Source archive SHA-256 of the wheel uploaded to the VM:
+`3f451961b8541e9fe226da8676d312f5970e6ba677358fd1f348cde4ea196a88`.
+
+**Vercel frontend:** already current — `leadzen.zyene.com` was serving
+deployment `dpl_8sGCGAoK4qSq1rMoMG9iWhvzf14p` built from `b6f350c` **before**
+this backend release, so no Vercel action was required.
+
+**Google VM:** `leadzen-api` (`zyene-reviews`, zone `us-central1-a`).
+
+**Pre-release safety:**
+- VM snapshot: `leadzen-api-pre-b6f350c-20261008` (READY, 3.78 GB, created
+  2026-10-08T10:33Z). Boot disk `openoutreach-api`.
+- On-VM backup: `/srv/private/leadzen-pre-upgrade-20261008` (7.1 MB). SQLite
+  integrity verified `ok` on the control DB and the only initialized workspace
+  (`97bd43a2-0025-4e48-b9f1-dcd4b796c331`). Services were restarted inactive
+  within ~6 seconds for the backup and confirmed healthy before continuing.
+
+**Cut-over steps taken:**
+1. Built wheel `leadzen-0.1.0-py3-none-any.whl` from local `HEAD` (= `b6f350c`).
+2. Uploaded to VM `/tmp/` over `gcloud compute scp` (SSH managed via
+   `gcloud compute config-ssh` with project `zyene-reviews`).
+3. Staged runtime at `/opt/leadzen-b6f350c-20261008` by copying the existing
+   compatible venv and extracting the wheel into its `site-packages`. Verified
+   migration `0020_lead_finder_provider.py` present.
+4. Stopped services, copied `/opt/leadzen-f1d8cfe-20261006/data` to the new
+   runtime, copied env file to `/etc/leadzen-b6f350c.env`, updated hard-coded
+   paths (`LEADZEN_DB`, `LEADZEN_WORKSPACE_ROOT`, `LEADZEN_PUBLIC_URL`) to the
+   new runtime location. Restarted.
+5. **Detected and fixed** a real regression introduced during cutover: the
+   follow-ups scheduler logged `Workspace follow-up worker failed (exit code 1)`
+   after the first restart. Root cause: `LEADZEN_*_PATH` variables still
+   pointed at the old runtime directory, so the worker could not see the
+   workspace database. Fixed via `sed` on the env file; services restarted;
+   the scheduler is silent in subsequent minutes (no due work).
+6. **Migrations** — control DB already at `0020` (applied during a pre-flight
+   `django check`); workspace DB upgraded from `0019` → `0020_lead_finder_provider`
+   via `python -m django migrate --no-input` against the workspace SQLite file.
+   Verified via `PRAGMA integrity_check = ok` and post-migration listing.
+
+**Post-cutover verification:**
+- `systemctl is-active leadzen.service` = active; `leadzen-followups.service` = active.
+- Anonymous `GET https://leadzen-api.zyene.com/api/health` and `/api/ready` → **401**.
+- `GET https://leadzen.zyene.com/login` → **200**, still serving deployment
+  `dpl_8sGCGAoK4qSq1rMoMG9iWhvzf14p` (no Vercel change required).
+- `GET https://leadzen.zyene.com/api/proxy/health` anonymous → **401**.
+- Static assets (woff2 font, brand PNG) → **206 Partial Content** with correct
+  `content-type` — the directive, CSP nonce and HSTS headers all present.
+- No recent ERROR-level entries in either service's journal.
+
+**Not exercised:** admin login (`support@zyene.com` secret lives outside the
+repository), any outbound email, real BetterContact/AI Ark paid request,
+real inbox placement, or browser-driven full HTTPS journey. The single-use
+automation that owns those flows still requires fresh, scoped approval.
+
+**Rollback path:** stop services → restore `/srv/private/leadzen-pre-upgrade-20261008`
+to `/opt/leadzen-b6f350c-20261008/data` and `/etc/leadzen-b6f350c.env` →
+point `leadzen.service`/`leadzen-followups.service` back to
+`/opt/leadzen-f1d8cfe-20261006` via the previously-copied unit files → start.
+Or recreate the VM from snapshot `leadzen-api-pre-b6f350c-20261008`. Migration
+`0020` only adds a column and a new table; the schema is forward-compatible
+for roll-back on the older runtime.
+
+### Post-release opt-in flags enabled — same day, 17:50 UTC
+
+Following owner approval, these optional flags were added to `/etc/leadzen-b6f350c.env`
+(previous values preserved at `/etc/leadzen-b6f350c.env.pre-enables-20261008`):
+
+```
+LEADZEN_AUTOPILOT_ENABLED=1
+LEADZEN_MAIL_HOSTS=*
+LEADZEN_EMAIL_HOSTS=*
+LEADZEN_MCP_PUBLIC_URL=https://leadzen-api.zyene.com
+LEADZEN_CHAT_PROMPTED_OUTPUT_HOSTS=https://leadzen.zyene.com
+```
+
+- `production.py` fail-closed validation passed.
+- Both services restarted and stay active; scheduler has no errors since restart.
+- Autopilot code path confirms `enabled() = True`; zero Autopilot policies in DB.
+- **What changes for employees:** each employee can now authorize Daily Autopilot
+  in `/outreach`; the first `AutopilotRun` is created during their next
+  New-York 10:00–12:00 kickoff window if no blockers exist (mailbox, target,
+  product, BetterContact, AI Ark not selected — AI Ark is still
+  blocked-at-autopilot by design). First email paced within 10:00–17:00 NY.
+- **What did NOT change:** no real emails have been sent; no paid provider call
+  has been made; admins must still send invitation emails manually
+  (`LEADZEN_RESEND_API_KEY` remains unset until an operator supplies one).
+
+## Earlier dated evidence
+
+### Application addresses recorded on October 3
 
 - Employee login: https://leadzen.zyene.com/login
 - Administrator: https://leadzen.zyene.com/admin

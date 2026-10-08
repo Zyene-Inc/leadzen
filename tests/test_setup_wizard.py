@@ -237,7 +237,9 @@ def test_real_groq_agent_probe_uses_one_bounded_request_without_tools(wizard, ba
         assert "tools" not in body
         assert body["max_tokens"] == 256
         assert body["reasoning_effort"] == "low"
-        assert network.call_args.kwargs["timeout"] == 5
+        # Cold providers (Kimi on akashml, etc.) take ~16s on the first call.
+        # The wizard must allow enough headroom for a healthy connection.
+        assert network.call_args.kwargs["timeout"] == 30
 
 
 def test_active_probe_lease_and_rate_limit_prevent_provider_calls(wizard):

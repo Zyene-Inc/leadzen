@@ -133,7 +133,10 @@ def test_search_uses_exact_audience_and_never_bettercontact(ark_client):
     assert args[1].endswith("/v1/people") and args[4] == "api.ai-ark.com"
     body = json.loads(args[3])
     assert body["size"] == 2 and body["page"] == 0
-    assert body["account"]["industries"]["any"]["include"]["content"] == ["Dental practices"]
+    # "Dental practices" is not an AI Ark industry; the closest supported value is.
+    assert body["account"]["industries"]["any"]["include"] == {"mode": "SMART", "content": ["dental"]}
+    assert body["contact"]["experience"]["latest"]["title"]["any"]["include"]["mode"] == "SMART"
+    assert body["contact"]["location"] == {"any": {"include": ["United States"]}}
     assert body["account"]["employeeSize"]["range"] == [{"start": 1, "end": 10}]
     assert result[0]["contact_full_name"] == "Test Dentist"
     assert "email" not in result[0]
@@ -379,3 +382,84 @@ def test_usage_keeps_provider_units_separate_after_switch(ark_client):
     report = execute(row, "get_credit_usage", {})
     assert report["provider"] == "bettercontact" and report["reported_usage"] == 2
     assert report["uncertain_searches"] == 0
+
+
+def test_approval_expiring_mid_run_does_not_strand_paid_profiles(ark_client):
+    from leadzen.ai_ark import run
+    from leadzen.discovery_progress import observe, current
+    from leadzen.config.models import ChatRun
+    row = start(ark_client)
+
+    def response(*args, **kwargs):
+        # Expires after this run segment started, before its paid results are processed.
+        ChatRun.objects.filter(pk=row.pk).update(approval_expires_at=current().started + timedelta(microseconds=1))
+        return 200, {}, json.dumps({"content": [person()]}).encode()
+
+    with observe(row), patch("leadzen.ai.pinned_request", side_effect=response), patch("openoutfind.discovery.embed_profile", return_value=np.zeros(384)), patch("openoutfind.core.ml.qualifier.qualify_with_llm", return_value=(1, "Matches target")):
+        result = run({"count": 1, "emails": False, "audience": ""}, current())
+    assert not result["partial"], result
+    assert result["discovery"]["counts"]["produced"] == 1
+
+
+def test_stop_after_paid_email_keeps_the_address(ark_client):
+    from leadzen.ai_ark import enrich
+    from leadzen.discovery_progress import observe, current
+    from leadzen.config.models import ChatRun, DiscoveryLookup
+    from openoutfind.crm.models import Lead, Deal, DealState
+    row = start(ark_client, emails=True)
+    lead = Lead.objects.create(profile_url=person()["link"]["linkedin"])
+    Deal.objects.create(lead=lead, state=DealState.QUALIFIED)
+    result = {**person(), "email": {"state": "DONE", "output": [{"address": "dentist@example.com", "found": True, "status": "VALID", "domainType": "SMTP", "free": False, "generic": False}]}}
+
+    def response(*args, **kwargs):
+        ChatRun.objects.filter(pk=row.pk).update(cancel_requested=True)
+        return 200, {}, json.dumps(result).encode()
+
+    with observe(row), patch("leadzen.ai.pinned_request", side_effect=response), pytest.raises(PermissionError):
+        enrich(current(), lead)
+    lead.refresh_from_db()
+    assert lead.email == "dentist@example.com"
+    assert DiscoveryLookup.objects.get().email_status == "valid"
+
+
+def test_changing_lead_count_does_not_rebuy_earlier_profiles(ark_client):
+    from leadzen.ai_ark import search, query_digest, search_filters
+    from leadzen.discovery_progress import observe, current
+    from leadzen.config.models import DiscoverySearch, DiscoverySession, ChatRun
+    first = start(ark_client, count=2)
+    legacy = DiscoverySession.objects.create(run=ChatRun.objects.create(thread=first.thread, actor_id=first.actor_id, request_id=uuid.uuid4(), status="succeeded"), goal=1, action={})
+    DiscoverySearch.objects.create(session=legacy, query_hash=query_digest({**search_filters(AUDIENCE), "size": 2}), page=0, size=2, credits="1", state="terminated")
+    with observe(first), patch("leadzen.ai.pinned_request", return_value=(200, {}, json.dumps({"content": [person()]}).encode())) as network:
+        search(current())
+    body = json.loads(network.call_args.args[3])
+    assert body["size"] == 4 and body["page"] == 1  # Legacy page 0 of size 2 already bought profiles 0-1.
+    first.status = "succeeded"
+    first.save()
+    second = start(ark_client, count=1)
+    with observe(second), patch("leadzen.ai.pinned_request", return_value=(200, {}, json.dumps({"content": [person("other")]}).encode())) as network:
+        search(current())
+    body = json.loads(network.call_args.args[3])
+    assert body["size"] == 2 and body["page"] == 4  # Profiles 0-7 were bought; never page 0 again.
+
+
+def test_refused_request_leaves_no_uncertain_charge(ark_client):
+    from leadzen.ai_ark import search
+    from leadzen.discovery_progress import observe, current, credits
+    from leadzen.config.models import DiscoverySearch
+    row = start(ark_client)
+    with observe(row), patch("leadzen.ai_ark.effective", return_value=effective().__class__(**{**asdict(effective()), "lead_finder_provider": "bettercontact"})), patch("leadzen.ai.pinned_request") as network:
+        with pytest.raises(ValueError):
+            search(current())
+        assert not DiscoverySearch.objects.exists()
+        assert credits(current().session)["used"] == 0
+    network.assert_not_called()
+
+
+def test_failed_run_is_not_described_as_finished(ark_client):
+    from leadzen.ai_ark import run
+    from leadzen.discovery_progress import observe, current
+    row = start(ark_client)
+    with observe(row), patch("leadzen.ai.pinned_request", return_value=(402, {}, b"")):
+        result = run({"count": 1, "emails": False, "audience": ""}, current())
+    assert result["partial"]
+    assert "finished" not in result["note"] and "stopped before finishing" in result["note"]

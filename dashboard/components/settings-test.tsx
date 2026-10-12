@@ -33,6 +33,7 @@ export function SettingsTest({
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const submitting = useRef(false);
   const button = useRef<HTMLButtonElement>(null);
   const previouslyOpen = useRef(false);
@@ -53,18 +54,28 @@ export function SettingsTest({
     submitting.current = true;
     setBusy(true);
     setError("");
+    setNotice("");
     try {
       await api("onboarding/test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ kind }),
       });
-      saved(await api<WorkspaceSettings>("settings"));
-      close();
     } catch (caught) {
       setError(
         caught instanceof Error ? caught.message : "Unable to test connection",
       );
+      submitting.current = false;
+      setBusy(false);
+      return;
+    }
+    try {
+      saved(await api<WorkspaceSettings>("settings"));
+      close();
+    } catch {
+      // The test itself passed; only the follow-up refresh failed.
+      setOpen(false);
+      setNotice("Connection test passed. Reload to see the updated status.");
     } finally {
       submitting.current = false;
       setBusy(false);
@@ -101,11 +112,17 @@ export function SettingsTest({
         aria-expanded={open}
         onClick={() => {
           setError("");
+          setNotice("");
           setOpen(!open);
         }}
       >
         Test
       </button>
+      {notice && (
+        <p className="settings-help" role="status">
+          {notice}
+        </p>
+      )}
       {open && (
         <div className="central-test-confirm">
           <p>{testDetails[kind]}</p>

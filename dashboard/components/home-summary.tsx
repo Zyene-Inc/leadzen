@@ -24,7 +24,7 @@ export type HomeSummary = {
     checked_at: string | null;
     synthetic: boolean;
   };
-  target: { summary: string; audience: Audience | null; country_name: string };
+  target: { summary: string; audience: Audience | null; country_name: string; place?: string };
   recent_activity: {
     id: number;
     name: string;
@@ -150,7 +150,7 @@ export function HomeSummaryPanel({
               <>
                 <h3>{audience.industry?.replace(/\s+/g, " ").trim()}</h3>
                 <p className="home-target-location">
-                  {home.target.country_name}
+                  {home.target.place || home.target.country_name}
                   {audience.company_size !== "any"
                     ? ` · ${audience.company_size} employees`
                     : " · Any company size"}

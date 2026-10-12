@@ -247,8 +247,13 @@ def campaign(request, campaign_id):
     status = "archived" if request.method == "DELETE" else body.get("status")
     if status not in {"active", "paused", "archived"} or row.status == "archived":
         return error("Choose active, paused or archived status")
+    resumed = status == "active" and row.status != "active"
     row.status = status
     row.save(update_fields=["status"])
+    if resumed and not row.autopilot_run_id:
+        # Like start_campaign: reactivating never restores an older automatic approval.
+        row.followup_approval = {}
+        row.save(update_fields=["followup_approval"])
     if status == "archived":
         row.recipients.update(status="stopped")
         row.followup_approval = {}
@@ -391,6 +396,12 @@ def approved_job_guard(job):
         raise PermissionError("The reviewed campaign, identity or recipient permission changed")
 
 
+def replied_after_outreach(deal):
+    """An inbound message from this address after our first email, in any thread."""
+    first = Message.objects.filter(direction=Direction.OUTBOUND, to_address__iexact=deal.lead.email).order_by("recorded_at").values_list("recorded_at", flat=True).first()
+    return first is not None and Message.objects.filter(direction=Direction.INBOUND, from_address__iexact=deal.lead.email, recorded_at__gte=first).exists()
+
+
 def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, automatic=False):
     """One bounded due-send pass; queued work is rechecked at each transport call."""
     from cold_outreach.emails import sender
@@ -449,7 +460,7 @@ def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, au
             from leadzen.transports import sync_replies_strict
             sync_replies_strict(box, classify=False) if automatic else sync_replies_strict(box)
             deal.refresh_from_db()
-            if Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists() or Suppression.objects.filter(email__iexact=deal.lead.email).exists():
+            if Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists() or Suppression.objects.filter(email__iexact=deal.lead.email).exists() or (recipient.next_step > 0 and replied_after_outreach(deal)):
                 recipient.status = "stopped"
                 recipient.save(update_fields=["status"])
                 continue
@@ -501,7 +512,8 @@ def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, au
                 if (campaign.status != "active" or any(getattr(campaign, key) != value for key, value in frozen_content.items())
                         or deal.state == DealState.COMPLETED or ContactPreferences.objects.filter(lead=deal.lead, deleted_at__isnull=False).exists()
                         or Suppression.objects.filter(email__iexact=deal.lead.email).exists()
-                        or (deal.thread_id and Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists())):
+                        or (deal.thread_id and Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists())
+                        or (recipient.next_step > 0 and replied_after_outreach(deal))):
                     raise PermissionError("Campaign or recipient permission changed before sending")
                 if campaign.category != "outreach" and not ContactPreferences.objects.filter(lead=deal.lead, opted_in=True).exists():
                     raise PermissionError("Recipient opt-in was withdrawn")

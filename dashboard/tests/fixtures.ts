@@ -12,7 +12,7 @@ export const settings: WorkspaceSettings = {
     identity: { operator_name: "Synthetic user", operator_email: "user@example.com", operator_country_code: "US", country_name: "United States" },
     product: { product_name: "Synthetic product", product_docs: "A useful product for practices" },
     booking_link: "https://example.com/book",
-    target: { summary: "Practice owners", audience: { industry: "Dental practices", country: "US", company_size: "any", roles: ["Owner"], seniority: ["owner"], instructions: "Decision makers" }, country_name: "United States", accepted_legal_notice: true },
+    target: { summary: "Practice owners", audience: { industry: "Dental practices", country: "US", region: "", company_size: "any", roles: ["Owner"], seniority: ["owner"], instructions: "Decision makers" }, country_name: "United States", accepted_legal_notice: true },
     countries: [{ code: "US", name: "United States" }],
     checks: { ai: { connected: false }, discovery: { connected: false }, mailbox: { connected: false } },
     data: { engine: "SQLite", path: "/synthetic/workspace/db.sqlite3", size_bytes: 1024, combined: true },

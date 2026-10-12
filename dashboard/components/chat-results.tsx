@@ -200,6 +200,18 @@ export function ApprovalCard({
           <strong>Audience:</strong> {text(preview.audience)}
         </p>
       )}
+      {!!text(preview.search) && (
+        <p>
+          <strong>Provider search:</strong>{" "}
+          {preview.changes_search === true && <span className="badge">Changed for this request</span>}{" "}
+          {text(preview.search)}
+        </p>
+      )}
+      {!!text(preview.qualification) && (
+        <p>
+          <strong>Qualification only:</strong> {text(preview.qualification)}
+        </p>
+      )}
       {!!preview.from_address && (
         <p>
           <strong>Sender:</strong> {text(preview.from_address)}

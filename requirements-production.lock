@@ -1450,9 +1450,9 @@ pydantic==2.13.5 \
     #   openoutsend
     #   pydantic-ai-slim
     #   pydantic-graph
-pydantic-ai-slim==2.52.0 \
-    --hash=sha256:02b546f18ad75aca5fe4b1058df19ca293c4a75e64962af23b99386d0fa34fdf \
-    --hash=sha256:87819dbc35c5a0a75d59d0f2c3afe7dde16c0455e6716b816055e6770b417a83
+pydantic-ai-slim==2.53.0 \
+    --hash=sha256:37539693ff944dca2ee1ad30ad3c2b5c8adfdb9f54808767098dbc5410130a9b \
+    --hash=sha256:979fb5553cc32baf9f3aaeff7a83c19d6ce6d19c0284f5cd54087bc9870b2522
     # via
     #   leadzen (pyproject.toml)
     #   openoutfind
@@ -1581,9 +1581,9 @@ pydantic-core==2.46.5 \
     # via
     #   cohere
     #   pydantic
-pydantic-graph==2.52.0 \
-    --hash=sha256:55359f5d5cc2b9351f7d1c20b95e588b53f7abacc64745d81eae664420445399 \
-    --hash=sha256:ee66b35e48671804ef0f72831dd0087efe4bfafc9747f122e6ef9dc1778a7cd0
+pydantic-graph==2.53.0 \
+    --hash=sha256:28f05d5f66f5f6b11ef8f1c263f93781271b3af77ef3b313cc51b88a2e33445a \
+    --hash=sha256:48d70fd7affe15f33773a74b9657ab9442569725d9e67263ac3a3b95de89f714
     # via pydantic-ai-slim
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \

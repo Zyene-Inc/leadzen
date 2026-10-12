@@ -181,3 +181,26 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Review contro
     expect(load).toHaveBeenCalledTimes(2);
   });
 });
+
+describe("Connection test refresh", () => {
+  test("a passed test is not reported as failed when the settings refresh fails", async () => {
+    call.mockResolvedValueOnce({ ok: true }).mockRejectedValueOnce(new Error("Request failed. Please try again."));
+    const saved = vi.fn();
+    render(<SettingsTest kind="ai" data={settings} disabled={false} saved={saved} />);
+    await userEvent.click(screen.getByRole("button", { name: "Test" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm test" }));
+    expect(await screen.findByText("Connection test passed. Reload to see the updated status.")).toBeTruthy();
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.queryByText("Unable to test connection")).toBeNull();
+    expect(saved).not.toHaveBeenCalled();
+    expect(call.mock.calls.map(([path]) => path)).toEqual(["onboarding/test", "settings"]);
+  });
+  test("a failed test still reports its error", async () => {
+    call.mockRejectedValueOnce(new Error("Invalid API key"));
+    render(<SettingsTest kind="ai" data={settings} disabled={false} saved={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: "Test" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm test" }));
+    expect((await screen.findByRole("alert")).textContent).toBe("Invalid API key");
+    expect(call).toHaveBeenCalledOnce();
+  });
+});

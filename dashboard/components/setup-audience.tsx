@@ -58,6 +58,24 @@ export function SetupAudience({
           value={audience.country}
           onChange={(country) => update({ country })}
         />
+        <div className="secret-field">
+          <label htmlFor="target-region">State or city (optional)</label>
+          <input
+            id="target-region"
+            className="input"
+            maxLength={120}
+            pattern="[^;\t]*"
+            title="Use one place without semicolons or tabs."
+            value={audience.region ?? ""}
+            onChange={(event) => update({ region: event.target.value })}
+            placeholder="Texas"
+            aria-describedby="target-region-help"
+          />
+          <span className="settings-help" id="target-region-help">
+            Narrows the provider search, e.g. Texas or Austin, Texas. Leave
+            blank for the whole country.
+          </span>
+        </div>
         <label>
           Company size
           <select

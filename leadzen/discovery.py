@@ -129,7 +129,7 @@ def progress_payload(session):
             "phase": session.phase, "current_activity": activity,
             "pause_requested": session.pause_requested, "stop_requested": session.run.cancel_requested,
             "goal": {"count": session.goal, "unit": session.unit}, "counts": statistics, "credits": credits(session),
-            "target": session.target, "synthetic": session.synthetic,
+            "target": session.target, "synthetic": session.synthetic, "search_scope": session.action.get("search_scope"),
             "goal_reached": statistics["produced"] >= session.goal,
             "approval_expires_at": session.run.approval_expires_at.isoformat() if session.run.approval_expires_at else None,
             "events": [{"id": e.pk, "kind": e.kind, "data": e.data, "created_at": e.created_at.isoformat()} for e in reversed(events)],

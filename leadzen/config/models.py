@@ -360,6 +360,22 @@ class DiscoveryCandidate(models.Model):
         constraints = [models.UniqueConstraint(fields=["session", "source_id"], name="discovery_candidate_unique")]
 
 
+class SearchPlan(models.Model):
+    """BetterContact's learned search state for one target, archived while inactive.
+
+    The finder keeps one global frontier. LeadZen switches it per target so a new
+    Target searches for its own people and an earlier Target's learning is restored.
+    """
+    fingerprint = models.CharField(max_length=64, unique=True)
+    target = models.TextField(default="")
+    spec = models.JSONField(default=dict)
+    state = models.JSONField(default=dict)
+    active = models.BooleanField(default=False)
+    activated_at = models.DateTimeField(null=True, blank=True)
+    archived_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class DiscoverySearch(models.Model):
     """Paid profile-search reservation, persisted before any network write."""
     session = models.OneToOneField(DiscoverySession, on_delete=models.CASCADE, related_name="profile_search")

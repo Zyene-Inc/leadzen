@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { DiscoveryActivityFeed, DiscoveryCandidateList, DiscoveryCurrentActivity } from "@/components/discovery-activity";
-import { recentDiscoveryCandidates, statusLabel, type DiscoveryProgress } from "@/lib/discovery";
+import { DiscoveryActivityFeed, DiscoveryCandidateList, DiscoveryCurrentActivity, DiscoverySearchScope } from "@/components/discovery-activity";
+import { creditLabel, recentDiscoveryCandidates, statusLabel, type DiscoveryProgress } from "@/lib/discovery";
 
 export function ChatDiscoveryCard({ data }: { data: DiscoveryProgress }) {
   const candidates = recentDiscoveryCandidates(data);
@@ -23,8 +23,9 @@ export function ChatDiscoveryCard({ data }: { data: DiscoveryProgress }) {
         <div><dt>Qualified</dt><dd>{data.counts.qualified}</dd></div>
         <div><dt>Evaluated</dt><dd>{data.counts.evaluated}</dd></div>
         <div><dt>Rejected</dt><dd>{data.counts.rejected}</dd></div>
-        <div><dt>Email credits used</dt><dd>{data.credits.used === null ? "Awaiting provider report" : data.credits.used}</dd></div>
+        <div><dt>{creditLabel(data)} used</dt><dd>{data.credits.used === null ? "Awaiting provider report" : data.credits.used}</dd></div>
       </dl>
+      <DiscoverySearchScope scope={data.search_scope} />
       {typeof remaining === "number" && remaining > 0 && <p className="settings-help">{remaining} discovered {remaining === 1 ? "profile has" : "profiles have"} not received a qualification verdict yet.</p>}
       {candidates.length > 0 && (
         <DiscoveryCandidateList candidates={candidates} label="Recent discovery candidates" />

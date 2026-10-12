@@ -48,6 +48,8 @@ def discover(run, *, emails=False, source_ids=None, new_source_after=None):
         if source_ids:
             action["source_identity"] = selected_identity(source_ids)
         if not emails:
+            from leadzen.lead_finder import search_scope
+            action["search_scope"] = search_scope(args)
             from openoutfind.crm.models import Lead as Source
             action["new_source_after"] = (new_source_after if new_source_after is not None else
                 Source.objects.order_by("-pk").values_list("pk", flat=True).first() or 0)

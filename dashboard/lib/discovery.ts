@@ -21,6 +21,8 @@ export type DiscoveryEvent = {
   created_at: string;
   display_time?: string;
 };
+/** What the provider search uses versus what only AI qualification checks. */
+export type SearchScope = { changes_search: boolean; search: string; qualification: string };
 export type DiscoveryProgress = {
   id: string;
   thread_id: string;
@@ -42,6 +44,8 @@ export type DiscoveryProgress = {
     reported: number;
     pending: number;
     approved: number;
+    /** "ai_ark" totals include paid profile search; other providers bill emails only. */
+    provider?: string;
   };
   target: string;
   synthetic: boolean;
@@ -53,6 +57,8 @@ export type DiscoveryProgress = {
   candidates?: Candidate[];
   current_activity?: Pick<DiscoveryEvent, "kind" | "data" | "created_at"> | null;
   phase?: string;
+  /** Absent or null on runs saved before search scopes were recorded. */
+  search_scope?: SearchScope | null;
 };
 export type EmailReview = {
   provider_name?: string;
@@ -60,6 +66,10 @@ export type EmailReview = {
   revision: string;
   note: string;
 };
+export const creditLabel = (data: Pick<DiscoveryProgress, "credits">) =>
+  data.credits.provider === "ai_ark" ? "AI Ark credits" : "Email credits";
+export const approvedBudget = (data: Pick<DiscoveryProgress, "credits">) =>
+  `${data.credits.provider === "ai_ark" ? "Approved AI Ark budget (profile search + emails)" : "Approved email budget"}: ${data.credits.approved} credits.`;
 export const findingActive = (status: string) =>
   ["queued", "running"].includes(status);
 

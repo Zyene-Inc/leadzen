@@ -8,10 +8,12 @@ import { useEffect, useRef, useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Icon } from "@/components/icon";
 import DiscoveryEmailReview from "@/components/discovery-email-review";
-import { DiscoveryActivityFeed, DiscoveryCandidateList, DiscoveryCurrentActivity } from "@/components/discovery-activity";
+import { DiscoveryActivityFeed, DiscoveryCandidateList, DiscoveryCurrentActivity, DiscoverySearchScope } from "@/components/discovery-activity";
 import { api } from "@/lib/client-api";
 import type { Account } from "@/lib/auth";
 import {
+  approvedBudget,
+  creditLabel,
   findingActive,
   candidateWorkspaceLink,
   recentDiscoveryCandidates,
@@ -214,12 +216,13 @@ function ProgressSummary({ data }: { data: DiscoveryProgress }) {
           </div>
         ))}
         <div>
-          <dt>Email credits used</dt>
+          <dt>{creditLabel(data)} used</dt>
           <dd>
             {data.credits.used === null ? "Awaiting report" : data.credits.used}
           </dd>
         </div>
       </dl>
+      <DiscoverySearchScope scope={data.search_scope} />
       {data.credits.used === null && (
         <p className="settings-help">
           {data.credits.reported} credits confirmed so far. An accepted lookup
@@ -233,8 +236,7 @@ function ProgressSummary({ data }: { data: DiscoveryProgress }) {
         </p>
       )}
       <p className="settings-help">
-        Approved email budget: {data.credits.approved} credits. AI usage is
-        separate. No outreach emails are sent by this run.
+        {approvedBudget(data)} AI usage is separate. No outreach emails are sent by this run.
       </p>
     </section>
   );

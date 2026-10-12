@@ -238,3 +238,67 @@ def test_expired_worker_recovery_preserves_uncertain_send_and_does_not_replay(co
     job.refresh_from_db(); recipient.refresh_from_db()
     assert job.status == "failed" and recipient.status == "review"
     assert Message.objects.count() == 1
+
+
+def test_unsubscribe_button_in_new_thread_stops_automatic_followups_without_ai(connected):
+    from leadzen.transports import sync_replies_strict
+    from cold_outreach.emails.models import FolderCoverage
+    from cold_outreach.emails.sender import unsubscribe_address
+    campaign, recipient = setup_sequence(connected)
+    box = Mailbox.objects.get()
+    Message.objects.create(mailbox=box, direction=Direction.INBOUND, message_id="unsub-button", from_address=recipient.deal.lead.email, to_address=unsubscribe_address(box.from_address), subject="Unsubscribe", body_text="", kind="")
+    FolderCoverage.objects.create(mailbox=box, folder="INBOX", synced_at=timezone.now() + timedelta(seconds=5))
+    with patch("cold_outreach.emails.sync.mirror"), patch("cold_outreach.emails.classify.classify_pending") as classify:
+        sync_replies_strict(box, classify=False)
+    classify.assert_not_called()
+    assert Suppression.objects.filter(email__iexact=recipient.deal.lead.email).exists()
+    with patch("leadzen.followups.within_window", return_value=True), patch("cold_outreach.core.sending_window.within_sending_window", return_value=True), patch("leadzen.transports.sync_replies_strict"), patch("cold_outreach.emails.sender._deliver") as deliver:
+        assert run_due() == 0
+    deliver.assert_not_called()
+
+
+def test_reply_in_new_thread_stops_automatic_followup(connected):
+    campaign, recipient = setup_sequence(connected)
+    Message.objects.create(mailbox=Mailbox.objects.get(), direction=Direction.INBOUND, message_id="fresh-thread-reply", from_address=recipient.deal.lead.email.upper(), to_address=campaign.from_address, subject="Question", body_text="Can we talk?", kind="")
+    with patch("leadzen.followups.within_window", return_value=True), patch("cold_outreach.core.sending_window.within_sending_window", return_value=True), patch("leadzen.transports.sync_replies_strict"), patch("cold_outreach.emails.sender._deliver") as deliver:
+        assert run_due() == 0
+    deliver.assert_not_called()
+    recipient.refresh_from_db()
+    assert recipient.status == "stopped" and recipient.next_step == 1
+
+
+def test_api_resume_does_not_restore_automatic_approval(connected):
+    campaign, recipient = setup_sequence(connected)
+    for status in ("paused", "active"):
+        assert connected.put(f"/api/campaigns/{campaign.pk}", json.dumps({"status": status}), content_type="application/json").status_code == 200
+    campaign.refresh_from_db()
+    assert campaign.status == "active" and campaign.followup_approval == {}
+    with patch("leadzen.followups.within_window", return_value=True), patch("cold_outreach.core.sending_window.within_sending_window", return_value=True), patch("leadzen.transports.sync_replies_strict"), patch("cold_outreach.emails.sender._deliver") as deliver:
+        assert run_due() == 0
+    deliver.assert_not_called()
+
+
+@pytest.mark.parametrize("evidence", ["alias", "stop", "kind"])
+def test_later_opt_out_keeps_a_manual_block(connected, evidence):
+    from leadzen.suppression import block_address, opt_out_evidence
+    from cold_outreach.emails.sender import unsubscribe_address
+    campaign, recipient = setup_sequence(connected)
+    email, box = recipient.deal.lead.email, Mailbox.objects.get()
+    block_address(email)
+    assert not opt_out_evidence(email)
+    Message.objects.create(mailbox=box, direction=Direction.INBOUND, message_id=f"later-{evidence}", from_address=email,
+                           to_address=unsubscribe_address(box.from_address) if evidence == "alias" else campaign.from_address,
+                           subject="Re: Hello", body_text="STOP" if evidence == "stop" else "", kind="opt_out" if evidence == "kind" else "")
+    assert opt_out_evidence(email)
+    assert Suppression.objects.get(email=email).reason == "Manually suppressed"
+
+
+def test_unrelated_suppression_keeps_campaign_approval_valid(connected):
+    from leadzen.chat.engine import snapshot
+    campaign, recipient = setup_sequence(connected)
+    args = {"campaign_id": str(campaign.pk), "recipient_ids": [recipient.pk]}
+    before = snapshot("send_campaign", args, execution=True)
+    Suppression.objects.create(email="someone-else@example.com")
+    assert snapshot("send_campaign", args, execution=True) == before
+    Suppression.objects.create(email=recipient.deal.lead.email.upper())
+    assert snapshot("send_campaign", args, execution=True) != before

@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from pytz import country_names
+from leadzen.geo import countries
 
 from leadzen.accounts.models import LoginThrottle
 from leadzen.accounts.service import access, audit, email_address, error, payload, session_user
@@ -167,7 +168,7 @@ def state_payload(state, actor):
         checks[kind]["connected"] = checked(state, current, kind)
     config = SiteConfig.load()
     defaults = {"operator_name": actor.first_name, "operator_email": actor.email, "operator_country_code": config.operator_country_code or "US", "purpose": actor.leadzen_profile.purpose or "other", "workspace_name": actor.leadzen_profile.workspace_name, "product_name": "", "product_docs": config.product_docs, "booking_link": config.booking_link, "legacy_target": config.campaign_target, "discovery_enabled": True}
-    return {"draft": {**defaults, **state.draft}, "completed_steps": state.completed_steps, "checks": checks, "connections": _settings_payload(), "countries": [{"code": code, "name": name} for code, name in sorted(country_names.items(), key=lambda row: row[1])], "onboarded": actor.leadzen_profile.onboarding_completed_at is not None}
+    return {"draft": {**defaults, **state.draft}, "completed_steps": state.completed_steps, "checks": checks, "connections": _settings_payload(), "countries": countries(), "onboarded": actor.leadzen_profile.onboarding_completed_at is not None}
 
 
 def validate_booking_link(value):
@@ -220,15 +221,22 @@ def validate_step(step, values, state, settings):
         raise SettingsError("Choose distinct, single-line target roles")
     if not isinstance(seniority, list) or not seniority or any(not isinstance(level, str) or level not in SENIORITY for level in seniority) or len(set(seniority)) != len(seniority):
         raise SettingsError("Choose valid seniority levels")
-    normalized = {"industry": text(audience.get("industry"), "Industry", 300), "country": audience["country"], "company_size": audience["company_size"], "roles": roles, "seniority": seniority, "instructions": text(audience.get("instructions", ""), "Additional instructions", 5000, required=False)}
+    region = text(audience.get("region", ""), "State or city", 120, required=False)
+    if any(c in region for c in "\n\t;"):
+        raise SettingsError("Enter one state, region or city, such as Texas or Austin, Texas")
+    normalized = {"industry": text(audience.get("industry"), "Industry", 300), "country": audience["country"], "region": region, "company_size": audience["company_size"], "roles": roles, "seniority": seniority, "instructions": text(audience.get("instructions", ""), "Additional instructions", 5000, required=False)}
     if values.get("confirmed") is not True or values.get("accepted_legal_notice") is not True:
         raise SettingsError("Review the target preview and confirm your authorization")
     return {"audience": normalized, "confirmed": True, "accepted_legal_notice": True}
 
 
-def target_preview(audience):
+def target_preview(audience, *, legacy=False):
+    from leadzen.geo import place
     size = "any company size" if audience["company_size"] == "any" else f"{audience['company_size']} employees"
-    return f"Find {', '.join(audience['roles'])} working at {audience['industry']} in {country_names[audience['country']]}, {size}. Seniority: {', '.join(audience['seniority'])}. {audience['instructions']}".strip()
+    # Targets saved before state/city support used pytz country names; `legacy`
+    # recognizes them so an existing saved Target stays active.
+    where = country_names[audience["country"]] if legacy else place(audience)
+    return f"Find {', '.join(audience['roles'])} working at {audience['industry']} in {where}, {size}. Seniority: {', '.join(audience['seniority'])}. {audience['instructions']}".strip()
 
 
 @csrf_exempt

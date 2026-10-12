@@ -6,6 +6,7 @@ from datetime import timedelta
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import F
 from pydantic import BaseModel, ConfigDict, Field
@@ -65,27 +66,95 @@ def contact_values(body, *, allow_empty_email=False):
 @require_http_methods(["POST"])
 @access(workspace=True)
 def add_contacts(request):
+    """Add or import contacts row by row and report what happened to each row.
+
+    One bad or repeated row never fails the others. An email already among the
+    active leads is skipped (never duplicated). A previously deleted contact is
+    restored instead of duplicated; a suppressed address stays do-not-contact.
+    """
     body = payload(request)
+    batch = isinstance(body, dict) and "contacts" in body
     rows = body.get("contacts", [body])
-    if not isinstance(rows, list) or not 1 <= len(rows) <= 100 or any(not isinstance(row, dict) for row in rows):
+    if not isinstance(rows, list) or not 1 <= len(rows) <= 100:
         return error("Add between 1 and 100 contacts per import")
-    validated = [contact_values(row) for row in rows]
-    if len({values["email"] for values, _ in validated}) != len(validated):
-        return error("The import contains duplicate email addresses")
+    report = {"ids": [], "created": 0, "restored": 0, "do_not_contact": 0, "skipped": [], "duplicates": [], "failed": []}
+    seen = set()
     alias = Lead.objects.all().db
-    with transaction.atomic(using=alias):
-        if Lead.objects.filter(email__in=[v["email"] for v, _ in validated]).exists():
-            return error("A contact with one of these email addresses already exists. Edit that contact instead.", 409)
-        ids = []
-        for values, preferences in validated:
-            lead = Lead.objects.create(lead_id=f"manual-{uuid.uuid4().hex}", **values)
-            deal = Deal.objects.create(lead=lead, reason="Added by employee")
-            ContactPreferences.objects.create(lead=lead, **preferences)
-            if Suppression.objects.filter(email__iexact=lead.email).exists():
-                deal.state, deal.outcome = DealState.COMPLETED, Outcome.UNSUBSCRIBED
-                deal.save()
-            ids.append(deal.pk)
-    return JsonResponse({"ids": ids, "created": len(ids)}, status=201)
+    for number, row in enumerate(rows, start=1):
+        if not isinstance(row, dict):
+            report["failed"].append({"row": number, "email": "", "reason": "Not a contact record"})
+            continue
+        try:
+            values, preferences = contact_values(row)
+        except (ValueError, ValidationError) as exc:
+            reason = "; ".join(exc.messages) if isinstance(exc, ValidationError) else str(exc)
+            report["failed"].append({"row": number, "email": str(row.get("email", ""))[:320], "reason": reason})
+            continue
+        email = values["email"]
+        if email in seen:
+            report["duplicates"].append({"row": number, "email": email, "reason": "Repeated earlier in this import"})
+            continue
+        seen.add(email)
+        with transaction.atomic(using=alias):
+            matches = list(Lead.objects.filter(email__iexact=email).select_related("preferences").order_by("-pk"))
+            if any(not getattr(getattr(lead, "preferences", None), "deleted_at", None) for lead in matches):
+                report["skipped"].append({"row": number, "email": email, "reason": "Already in your leads"})
+                continue
+            suppressed = Suppression.objects.filter(email__iexact=email).exists()
+            if matches:
+                deal = restore_contact(matches[0], values, preferences, suppressed)
+                report["restored"] += 1
+            else:
+                lead = Lead.objects.create(lead_id=f"manual-{uuid.uuid4().hex}", **values)
+                deal = Deal.objects.create(lead=lead, reason="Added by employee")
+                ContactPreferences.objects.create(lead=lead, **preferences)
+                if suppressed:
+                    deal.state, deal.outcome = DealState.COMPLETED, Outcome.UNSUBSCRIBED
+                    deal.save()
+                report["created"] += 1
+            report["do_not_contact"] += suppressed
+            report["ids"].append(deal.pk)
+    if not batch and not report["ids"]:
+        # The single-contact form keeps its direct, specific errors.
+        if report["skipped"]:
+            return error("A contact with this email address already exists. Edit that contact instead.", 409)
+        return error(report["failed"][0]["reason"])
+    report["summary"] = import_summary(report)
+    status = 201 if report["ids"] else 400 if report["failed"] and not report["skipped"] and not report["duplicates"] else 200
+    if status == 400:
+        report["error"] = "No contacts were imported. " + report["summary"]
+    return JsonResponse(report, status=status)
+
+
+def import_summary(report):
+    parts = [f"{report['created']} added", f"{report['restored']} added again"]
+    if report["skipped"]:
+        parts.append(f"{len(report['skipped'])} already in your leads")
+    if report["duplicates"]:
+        parts.append(f"{len(report['duplicates'])} repeated in the file")
+    if report["failed"]:
+        first = report["failed"][0]
+        parts.append(f"{len(report['failed'])} failed (row {first['row']}: {first['reason']})")
+    note = f" {report['do_not_contact']} on the do-not-contact list stay blocked." if report["do_not_contact"] else ""
+    return ", ".join(parts) + "." + note
+
+
+def restore_contact(lead, values, preferences, suppressed):
+    """Bring back a deleted contact rather than creating a second record for it."""
+    for key, value in values.items():
+        setattr(lead, key, value)
+    lead.save()
+    ContactPreferences.objects.update_or_create(lead=lead, defaults={**preferences, "deleted_at": None})
+    deal = Deal.objects.get(lead=lead)
+    if suppressed:
+        deal.state, deal.outcome = DealState.COMPLETED, Outcome.UNSUBSCRIBED
+    elif deal.state == DealState.COMPLETED and deal.outcome == Outcome.NOT_INTERESTED:
+        # Deleting set this outcome. Earlier emails or replies still block a new
+        # first email at send time (address-level checks), so history stays safe.
+        deal.state, deal.outcome = DealState.READY, ""
+    deal.reason = "Added again by employee"
+    deal.save()
+    return deal
 
 
 @csrf_exempt

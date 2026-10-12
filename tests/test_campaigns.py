@@ -34,13 +34,20 @@ def make(client, contact_id, category="outreach"):
     return response.json()["id"]
 
 
-def test_contact_import_is_atomic_and_suppression_survives_import(connected):
+def test_contact_import_keeps_valid_rows_and_suppression_survives_import(connected):
     Suppression.objects.create(email="stopped@example.com")
     deal_id = add(connected, "stopped@example.com")
     assert Deal.objects.get(pk=deal_id).state == "Completed"
     count = Lead.objects.count()
-    result = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "valid@example.com"}, {"email": "bad"}]}), content_type="application/json")
-    assert result.status_code == 400 and Lead.objects.count() == count
+    result = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "valid@example.com"}, {"email": "bad"}, {"email": "Valid@Example.com"}, {"email": "stopped@example.com"}]}), content_type="application/json")
+    assert result.status_code == 201, result.content
+    report = result.json()
+    assert report["created"] == 1 and Lead.objects.count() == count + 1
+    assert [f["row"] for f in report["failed"]] == [2] and [d["row"] for d in report["duplicates"]] == [3]
+    assert [s["row"] for s in report["skipped"]] == [4]
+    assert "1 added" in report["summary"] and "1 failed (row 2" in report["summary"]
+    every_bad = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "bad"}]}), content_type="application/json")
+    assert every_bad.status_code == 400 and "No contacts were imported" in every_bad.json()["error"]
 
 
 def test_sequence_enrollment_validation_and_no_duplicate_campaign(connected):
@@ -157,6 +164,16 @@ def test_delete_hides_contact_stops_queue_and_preserves_opt_out_history(connecte
         assert run_campaign(identifier, 1) == 0 and deliver.call_count == 1
     assert connected.delete(f"/api/contacts/{person}").status_code == 200
     assert connected.put(f"/api/contacts/{person}", data='{"email":"person@example.com"}', content_type="application/json").status_code == 404
+    # Adding the address again restores the same record; the opt-out still holds.
+    again = connected.post("/api/contacts", data='{"email":"person@example.com"}', content_type="application/json")
+    assert again.status_code == 201 and again.json()["ids"] == [person] and again.json()["restored"] == 1
+    assert Lead.objects.filter(email__iexact="person@example.com").count() == 1
+    deal = Deal.objects.get(pk=person)
+    assert deal.state == "Completed" and deal.outcome == "unsubscribed" and again.json()["do_not_contact"] == 1
+    assert connected.get("/api/leads").json()["total"] == 1
+    with patch("cold_outreach.core.sending_window.within_sending_window", return_value=True), patch("cold_outreach.emails.sender._deliver") as deliver:
+        assert run_campaign(identifier, 1) == 0
+        deliver.assert_not_called()
     assert connected.post("/api/contacts", data='{"email":"person@example.com"}', content_type="application/json").status_code == 409
 
 
@@ -391,3 +408,14 @@ def test_campaign_worker_claim_cannot_be_replayed_and_uses_saved_limit(connected
         assert sender.call_args.kwargs["recipient_ids"] == ids
     job.refresh_from_db()
     assert job.status == "succeeded"
+
+
+def test_deleted_contact_without_opt_out_can_be_added_again_as_ready(connected):
+    person = add(connected, "again@example.com")
+    assert connected.delete(f"/api/contacts/{person}").status_code == 200
+    response = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "again@example.com", "first_name": "Grace", "company": "New Co"}]}), content_type="application/json")
+    assert response.status_code == 201 and response.json()["restored"] == 1 and response.json()["ids"] == [person]
+    deal = Deal.objects.select_related("lead").get(pk=person)
+    assert deal.state == "Ready to Email" and deal.lead.first_name == "Grace" and deal.lead.company == "New Co"
+    assert not ContactPreferences.objects.get(lead=deal.lead).deleted_at
+    assert Lead.objects.filter(email__iexact="again@example.com").count() == 1

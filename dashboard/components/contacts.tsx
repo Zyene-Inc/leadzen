@@ -14,6 +14,9 @@ import { api } from "@/lib/client-api";
 import { emailLabel, leadFilters, leadStatus, type Contact } from "@/lib/leads";
 import { LeadLinks } from "@/components/lead-links";
 
+type ImportRow = { row: number; email: string; reason: string };
+type ImportReport = { ids: number[]; created: number; restored: number; do_not_contact: number; skipped: ImportRow[]; duplicates: ImportRow[]; failed: ImportRow[]; summary: string };
+
 function csvRows(source: string) {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -86,6 +89,7 @@ export default function Contacts({ user }: { user: Account }) {
   const [deleting, setDeleting] = useState<number | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [csv, setCsv] = useState("");
+  const [report, setReport] = useState<ImportReport | null>(null);
   const [error, setError] = useState("");
   const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
@@ -166,17 +170,19 @@ export default function Contacts({ user }: { user: Account }) {
       "Contact saved.",
     );
   }
-  function importCsv() {
+  async function importCsv() {
+    let contacts: Record<string, unknown>[];
+    try { contacts = csvRows(csv); } catch (caught) { setError(caught instanceof Error ? caught.message : "Invalid CSV"); return; }
+    if (submitting.current) return;
+    submitting.current = true; setBusy(true); setError(""); setNotice(""); setReport(null);
     try {
-      void mutate(
-        "contacts",
-        "POST",
-        { contacts: csvRows(csv) },
-        "Contacts imported.",
-      );
+      // Each row is handled on its own; the server reports every skipped or failed row.
+      const result = await api<ImportReport>("contacts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contacts }) });
+      setReport(result); setNotice(`Import finished: ${result.summary ?? "done."}`);
+      if (result.ids?.length) { setCsv(""); await load(); }
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Invalid CSV");
-    }
+      setError(caught instanceof Error ? caught.message : "Unable to import contacts");
+    } finally { submitting.current = false; setBusy(false); }
   }
   return (
     <div className="shell">
@@ -297,8 +303,10 @@ export default function Contacts({ user }: { user: Account }) {
           <summary>Import CSV</summary>
           <p className="settings-help">
             Columns: email, first_name, last_name, company, title, opted_in
-            (true/false), consent_note. Up to 100 contacts per import; duplicate
-            emails are rejected.
+            (true/false), consent_note. Up to 100 contacts per import. Each row
+            is checked on its own: invalid or repeated rows and emails already in
+            your leads are skipped, and previously deleted contacts are added
+            back. Do-not-contact addresses stay blocked.
           </p>
           <textarea
             className="input textarea"
@@ -314,11 +322,19 @@ export default function Contacts({ user }: { user: Account }) {
               type="button"
               className="button"
               disabled={busy || !csv.trim()}
-              onClick={importCsv}
+              onClick={() => void importCsv()}
             >
               Import contacts
             </button>
           </div>
+          {report && [...(report.failed ?? []), ...(report.duplicates ?? []), ...(report.skipped ?? [])].length > 0 && (
+            <div className="import-report" aria-label="Rows not imported">
+              <strong>Rows not imported</strong>
+              <ul>{[...report.failed.map((r) => ({ ...r, kind: "Failed" })), ...report.duplicates.map((r) => ({ ...r, kind: "Repeated" })), ...report.skipped.map((r) => ({ ...r, kind: "Skipped" }))]
+                .sort((a, b) => a.row - b.row)
+                .map((r) => <li key={`${r.kind}-${r.row}`}>Row {r.row}{r.email ? ` · ${r.email}` : ""}: {r.kind}. {r.reason}</li>)}</ul>
+            </div>
+          )}
         </details>
         {selected.length > 0 && <div className="selection-toolbar"><strong>{selected.length} selected</strong><button className="button primary" disabled={busy} onClick={() => void prepareOutreach()}>Prepare outreach</button><AskLeadZen actorId={user.id} context={{ selectedLeadIds: selected, workspacePath: "/contacts" }} /><button className="button ghost" onClick={() => setSelected([])}>Clear</button></div>}
         <section className="panel">

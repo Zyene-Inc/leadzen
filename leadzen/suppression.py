@@ -10,6 +10,20 @@ def record_payload(record):
     return {"id": record.pk, "email": record.email, "reason": record.reason, "suppressed_at": record.suppressed_at.isoformat()}
 
 
+def opt_out_evidence(address):
+    """A suppression keeps its first reason, so check what later arrived as well."""
+    from cold_outreach.emails.delivery_policy import address_is_dead
+    from cold_outreach.emails.models import DeliveryEvent, Direction, Kind, Message
+    from leadzen.outreach import EXACT_STOP
+    inbound = Message.objects.filter(direction=Direction.INBOUND, from_address__iexact=address)
+    if inbound.filter(kind=Kind.OPT_OUT).exists() or inbound.filter(to_address__icontains="+unsub@").exists():
+        return True
+    if any(EXACT_STOP.fullmatch(body or "") for body in inbound.values_list("body_text", flat=True).iterator()):
+        return True
+    bounces = DeliveryEvent.objects.filter(message__to_address__iexact=address, status=DeliveryEvent.Status.BOUNCED)
+    return any(address_is_dead(status) for status in bounces.values_list("enhanced_status", flat=True))
+
+
 def block_address(address, reason="Manually suppressed"):
     email = email_address(address)
     if not isinstance(reason, str) or len(reason) > 200 or any(ord(c) < 32 for c in reason):

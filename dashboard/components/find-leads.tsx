@@ -120,8 +120,8 @@ function DiscoveryOptions({
           className="button"
           type="button"
           aria-label="Decrease lead count"
-          disabled={!valid || count <= 1}
-          onClick={() => setQuantity(String(count - 1))}
+          disabled={!Number.isInteger(count) || count <= 1}
+          onClick={() => setQuantity(String(Math.min(count - 1, maximum)))}
         >
           −
         </button>
@@ -242,8 +242,9 @@ function DiscoveryReview({
         {busy ? "Starting…" : "Start Finding"}
       </button>
       <p className="settings-help">
-        Starting approves only the discovery choices and email-credit limit
-        shown above.
+        {profileBudget
+          ? `Starting approves only the discovery choices and the ${providerName} profile-search and email-credit limit shown above.`
+          : "Starting approves only the discovery choices and email-credit limit shown above."}
       </p>
     </section>
   );

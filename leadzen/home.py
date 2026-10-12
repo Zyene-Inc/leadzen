@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from pytz import country_names
+from leadzen.geo import countries, country_name, place
 
 from cold_outreach.emails.models import Direction, Message
 from cold_outreach.leads.models import Lead as Contact
@@ -24,12 +25,14 @@ def current_target(config, state):
     # A partially edited wizard must not masquerade as the active engine target.
     audience = state.draft.get("audience") if state else None
     try:
-        if not audience or target_preview(audience) != config.campaign_target:
+        if not audience or (config.campaign_target != target_preview(audience)
+                            and (audience.get("region") or config.campaign_target != target_preview(audience, legacy=True))):
             audience = None
     except (KeyError, TypeError):
         audience = None
     return {"summary": config.campaign_target, "audience": audience,
-            "country_name": country_names.get(audience["country"], "") if audience else ""}
+            "country_name": country_name(audience["country"]) if audience and audience.get("country") in country_names else "",
+            "place": place(audience) if audience and audience.get("country") in country_names else ""}
 
 
 def summary():
@@ -87,4 +90,4 @@ def target(request):
     config = SiteConfig.load()
     state = OnboardingState.objects.filter(pk=1).first()
     result = current_target(config, state)
-    return JsonResponse({**result, "countries": [{"code": code, "name": name} for code, name in sorted(country_names.items(), key=lambda row: row[1])], "accepted_legal_notice": config.accepted_legal_notice})
+    return JsonResponse({**result, "countries": countries(), "accepted_legal_notice": config.accepted_legal_notice})

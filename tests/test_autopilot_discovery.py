@@ -50,6 +50,10 @@ def test_daily_goal_ignores_old_backlog_and_only_qualifies_newly_discovered_prof
     run = AutopilotRun.objects.create(policy=p, actor_id=p.actor_id, workday=NOW.date(),
         checkpoint={"contact_limit": 1}, deadline_at=NOW + timedelta(minutes=12))
     baseline = Lead.objects.order_by("-pk").first().pk
+    from leadzen import search_plan
+    with patch("django.utils.timezone.now", return_value=NOW):
+        # The frontier below belongs to the saved target's active search plan.
+        search_plan.activate(search_plan.spec({"audience": ""}))
     node = QueryNode.objects.create(token_key="synthetic-today", country_code="US")
     qualifier = SimpleNamespace(is_cold=cold, n_real_positives=0, n_obs=0,
         acquisition_mode=lambda: "explore (BALD)", acquisition_scores=lambda embeddings: None,

@@ -116,6 +116,8 @@ class List(Arguments):
 class TargetOverrides(Arguments):
     audience: str = Field(default="", max_length=2000)
     similarLeadId: StrictInt | None = Field(default=None, gt=0)
+    country: str = Field(default="", pattern=r"^([A-Z]{2})?$")
+    region: str = Field(default="", max_length=120)
 
 
 class Find(Arguments):
@@ -130,6 +132,7 @@ class Target(Arguments):
     company_size: str
     roles: list[str] = Field(min_length=1, max_length=20)
     seniority: list[str] = Field(min_length=1, max_length=20)
+    region: str = Field(default="", max_length=120)
     instructions: str = Field(default="", max_length=5000)
 
 
@@ -297,6 +300,9 @@ def setup_session(row, tool, args):
         action.update(provider="ai_ark", credits=capability["credits"])
     if sources:
         action["source_identity"] = selected_identity(sources)
+    else:
+        from leadzen.lead_finder import search_scope
+        action["search_scope"] = search_scope(engine)
     DiscoverySession.objects.create(run=row, goal=engine["count"], unit="emails" if engine["emails"] else "leads", source_ids=sources, action=action, target=engine["audience"] or SiteConfig.load().campaign_target)
     # A free run needs the same bounded checkpoint lease as Workspace discovery.
     # Paid enrichment retains the human approval's original expiration.
@@ -314,7 +320,16 @@ def engine_find_args(args):
     if overrides.get("similarLeadId"):
         d = lead_rows([overrides["similarLeadId"]])[0]
         audience = (audience or SiteConfig.load().campaign_target) + f"\nFind similar roles and companies to this saved contact: {d.lead.title} at {d.lead.company}."
-    return {"count": args["count"], "emails": False, "audience": audience[:2000]}
+    result = {"count": args["count"], "emails": False, "audience": audience[:2000]}
+    if overrides.get("country") or overrides.get("region"):
+        from pytz import country_names
+        if not audience or overrides.get("country") not in country_names:
+            raise ValueError("Give the audience and its country with a location, or update the saved Target")
+        region = overrides.get("region", "").strip()
+        if any(c in region for c in "\n\t;"):
+            raise ValueError("Enter one state, region or city")
+        result["location"] = {"country": overrides["country"], "region": region}
+    return result
 
 
 def drafts_result(row, review):
@@ -439,7 +454,8 @@ def execute(row, tool, args):
         d = lead_rows([args["leadId"]])[0]
         if tool == "unsuppress_contact":
             records = Suppression.objects.filter(email__iexact=d.lead.email)
-            if not records.exists() or records.exclude(reason__startswith="Manually suppressed").exists():
+            from leadzen.suppression import opt_out_evidence
+            if not records.exists() or records.exclude(reason__startswith="Manually suppressed").exists() or opt_out_evidence(d.lead.email):
                 raise ValueError("Opt-outs and terminal provider suppressions cannot be removed here")
             records.delete()
             return {"id": d.pk, "suppression_removed": True, "note": "The manual address block was removed. Stopped sequences remain stopped; no sending was enabled.", "workspaceUrl": f"/contacts/{d.pk}"}

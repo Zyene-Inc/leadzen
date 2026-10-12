@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from pytz import country_names
+from leadzen.geo import countries, country_name
 
 from leadzen.accounts.service import access, payload
 from leadzen.config.models import OnboardingState, SiteConfig
@@ -42,11 +43,11 @@ def settings_payload(actor):
         size = None
     return {"workspace": {
         "identity": {"operator_name": config.operator_name, "operator_email": config.operator_email,
-                     "operator_country_code": config.operator_country_code, "country_name": country_names.get(config.operator_country_code, "")},
+                     "operator_country_code": config.operator_country_code, "country_name": country_name(config.operator_country_code) if config.operator_country_code in country_names else ""},
         "product": {"product_name": name, "product_docs": description}, "booking_link": config.booking_link,
         "sending_schedule": get_schedule(config),
         "target": {**current_target(config, state), "accepted_legal_notice": config.accepted_legal_notice},
-        "checks": checks, "countries": [{"code": code, "name": name} for code, name in sorted(country_names.items(), key=lambda row: row[1])],
+        "checks": checks, "countries": countries(),
         "data": {"engine": "SQLite", "path": str(path), "size_bytes": size, "combined": True},
     }}
 

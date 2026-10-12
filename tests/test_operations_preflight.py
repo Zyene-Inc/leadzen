@@ -192,7 +192,8 @@ def test_env_reader_rejects_permissive_modes_symlinks_duplicates_substitution(tm
 
 def test_old_schema_pending_is_never_release_pass(fixture):
     with sqlite3.connect(fixture["employee"]) as db:
-        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name='0020_lead_finder_provider'")
+        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name IN ('0020_lead_finder_provider', '0021_search_plan')")
+        db.execute("DROP TABLE leadzen_config_searchplan")
         db.execute("DROP TABLE leadzen_config_discoverysearch")
         db.execute("ALTER TABLE leadzen_config_runtimesettings DROP COLUMN lead_finder_provider")
     strict = fixture["run"]()
@@ -200,7 +201,7 @@ def test_old_schema_pending_is_never_release_pass(fixture):
     assert "SCHEMA_PENDING" in codes(strict)
     pending = fixture["run"]("allow-pending")
     assert pending["status"] == "BLOCKED"
-    assert pending["databases"][1]["checks"]["schema"]["pending_migrations"] == 1
+    assert pending["databases"][1]["checks"]["schema"]["pending_migrations"] == 2
 
 
 def test_migration_record_without_current_column_is_failure(fixture):
@@ -545,7 +546,7 @@ def test_real_graph_child_does_not_load_application_settings_or_touch_selected_d
     assert result.returncode == 0
     payload = json.loads(result.stdout)
     assert ["leadzen_accounts", "0004_accountprofile_tour_state"] in payload["leaves"]
-    assert ["leadzen_config", "0020_lead_finder_provider"] in payload["leaves"]
+    assert ["leadzen_config", "0021_search_plan"] in payload["leaves"]
     assert original.read_bytes() == b"not-a-database"
     assert str(original) not in result.stdout + result.stderr
 

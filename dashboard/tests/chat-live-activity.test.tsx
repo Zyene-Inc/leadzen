@@ -90,4 +90,13 @@ describe("Chat live activity", () => {
     expand(container);
     expect(screen.getByText("Needs attention")).toBeTruthy();
   });
+  it("labels AI Ark totals as provider credits, not email credits", () => {
+    const data = conversation();
+    data.discovery = { ...data.discovery!, credits: { used: 2, reported: 2, pending: 0, approved: 6, provider: "ai_ark" } };
+    const { container } = render(<ChatLiveActivity conversation={data} />);
+    expect(screen.getByText("AI Ark credits: 2 used · 6 approved")).toBeTruthy();
+    expand(container);
+    expect(screen.getByText("AI Ark credits used: 2")).toBeTruthy();
+    expect(screen.queryByText(/Email credits/)).toBeNull();
+  });
 });

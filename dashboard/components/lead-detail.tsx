@@ -10,6 +10,7 @@ import { LeadTimeline } from "@/components/lead-timeline";
 import type { Account } from "@/lib/auth";
 import { useWorkspaceRevision } from "@/lib/workspace-updates";
 import { api } from "@/lib/client-api";
+import { transientError } from "@/lib/api-errors";
 import { leadStatus, type Contact } from "@/lib/leads";
 
 type Review = { eligible: boolean; reason: string; revision: string; name: string; provider_name?: string };
@@ -105,7 +106,10 @@ export default function LeadDetail({ user, contactId }: { user: Account; contact
     try {
       const value = await api<Contact>(`contacts/${contactId}`, { signal });
       if (!signal?.aborted) { setLead(value); setError(""); }
-    } catch (caught) { if (!signal?.aborted) { setLead(null); setError(caught instanceof Error ? caught.message : "Unable to load lead"); } }
+    } catch (caught) {
+      // Keep the loaded contact through transient poll/refresh failures; a denial or another contact clears it.
+      if (!signal?.aborted) { setLead((current) => transientError(caught) && current?.id === contactId ? current : null); setError(caught instanceof Error ? caught.message : "Unable to load lead"); }
+    }
   }, [contactId]);
   useEffect(() => {
     const controller = new AbortController();

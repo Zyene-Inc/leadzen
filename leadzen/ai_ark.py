@@ -13,7 +13,6 @@ from urllib.parse import urlsplit
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
-from django.db.models import Max
 
 from leadzen.configuration import SettingsError, effective
 from leadzen.config.models import DiscoveryLookup, DiscoverySearch, OnboardingState, SiteConfig
@@ -44,7 +43,7 @@ def request(method, path, body=None, *, values=None, receipt=None):
         if path == "/v1/people":
             if not isinstance(receipt, DiscoverySearch) or not isinstance(body, dict):
                 raise PermissionError("Invalid search reservation")
-            digest = hashlib.sha256(json.dumps({k: v for k, v in body.items() if k != "page"}, sort_keys=True).encode()).hexdigest()
+            digest = query_digest({k: v for k, v in body.items() if k not in {"page", "size"}})
             if body.get("size") != receipt.size or body.get("page") != receipt.page or digest != receipt.query_hash:
                 raise PermissionError("The reserved search changed")
         else:
@@ -88,10 +87,9 @@ def credit_balance(values=None):
 
 def authorize(monitor):
     monitor.boundary()
-    from django.utils import timezone
     from leadzen.config.models import ChatRun
     row = ChatRun.objects.get(pk=monitor.session.run_id)
-    if not row.approval_expires_at or row.approval_expires_at <= timezone.now():
+    if not row.approval_expires_at or row.approval_expires_at <= monitor.started:
         raise PermissionError("The AI Ark approval expired")
     action = monitor.session.action
     from leadzen.lead_finder import budget
@@ -102,18 +100,37 @@ def authorize(monitor):
 
 
 def match(values, *, text=False):
-    return {"any": {"include": {"mode": "WORD", "content": values} if text else values}}
+    # SMART is AI Ark's recommended mode for titles and industries: it also matches
+    # related wording ("dentist" / "general dentist"), where WORD needs the phrase.
+    return {"any": {"include": {"mode": "SMART", "content": values} if text else values}}
+
+
+def industry_filter(industry):
+    """AI Ark's own industry values when the text maps to them, else company keywords."""
+    from leadzen.industries import closest
+    values = closest(industry)
+    if values:
+        return {"industries": match(values, text=True)}
+    return {"keyword": {"any": {"include": {"sources": [{"mode": "SMART", "source": s} for s in ("INDUSTRY", "KEYWORD", "DESCRIPTION")], "content": [industry]}}}}
+
+
+def location_filter(audience):
+    from leadzen.geo import country_name
+    country = country_name(audience["country"])
+    region = [part.strip() for part in (audience.get("region") or "").split(",") if part.strip()]
+    # A state/city must also be in the saved country ("Georgia" the state, not the country).
+    return {"all": {"include": [country, *region]}} if region else {"any": {"include": [country]}}
 
 
 def search_filters(audience):
-    """Use saved structured targeting verbatim; never silently broaden a filter."""
+    """Use saved structured targeting; never silently broaden a filter."""
     from pytz import country_names
     from leadzen.setup_wizard import SIZES, SENIORITY
     if not isinstance(audience, dict) or not audience.get("roles") or audience.get("country") not in country_names or not audience.get("industry"):
         raise SettingsError("Save a structured audience in Target before using AI Ark")
     if audience.get("company_size") not in SIZES or any(v not in SENIORITY for v in audience.get("seniority", [])):
         raise SettingsError("Review your audience size and seniority before using AI Ark")
-    account = {"industries": match([audience["industry"]], text=True)}
+    account = industry_filter(audience["industry"])
     size = audience["company_size"]
     if size != "any":
         low, _, high = size.rstrip("+").partition("-")
@@ -122,10 +139,20 @@ def search_filters(audience):
             band["end"] = int(high)
         account["employeeSize"] = {"type": "RANGE", "range": [band]}
     contact = {"experience": {"latest": {"title": match(audience["roles"], text=True)}},
-               "location": match([country_names[audience["country"]]])}
+               "location": location_filter(audience)}
     if audience.get("seniority"):
         contact["seniority"] = match(audience["seniority"])
     return {"account": account, "contact": contact}
+
+
+def describe(audience):
+    """What AI Ark is actually asked for, in words, for previews."""
+    from leadzen.geo import place
+    from leadzen.industries import closest
+    values = closest(audience["industry"])
+    industry = f"AI Ark industries {', '.join(values)} (closest to \"{audience['industry']}\")" if values else f"company keywords \"{audience['industry']}\" (no matching AI Ark industry)"
+    size = "any size" if audience["company_size"] == "any" else f"{audience['company_size']} employees"
+    return f"{', '.join(audience['roles'])} · {industry} · {place(audience)} · {size} · seniority {', '.join(audience.get('seniority') or ['any'])}"
 
 
 def linkedin(value):
@@ -160,6 +187,19 @@ def profile(person):
     return row
 
 
+def send(receipt, path, body):
+    try:
+        return request("POST", path, body, receipt=receipt)
+    except Exception:
+        # Refused before submission: nothing was bought, so leave no uncertain charge.
+        type(receipt).objects.filter(pk=receipt.pk, state="uncertain").delete()
+        raise
+
+
+def query_digest(filters):
+    return hashlib.sha256(json.dumps(filters, sort_keys=True).encode()).hexdigest()
+
+
 def search(monitor):
     authorize(monitor)
     session = monitor.session
@@ -174,15 +214,18 @@ def search(monitor):
     from leadzen.home import current_target
     filters = search_filters(current_target(SiteConfig.load(), state)["audience"])
     size = session.goal * 2
-    query_hash = hashlib.sha256(json.dumps({**filters, "size": size}, sort_keys=True).encode()).hexdigest()
+    # Advance past every profile already bought for these filters, whatever lead
+    # count bought it. Older receipts hashed their page size into the key.
+    query_hash = query_digest(filters)
+    legacy = [query_digest({**filters, "size": n}) for n in range(2, 51, 2)]
     with transaction.atomic(using=session._state.db):
-        previous = DiscoverySearch.objects.filter(query_hash=query_hash).aggregate(last=Max("page"))["last"]
-        page = 0 if previous is None else previous + 1
+        bought = max((r.page * r.size + r.size for r in DiscoverySearch.objects.filter(query_hash__in=[query_hash, *legacy]).only("page", "size")), default=0)
+        page = -(-bought // size)
         if (page + 1) * size > 10000:
             raise SettingsError("AI Ark pagination limit reached; refine your audience")
         receipt = DiscoverySearch.objects.create(session=session, query_hash=query_hash, page=page, size=size)
     monitor.event("searching", {"provider": "AI Ark", "profiles_limit": size, "credits_limit": session.goal})
-    response = request("POST", "/v1/people", {**filters, "page": page, "size": size}, receipt=receipt)
+    response = send(receipt, "/v1/people", {**filters, "page": page, "size": size})
     rows = [] if response is None else response.get("content")
     if not isinstance(rows, list) or len(rows) > size:
         raise SettingsError("AI Ark returned an invalid search page")
@@ -202,7 +245,7 @@ def enrich(monitor, lead):
         # Missing handles/ambiguous responses are not permission for a second charge.
         return
     receipt = monitor.reserve_lookup({"data": [{"linkedin_url": lead.profile_url}], "enrich_email_address": True})
-    result = request("POST", "/v1/people/export/single", {"url": url}, receipt=receipt)
+    result = send(receipt, "/v1/people/export/single", {"url": url})
     output = []
     if result is not None:
         if linkedin((result.get("link") or {}).get("linkedin")) != url:
@@ -219,16 +262,17 @@ def enrich(monitor, lead):
             validate_email(address)
         except (ValidationError, TypeError):
             address = ""
-    receipt.credits = Decimal(1 if valid else 0)
-    receipt.state, receipt.email_status = "terminated", "valid" if address else "not_found"
-    receipt.save()
-    monitor.guard()
+    # Keep a paid address before any stop check; a Stop must not discard it.
     if address:
         lead.email = address
         lead.save(update_fields=["email"])
         from openoutfind.core.db.deals import set_profile_state
         from openoutfind.crm.models import DealState
         set_profile_state(lead.profile_url, DealState.RESOLVED)
+    receipt.credits = Decimal(1 if valid else 0)
+    receipt.state, receipt.email_status = "terminated", "valid" if address else "not_found"
+    receipt.save()
+    monitor.guard()
     monitor.event("email_lookup", {"provider": "AI Ark", "email_status": receipt.email_status, "credits": float(receipt.credits)})
 
 
@@ -243,7 +287,7 @@ def run(args, monitor):
     from leadzen.discovery_progress import DiscoveryPaused, _qualify_for_campaign, counts
     from leadzen.discovery import progress_payload
     from leadzen.home import QUALIFIED
-    stored, partial, paused = 0, False, False
+    stored, partial, paused, failed = 0, False, False, False
     try:
         if not monitor:
             raise PermissionError("An approved discovery session is required")
@@ -261,6 +305,11 @@ def run(args, monitor):
                     lead.profile_text += "\nCompany evidence: " + row["qualification_evidence"]
                     lead.save(update_fields=["profile_text"])
                     monitor.discovered([lead])
+                else:
+                    # A profile saved by an interrupted run but never evaluated is still owed a verdict.
+                    lead = Lead.objects.filter(profile_url=row["contact_linkedin_profile_url"], synthetic=False, disqualified=False, deal__isnull=True).first()
+                    if lead:
+                        monitor.discovered([lead])
             sources = list(session.candidates.filter(discovered=True).values_list("source_id", flat=True))
         else:
             sources = session.source_ids
@@ -293,9 +342,9 @@ def run(args, monitor):
     except DiscoveryPaused:
         paused = True
     except Exception:
-        partial = True
+        partial = failed = True
         if monitor:
             monitor.event("provider_stopped", {"message": "AI Ark stopped. Completed results are kept; uncertain charges are not retried. Check your connection, balance and saved audience."})
     return {"stored": stored, "partial": partial, "paused": paused,
-            "note": "AI Ark paused at a saved boundary." if paused else "AI Ark finished within the approved budget. Partial results are kept; no emails were sent.",
+            "note": "AI Ark paused at a saved boundary." if paused else "AI Ark stopped before finishing. Completed results are kept; uncertain charges are not retried; no emails were sent." if failed else "AI Ark finished within the approved budget. Partial results are kept; no emails were sent.",
             **({"discovery": progress_payload(monitor.session), "workspaceUrl": f"/find-leads/{monitor.session.pk}"} if monitor else {})}

@@ -111,6 +111,9 @@ def selected_identity(source_ids):
 class Monitor:
     def __init__(self, session):
         self.session = session
+        # An approval must be valid when a run segment starts. Its own deadline
+        # bounds the rest, so paid results aren't stranded mid-run by expiry.
+        self.started = timezone.now()
 
     def guard(self):
         from leadzen.chat.engine import snapshot
@@ -121,7 +124,7 @@ class Monitor:
             raise PermissionError("Discovery stopped or exceeded its deadline")
         if snapshot("find_leads", self.session.action["arguments"]) != self.session.action["snapshot"]:
             raise PermissionError("Discovery setup changed")
-        if self.session.action.get("provider") == "ai_ark" and (not row.approval_expires_at or row.approval_expires_at <= timezone.now()):
+        if self.session.action.get("provider") == "ai_ark" and (not row.approval_expires_at or row.approval_expires_at <= self.started):
             raise PermissionError("AI Ark approval expired")
         if self.session.source_ids and selected_identity(self.session.source_ids) != self.session.action.get("source_identity"):
             raise PermissionError("Selected lead identity or deletion state changed")

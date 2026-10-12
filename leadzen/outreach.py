@@ -57,6 +57,17 @@ def honor_saved_optouts(mailbox):
         if deal.latest_inbound_from.lower() == deal.lead.email.lower() and EXACT_STOP.fullmatch(deal.latest_inbound_body):
             from leadzen.suppression import block_address
             block_address(deal.lead.email, "Exact STOP reply received")
+    # An Unsubscribe button writes to the +unsub alias in a fresh thread. Automatic
+    # checks skip classification, so honor that alias here without reading bodies.
+    from cold_outreach.emails.sender import unsubscribe_address
+    from leadzen.suppression import block_address
+    alias = unsubscribe_address(mailbox.from_address)
+    senders = Message.objects.filter(mailbox=mailbox, direction=Direction.INBOUND, kind="", to_address__icontains=alias).exclude(from_address="")
+    for address in senders.values_list("from_address", flat=True).distinct().iterator(chunk_size=200):
+        try:
+            block_address(address, "Unsubscribe request received")
+        except ValueError:
+            continue
 
 
 def digest(data):

@@ -49,4 +49,29 @@ describe("lead detail production polling", () => {
     await act(async () => { await vi.advanceTimersByTimeAsync(6000); });
     expect(call).toHaveBeenCalledTimes(2);
   });
+
+  test("a transient lookup refresh failure keeps the loaded lead and polling continues", async () => {
+    call.mockResolvedValueOnce(running).mockRejectedValueOnce(Object.assign(new Error("Connection interrupted"), { status: 503 })).mockResolvedValue({ ...running, lookup: { ...running.lookup, status: "succeeded" } });
+    vi.useFakeTimers();
+    await act(async () => { render(<LeadDetail user={user} contactId={lead.id} />); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+    expect(screen.getByRole("alert").textContent).toBe("Connection interrupted");
+    expect(screen.getByRole("heading", { name: lead.name })).toBeTruthy();
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500); });
+    expect(call).toHaveBeenCalledTimes(3);
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.getByRole("heading", { name: lead.name })).toBeTruthy();
+    await act(async () => { await vi.advanceTimersByTimeAsync(6000); });
+    expect(call).toHaveBeenCalledTimes(3);
+  });
+
+  test("a failed load for another contact never shows the previous contact", async () => {
+    call.mockResolvedValueOnce(lead).mockRejectedValueOnce(new Error("Lead not found"));
+    let view!: ReturnType<typeof render>;
+    await act(async () => { view = render(<LeadDetail user={user} contactId={lead.id} />); });
+    expect(screen.getByRole("heading", { name: lead.name })).toBeTruthy();
+    await act(async () => { view.rerender(<LeadDetail user={user} contactId={lead.id + 1} />); });
+    expect(screen.getByRole("alert").textContent).toBe("Lead not found");
+    expect(screen.queryByRole("heading", { name: lead.name })).toBeNull();
+  });
 });

@@ -14,11 +14,22 @@ import {
   type Candidate,
   type DiscoveryEvent,
   type DiscoveryProgress,
+  type SearchScope,
 } from "@/lib/discovery";
 
 function eventTime(createdAt: string) {
   const date = new Date(createdAt);
   return Number.isNaN(date.getTime()) ? "" : formatNewYorkDateTime(date, { hour: "2-digit", minute: "2-digit" });
+}
+
+export function DiscoverySearchScope({ scope }: { scope?: Partial<SearchScope> | null }) {
+  if (!scope?.search && !scope?.qualification) return null;
+  return (
+    <div className="discovery-scope">
+      {scope.search && <p className="settings-help"><strong>Provider search:</strong> {scope.search}</p>}
+      {scope.qualification && <p className="settings-help"><strong>Qualification only:</strong> {scope.qualification}</p>}
+    </div>
+  );
 }
 
 export function DiscoveryCurrentActivity({ data }: { data: DiscoveryProgress }) {

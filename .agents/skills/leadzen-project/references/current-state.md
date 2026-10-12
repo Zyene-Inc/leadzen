@@ -1,5 +1,35 @@
 # Last verified project state
 
+## Provider search targeting — local source, October 12, 2026
+
+BetterContact previously kept searching the first-ever target; Target changes and
+Chat audiences only affected AI qualification. LeadZen now fingerprints the target,
+backs up the finder's learned search state per target (`SearchPlan`, migration
+`0021_search_plan`), rebuilds or restores it on a meaningful change, and constrains
+every Lead Finder request to the Target's location, size and seniority. AI Ark maps
+industries to its 919 supported values (keyword fallback), uses SMART matching,
+plain country names and a new optional Target state/city. Chat previews and
+discovery progress state what changes the provider search versus AI qualification.
+Each employee's first BetterContact run after release archives pre-existing finder
+state as `legacy-…` and builds a fresh plan. Not committed, migrated or deployed;
+a controlled real-provider probe (1 AI Ark credit, 1 BetterContact profile, no
+email lookup) confirmed Texas-restricted results. Backend 1,747 and frontend 1,228
+tests, TypeScript and build passed. See the
+[targeting report](../../../../docs/search-targeting-fixes-2026-10-12.md).
+
+## Logic review fixes — local source, October 12, 2026
+
+A logic review of `main` at `b6f350c` found and fixed: automatic follow-ups and
+Autopilot ignoring Unsubscribe-button opt-outs and new-thread replies; campaign
+approvals invalidated by unrelated suppressions; API reactivation restoring old
+automatic approvals; unsuppress removing later real opt-outs; AI Ark discarding a
+paid email on Stop, cutting runs off at approval expiry, re-buying profiles when
+the lead count changed, leaving phantom uncertain charges and describing failures
+as finished; and dashboard credit labels, lead-page error handling, the count
+decrease button and connection-test reporting. No migration; not committed or
+deployed. Backend 1,720 and frontend 1,219 tests, TypeScript and build passed.
+See the [review and validation report](../../../../docs/logic-review-fixes-2026-10-12.md).
+
 ## Selectable lead providers — local source, October 7, 2026
 
 Employees can choose BetterContact or AI Ark in Settings/onboarding, with separate

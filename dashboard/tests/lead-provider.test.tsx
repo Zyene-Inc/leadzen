@@ -47,4 +47,23 @@ describe("Lead provider selection", () => {
     expect(sent.estimated_credits).toBe(3);
     expect(sent.emails).toBe(false);
   });
+
+  test("AI Ark Start copy covers profile search and an over-limit count can still be decreased", async () => {
+    vi.mocked(api).mockResolvedValueOnce({ max_count: 25, max_email_count: 12, provider_name: "AI Ark", profile_budget_per_lead: 1, target: "Practice owners", ready: true, blockers: [], revision: "synthetic-revision", active_run: null });
+    const actor = userEvent.setup();
+    render(<FindLeads user={user} />);
+    await screen.findByText(/AI Ark profile-search and email-credit limit/);
+    const input = screen.getByRole("spinbutton") as HTMLInputElement;
+    await actor.clear(input);
+    await actor.type(input, "20");
+    await actor.click(screen.getByRole("radio", { name: /Find verified emails/ }));
+    const decrease = screen.getByRole("button", { name: "Decrease lead count" }) as HTMLButtonElement;
+    expect((screen.getByRole("button", { name: /Start Finding/i }) as HTMLButtonElement).disabled).toBe(true);
+    expect(decrease.disabled).toBe(false);
+    await actor.click(decrease);
+    expect(input.value).toBe("12");
+    expect((screen.getByRole("button", { name: "Increase lead count" }) as HTMLButtonElement).disabled).toBe(true);
+    await actor.click(decrease);
+    expect(input.value).toBe("11");
+  });
 });

@@ -88,7 +88,7 @@ def test_target_updates_saved_engine_instructions_without_retesting_connections(
     assert config.product_docs == "Keep product intact" and state.draft["product_name"] == "Existing product"
     home = account_client.get("/api/overview").json()["home"]
     assert home["operator_name"] == "Ashish Dikonda"
-    assert home["target"]["audience"] == audience()
+    assert home["target"]["audience"] == {**audience(), "region": ""}
     # An unfinished wizard draft is not the currently active target.
     state.draft["audience"]["industry"] = "Restaurants"
     state.save()

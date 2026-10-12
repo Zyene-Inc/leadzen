@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/icon";
 import { DiscoveryActivityFeed } from "@/components/discovery-activity";
 import { currentRunDiscovery, type ChatRun, type Conversation } from "@/lib/chat";
-import { currentDiscoveryActivity, type DiscoveryProgress } from "@/lib/discovery";
+import { creditLabel, currentDiscoveryActivity, type DiscoveryProgress } from "@/lib/discovery";
 
 const terminalLabels: Record<string, string> = {
   succeeded: "Task complete", completed: "Task complete", failed: "Task needs attention",
@@ -82,7 +82,7 @@ function RunActivity({ conversation, run }: { conversation: Conversation; run: C
         {expanded && <div className="chat-live-body" role="region" aria-label="Recorded task activity" tabIndex={0}>
           {run.cancel_requested && active && <p>Waiting for the current action to finish. Saved results are kept.</p>}
           {discovery?.synthetic && <p>Synthetic preview · no external calls or real credits used.</p>}
-          {discovery && <p>Email credits used: {discovery.credits.used === null ? "Awaiting provider report" : discovery.credits.used}</p>}
+          {discovery && <p>{creditLabel(discovery)} used: {discovery.credits.used === null ? "Awaiting provider report" : discovery.credits.used}</p>}
           {actions.length > 0 && <ol className="chat-live-actions">{actions.map(action => {
             return <li key={action.id}><span>{action.content}</span><small>{actionState(action.data.result, active)}</small></li>;
           })}</ol>}
@@ -91,7 +91,7 @@ function RunActivity({ conversation, run }: { conversation: Conversation; run: C
         </div>}
       </details>
       {discovery && <div className="chat-live-footer">
-        {(discovery.credits.approved > 0 || discovery.credits.used === null) && <span className="chat-live-credit">Email credits: {discovery.credits.used === null ? "Awaiting provider report" : `${discovery.credits.used} used`} · {discovery.credits.approved} approved</span>}
+        {(discovery.credits.approved > 0 || discovery.credits.used === null) && <span className="chat-live-credit">{creditLabel(discovery)}: {discovery.credits.used === null ? "Awaiting provider report" : `${discovery.credits.used} used`} · {discovery.credits.approved} approved</span>}
         <Link className="text-link" href={`/find-leads/${discovery.id}`}>{active ? "Open live discovery" : "View saved results"} →</Link><Link className="text-link" href="/contacts">Open leads →</Link>
       </div>}
     </section>

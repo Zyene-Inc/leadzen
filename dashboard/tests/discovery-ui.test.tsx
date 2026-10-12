@@ -154,4 +154,21 @@ describe("Discovery UI uses persisted identities and verdicts", () => {
     await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
     expect(call).toHaveBeenCalledTimes(3);
   });
+
+  test("AI Ark credits include paid profile search while BetterContact stays email-only", async () => {
+    const ark = { ...progress, status: "completed", goal_reached: true, credits: { used: 4, reported: 4, pending: 0, approved: 6, provider: "ai_ark" } };
+    const { unmount } = render(<ChatDiscoveryCard data={ark} />);
+    expect(screen.getByText("AI Ark credits used")).toBeTruthy();
+    expect(screen.queryByText("Email credits used")).toBeNull();
+    unmount();
+    vi.mocked(api).mockResolvedValueOnce(ark);
+    const view = render(<DiscoveryLive user={user} runId="run1" />);
+    expect(await screen.findByText("AI Ark credits used")).toBeTruthy();
+    expect(screen.getByText(/Approved AI Ark budget \(profile search \+ emails\): 6 credits\./)).toBeTruthy();
+    view.unmount();
+    vi.mocked(api).mockResolvedValueOnce({ ...ark, credits: { ...ark.credits, provider: "bettercontact" } });
+    render(<DiscoveryLive user={user} runId="run1" />);
+    expect(await screen.findByText("Email credits used")).toBeTruthy();
+    expect(screen.getByText(/Approved email budget: 6 credits\./)).toBeTruthy();
+  });
 });

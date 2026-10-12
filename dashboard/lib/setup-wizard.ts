@@ -4,6 +4,8 @@ export type Country = { code: string; name: string };
 export type Audience = {
   industry: string;
   country: string;
+  /** State, province or city inside the country; blank means the whole country. */
+  region: string;
   company_size: string;
   roles: string[];
   seniority: string[];
@@ -75,6 +77,7 @@ export const seniorityOptions = [
 export const blankAudience: Audience = {
   industry: "",
   country: "US",
+  region: "",
   company_size: "any",
   roles: [],
   seniority: [],
@@ -94,10 +97,10 @@ export function initialDraft(wizard: Pick<Wizard, "draft">): Draft {
     confirmed: false,
     accepted_legal_notice: false,
     ...wizard.draft,
-    audience: wizard.draft.audience ?? {
-      ...blankAudience,
-      country: wizard.draft.operator_country_code || "US",
-    },
+    // Targets saved before regions existed have no region field.
+    audience: wizard.draft.audience
+      ? { ...blankAudience, ...wizard.draft.audience, region: wizard.draft.audience.region ?? "" }
+      : { ...blankAudience, country: wizard.draft.operator_country_code || "US" },
   };
 }
 export function initialConnections(value: Settings): Settings {
@@ -116,11 +119,12 @@ export function targetPreview(audience: Audience, countries: Country[]) {
   const country =
     countries.find((entry) => entry.code === audience.country)?.name ??
     audience.country;
+  const region = audience.region?.trim();
   const size =
     audience.company_size === "any"
       ? "any company size"
       : `${audience.company_size} employees`;
-  return `Find ${audience.roles.join(", ") || "your chosen roles"} working at ${audience.industry || "your chosen industry"} in ${country}, ${size}. Seniority: ${audience.seniority.join(", ") || "your chosen levels"}. ${audience.instructions}`.trim();
+  return `Find ${audience.roles.join(", ") || "your chosen roles"} working at ${audience.industry || "your chosen industry"} in ${region ? `${region}, ${country}` : country}, ${size}. Seniority: ${audience.seniority.join(", ") || "your chosen levels"}. ${audience.instructions}`.trim();
 }
 export function stepValues(step: number, draft: Draft) {
   if (step === 2) return { discovery_enabled: draft.discovery_enabled };

@@ -419,3 +419,22 @@ def test_deleted_contact_without_opt_out_can_be_added_again_as_ready(connected):
     assert deal.state == "Ready to Email" and deal.lead.first_name == "Grace" and deal.lead.company == "New Co"
     assert not ContactPreferences.objects.get(lead=deal.lead).deleted_at
     assert Lead.objects.filter(email__iexact="again@example.com").count() == 1
+
+
+def test_workspace_can_lift_a_manual_block_but_never_an_opt_out(connected):
+    from cold_outreach.emails.models import Mailbox, Message, Direction
+    manual = connected.post("/api/suppression", data=json.dumps({"email": "manual@example.com", "reason": "Manually suppressed"}), content_type="application/json").json()["record"]
+    opted = connected.post("/api/suppression", data=json.dumps({"email": "optout@example.com", "reason": "Opted out"}), content_type="application/json").json()["record"]
+    later = connected.post("/api/suppression", data=json.dumps({"email": "later@example.com", "reason": "Manually suppressed"}), content_type="application/json").json()["record"]
+    box = Mailbox.objects.first() or Mailbox.objects.create(from_address="sender@example.com")
+    Message.objects.create(mailbox=box, direction=Direction.INBOUND, message_id="later-stop", from_address="later@example.com", to_address="sender@example.com", subject="Re: hi", body_text="STOP", kind="")
+    listed = {row["email"]: row["removable"] for row in connected.get("/api/suppression").json()["items"]}
+    assert listed == {"manual@example.com": True, "optout@example.com": False, "later@example.com": False}
+    refused = connected.delete(f"/api/suppression/{opted['id']}")
+    assert refused.status_code == 409 and "cannot be removed" in refused.json()["error"]
+    assert connected.delete(f"/api/suppression/{later['id']}").status_code == 409
+    removed = connected.delete(f"/api/suppression/{manual['id']}")
+    assert removed.status_code == 200 and removed.json()["removed"] is True
+    assert not Suppression.objects.filter(email="manual@example.com").exists()
+    assert Suppression.objects.filter(email__in=["optout@example.com", "later@example.com"]).count() == 2
+    assert connected.delete(f"/api/suppression/{manual['id']}").status_code == 404

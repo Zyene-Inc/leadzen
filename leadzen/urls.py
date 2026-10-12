@@ -71,6 +71,7 @@ urlpatterns = [
     path("api/overview", web.overview),
     path("api/inbox", web.inbox),
     path("api/suppression", web.suppression),
+    path("api/suppression/<int:record_id>", web.suppression_record),
     path("api/leads", web.leads),
     path("api/contacts", campaigns.add_contacts),
     path("api/contacts/<int:deal_id>", campaigns.contact),

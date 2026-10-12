@@ -28,6 +28,28 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
     await userEvent.click(screen.getByRole("button", { name: "Refresh" }));
     expect(writes()).toHaveLength(0);
   });
+  test("manual blocks can be removed after confirmation; opt-outs show as protected", async () => {
+    call.mockImplementation(async (_path, init) => init?.method === "DELETE" ? { removed: true, note: "Block removed. Stopped sequences stay stopped and nothing is sent automatically." }
+      : { items: [{ id: 1, email: "manual@example.com", reason: "Manually suppressed", suppressed_at: "2026-10-02T12:00:00Z", removable: true }, { id: 2, email: "optout@example.com", reason: "Opted out", suppressed_at: "2026-10-02T12:00:00Z", removable: false }], total: 2, limit: 50, offset: 0 });
+    render(<Suppression user={user} />);
+    await screen.findByText("manual@example.com");
+    expect(screen.getAllByRole("button", { name: "Remove block" })).toHaveLength(1);
+    expect(screen.getByText("Opt-out protected: cannot be removed.")).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", { name: "Remove block" }));
+    expect(writes()).toHaveLength(0);
+    await userEvent.click(screen.getByRole("button", { name: "Confirm remove" }));
+    await waitFor(() => expect(writes()).toHaveLength(1));
+    expect(writes()[0][0]).toBe("suppression/1");
+    expect(writes()[0][1]?.method).toBe("DELETE");
+    expect(await screen.findByText(/manual@example.com: Block removed/)).toBeTruthy();
+  });
+  test("a refused removal shows the server reason", async () => {
+    call.mockImplementation(async (_path, init) => { if (init?.method === "DELETE") throw new Error("This is an opt-out or a delivery block. It cannot be removed."); return { items: [{ id: 1, email: "manual@example.com", reason: "Manually suppressed", suppressed_at: "2026-10-02T12:00:00Z", removable: true }], total: 1, limit: 50, offset: 0 }; });
+    render(<Suppression user={user} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Remove block" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm remove" }));
+    expect((await screen.findByRole("alert")).textContent).toContain("cannot be removed");
+  });
   test("suppression list search, pagination and Add/Cancel use stored records", async () => {
     call.mockResolvedValue({ items: [{ id: 1, email: lead.email, reason: "Opted out", suppressed_at: "2026-10-02T12:00:00Z" }], total: 51, limit: 50, offset: 0 });
     render(<Suppression user={user} />);

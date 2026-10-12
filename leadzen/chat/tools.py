@@ -453,11 +453,10 @@ def execute(row, tool, args):
         from leadzen.suppression import block_address
         d = lead_rows([args["leadId"]])[0]
         if tool == "unsuppress_contact":
-            records = Suppression.objects.filter(email__iexact=d.lead.email)
-            from leadzen.suppression import opt_out_evidence
-            if not records.exists() or records.exclude(reason__startswith="Manually suppressed").exists() or opt_out_evidence(d.lead.email):
-                raise ValueError("Opt-outs and terminal provider suppressions cannot be removed here")
-            records.delete()
+            from leadzen.suppression import unsuppress
+            if not d.lead.email:
+                raise ValueError("This lead has no email address to unblock")
+            unsuppress(d.lead.email)
             return {"id": d.pk, "suppression_removed": True, "note": "The manual address block was removed. Stopped sequences remain stopped; no sending was enabled.", "workspaceUrl": f"/contacts/{d.pk}"}
         if d.lead.email:
             block_address(d.lead.email, "Manually suppressed" + (": " + args["reason"] if args["reason"] else ""))

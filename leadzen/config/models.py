@@ -366,6 +366,12 @@ class DiscoveryCandidate(models.Model):
 WORKSPACE_JOB = {"origin": "workspace"}
 
 
+def conversations(threads):
+    """Only real Chat conversations. A plain JSON-key exclude also drops threads
+    without the key in SQLite, so match the absent key explicitly."""
+    return threads.filter(models.Q(context__origin__isnull=True) | ~models.Q(context__origin=WORKSPACE_JOB["origin"]))
+
+
 class SearchPlan(models.Model):
     """BetterContact's learned search state for one target, archived while inactive.
 

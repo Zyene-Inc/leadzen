@@ -197,7 +197,7 @@ def write_initial_step(deals):
     from leadzen.config.models import SiteConfig
     from cold_outreach.core.llm import run_agent_sync
     values, config = effective(), SiteConfig.load()
-    if not values.ai_enabled or not values.llm_api_key and values.provider != "ollama":
+    if not values.ai_enabled or not values.llm_api_key:
         raise SettingsError("Connect AI in Settings before preparing a draft")
     leads = [{"title": d.lead.title[:200], "company": d.lead.company[:200]} for d in deals[:25]]
     system = ("Write ONE plain-text cold outreach email TEMPLATE that will be sent individually to each listed lead. "
@@ -236,6 +236,12 @@ def prepare_campaign(request):
         return error("One or more leads do not belong to this workspace", 404)
     if any(d.state != DealState.READY or not d.lead.email or Suppression.objects.filter(email__iexact=d.lead.email).exists() for d in deals):
         return error("Choose ready leads with an email address that have not opted out")
+    # Everything the save will check runs before the paid model call.
+    blocked = sender_blocker("outreach", 1)
+    if blocked:
+        return error(blocked)
+    if enrolled(ids):
+        return error("A selected lead is already enrolled in another campaign", 409)
     key = f"campaign-prepare/{request.actor.pk}"
     with transaction.atomic(using="default"):
         counter, _ = LoginThrottle.objects.using("default").get_or_create(key=key, defaults={"window_started_at": timezone.now()})
@@ -262,6 +268,21 @@ def prepare_campaign(request):
         return error("The AI draft used unsupported text or tags. Try again, or write the message yourself.", 502)
 
 
+def sender_blocker(category, step_count):
+    values = effective()
+    uses_resend = values.mail_transport == "resend" or (values.mail_transport == "smtp" and values.smtp_host == "smtp.resend.com")
+    uses_zeptomail = values.mail_transport == "zeptomail" or (values.mail_transport == "smtp" and "zeptomail" in values.smtp_host)
+    if uses_resend and category == "outreach":
+        return "Resend does not support cold outreach. Choose opted-in contacts."
+    if uses_zeptomail and (category != "transactional" or step_count > 1):
+        return "ZeptoMail supports single transactional emails, not outreach sequences"
+    return ""
+
+
+def enrolled(ids):
+    return CampaignRecipient.objects.filter(deal_id__in=ids, campaign__status__in=["draft", "active", "paused"], status__in=["pending", "sending", "review"]).exists()
+
+
 def create_campaign(body):
     """Shared draft boundary for the workspace UI and the chat tool."""
     name = body.get("name", "")
@@ -284,16 +305,13 @@ def create_campaign(body):
         return error("Choose ready contacts with an email address that have not opted out")
     if category != "outreach" and ContactPreferences.objects.filter(lead_id__in=[d.lead_id for d in deals], opted_in=True).count() != len(deals):
         return error("This campaign requires recorded recipient opt-in")
+    blocked = sender_blocker(category, len(steps))
+    if blocked:
+        return error(blocked)
     values = effective()
-    uses_resend = values.mail_transport == "resend" or (values.mail_transport == "smtp" and values.smtp_host == "smtp.resend.com")
-    uses_zeptomail = values.mail_transport == "zeptomail" or (values.mail_transport == "smtp" and "zeptomail" in values.smtp_host)
-    if uses_resend and category == "outreach":
-        return error("Resend does not support cold outreach. Choose opted-in contacts.")
-    if uses_zeptomail and (category != "transactional" or len(steps) > 1):
-        return error("ZeptoMail supports single transactional emails, not outreach sequences")
     alias = EmailCampaign.objects.all().db
     with transaction.atomic(using=alias):
-        if CampaignRecipient.objects.filter(deal_id__in=ids, campaign__status__in=["draft", "active", "paused"], status__in=["pending", "sending", "review"]).exists():
+        if enrolled(ids):
             return error("A selected contact is already enrolled in another campaign", 409)
         from leadzen.sending_schedule import get_schedule
         campaign = EmailCampaign.objects.create(name=name.strip(), category=category, steps=steps, from_address=values.mailbox_address,

@@ -16,7 +16,7 @@ from django.views.decorators.http import require_http_methods
 from cold_outreach.emails.models import Direction, Message
 from cold_outreach.leads.models import Deal, DealState, Suppression
 from openoutfind.crm.models import Deal as Decision, Lead as Profile
-from leadzen.config.models import WORKSPACE_JOB
+from leadzen.config.models import WORKSPACE_JOB, conversations
 from leadzen.accounts.service import access, error, payload
 from leadzen.config.models import ChatMessage, ChatRun, ChatThread, DiscoveryLookup, DiscoverySession, SiteConfig
 from leadzen.discovery import context
@@ -228,7 +228,7 @@ def work_email(request, deal_id):
             return error("Request ID already used", 409)
         return JsonResponse({"run": chat.run_payload(existing)}, status=202)
     chat.recover_stale(request.actor.pk)
-    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Task limit reached. Try later or archive a conversation", 429)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):

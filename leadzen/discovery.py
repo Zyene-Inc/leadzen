@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from leadzen.config.models import WORKSPACE_JOB
+from leadzen.config.models import WORKSPACE_JOB, conversations
 from leadzen.accounts.service import access, error, payload
 from leadzen.chat import views as chat
 from leadzen.chat.engine import MAX_ACTION_COUNT, normalize, prepare, snapshot
@@ -88,7 +88,7 @@ def discovery(request):
         return error("Finish or stop your active task before finding more leads.", 409)
     if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15:
         return error("Discovery and chat limit reached. Try again in a few minutes.", 429)
-    if ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Archive a conversation before creating another discovery run.", 409)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):
@@ -241,7 +241,7 @@ def emails(request, run_id):
     setup = context(request.actor.pk)
     if not setup["ready"] or setup["active_run"]:
         return error("Complete setup and finish or stop your active task first", 409)
-    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Task limit reached. Try later or archive a conversation", 429)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):

@@ -115,7 +115,6 @@ def main(run_id):
         with _database_lock(settings.DATABASE_PATH):
             drive(run_id)
     except Exception:
-        from django.utils import timezone
         from leadzen.config.models import ChatRun
         from leadzen.chat.engine import finish
         row = ChatRun.objects.filter(pk=run_id, status="queued").first()

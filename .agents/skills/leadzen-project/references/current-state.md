@@ -1,5 +1,27 @@
 # Last verified project state
 
+## Production backend `b6f350c` — recorded October 8, 2026
+
+Per the [October 8 release record](../../../../docs/deployment.md) (copied from the
+closed Zyene-Inc/leadzen#10; not re-verified against the live VM since), the
+`leadzen-api` backend runs `b6f350c` (PR #9, selectable lead providers) from
+`/opt/leadzen-b6f350c-20261008` with `/etc/leadzen-b6f350c.env`. Migration
+`0020_lead_finder_provider` was applied to the control database and the only
+initialized workspace. Vercel already served deployment
+`dpl_8sGCGAoK4qSq1rMoMG9iWhvzf14p` built from `b6f350c`. Recovery points:
+snapshot `leadzen-api-pre-b6f350c-20261008` and on-VM backup
+`/srv/private/leadzen-pre-upgrade-20261008`.
+
+The same day, with owner approval, `LEADZEN_AUTOPILOT_ENABLED=1`,
+`LEADZEN_MAIL_HOSTS=*`, `LEADZEN_EMAIL_HOSTS=*`, `LEADZEN_MCP_PUBLIC_URL` and
+`LEADZEN_CHAT_PROMPTED_OUTPUT_HOSTS` were enabled. No emails were sent and no paid
+provider call was made as part of enabling them; invitation email stays disabled
+until `LEADZEN_RESEND_API_KEY` is set. The `*` host values disable the mail
+allow-lists and should be restricted to real providers.
+
+Not yet released: PR #11 (`0bebc53`, migration `0021_search_plan`). Verify the
+live commit, migrations, flags and host settings on the VM before that release.
+
 ## Provider search targeting — local source, October 12, 2026
 
 BetterContact previously kept searching the first-ever target; Target changes and

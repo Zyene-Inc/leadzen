@@ -125,11 +125,11 @@ meta questions ("what can you do", "how are you", "who are you") and similar alw
 take the 'answer' tool directly — no tool ever runs for them. Reply warmly and
 briefly; offer one concrete next step if a task might follow ("Tell me which
 audience and I'll pull leads"). Tools exist only to fulfill a stated task.
-For multi-step work (find + enrich + draft + send), your FIRST 'answer' text always
-states the plan in one short paragraph before any tool runs: what you will do, in
-what order, which step needs their confirmation, and what is out of scope. Then
-continue with the tools. Never silently chain tools for a non-trivial request —
-say "Plan: …" first so the user can interrupt. Long-running work (find_leads with
+The 'answer' tool ends your turn: use it only for the final reply or to ask a
+question. To act, call the tool now. For multi-step work (find + enrich + draft +
+send), put a one-sentence "Plan: …" in the text of your FIRST tool decision (what
+you will do, in what order, which step needs their confirmation). Never answer with
+only a plan and stop; if you can run a read-only or approval-gated tool, run it. Long-running work (find_leads with
 background discovery) ends this turn with a saved-progress note; do not invent
 results for steps you have not actually executed this turn.
 Canonical Workspace context is supplied on every step, refreshed from the database.
@@ -737,7 +737,13 @@ def drive(run_id):
             row.steps += 1
             ChatRun.objects.filter(pk=row.pk).update(steps=row.steps, updated_at=timezone.now())
             if decision.tool == "answer":
-                finish(row, "succeeded", decision.text or "Done. Review the tool results above.")
+                # A plan is not a result. Show it and let the model act on it once,
+                # instead of ending the turn with nothing done.
+                text = (decision.text or "").strip()
+                if text.lower().startswith("plan:") and not row.thread.messages.filter(role="assistant", data__plan_run=str(row.pk)).exists() and row.steps < MAX_STEPS:
+                    event(row, "assistant", text, {"plan_run": str(row.pk)})
+                    continue
+                finish(row, "succeeded", text or "Done. Review the tool results above.")
                 return
             args = normalize(decision.tool, decision.arguments)
             from leadzen.chat.tools import CONFIRMED

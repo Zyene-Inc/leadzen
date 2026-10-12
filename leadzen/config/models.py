@@ -224,6 +224,9 @@ class OutreachJob(models.Model):
     campaign_id = models.UUIDField(null=True, blank=True)
     request_id = models.UUIDField(null=True, blank=True, unique=True)
     campaign_approval = models.JSONField(default=dict)
+    # Set when the employee has read a failure; it then leaves "Needs attention"
+    # but stays listed with its output. Recipients held for review are untouched.
+    resolved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]

@@ -79,6 +79,8 @@ async function proxy(request: NextRequest, context: RouteContext) {
           ? ["GET", "PUT", "DELETE"]
         : /^suppression\/\d+$/.test(route)
           ? ["DELETE"]
+        : /^jobs\/[0-9a-f-]{36}\/resolve$/.test(route)
+          ? ["POST"]
       : /^admin\/users\/\d+$/.test(route)
         ? ["PUT", "DELETE"]
         : /^campaigns\/[0-9a-f-]{36}\/preview$/.test(route)

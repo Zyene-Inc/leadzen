@@ -82,5 +82,6 @@ urlpatterns = [
     path("api/campaigns/<uuid:campaign_id>/preview", campaigns.preview),
     path("api/campaigns/<uuid:campaign_id>/run", web.start_campaign),
     path("api/jobs", web.jobs),
+    path("api/jobs/<uuid:job_id>/resolve", web.resolve_job),
     path("api/jobs/send", web.start_send),
 ]

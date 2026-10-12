@@ -378,6 +378,7 @@ def _job_payload(job: OutreachJob) -> dict:
         "created_at": _iso(job.created_at),
         "started_at": _iso(job.started_at),
         "finished_at": _iso(job.finished_at),
+        "resolved_at": _iso(job.resolved_at),
     }
 
 
@@ -405,6 +406,21 @@ def recover_expired_jobs():
 @access(workspace=True)
 def jobs(request):
     return JsonResponse({"items": [_job_payload(job) for job in OutreachJob.objects.all()[:20]]})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@access(workspace=True)
+def resolve_job(request, job_id):
+    """Mark a failed send job as reviewed. Only failures; idempotent; nothing is retried."""
+    job = OutreachJob.objects.filter(pk=job_id).first()
+    if job is None:
+        return _json_error("Delivery job not found", 404)
+    if job.status != OutreachJob.Status.FAILED:
+        return _json_error("Only failed jobs can be marked as reviewed", 409)
+    OutreachJob.objects.filter(pk=job.pk, resolved_at__isnull=True).update(resolved_at=timezone.now())
+    job.refresh_from_db()
+    return JsonResponse(_job_payload(job))
 
 
 @csrf_exempt

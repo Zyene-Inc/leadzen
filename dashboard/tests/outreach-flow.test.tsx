@@ -113,3 +113,24 @@ test("an archived Autopilot deep link reveals its saved messages without changin
   await userEvent.click(screen.getByRole("button", { name: "Open" }));
   expect(screen.queryByRole("heading", { name: archived.name })).toBeNull();
 });
+
+test("a failed delivery can be marked reviewed only after opening it, and stays listed", async () => {
+  let resolved: string | null = null;
+  call.mockImplementation(async (path, init) => {
+    if (path === "autopilot") return { setup: { revision: "r", blockers: [], target: "Owners", product: "Product", sender: "sender@example.com", signature: "", booking_link: "", service_enabled: false }, policy: null, runs: [] };
+    if (path === "outreach") return { reviews: [], window: { start: 8, end: 20, timezone: "UTC" } };
+    if (path === "jobs/job1/resolve" && init?.method === "POST") { resolved = "2026-10-12T22:00:00Z"; return {}; }
+    if (path === "jobs") return { items: [{ id: "job1", kind: "campaign", status: "failed", requested_count: 2, output: "SMTP authentication failed", resolved_at: resolved }] };
+    return { items: [] };
+  });
+  render(<Campaigns user={user} />);
+  await screen.findByRole("heading", { name: "Delivery activity" });
+  expect((screen.getByRole("button", { name: "Mark as reviewed" }).closest("details") as HTMLDetailsElement).open).toBe(false);
+  await userEvent.click(screen.getByText("View result"));
+  expect(screen.getByText("SMTP authentication failed")).toBeTruthy();
+  await userEvent.click(screen.getByRole("button", { name: "Mark as reviewed" }));
+  await waitFor(() => expect(writes().map(([p]) => p)).toContain("jobs/job1/resolve"));
+  expect(await screen.findByText("Reviewed failures (1)")).toBeTruthy();
+  expect(screen.queryByRole("button", { name: "Mark as reviewed" })).toBeNull();
+  expect(writes().some(([p]) => String(p).includes("/run") || String(p).startsWith("jobs/send"))).toBe(false);
+});

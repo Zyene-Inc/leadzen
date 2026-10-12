@@ -85,6 +85,6 @@ def attention(request):
     for row in EmailCampaign.objects.exclude(status="archived").exclude(followup_approval__issue__isnull=True).order_by("-created_at")[:4]:
         if row.followup_approval.get("issue"):
             items.append({"id": f"blocked-{row.pk}", "label": row.name, "detail": row.followup_approval["issue"], "href": f"/outreach?campaign={row.pk}"})
-    for row in OutreachJob.objects.filter(status="failed").order_by("-created_at")[:3]:
+    for row in OutreachJob.objects.filter(status="failed", resolved_at__isnull=True).order_by("-created_at")[:3]:
         items.append({"id": f"job-{row.pk}", "label": "Sending needs attention", "detail": "Check the saved result before retrying", "href": "/outreach"})
     return JsonResponse({"items": items})

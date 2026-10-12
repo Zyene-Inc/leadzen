@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from cold_outreach.emails.models import Mailbox, Message, Direction
 from cold_outreach.leads.models import Deal, Lead, Suppression
-from leadzen.config.models import EmailCampaign, CampaignRecipient, ContactPreferences, SiteConfig
+from leadzen.config.models import EmailCampaign, CampaignRecipient, ContactPreferences, OutreachJob, SiteConfig
 from leadzen.configuration import save_dashboard_settings
 from leadzen.campaigns import run_campaign
 
@@ -438,3 +438,19 @@ def test_workspace_can_lift_a_manual_block_but_never_an_opt_out(connected):
     assert not Suppression.objects.filter(email="manual@example.com").exists()
     assert Suppression.objects.filter(email__in=["optout@example.com", "later@example.com"]).count() == 2
     assert connected.delete(f"/api/suppression/{manual['id']}").status_code == 404
+
+
+def test_failed_job_can_be_marked_reviewed_but_stays_listed(connected):
+    failed = OutreachJob.objects.create(requested_count=2, status="failed", output="SMTP 535 authentication failed")
+    running = OutreachJob.objects.create(requested_count=1, status="running")
+    attention = lambda: [i["id"] for i in connected.get("/api/attention").json()["items"]]
+    assert f"job-{failed.pk}" in attention()
+    assert connected.post(f"/api/jobs/{running.pk}/resolve", data="{}", content_type="application/json").status_code == 409
+    first = connected.post(f"/api/jobs/{failed.pk}/resolve", data="{}", content_type="application/json")
+    assert first.status_code == 200 and first.json()["resolved_at"]
+    again = connected.post(f"/api/jobs/{failed.pk}/resolve", data="{}", content_type="application/json")
+    assert again.json()["resolved_at"] == first.json()["resolved_at"]
+    assert f"job-{failed.pk}" not in attention()
+    listed = {j["id"]: j for j in connected.get("/api/jobs").json()["items"]}
+    assert listed[str(failed.pk)]["status"] == "failed" and "authentication failed" in listed[str(failed.pk)]["output"]
+    assert connected.post("/api/jobs/00000000-0000-0000-0000-000000000000/resolve", data="{}", content_type="application/json").status_code == 404

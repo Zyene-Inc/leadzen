@@ -334,3 +334,14 @@ def test_repeated_plan_answer_ends_the_turn(chat_client):
     detail = chat_client.get(f"/api/chat/threads/{thread}").json()
     assert detail["run"]["status"] == "succeeded" and model.call_count == 2
     assert detail["messages"][-1]["content"] == "Plan: step one again."
+
+
+def test_tool_results_reach_the_model_with_every_record_and_total():
+    from leadzen.chat.engine import compact
+    items = [{"name": f"Lead {i}", "linkedin_url": f"https://www.linkedin.com/in/lead-{i}", "profile_text": "x" * 5000, "reason": "y" * 900} for i in range(30)]
+    data = compact({"tool": "list_leads", "result": {"items": items, "total": 30}})
+    text = json.dumps(data)
+    assert "profile_text" not in text and len(text) < 20000
+    assert data["result"]["total"] == 30 and len(data["result"]["items"]) == 26
+    assert data["result"]["items"][24]["linkedin_url"].endswith("lead-24") and data["result"]["items"][-1] == "... 5 more"
+    assert data["result"]["items"][0]["reason"].endswith("…")

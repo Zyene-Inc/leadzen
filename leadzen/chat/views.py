@@ -172,7 +172,7 @@ def message(request, thread_id):
     values = effective()
     if not values.ai_enabled or not values.llm_api_key or not values.model:
         return error("Connect an AI provider and enable AI in Connections first", 409)
-    if ChatRun.objects.filter(actor_id=request.actor.pk, status__in=ACTIVE).exists():
+    if ChatRun.objects.filter(actor_id=request.actor.pk, status__in=ACTIVE, lane="chat").exists():
         return error("Finish or stop your active chat task first", 409)
     if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15:
         return error("Chat limit reached. Try again in a few minutes.", 429)

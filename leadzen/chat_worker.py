@@ -11,9 +11,17 @@ def main(run_id):
     from leadzen.chat.engine import drive, finish
     from leadzen.config.models import ChatRun
     from leadzen.web_worker import _database_lock
+    from leadzen.lanes import PROVIDER, LaneBusy, provider_work
+    lane = ChatRun.objects.filter(pk=run_id).values_list("lane", flat=True).first()
     try:
-        with _database_lock(settings.DATABASE_PATH):
+        # Lead search and email lookups never send; they need the provider lane only.
+        with provider_work(settings.DATABASE_PATH) if lane == PROVIDER else _database_lock(settings.DATABASE_PATH):
             drive(run_id)
+    except LaneBusy as busy:
+        row = ChatRun.objects.filter(pk=run_id, status="queued").first()
+        if row:
+            finish(row, "failed", str(busy))
+        return 1
     except Exception:
         row = ChatRun.objects.filter(pk=run_id, status="queued").first()
         if row:

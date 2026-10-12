@@ -17,7 +17,7 @@ test("inbox checks require inline approval, show cost and mailbox, and Cancel is
   render(<InboxCheck refreshed={vi.fn()} />);
   await userEvent.click(screen.getByRole("button", { name: "Check for replies" }));
   await screen.findByRole("heading", { name: "Check your connected inbox?" });
-  expect(screen.getByText(/sender@example.com/).textContent).toContain("AI charges may apply");
+  expect(screen.getByText(/sender@example.com/).textContent).toContain("No AI is used");
   expect(writes()).toHaveLength(1);
   await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
   expect(JSON.parse(String(writes()[1][1]?.body))).toEqual({ action_id: "approval1", approved: false });

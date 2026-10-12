@@ -42,7 +42,7 @@ def discover(run, *, emails=False, source_ids=None, new_source_after=None):
     args = {"count": len(source_ids) if emails else run.checkpoint["contact_limit"], "emails": emails, "audience": ""}
     with transaction.atomic(using=run._state.db):
         thread = ChatThread.objects.create(actor_id=run.actor_id, title=f"Autopilot · {run.workday} · {'emails' if emails else 'leads'}", context=dict(WORKSPACE_JOB))
-        row = ChatRun.objects.create(thread=thread, actor_id=run.actor_id, request_id=uuid.uuid4(),
+        row = ChatRun.objects.create(thread=thread, actor_id=run.actor_id, request_id=uuid.uuid4(), lane="provider",
             status="running", deadline_at=run.deadline_at)
         action = {"arguments": args, "snapshot": snapshot("find_leads", args),
                   "authorization": "autopilot", "policy_id": str(run.policy_id)}
@@ -57,8 +57,11 @@ def discover(run, *, emails=False, source_ids=None, new_source_after=None):
         session = DiscoverySession.objects.create(run=row, action=action, goal=args["count"],
             unit="emails" if emails else "leads", target=run.policy.scope["target"], source_ids=source_ids)
         checkpoint(run, "enriching" if emails else "finding", **{"enrichment_id" if emails else "discovery_id": str(row.pk)})
+    from django.conf import settings
+    from leadzen.lanes import provider_work
     try:
-        with observe(row):
+        # Never overlap a Find Leads run or email lookup in this workspace.
+        with provider_work(settings.DATABASE_PATH), observe(row):
             result = find_leads(args)
             if emails:
                 result = collect_enrichment(run, row, session, args, result)

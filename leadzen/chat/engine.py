@@ -22,6 +22,7 @@ from cold_outreach.leads.models import Deal, DealState, Suppression
 from leadzen.config.models import CampaignRecipient, ChatMessage, ChatRun, ChatThread, EmailCampaign, RuntimeSettings, SiteConfig
 from leadzen.configuration import SettingsError, effective
 from leadzen.workspaces import assert_worker_access
+from leadzen.lanes import LaneBusy
 
 TOOLS = Literal["answer", "connections", "overview", "list_leads", "list_replies", "list_campaigns", "find_leads", "draft_campaign", "send_campaign", "pause_campaign", "sync_replies", "get_workspace_status", "get_workspace_context", "get_target", "update_target", "stop_discovery", "get_lead", "find_work_emails", "get_credit_usage", "create_drafts", "get_draft", "update_draft", "regenerate_draft", "send_email", "send_emails", "sync_mailbox", "get_thread", "draft_reply", "send_reply", "suppress_contact", "unsuppress_contact", "get_activity", "add_contacts"]
 MAX_STEPS = 8
@@ -367,7 +368,7 @@ def prepare(row, tool, args, *, selected=False):
         summary = f"Run {campaign.name} for up to {emails} emails from {values.mailbox_address}"
     else:
         summary = "Sync and classify mailbox replies"
-        preview = {"from_address": values.mailbox_address, "note": "Reads the connected inbox and may use your AI provider for reply classification. Sends nothing."}
+        preview = {"from_address": values.mailbox_address, "note": "Reads the connected inbox and stores new replies. No AI is used and nothing is sent."}
     if row.credits_reserved + credits > 25 or row.emails_reserved + emails > 25:
         raise ValueError("This turn's lead-credit or email budget is exhausted. Start a new request.")
     if tool in {"find_leads", "find_work_emails"}:
@@ -625,7 +626,8 @@ def execute(tool, args, row):
         from leadzen.transports import sync_replies_strict
         from leadzen.ai import install_engine_adapters
         from leadzen.wizard import apply_to_environment
-        prepare_worker_mailbox(require_ai=True)
+        # Reply classification is rule based (no model call), so AI is not required.
+        prepare_worker_mailbox(require_ai=False)
         install_engine_adapters()
         apply_to_environment(SiteConfig.load())
         for box in active_mailboxes()[:1]:
@@ -666,8 +668,13 @@ def perform(row, tool, arguments, label, *, recover_validation=False):
         setup_session(row, tool, arguments)
         from leadzen.discovery_progress import observe
         from contextlib import nullcontext
-        with observe(row) if tool in {"find_leads", "find_work_emails"} else nullcontext():
+        from django.conf import settings
+        from leadzen.lanes import provider_work
+        provider = tool in {"find_leads", "find_work_emails"}
+        with provider_work(settings.DATABASE_PATH) if provider else nullcontext(), observe(row) if provider else nullcontext():
             result = execute(tool, arguments, row)
+    except LaneBusy as exc:
+        result = {"error": str(exc)}
     except ValueError as exc:
         if not recover_validation:
             message.data = {"tool": tool, "result": {"status": "stopped", "note": "Review the final task message before retrying."}}

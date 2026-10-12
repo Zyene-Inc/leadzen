@@ -2,13 +2,13 @@
 import { formatNewYorkDateTime } from "@/lib/date-time";
 import { PageHeading } from "@/components/page-heading";
 
-import Link from "next/link";
 import { useRef, useState, type ReactNode } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Icon } from "@/components/icon";
 import type { Account } from "@/lib/auth";
 import { useStoredData } from "@/lib/use-stored-data";
 import { SuppressionForm } from "@/components/suppression-form";
+import { InboxCheck } from "@/components/inbox-check";
 import { api } from "@/lib/client-api";
 
 type PageData<T> = { items: T[]; total: number; limit: number; offset: number };
@@ -140,16 +140,14 @@ export function Inbox({ user }: { user: Account }) {
       user={user}
       active="inbox"
       title="Inbox"
-      description="Read stored inbound messages, including human replies, bounces and opt-outs. Refresh reloads saved messages; syncing your mailbox is a separate approved action."
+      description="Read stored inbound messages, including human replies, bounces and opt-outs. Refresh reloads saved messages; checking your mailbox for new replies is a separate approved action."
       actions={
         <>
-          <Link className="button" href="/chat?intent=sync-replies">
-            Sync replies in chat
-          </Link>
           <Refresh loading={loading} onClick={refresh} />
         </>
       }
     >
+      <InboxCheck refreshed={refresh} />
       <section className="panel">
         <div className="filters">
           <div className="search-field">
@@ -227,7 +225,7 @@ export function Inbox({ user }: { user: Account }) {
                   <div className="empty">
                     {query || kind !== "all"
                       ? "No messages match this view."
-                      : "No messages saved yet. Sync replies in chat after connecting your reply inbox in Settings."}
+                      : "No messages saved yet. Use Check for replies above after connecting your reply inbox in Settings."}
                   </div>
                 )}
               </div>

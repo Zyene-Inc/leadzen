@@ -59,3 +59,24 @@ def test_live_tool_choice(discovery_client, monkeypatch):
         if row.status == "awaiting_approval":  # Record it, then decline so the next prompt can run.
             ChatRun.objects.filter(pk=run).update(status="cancelled", pending={})
         print(f"\n### {prompt!r}  (expected: {expected})\n  status={row.status} steps={row.steps} {time.time()-start:.1f}s tools={tools} sent={deliver.call_count}\n  reply: {(final[-1] if final else row.pending.get('summary') if row.pending else None)!r}"[:900])
+
+
+@pytest.mark.skipif(not os.environ.get("AKML_KEY"), reason="live model evaluation is opt-in")
+@pytest.mark.parametrize("attempt", range(3))
+def test_live_prepare_draft(discovery_client, monkeypatch, attempt):
+    """The Workspace "Prepare draft" button against the real model: valid, saved, no Chat."""
+    from tests.test_campaigns import add
+    from leadzen.config.models import SiteConfig, ChatThread
+    monkeypatch.setenv("LEADZEN_LLM_HOSTS", "api.akashml.com")
+    values = asdict(effective()); values.update(ai_enabled=True, provider="openai_compatible", model="openai/gpt-oss-120b", base_url="https://api.akashml.com/v1")
+    save_dashboard_settings(values, llm_api_key=os.environ["AKML_KEY"])
+    SiteConfig.objects.update(operator_name="Karthik", product_docs="Zyene Reviews helps local restaurants and home-service businesses collect more Google reviews with automatic SMS and email review requests.", campaign_target="Owners of US restaurants and home-service businesses with 1-10 employees", booking_link="https://cal.example.com/zyene")
+    contact = add(discovery_client)
+    start = time.time()
+    response = discovery_client.post("/api/campaigns/prepare", data=json.dumps({"contact_ids": [contact]}), content_type="application/json")
+    data = response.json()
+    print(f"\n### prepare draft attempt {attempt}: HTTP {response.status_code} in {time.time()-start:.1f}s chat_threads={ChatThread.objects.count()}")
+    if response.status_code == 201:
+        print(f"  name: {data['name']!r}\n  subject: {data['steps'][0]['subject']!r}\n  body: {data['steps'][0]['body']!r}"[:1200])
+    assert response.status_code == 201, data
+    assert ChatThread.objects.count() == 0

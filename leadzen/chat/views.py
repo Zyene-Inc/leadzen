@@ -7,6 +7,7 @@ import uuid
 from datetime import timedelta
 
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.http import JsonResponse, StreamingHttpResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -89,7 +90,10 @@ def threads(request):
     recover_stale(request.actor.pk)
     rows = ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)
     if request.method == "GET":
-        return JsonResponse({"items": [thread_payload(t) for t in rows.order_by("-updated_at")[:100]]})
+        from leadzen.config.models import WORKSPACE_JOB
+        # A plain exclude on a JSON key also drops threads without the key in SQLite.
+        conversations = rows.filter(Q(context__origin__isnull=True) | ~Q(context__origin=WORKSPACE_JOB["origin"]))
+        return JsonResponse({"items": [thread_payload(t) for t in conversations.order_by("-updated_at")[:100]]})
     if rows.count() >= 100:
         return error("Archive a conversation before creating another", 409)
     from leadzen.chat.context import structured, FIELDS

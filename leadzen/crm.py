@@ -16,6 +16,7 @@ from django.views.decorators.http import require_http_methods
 from cold_outreach.emails.models import Direction, Message
 from cold_outreach.leads.models import Deal, DealState, Suppression
 from openoutfind.crm.models import Deal as Decision, Lead as Profile
+from leadzen.config.models import WORKSPACE_JOB
 from leadzen.accounts.service import access, error, payload
 from leadzen.config.models import ChatMessage, ChatRun, ChatThread, DiscoveryLookup, DiscoverySession, SiteConfig
 from leadzen.discovery import context
@@ -238,7 +239,7 @@ def work_email(request, deal_id):
             if not review["eligible"] or review["revision"] != body.get("revision"):
                 return error(review["reason"] or "The lead or setup changed. Review this lookup again.", 409)
             source_ids = [review["source_id"]]
-            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Work email for {review['name']}"[:100])
+            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Work email for {review['name']}"[:100], context=dict(WORKSPACE_JOB))
             row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id)
             prepare(row, "find_leads", normalize("find_leads", {"count": 1, "emails": True}), selected=True)
             row.refresh_from_db()

@@ -16,6 +16,7 @@ from types import SimpleNamespace
 from django.db import transaction
 from django.utils import timezone
 
+from leadzen.config.models import WORKSPACE_JOB
 from leadzen.config.models import (AutopilotPolicy, AutopilotRun, CampaignRecipient, ChatRun,
     ChatThread, DiscoverySession, EmailCampaign)
 from leadzen.autopilot import (ContactStopped, check_policy, execution, external_guard,
@@ -40,7 +41,7 @@ def discover(run, *, emails=False, source_ids=None, new_source_after=None):
     source_ids = source_ids or []
     args = {"count": len(source_ids) if emails else run.checkpoint["contact_limit"], "emails": emails, "audience": ""}
     with transaction.atomic(using=run._state.db):
-        thread = ChatThread.objects.create(actor_id=run.actor_id, title=f"Autopilot · {run.workday} · {'emails' if emails else 'leads'}")
+        thread = ChatThread.objects.create(actor_id=run.actor_id, title=f"Autopilot · {run.workday} · {'emails' if emails else 'leads'}", context=dict(WORKSPACE_JOB))
         row = ChatRun.objects.create(thread=thread, actor_id=run.actor_id, request_id=uuid.uuid4(),
             status="running", deadline_at=run.deadline_at)
         action = {"arguments": args, "snapshot": snapshot("find_leads", args),

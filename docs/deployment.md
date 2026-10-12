@@ -3,14 +3,65 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent recorded deployment is the **October 8, 2026** backend update to
-`b6f350c`, below. It was recorded by the operator who performed it and copied here
+The most recent deployment is the **October 12, 2026** release of `1fb9799`,
+below, followed by the October 8 record. It was recorded by the operator who performed it and copied here
 on October 12 from the closed Zyene-Inc/leadzen#10; it has not been re-verified
 against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## October 12, 2026 — backend and dashboard `1fb9799`
+
+**Source released:** `main` at `1fb9799` (PRs #11 outreach safety, AI Ark billing
+and provider search targeting; #12 AI connection probe timeout; #13 docs). Wheel
+SHA-256 `e44b12a052bcad78d4ce9978071851ca993aef1b5c77e5205643f1e077857225`;
+`pydantic-ai-slim` and `pydantic-graph` 2.52.0 → 2.53.0 (CVE-2026-107286), both
+verified against `requirements-production.lock` hashes.
+
+**Verified before release (live VM):** `b6f350c` at `/opt/leadzen-b6f350c-20261008`
+with `/etc/leadzen-b6f350c.env`; control and the one initialized workspace
+(`97bd43a2-…`) at `leadzen_config.0020`, integrity `ok`; October 8 snapshot and
+on-VM backup present. Vercel `leadzen.zyene.com` still served the October 7 build.
+
+**Recovery points:** VM snapshot `leadzen-api-pre-1fb9799-20261012` (READY);
+on-VM backup `/srv/private/leadzen-pre-upgrade-20261012` (data after WAL
+checkpoint, env file, both unit files); previous runtime
+`/opt/leadzen-b6f350c-20261008` left untouched with its unmigrated data.
+
+**Cut-over:** staged `/opt/leadzen-1fb9799-20261012` (copied venv, replaced
+`leadzen` and the two pydantic packages); smoke-tested imports and production
+environment validation; stopped both services; checkpointed and backed up;
+copied data; created `/etc/leadzen-1fb9799.env` (root 600, paths updated);
+migrated control and workspace databases to `0021_search_plan` as the service
+user with Autopilot/follow-ups forced off (integrity `ok`); pointed both units at
+the new runtime. Downtime about 2–3 minutes.
+
+**Post-release changes:** removed `LEADZEN_MAIL_HOSTS=*` and
+`LEADZEN_EMAIL_HOSTS=*` (copy kept at `/etc/leadzen-1fb9799.env.pre-mailhosts-20261012`).
+They were not wildcards — `approved_host` compares literal names — so they had no
+effect; Zoho hosts are in the built-in allow-list. Restarted the follow-ups
+scheduler (Autopilot and automatic follow-ups flags remain `1`).
+
+**Vercel:** promoted `dpl_EU3u4kNzsUEmTyrZZT3SSvaEC37c` (`1fb9799`) to
+`leadzen.zyene.com` and re-enabled the project's `autoAssignCustomDomains`, which
+an earlier rollback had left off, so later production builds take the domain.
+
+**Production verification:** authenticated `/api/health` and `/api/ready` 200
+(database and migrations OK); both services active with zero restarts and no
+warnings since release; public login 200; anonymous API 401. Operator-requested
+tests to an internal inbox: invitation path through Resend (verified
+`leadzen.zyene.com` sender) accepted; the employee mailbox SMTP and IMAP login
+passed and one labelled test email was accepted by Zoho; BetterContact Lead
+Finder with the employee key and saved Target filters (United States, 1-10,
+nine seniorities) returned a US profile with enrichment off and nothing stored.
+
+**Open item:** the employee's AI provider key (`openai_compatible`,
+`api.akashml.com`, model `moonshotai/Kimi-K3`) returns 401 on both the old and
+new runtime. Until it is replaced in Settings, AI qualification, search-plan
+seeding and Autopilot drafting fail safely; the first real BetterContact
+discovery (which archives legacy finder state) was therefore not run.
 
 ## October 8, 2026 — backend `b6f350c` (selectable lead providers)
 
@@ -333,9 +384,8 @@ migration 0002. The current source requires **all** migrations through
 `leadzen_accounts.0004_accountprofile_tour_state` in the control database and
 every initialized employee database. Apply them only after quiescing intake,
 scheduler and all worker types and creating matching recovery backups. The
-October 8 record above reports `leadzen_config.0020_lead_finder_provider` applied
-to the control database and the one initialized workspace. Current `main` also
-requires `leadzen_config.0021_search_plan`, which has not been applied.
+October 12 release above applied `leadzen_config.0021_search_plan` to the control
+database and the one initialized workspace.
 
 The new authenticated `/api/ready` checks the control database and pending
 migrations, returns 503 on dependency/schema failure, and does not expose paths

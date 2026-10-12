@@ -1,5 +1,20 @@
 # Last verified project state
 
+## Production `1fb9799` — released October 12, 2026
+
+Backend `/opt/leadzen-1fb9799-20261012` (`/etc/leadzen-1fb9799.env`) and Vercel
+`dpl_EU3u4kNzsUEmTyrZZT3SSvaEC37c` serve `main` at `1fb9799`; control and workspace
+databases are at `0021_search_plan`. API and follow-ups scheduler active;
+Autopilot and automatic follow-ups flags on; the no-op `*` mail host entries were
+removed; Vercel auto-assigns `leadzen.zyene.com` again. Verified: authenticated
+health/readiness, Resend invitation path, employee Zoho SMTP/IMAP with one test
+email to an internal inbox, and a BetterContact search with the saved Target's
+enforced filters. Blocker: the employee's akashml AI key returns 401, so AI
+qualification, search-plan seeding and Autopilot drafting cannot run until it is
+replaced. Recovery: snapshot `leadzen-api-pre-1fb9799-20261012`, backup
+`/srv/private/leadzen-pre-upgrade-20261012`, previous runtime untouched. See the
+[release record](../../../../docs/deployment.md).
+
 ## Production backend `b6f350c` — recorded October 8, 2026
 
 Per the [October 8 release record](../../../../docs/deployment.md) (copied from the

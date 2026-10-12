@@ -1,5 +1,17 @@
 # Last verified project state
 
+## Workspace gaps closed — local source, October 12, 2026 (not deployed)
+
+On top of PR #15: background work runs in lanes (`ChatRun.lane`; one active run
+per lane: chat, provider, inbox). Find Leads and email lookups hold a per-workspace
+`provider.lock` plus one of two server-wide slots (2 GB VM) instead of `send.lock`,
+so reply checks and Chat no longer wait for them; every send path still holds
+`send.lock`. Contact import is row by row with a summary; deleted contacts are
+restored, never duplicated, and opt-outs stay blocked. The Do Not Contact page can
+lift manual blocks only. Failed send jobs can be marked reviewed (`resolved_at`)
+and stay listed. Reply checks need no AI; the lead page drafts a single first
+email; stored messages check replies directly. Migrations `0022`–`0024` required.
+
 ## Production backend `b6f350c` — recorded October 8, 2026
 
 Per the [October 8 release record](../../../../docs/deployment.md) (copied from the

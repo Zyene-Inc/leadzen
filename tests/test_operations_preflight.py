@@ -192,16 +192,15 @@ def test_env_reader_rejects_permissive_modes_symlinks_duplicates_substitution(tm
 
 def test_old_schema_pending_is_never_release_pass(fixture):
     with sqlite3.connect(fixture["employee"]) as db:
-        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name IN ('0020_lead_finder_provider', '0021_search_plan', '0022_mark_workspace_job_threads')")
-        db.execute("DROP TABLE leadzen_config_searchplan")
-        db.execute("DROP TABLE leadzen_config_discoverysearch")
-        db.execute("ALTER TABLE leadzen_config_runtimesettings DROP COLUMN lead_finder_provider")
+        # The newest migration is recorded as unapplied and its column is absent.
+        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name='0024_outreachjob_resolved_at'")
+        db.execute("ALTER TABLE leadzen_config_outreachjob DROP COLUMN resolved_at")
     strict = fixture["run"]()
     assert strict["status"] == "FAIL"
     assert "SCHEMA_PENDING" in codes(strict)
     pending = fixture["run"]("allow-pending")
     assert pending["status"] == "BLOCKED"
-    assert pending["databases"][1]["checks"]["schema"]["pending_migrations"] == 3
+    assert pending["databases"][1]["checks"]["schema"]["pending_migrations"] == 1
 
 
 def test_migration_record_without_current_column_is_failure(fixture):
@@ -221,7 +220,7 @@ def test_applied_migration_cannot_hide_missing_automatic_index(fixture):
 
 def test_partial_unique_execution_constraint_cannot_be_missing(fixture):
     with sqlite3.connect(fixture["employee"]) as db:
-        db.execute('DROP INDEX "one_active_chat_per_actor"')
+        db.execute('DROP INDEX "one_active_run_per_lane"')
     assert "SCHEMA_PARTIAL_UNIQUE_MISSING" in codes(fixture["run"]())
 
 
@@ -546,7 +545,7 @@ def test_real_graph_child_does_not_load_application_settings_or_touch_selected_d
     assert result.returncode == 0
     payload = json.loads(result.stdout)
     assert ["leadzen_accounts", "0004_accountprofile_tour_state"] in payload["leaves"]
-    assert ["leadzen_config", "0022_mark_workspace_job_threads"] in payload["leaves"]
+    assert ["leadzen_config", "0024_outreachjob_resolved_at"] in payload["leaves"]
     assert original.read_bytes() == b"not-a-database"
     assert str(original) not in result.stdout + result.stderr
 

@@ -3,14 +3,55 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **October 12, 2026** release of `1fb9799`,
-below, followed by the October 8 record. It was recorded by the operator who performed it and copied here
+The most recent deployment is the **October 13, 2026** release of `0273acb`,
+below. An earlier October 13 release of `42e9bbc` was not recorded here; it was
+the runtime replaced by this one. The October 12 and October 8 records follow. It was recorded by the operator who performed it and copied here
 on October 12 from the closed Zyene-Inc/leadzen#10; it has not been re-verified
 against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## October 13, 2026 — backend, database and dashboard `0273acb`
+
+**Source released:** `main` at `0273acb` (Merge PR #18: bulk email lookup, AI
+follow-ups, Results analytics, simpler Workspace UI). No dependency changes from
+`42e9bbc`. Wheel SHA-256
+`f7724daa6d26a77af1cbf7d6299987d3ea64d3e2c7757cb373403aa58c2bde7b`.
+
+**Verified before release (live VM):** `42e9bbc` at `/opt/leadzen-42e9bbc-20261013`
+with `/etc/leadzen-42e9bbc.env`; control database at `leadzen_config.0024`.
+
+**Recovery points:** VM snapshot `leadzen-api-pre-0273acb-20261013` (READY);
+on-VM backup `/srv/private/leadzen-pre-upgrade-0273acb-20261013` (data after WAL
+checkpoint, env file, both unit files); previous runtime
+`/opt/leadzen-42e9bbc-20261013` left untouched with its unmigrated data.
+
+**Cut-over:** staged `/opt/leadzen-0273acb-20261013` (copied venv, replaced the
+`leadzen` package); created `/etc/leadzen-0273acb.env` (root 600, paths
+updated); stopped both services; checkpointed (integrity `ok`) and backed up;
+copied data; import smoke test; migrated control and the one workspace
+(`97bd43a2-…`) to `0025_campaignsend` as the service user with Autopilot and
+follow-ups forced off (integrity `ok`; backfill attributed 1 earlier campaign
+send in the workspace); pointed both units at the new runtime. Downtime about
+two minutes. A first attempt stopped at the smoke test because the service user
+cannot read the root-only env file; the old runtime was restarted unchanged
+after about one minute, and the script now loads the env file as root.
+
+**Vercel:** the `main` push built `0273acb` for production and
+`leadzen.zyene.com` took it automatically (`autoAssignCustomDomains` on).
+
+**Production verification:** both services active, zero restarts, no warnings
+in the journal; authenticated `/api/health` and `/api/ready` 200; anonymous
+public API 401; dashboard login 200. Signed-in browser check as the employee:
+Results showed live figures (1 sent, 1 reply) and Leads showed the new counts.
+No email was sent and no paid lookup was made during the release.
+
+**Rollback path:** stop services → restore the two unit files from the on-VM
+backup (they point at `/opt/leadzen-42e9bbc-20261013` and its env file) →
+`systemctl daemon-reload` → start. Or recreate the VM from the snapshot.
+Migration `0025` only adds a table, so the older runtime runs on it unchanged.
 
 ## October 12, 2026 — backend and dashboard `1fb9799`
 

@@ -133,11 +133,12 @@ def test_create_contact_is_exactly_idempotent_and_replay_cannot_change_action(id
     assert Lead.objects.count() == 1
 
 
-def test_import_uses_existing_atomic_duplicate_validation(identity):
-    with pytest.raises(ValueError, match="duplicate"):
-        call(identity, "import_leads", {"contacts": [{"email": "same@example.com"}, {"email": "same@example.com"}]})
+def test_import_skips_repeated_rows_without_creating_duplicates(identity):
+    call(identity, "import_leads", {"contacts": [{"email": "same@example.com"}, {"email": "same@example.com"}]})
     from cold_outreach.leads.models import Lead
-    assert Lead.objects.count() == 0 and ChatRun.objects.count() == 0
+    assert Lead.objects.filter(email="same@example.com").count() == 1
+    with pytest.raises(ValueError, match="No contacts were imported"):
+        call(identity, "import_leads", {"contacts": [{"email": "not-an-email"}]})
 
 
 def test_update_preserves_email_and_recorded_consent_then_delete_stops_contact(identity):

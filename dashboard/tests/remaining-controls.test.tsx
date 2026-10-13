@@ -28,6 +28,58 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
     await userEvent.click(screen.getByRole("button", { name: "Refresh" }));
     expect(writes()).toHaveLength(0);
   });
+  test("manual blocks can be removed after confirmation; opt-outs show as protected", async () => {
+    call.mockImplementation(async (_path, init) => init?.method === "DELETE" ? { removed: true, note: "Block removed. Stopped sequences stay stopped and nothing is sent automatically." }
+      : { items: [{ id: 1, email: "manual@example.com", reason: "Manually suppressed", suppressed_at: "2026-10-02T12:00:00Z", removable: true }, { id: 2, email: "optout@example.com", reason: "Opted out", suppressed_at: "2026-10-02T12:00:00Z", removable: false }], total: 2, limit: 50, offset: 0 });
+    render(<Suppression user={user} />);
+    await screen.findByText("manual@example.com");
+    expect(screen.getAllByRole("button", { name: "Remove block" })).toHaveLength(1);
+    expect(screen.getByText("Opt-out protected: cannot be removed.")).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", { name: "Remove block" }));
+    expect(writes()).toHaveLength(0);
+    await userEvent.click(screen.getByRole("button", { name: "Confirm remove" }));
+    await waitFor(() => expect(writes()).toHaveLength(1));
+    expect(writes()[0][0]).toBe("suppression/1");
+    expect(writes()[0][1]?.method).toBe("DELETE");
+    expect(await screen.findByText(/manual@example.com: Block removed/)).toBeTruthy();
+  });
+  test("a refused removal shows the server reason", async () => {
+    call.mockImplementation(async (_path, init) => { if (init?.method === "DELETE") throw new Error("This is an opt-out or a delivery block. It cannot be removed."); return { items: [{ id: 1, email: "manual@example.com", reason: "Manually suppressed", suppressed_at: "2026-10-02T12:00:00Z", removable: true }], total: 1, limit: 50, offset: 0 }; });
+    render(<Suppression user={user} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Remove block" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm remove" }));
+    expect((await screen.findByRole("alert")).textContent).toContain("cannot be removed");
+  });
+  test("lead page drafts one first email for exactly this lead without Chat", async () => {
+    call.mockImplementation(async (path, init) => {
+      if (path === "outreach/reviews" && init?.method === "POST") return { id: "review1" };
+      if (path === "outreach/reviews/review1") return { id: "review1", kind: "initial", status: "draft", requested_count: 1, from_address: "sender@example.com", drafts: [], actor_id: 1 };
+      return { ...lead, timeline: { events: [], sequences: [], blocked_reason: "", can_stop: false, suppression: null } };
+    });
+    render(<LeadDetail user={user} contactId={1} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Draft email" }));
+    await waitFor(() => expect(writes()).toHaveLength(1));
+    expect(writes()[0][0]).toBe("outreach/reviews");
+    const body = JSON.parse(String(writes()[0][1]?.body));
+    expect(body.lead_ids).toEqual([1]); expect(body.count).toBe(1); expect(typeof body.request_id).toBe("string");
+    expect(call.mock.calls.some(([path]) => String(path).startsWith("chat/"))).toBe(false);
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Draft email" })).toBeNull());
+  });
+  test("lead page offers no draft for suppressed or already-contacted leads", async () => {
+    for (const crm_status of ["suppressed", "contacted"]) {
+      call.mockResolvedValue({ ...lead, crm_status, timeline: { events: [], sequences: [], blocked_reason: "", can_stop: false, suppression: null } });
+      const view = render(<LeadDetail user={user} contactId={1} />);
+      await screen.findByRole("heading", { name: lead.name });
+      expect(screen.queryByRole("button", { name: "Draft email" })).toBeNull();
+      view.unmount();
+    }
+  });
+  test("stored messages page checks replies directly instead of linking to Chat", async () => {
+    call.mockResolvedValue({ items: [], total: 0, limit: 50, offset: 0 });
+    render(<StoredInbox user={user} />);
+    expect(await screen.findByRole("button", { name: "Check for replies" })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: /Sync replies in chat/ })).toBeNull();
+  });
   test("suppression list search, pagination and Add/Cancel use stored records", async () => {
     call.mockResolvedValue({ items: [{ id: 1, email: lead.email, reason: "Opted out", suppressed_at: "2026-10-02T12:00:00Z" }], total: 51, limit: 50, offset: 0 });
     render(<Suppression user={user} />);
@@ -104,8 +156,13 @@ test.each([
 ] as const)("%s clears the previous error while refreshing and after recovery", async (_name, View, loadingText) => {
   const recovered = { items: [], total: 0, limit: 50, offset: 0 };
   let complete!: (value: typeof recovered) => void;
-  call.mockRejectedValueOnce(new Error("Temporary read failure"))
-    .mockImplementation(() => new Promise(resolve => { complete = resolve; }));
+  // The Inbox page also restores its reply-check panel; only the record list fails and recovers.
+  let failed = false;
+  call.mockImplementation((path) => {
+    if (path === "inbox/check") return Promise.resolve({ check: null });
+    if (!failed) { failed = true; return Promise.reject(new Error("Temporary read failure")); }
+    return new Promise(resolve => { complete = resolve; });
+  });
   render(<View user={user} />);
   await screen.findByRole("alert");
   await userEvent.click(screen.getByRole("button", { name: "Refresh" }));

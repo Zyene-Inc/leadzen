@@ -10,6 +10,7 @@ import { LeadTimeline } from "@/components/lead-timeline";
 import type { Account } from "@/lib/auth";
 import { useWorkspaceRevision } from "@/lib/workspace-updates";
 import { api } from "@/lib/client-api";
+import OutreachReview from "@/components/outreach-review";
 import { transientError } from "@/lib/api-errors";
 import { leadStatus, type Contact } from "@/lib/leads";
 
@@ -78,7 +79,23 @@ function LookupUsage({ lookup }: { lookup: NonNullable<Contact["lookup"]> }) {
 
 function WorkEmail({ lead, load }: { lead: Contact; load: () => Promise<void> }) {
   const [reviewing, setReviewing] = useState(false);
+  const [draftReview, setDraftReview] = useState<string | null>(null);
+  const [drafting, setDrafting] = useState(false);
+  const [draftError, setDraftError] = useState("");
+  const draftRequest = useRef("");
   const opener = useRef<HTMLButtonElement>(null);
+  const canDraft = !!lead.email && !["suppressed", "contacted", "replied"].includes(lead.crm_status);
+  async function draftEmail() {
+    if (drafting) return;
+    setDrafting(true); setDraftError("");
+    draftRequest.current ||= crypto.randomUUID();
+    try {
+      // One personal first email, reviewed before anything is sent. No Chat involved.
+      const review = await api<{ id: string }>("outreach/reviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ count: 1, lead_ids: [lead.id], request_id: draftRequest.current }) });
+      setDraftReview(review.id);
+    } catch (caught) { setDraftError(caught instanceof Error ? caught.message : "Could not draft an email"); draftRequest.current = ""; }
+    finally { setDrafting(false); }
+  }
   const lookup = lead.lookup;
   function close() { setReviewing(false); opener.current?.focus(); }
   return <section className="panel settings-card" aria-labelledby="lead-contact-title">
@@ -91,7 +108,10 @@ function WorkEmail({ lead, load }: { lead: Contact; load: () => Promise<void> })
       {!lead.email && !active.has(lookup?.status ?? "") && <button ref={opener} className="button primary" onClick={() => setReviewing(true)} aria-expanded={reviewing} aria-controls={reviewing ? "work-email-confirm" : undefined}>Find Work Email</button>}
       {lookup?.run_id && <Link className="button" href={`/find-leads/${lookup.run_id}`}>View lookup activity</Link>}
       {lead.email && <Link className="button primary" href={`/outreach?lead=${lead.id}`}>Prepare outreach</Link>}
+      {canDraft && !draftReview && <button className="button" disabled={drafting} onClick={() => void draftEmail()}>{drafting ? "Drafting…" : "Draft email"}</button>}
     </div>
+    {draftError && <p className="error" role="alert">{draftError}</p>}
+    {draftReview && <OutreachReview key={draftReview} reviewId={draftReview} workspacePath={`/contacts/${lead.id}`} closeLabel="Back to lead" closed={() => { setDraftReview(null); draftRequest.current = ""; void load(); }} />}
     {reviewing && <EmailConfirmation contactId={lead.id} close={close} started={load} />}
     <p className="settings-help">An email address is not permission to send. Consent, suppression, provider policy and send approval are checked separately.</p>
   </section>;

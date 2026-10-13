@@ -224,6 +224,9 @@ class OutreachJob(models.Model):
     campaign_id = models.UUIDField(null=True, blank=True)
     request_id = models.UUIDField(null=True, blank=True, unique=True)
     campaign_approval = models.JSONField(default=dict)
+    # Set when the employee has read a failure; it then leaves "Needs attention"
+    # but stays listed with its output. Recipients held for review are untouched.
+    resolved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -327,9 +330,13 @@ class ChatRun(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     finished_at = models.DateTimeField(null=True, blank=True)
+    # Independent work runs side by side, one active run per lane: "chat"
+    # (conversations; may send), "provider" (lead search and email lookups; spends
+    # provider credits) and "inbox" (reply checks). See leadzen.lanes.
+    lane = models.CharField(max_length=16, default="chat")
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["actor_id"], condition=models.Q(status__in=["queued", "running", "awaiting_approval", "paused"]), name="one_active_chat_per_actor")]
+        constraints = [models.UniqueConstraint(fields=["actor_id", "lane"], condition=models.Q(status__in=["queued", "running", "awaiting_approval", "paused"]), name="one_active_run_per_lane")]
 
 
 class DiscoverySession(models.Model):

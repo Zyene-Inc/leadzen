@@ -224,6 +224,9 @@ class OutreachJob(models.Model):
     campaign_id = models.UUIDField(null=True, blank=True)
     request_id = models.UUIDField(null=True, blank=True, unique=True)
     campaign_approval = models.JSONField(default=dict)
+    # Set when the employee has read a failure; it then leaves "Needs attention"
+    # but stays listed with its output. Recipients held for review are untouched.
+    resolved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -327,9 +330,13 @@ class ChatRun(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     finished_at = models.DateTimeField(null=True, blank=True)
+    # Independent work runs side by side, one active run per lane: "chat"
+    # (conversations; may send), "provider" (lead search and email lookups; spends
+    # provider credits) and "inbox" (reply checks). See leadzen.lanes.
+    lane = models.CharField(max_length=16, default="chat")
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["actor_id"], condition=models.Q(status__in=["queued", "running", "awaiting_approval", "paused"]), name="one_active_chat_per_actor")]
+        constraints = [models.UniqueConstraint(fields=["actor_id", "lane"], condition=models.Q(status__in=["queued", "running", "awaiting_approval", "paused"]), name="one_active_run_per_lane")]
 
 
 class DiscoverySession(models.Model):
@@ -358,6 +365,18 @@ class DiscoveryCandidate(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["session", "source_id"], name="discovery_candidate_unique")]
+
+
+# Background Workspace jobs (discovery, email lookup, reply checks, Autopilot) keep
+# their progress and approvals on a ChatRun. Their thread is a container, not a
+# conversation, so Chat's conversation list leaves it out.
+WORKSPACE_JOB = {"origin": "workspace"}
+
+
+def conversations(threads):
+    """Only real Chat conversations. A plain JSON-key exclude also drops threads
+    without the key in SQLite, so match the absent key explicitly."""
+    return threads.filter(models.Q(context__origin__isnull=True) | ~models.Q(context__origin=WORKSPACE_JOB["origin"]))
 
 
 class SearchPlan(models.Model):

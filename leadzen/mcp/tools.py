@@ -394,7 +394,7 @@ def call_tool(actor, connection, name, arguments):
     try:
         with transaction.atomic(using=alias):
             stopping = name in {"cancel_operation", "stop_discovery", "suppress_contact", "pause_campaign", "pause_autopilot"}
-            if not stopping and ChatRun.objects.filter(actor_id=actor.pk, status__in=ACTIVE).exists():
+            if not stopping and ChatRun.objects.filter(actor_id=actor.pk, status__in=ACTIVE, lane="chat").exists():
                 raise ValueError("Finish or cancel your active task in LeadZen before starting another action")
             if ChatRun.objects.filter(actor_id=actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 30:
                 raise ValueError("Operation limit reached. Try again in a few minutes")

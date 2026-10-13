@@ -46,7 +46,7 @@ const noSelection: number[] = [];
 export default function Outreach({ user, initialSelection = noSelection, initialReviewId = null, initialCampaignId = null }: { user: Account; initialSelection?: number[]; initialReviewId?: string | null; initialCampaignId?: string | null }) {
   const campaigns = useStoredData<{ items: Campaign[] }>("campaigns", 5000);
   const setup = useStoredData<OutreachSetup>("outreach", 5000);
-  const jobs = useStoredData<{ items: { id: string; status: string; requested_count: number; kind: string; output: string }[] }>("jobs", 5000);
+  const jobs = useStoredData<{ items: DeliveryJob[] }>("jobs", 5000);
   const [creating, setCreating] = useState(initialSelection.length > 0 && !initialReviewId && !initialCampaignId);
   const [editing, setEditing] = useState<Campaign | undefined>();
   const [reviewId, setReviewId] = useState(initialReviewId);
@@ -67,11 +67,40 @@ export default function Outreach({ user, initialSelection = noSelection, initial
     {creating ? <OutreachComposer key={editing?.id || "new"} actorId={user.id} initialSelection={initialSelection} existing={editing} aiReady={!!setup.data?.ai_ready} close={() => { setCreating(false); setEditing(undefined); refresh(); }} saved={refresh} /> : reviewId ? <OutreachReview reviewId={reviewId} workspacePath={`/outreach?review=${reviewId}`} closeLabel="Back to outreach" closed={() => { setReviewId(null); refresh(); }} /> : <>
       <Autopilot />
       {setup.data && <div className="outreach-summary"><div><span className="muted">Sending from</span><strong>{setup.data.from_address || "Connect a mailbox in Settings"}</strong></div><div><span className="muted">Available today</span><strong>{setup.data.remaining_today} conversations</strong></div><div><span className="muted">Sending hours</span><strong>{scheduleHours(windowSchedule(setup.data.window))}</strong><small>{scheduleDayLabel(windowSchedule(setup.data.window).days)} · {LEADZEN_TIME_ZONE_LABEL}</small><Link className="text-link" href="/settings#sending-hours">Edit hours</Link></div></div>}
-      {jobs.data?.items.some((j) => ["queued", "running", "failed"].includes(j.status)) && <section className="panel settings-card"><h2>Delivery activity</h2>{jobs.data.items.filter((j) => ["queued", "running", "failed"].includes(j.status)).slice(0, 5).map((job) => <div className="attention-row" key={job.id}><span>{job.requested_count} emails <span className="badge">{job.status}</span></span><details><summary>View result</summary><p className="settings-help">{job.output || "Waiting for the worker’s next update."}</p></details></div>)}<HelpText label="What these states mean">Queued messages may wait for sending hours or pacing. Provider acceptance does not guarantee delivery. Uncertain attempts require review and are never automatically retried.</HelpText></section>}
+      <DeliveryActivity jobs={jobs.data?.items ?? []} refresh={jobs.refresh} />
       <div className="section-heading"><h2>Your outreach</h2><div className="top-actions" role="group" aria-label="Filter outreach">{[["open", "Open"], ["draft", "Needs review"], ["all", "All"]].map(([value, label]) => <button key={value} className={`button ${filter === value ? "selected" : "ghost"}`} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
       {setup.data?.reviews.filter((r) => filter === "all" || (filter === "draft" ? r.status === "draft" : ["draft", "generating", "queued", "running", "failed"].includes(r.status))).map((r) => <button className="review-list-button panel" key={r.id} onClick={() => setReviewId(r.id)}><span><strong>{r.kind === "reply" ? "Reply draft" : `${r.count} personal messages`}</strong><small>{sentTime(r.created_at)}</small></span><span className="badge">{r.status === "draft" ? "Needs review" : r.status}</span></button>)}
       <div className="campaign-list">{items.map((item) => <OutreachItem key={item.id} item={item} actorId={user.id} refresh={refresh} initiallyOpen={item.id === initialCampaignId} edit={() => { setEditing(item); setCreating(true); }} />)}</div>
       {campaigns.loading && !campaigns.data && <p role="status">Loading outreach…</p>}{campaigns.data && !items.length && !setup.data?.reviews.length && <section className="empty"><h2>{filter === "draft" ? "No drafts waiting" : "Start a conversation"}</h2><p>Select leads and prepare your first message. Add follow-ups only when you need them.</p><button className="button primary" onClick={() => { setEditing(undefined); setCreating(true); }}>Select leads</button></section>}
     </>}
   </main></div>;
+}
+
+type DeliveryJob = { id: string; status: string; requested_count: number; kind: string; output: string; resolved_at?: string | null };
+
+function DeliveryActivity({ jobs, refresh }: { jobs: DeliveryJob[]; refresh: () => void }) {
+  const [resolving, setResolving] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const open = jobs.filter((j) => ["queued", "running"].includes(j.status) || (j.status === "failed" && !j.resolved_at)).slice(0, 5);
+  const reviewed = jobs.filter((j) => j.status === "failed" && j.resolved_at).slice(0, 5);
+  if (!open.length && !reviewed.length) return null;
+  async function resolve(job: DeliveryJob) {
+    if (resolving) return;
+    setResolving(job.id); setError("");
+    try { await api(`jobs/${job.id}/resolve`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }); refresh(); }
+    catch (caught) { setError(caught instanceof Error ? caught.message : "Could not mark this failure as reviewed"); }
+    finally { setResolving(null); }
+  }
+  const row = (job: DeliveryJob, canResolve: boolean) => <div className="attention-row" key={job.id}>
+    <span>{job.requested_count} emails <span className="badge">{job.status}{job.resolved_at ? " · reviewed" : ""}</span></span>
+    <details><summary>View result</summary><p className="settings-help">{job.output || "Waiting for the worker’s next update."}</p>
+      {canResolve && <button className="button ghost" disabled={resolving === job.id} onClick={() => void resolve(job)}>{resolving === job.id ? "Saving…" : "Mark as reviewed"}</button>}
+    </details>
+  </div>;
+  return <section className="panel settings-card"><h2>Delivery activity</h2>
+    {error && <p className="error" role="alert">{error}</p>}
+    {open.map((job) => row(job, job.status === "failed"))}
+    {reviewed.length > 0 && <details><summary>Reviewed failures ({reviewed.length})</summary>{reviewed.map((job) => row(job, false))}</details>}
+    <HelpText label="What these states mean">Queued messages may wait for sending hours or pacing. Provider acceptance does not guarantee delivery. Uncertain attempts require review and are never automatically retried. Marking a failure as reviewed only removes it from Needs attention; nothing is retried or sent.</HelpText>
+  </section>;
 }

@@ -24,6 +24,15 @@ function expand(container: HTMLElement) {
 }
 
 describe("Chat live activity", () => {
+  it("shows no activity panel for a finished plain reply, but keeps it for failures", () => {
+    const plain = { ...conversation(), discovery: undefined, run: { ...conversation().run!, status: "succeeded", discovery_id: null, finished_at: started },
+      messages: [{ id: "user", role: "user", content: "hi", data: {}, created_at: started }, { id: "reply", role: "assistant", content: "Hi there!", data: {}, created_at: started }] } as Conversation;
+    const { container, rerender } = render(<ChatLiveActivity conversation={plain} />);
+    expect(container.querySelector(".chat-live-activity")).toBeNull();
+    expect(screen.queryByText("No tool actions were recorded for this request.")).toBeNull();
+    rerender(<ChatLiveActivity conversation={{ ...plain, run: { ...plain.run!, status: "failed" } }} />);
+    expect(container.querySelector(".chat-live-activity")).not.toBeNull();
+  });
   it("starts compact, reveals only recorded activity and keeps Workspace links available", () => {
     const { container } = render(<ChatLiveActivity conversation={conversation()} />);
     expect(container.querySelector("details")?.open).toBe(false);

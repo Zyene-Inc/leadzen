@@ -87,7 +87,7 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
     expect(screen.queryByRole("button", { name: "Stop" })).toBeNull();
   });
   test("CSV rejects malformed input and imports quoted rows correctly", async () => {
-    call.mockResolvedValue({ items: [], total: 0 });
+    call.mockImplementation(async (_path, init) => init?.method === "POST" ? { ids: [1], created: 1, restored: 0, do_not_contact: 0, skipped: [], duplicates: [], failed: [], summary: "1 added, 0 added again." } : { items: [], total: 0 });
     render(<Contacts user={user} />);
     fireEvent.change(screen.getByLabelText("CSV contacts"), { target: { value: 'email,first_name\n"unclosed' } });
     await userEvent.click(screen.getByRole("button", { name: "Import contacts" }));
@@ -95,8 +95,20 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
     expect(writes()).toHaveLength(0);
     fireEvent.change(screen.getByLabelText("CSV contacts"), { target: { value: 'email,company,opted_in\nnew@example.com,"Practice, Inc",true' } });
     await userEvent.click(screen.getByRole("button", { name: "Import contacts" }));
-    await screen.findByText("Contacts imported.");
+    await screen.findByText(/^Import finished:/);
     expect(payload()).toEqual({ contacts: [{ email: "new@example.com", company: "Practice, Inc", opted_in: true }] });
+  });
+  test("CSV import reports added, skipped, repeated and failed rows", async () => {
+    call.mockImplementation(async (_path, init) => init?.method === "POST"
+      ? { ids: [7], created: 1, restored: 0, do_not_contact: 0, summary: "1 added, 0 added again, 1 already in your leads, 1 repeated in the file, 1 failed (row 2: Enter a valid email address.).",
+          failed: [{ row: 2, email: "bad", reason: "Enter a valid email address." }], duplicates: [{ row: 4, email: "a@example.com", reason: "Repeated earlier in this import" }], skipped: [{ row: 3, email: "old@example.com", reason: "Already in your leads" }] }
+      : { items: [], total: 0 });
+    render(<Contacts user={user} />);
+    fireEvent.change(screen.getByLabelText("CSV contacts"), { target: { value: "email\na@example.com\nbad\nold@example.com\na@example.com" } });
+    await userEvent.click(screen.getByRole("button", { name: "Import contacts" }));
+    expect(await screen.findByText(/Import finished: 1 added/)).toBeTruthy();
+    const rows = screen.getByLabelText("Rows not imported").querySelectorAll("li");
+    expect([...rows].map((r) => r.textContent)).toEqual(["Row 2 · bad: Failed. Enter a valid email address.", "Row 3 · old@example.com: Skipped. Already in your leads", "Row 4 · a@example.com: Repeated. Repeated earlier in this import"]);
   });
   test("outreach pause, resume review and archive preserve approval boundaries", async () => {
     let current = row;

@@ -4,8 +4,6 @@ import Link from "next/link";
 import { api } from "@/lib/client-api";
 import type { Contact } from "@/lib/leads";
 import type { Campaign, SequenceStep } from "@/lib/campaign";
-import type { Conversation } from "@/lib/chat";
-import { activeRun } from "@/lib/chat";
 import { useStoredData } from "@/lib/use-stored-data";
 import { useWorkspaceContext } from "@/lib/workspace-context";
 import { HelpText } from "@/components/help-tooltip";
@@ -16,27 +14,6 @@ type EditableStep = SequenceStep & { key: string };
 const editableSteps = (steps: SequenceStep[]): EditableStep[] => steps.map((step) => ({ ...step, key: crypto.randomUUID() }));
 const blankStep = (delay_days = 0): EditableStep => ({ key: crypto.randomUUID(), subject: "", body: "", delay_days });
 const post = (body: unknown, method = "POST") => ({ method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-
-function Preparation({ threadId, done, cancel }: { threadId: string; done: (campaign: Campaign) => void; cancel: () => void }) {
-  const { data, error, refresh } = useStoredData<Conversation>(`chat/threads/${threadId}`, 1500);
-  const handled = useRef(false);
-  const [stopping, setStopping] = useState(false);
-  const [stopError, setStopError] = useState("");
-  useEffect(() => {
-    if (!data || activeRun(data.run) || handled.current) return;
-    const result = [...data.messages].reverse().find((m) => m.data.tool === "draft_campaign" && typeof m.data.result?.id === "string")?.data.result;
-    if (result) { handled.current = true; done(result as Campaign); }
-  }, [data, done]);
-  async function stop() {
-    if (!data?.run || stopping) return;
-    setStopping(true); setStopError("");
-    try { await api(`chat/runs/${data.run.id}/cancel`, post({})); refresh(); }
-    catch (caught) { setStopError(caught instanceof Error ? caught.message : "Could not stop preparation"); }
-    finally { setStopping(false); }
-  }
-  const running = activeRun(data?.run);
-  return <section className="panel settings-card" aria-live="polite"><h2>Preparing your draft</h2><p>{running ? "LeadZen is using your saved offer and selected leads." : "Review the assistant’s result or return to your drafts."}</p><p className="settings-help">AI charges may apply. Sending and paid lookups require separate approval.</p>{(error || stopError) && <p className="error" role="alert">{error || stopError}</p>}{data?.run?.status === "awaiting_approval" && <p role="status">The assistant needs your input. Review its request in Chat; no action has been approved here.</p>}<div className="card-actions"><Link className="button" href={`/chat/${threadId}`}>View activity</Link>{running ? <button className="button" disabled={stopping} onClick={() => void stop()}>Stop preparation</button> : <button className="button" onClick={cancel}>Back to outreach</button>}</div></section>;
-}
 
 export function OutreachComposer({ actorId, initialSelection, existing, aiReady, close, saved }: { actorId: number; initialSelection: number[]; existing?: Campaign; aiReady: boolean; close: () => void; saved: () => void }) {
   const [stage, setStage] = useState(existing ? 2 : 1);
@@ -51,33 +28,26 @@ export function OutreachComposer({ actorId, initialSelection, existing, aiReady,
   const [offer, setOffer] = useState({ target: existing?.target || "", product: existing?.product || "", booking_link: existing?.booking_link || "", signature: existing?.signature || "", delay_basis: existing?.delay_basis || "working_days" });
   const [confirmed, setConfirmed] = useState(false);
   const [draft, setDraft] = useState<Campaign | undefined>(existing);
-  const [threadId, setThreadId] = useState<string | null>(null);
+  const [writing, setWriting] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const lock = useRef(false);
-  const generation = useRef<{ selection: string; thread: string; request: string } | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { heading.current?.focus(); }, [stage]);
   useWorkspaceContext({ selectedLeadIds: selected, currentCampaignId: draft?.id || null, currentDraftId: null, currentLeadId: null, currentThreadId: null, workspacePath: "/outreach" }, actorId);
   async function prepareAI() {
     if (lock.current || !selected.length || selected.length > 25) return;
-    lock.current = true; setBusy(true); setError("");
+    lock.current = true; setBusy(true); setError(""); setWriting(true);
     try {
-      const selection = [...selected].sort((a, b) => a - b).join(",");
-      if (generation.current?.selection !== selection) {
-        const thread = await api<{ id: string }>("chat/threads", post({}));
-        generation.current = { selection, thread: thread.id, request: crypto.randomUUID() };
-      }
-      const request = generation.current;
-      await api(`chat/threads/${request.thread}/messages`, post({ request_id: request.request, content: `Prepare one draft campaign for exactly these Workspace lead IDs: ${selection}. Use my saved product, target, signature and booking link. Write one concise initial message using supported personalization tags. No follow-ups yet. Create the draft with draft_campaign and finish. Do not send, activate, sync a mailbox, discover leads or buy emails.`, context: { selectedLeadIds: selected, currentCampaignId: null, currentLeadId: null, currentDraftId: null, currentThreadId: null, workspacePath: "/outreach" } }));
-      setThreadId(request.thread);
-    } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not prepare drafts. Check saved outreach before retrying."); }
-    finally { lock.current = false; setBusy(false); }
+      // Written and saved by the backend directly; no Chat conversation is created.
+      adopt(await api<Campaign>("campaigns/prepare", post({ contact_ids: [...selected].sort((a, b) => a - b) })));
+    } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not prepare a draft. Try again, or write the message yourself."); }
+    finally { lock.current = false; setBusy(false); setWriting(false); }
   }
   function adopt(item: Campaign) {
     setDraft(item); setName(item.name); setCategory(item.category); setSteps(editableSteps(item.steps)); setSelected(item.recipients.map((r) => r.id));
     setOffer({ target: item.target, product: item.product, booking_link: item.booking_link, signature: item.signature, delay_basis: item.delay_basis });
-    setThreadId(null); setStage(2); saved();
+    setStage(2); saved();
   }
   async function persistDraft() {
     if (lock.current) throw new Error("Please wait for the current save.");
@@ -96,7 +66,6 @@ export function OutreachComposer({ actorId, initialSelection, existing, aiReady,
     catch (caught) { setError(caught instanceof Error ? caught.message : "Could not save your draft"); }
   }
   function updateStep(index: number, changes: Partial<SequenceStep>) { setSteps((current) => current.map((step, i) => i === index ? { ...step, ...changes } : step)); }
-  if (threadId) return <Preparation threadId={threadId} done={adopt} cancel={() => { saved(); close(); }} />;
   return <section className="outreach-composer" aria-label="Create outreach">
     <ol className="outreach-steps" aria-label="Outreach steps">{["Select leads", "Review messages", "Confirm outreach"].map((label, i) => <li key={label} aria-current={stage === i + 1 ? "step" : undefined}><span>{i + 1}</span>{label}</li>)}</ol>
     <div className="section-heading"><h2 ref={heading} tabIndex={-1}>{stage === 1 ? "Who would you like to contact?" : stage === 2 ? "Make the message yours" : "Ready for your approval"}</h2><button className="button ghost" disabled={busy} onClick={() => { if (stage !== 2 || window.confirm("Close this editor? Unsaved changes will be lost; saved drafts remain in Outreach.")) close(); }}>{draft ? "Close editor" : "Cancel"}</button></div>
@@ -108,7 +77,8 @@ export function OutreachComposer({ actorId, initialSelection, existing, aiReady,
       {loading && !contacts && <p role="status">Loading leads…</p>}{contacts && !contacts.items.length && <p className="empty">No ready leads match. <Link className="text-link" href="/contacts">Find or add leads</Link></p>}{contacts && contacts.items.length > 0 && !contacts.items.some((c) => c.email) && <p className="empty">None of the ready leads have a resolved email yet. <Link className="text-link" href="/contacts">Find each lead’s work email from the Leads page</Link>, or add contacts with emails.</p>}
       {contacts && contacts.total > contacts.limit && <div className="records-pagination"><span>{offset + 1}–{Math.min(offset + contacts.limit, contacts.total)} of {contacts.total}</span><div className="top-actions"><button className="button" disabled={!offset} onClick={() => setOffset(Math.max(0, offset - contacts.limit))}>Previous</button><button className="button" disabled={offset + contacts.limit >= contacts.total} onClick={() => setOffset(offset + contacts.limit)}>Next</button></div></div>}
       <p className="settings-help">Select up to 25 leads. Eligibility and permissions are checked again before sending.</p>
-      <div className="card-actions"><button className="button primary" disabled={busy || !selected.length || selected.length > 25} onClick={() => aiReady ? void prepareAI() : setStage(2)}>{busy ? "Preparing…" : "Prepare drafts"}</button>{aiReady && <button className="button" disabled={busy || !selected.length || selected.length > 25} onClick={() => setStage(2)}>Write myself</button>}</div>
+      <div className="card-actions"><button className="button primary" disabled={busy || !selected.length || selected.length > 25} onClick={() => aiReady ? void prepareAI() : setStage(2)}>{writing ? "Writing your draft…" : busy ? "Preparing…" : "Prepare drafts"}</button>{aiReady && <button className="button" disabled={busy || !selected.length || selected.length > 25} onClick={() => setStage(2)}>Write myself</button>}</div>
+      {writing && <p role="status">LeadZen is writing your draft from your saved offer. This usually takes a few seconds.</p>}
       <p className="settings-help">{aiReady ? "Prepare drafts uses your AI provider; AI charges may apply. No emails are sent." : "Write your message in the next step. Connect AI in Settings for assisted drafting."}</p>
     </section>}
     {stage === 2 && <form onSubmit={save}><fieldset disabled={busy} className="outreach-fields">

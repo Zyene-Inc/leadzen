@@ -16,6 +16,7 @@ from django.views.decorators.http import require_http_methods
 from cold_outreach.emails.models import Direction, Message
 from cold_outreach.leads.models import Deal, DealState, Suppression
 from openoutfind.crm.models import Deal as Decision, Lead as Profile
+from leadzen.config.models import WORKSPACE_JOB, conversations
 from leadzen.accounts.service import access, error, payload
 from leadzen.config.models import ChatMessage, ChatRun, ChatThread, DiscoveryLookup, DiscoverySession, SiteConfig
 from leadzen.discovery import context
@@ -191,7 +192,7 @@ def email_review(deal, actor_id):
     elif not setup["ready"]:
         reason = " ".join(setup["blockers"])
     elif setup["active_run"]:
-        reason = "Finish or stop your active task before requesting an email."
+        reason = "A lead search or email lookup is already running. Try again when it finishes."
     identity = selected_identity([source.pk]) if source else {}
     revision = hashlib.sha256(json.dumps({"setup": snapshot("find_leads", {}), "identity": identity,
         "id": deal.pk, "state": deal.state, "email": deal.lead.email, "source_email": source.email if source else "",
@@ -227,7 +228,7 @@ def work_email(request, deal_id):
             return error("Request ID already used", 409)
         return JsonResponse({"run": chat.run_payload(existing)}, status=202)
     chat.recover_stale(request.actor.pk)
-    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Task limit reached. Try later or archive a conversation", 429)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):
@@ -238,8 +239,8 @@ def work_email(request, deal_id):
             if not review["eligible"] or review["revision"] != body.get("revision"):
                 return error(review["reason"] or "The lead or setup changed. Review this lookup again.", 409)
             source_ids = [review["source_id"]]
-            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Work email for {review['name']}"[:100])
-            row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id)
+            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Work email for {review['name']}"[:100], context=dict(WORKSPACE_JOB))
+            row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id, lane="provider")
             prepare(row, "find_leads", normalize("find_leads", {"count": 1, "emails": True}), selected=True)
             row.refresh_from_db()
             row.pending = {**row.pending, "approved": True, "single_action": True, "source_identity": selected_identity(source_ids),

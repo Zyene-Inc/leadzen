@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from leadzen.config.models import WORKSPACE_JOB, conversations
 from leadzen.accounts.service import access, error, payload
 from leadzen.chat import views as chat
 from leadzen.chat.engine import prepare
@@ -34,22 +35,20 @@ def check_replies(request):
             return error("Request ID already used", 409)
         return JsonResponse({"thread_id": str(existing.thread_id), "run": chat.run_payload(existing)})
     chat.recover_stale(request.actor.pk)
-    if ChatRun.objects.filter(actor_id=request.actor.pk, status__in=chat.ACTIVE).exists():
-        return error("Finish or stop your active task before checking replies.", 409)
+    if ChatRun.objects.filter(actor_id=request.actor.pk, status__in=chat.ACTIVE, lane="inbox").exists():
+        return error("A reply check is already running.", 409)
     if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15:
         return error("Task limit reached. Try again in a few minutes.", 429)
-    if ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Archive an old chat before checking replies again.", 409)
     from leadzen.configuration import effective
     values = effective()
     if not values.mailbox_address or not values.imap_host or not (values.imap_password or values.mailbox_password):
         return error("Connect your reply inbox in Settings first.", 409)
-    if not values.ai_enabled or not values.llm_api_key:
-        return error("Connect AI in Settings to classify replies.", 409)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):
-            thread = ChatThread.objects.create(actor_id=request.actor.pk, title="Check for replies", context={"workspacePath": "/inbox"})
-            run = ChatRun.objects.create(actor_id=request.actor.pk, thread=thread, request_id=request_id)
+            thread = ChatThread.objects.create(actor_id=request.actor.pk, title="Check for replies", context={**WORKSPACE_JOB, "workspacePath": "/inbox"})
+            run = ChatRun.objects.create(actor_id=request.actor.pk, thread=thread, request_id=request_id, lane="inbox")
             ChatMessage.objects.create(thread=thread, role="user", content="Check my connected inbox for replies and classify them. Do not send emails or take any other action.", data={"workspace_action": "check_replies"})
             prepare(run, "sync_mailbox", {})
             run.refresh_from_db()
@@ -86,6 +85,6 @@ def attention(request):
     for row in EmailCampaign.objects.exclude(status="archived").exclude(followup_approval__issue__isnull=True).order_by("-created_at")[:4]:
         if row.followup_approval.get("issue"):
             items.append({"id": f"blocked-{row.pk}", "label": row.name, "detail": row.followup_approval["issue"], "href": f"/outreach?campaign={row.pk}"})
-    for row in OutreachJob.objects.filter(status="failed").order_by("-created_at")[:3]:
+    for row in OutreachJob.objects.filter(status="failed", resolved_at__isnull=True).order_by("-created_at")[:3]:
         items.append({"id": f"job-{row.pk}", "label": "Sending needs attention", "detail": "Check the saved result before retrying", "href": "/outreach"})
     return JsonResponse({"items": items})

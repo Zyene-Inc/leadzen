@@ -62,6 +62,8 @@ function RunActivity({ conversation, run }: { conversation: Conversation; run: C
     const result = message.data.result;
     return result && !result.error && !["running", "failed", "stopped", "cancelled"].includes(String(result.status));
   }).length;
+  // A finished conversational reply needs no activity panel; failures still explain themselves.
+  if (!active && !run.approval && run.status === "succeeded" && !actions.length && !discovery) return null;
   const label = activityLabel(run, active, discovery, tool?.content, writing);
   const detail = discovery
     ? `${discovery.counts.discovered} profiles found · ${discovery.counts.produced} / ${discovery.goal.count} ${discovery.goal.unit === "emails" ? "email results" : "qualified leads"} · ${discovery.counts.evaluated} evaluated`

@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from leadzen.config.models import WORKSPACE_JOB, conversations
 from leadzen.accounts.service import access, error, payload
 from leadzen.chat import views as chat
 from leadzen.chat.engine import MAX_ACTION_COUNT, normalize, prepare, snapshot
@@ -40,7 +41,7 @@ def context(actor_id):
         blockers.append("Complete your product and target audience in Purpose & setup.")
     if not (config.operator_email and config.operator_country_code and config.accepted_legal_notice):
         blockers.append("Complete your identity and legal acknowledgment in Purpose & setup.")
-    active = ChatRun.objects.filter(actor_id=actor_id, thread__actor_id=actor_id, status__in=chat.ACTIVE).select_related("thread").first()
+    active = ChatRun.objects.filter(actor_id=actor_id, thread__actor_id=actor_id, status__in=chat.ACTIVE, lane="provider").select_related("thread").first()
     return {"max_count": MAX_ACTION_COUNT, "max_email_count": 12 if values.lead_finder_provider == "ai_ark" else MAX_ACTION_COUNT,
             "provider": values.lead_finder_provider, "provider_name": finder_label(values),
             "profile_budget_per_lead": 1 if values.lead_finder_provider == "ai_ark" else 0, "target": config.campaign_target,
@@ -84,18 +85,18 @@ def discovery(request):
     if not current["ready"]:
         return error(" ".join(current["blockers"]), 409)
     if current["active_run"]:
-        return error("Finish or stop your active task before finding more leads.", 409)
+        return error("A lead search or email lookup is already running. Finish or stop it before starting another.", 409)
     if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15:
         return error("Discovery and chat limit reached. Try again in a few minutes.", 429)
-    if ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Archive a conversation before creating another discovery run.", 409)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):
             # Repeat the revision check inside the transaction before approving.
             if body.get("revision") != snapshot("find_leads", args):
                 return error("Your setup changed. Refresh and review before starting.", 409)
-            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Find {args['count']} leads" + (" with verified emails" if args["emails"] else " without email lookup"))
-            row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id)
+            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Find {args['count']} leads" + (" with verified emails" if args["emails"] else " without email lookup"), context=dict(WORKSPACE_JOB))
+            row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id, lane="provider")
             prepare(row, "find_leads", args)
             row.refresh_from_db()
             # Start Finding is explicit approval of this exact displayed budget.
@@ -240,7 +241,7 @@ def emails(request, run_id):
     setup = context(request.actor.pk)
     if not setup["ready"] or setup["active_run"]:
         return error("Complete setup and finish or stop your active task first", 409)
-    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Task limit reached. Try later or archive a conversation", 429)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):
@@ -250,8 +251,8 @@ def emails(request, run_id):
                 return error("The selected leads or setup changed. Refresh this review.", 409)
             source_ids = [items[i]["source_id"] for i in ids]
             args = normalize("find_leads", {"count": len(ids), "emails": True})
-            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Find emails for {len(ids)} selected leads")
-            row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id)
+            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Find emails for {len(ids)} selected leads", context=dict(WORKSPACE_JOB))
+            row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id, lane="provider")
             prepare(row, "find_leads", args, selected=True)
             row.refresh_from_db()
             row.pending = {**row.pending, "approved": True, "single_action": True, "source_identity": selected_identity(source_ids)}

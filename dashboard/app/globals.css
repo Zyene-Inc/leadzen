@@ -1384,14 +1384,6 @@ h1 {
   background: var(--danger-soft);
   border-color: transparent;
 }
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--success);
-  display: inline-block;
-  margin-right: 6px;
-}
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2384,21 +2376,6 @@ code {
   color: var(--muted);
   font-size: 13px;
 }
-.tour-card {
-  max-width: 760px;
-  margin-top: 20px;
-  padding: 22px;
-}
-.tour-card h2 {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  margin: 24px 0 10px;
-}
-.tour-card .card-actions {
-  padding-inline: 0;
-  padding-bottom: 0;
-}
 .job-panel {
   margin-top: 20px;
 }
@@ -2980,7 +2957,6 @@ time,
   .home-decisions { max-height: 300px; }
 }
 
-.tour-card .help-text { margin-inline: 0; }
 .campaign-list .panel-head p { margin: 4px 0 0; }
 
 /* Actual task activity, collapsed by default. Never scroll on the reader's behalf. */

@@ -338,13 +338,32 @@ def suppression(request):
         limit, offset, query = _workspace_page(request)
     except ValueError:
         return _json_error("Invalid pagination or search. Use limit 1–100, a non-negative offset and search up to 200 characters.", 400)
+    from leadzen.suppression import removal_blocker
     records = Suppression.objects.order_by("-suppressed_at", "-pk")
     if query:
         records = records.filter(Q(email__icontains=query) | Q(reason__icontains=query))
     return JsonResponse({
-        "items": [{"id": row.pk, "email": row.email, "reason": row.reason, "suppressed_at": _iso(row.suppressed_at)} for row in records[offset:offset + limit]],
+        "items": [{"id": row.pk, "email": row.email, "reason": row.reason, "suppressed_at": _iso(row.suppressed_at),
+                   "removable": not removal_blocker(row.email)} for row in records[offset:offset + limit]],
         "total": records.count(), "limit": limit, "offset": offset,
     })
+
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+@access(workspace=True)
+def suppression_record(request, record_id):
+    """Lift a manual block from the Workspace; opt-outs stay protected."""
+    from leadzen.suppression import unsuppress
+    record = Suppression.objects.filter(pk=record_id).first()
+    if record is None:
+        return _json_error("Suppressed address not found", 404)
+    try:
+        unsuppress(record.email)
+    except ValueError as exc:
+        return _json_error(str(exc), 409)
+    return JsonResponse({"removed": True, "email": record.email,
+                         "note": "Block removed. Stopped sequences stay stopped and nothing is sent automatically."})
 
 
 def _job_payload(job: OutreachJob) -> dict:
@@ -359,6 +378,7 @@ def _job_payload(job: OutreachJob) -> dict:
         "created_at": _iso(job.created_at),
         "started_at": _iso(job.started_at),
         "finished_at": _iso(job.finished_at),
+        "resolved_at": _iso(job.resolved_at),
     }
 
 
@@ -386,6 +406,21 @@ def recover_expired_jobs():
 @access(workspace=True)
 def jobs(request):
     return JsonResponse({"items": [_job_payload(job) for job in OutreachJob.objects.all()[:20]]})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@access(workspace=True)
+def resolve_job(request, job_id):
+    """Mark a failed send job as reviewed. Only failures; idempotent; nothing is retried."""
+    job = OutreachJob.objects.filter(pk=job_id).first()
+    if job is None:
+        return _json_error("Delivery job not found", 404)
+    if job.status != OutreachJob.Status.FAILED:
+        return _json_error("Only failed jobs can be marked as reviewed", 409)
+    OutreachJob.objects.filter(pk=job.pk, resolved_at__isnull=True).update(resolved_at=timezone.now())
+    job.refresh_from_db()
+    return JsonResponse(_job_payload(job))
 
 
 @csrf_exempt

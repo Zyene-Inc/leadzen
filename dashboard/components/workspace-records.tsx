@@ -2,13 +2,14 @@
 import { formatNewYorkDateTime } from "@/lib/date-time";
 import { PageHeading } from "@/components/page-heading";
 
-import Link from "next/link";
 import { useRef, useState, type ReactNode } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Icon } from "@/components/icon";
 import type { Account } from "@/lib/auth";
 import { useStoredData } from "@/lib/use-stored-data";
 import { SuppressionForm } from "@/components/suppression-form";
+import { InboxCheck } from "@/components/inbox-check";
+import { api } from "@/lib/client-api";
 
 type PageData<T> = { items: T[]; total: number; limit: number; offset: number };
 type InboxMessage = {
@@ -25,6 +26,7 @@ type Suppressed = {
   email: string;
   reason: string;
   suppressed_at: string;
+  removable?: boolean;
 };
 const classifications: Record<string, string> = {
   human_reply: "Human reply",
@@ -138,16 +140,14 @@ export function Inbox({ user }: { user: Account }) {
       user={user}
       active="inbox"
       title="Inbox"
-      description="Read stored inbound messages, including human replies, bounces and opt-outs. Refresh reloads saved messages; syncing your mailbox is a separate approved action."
+      description="Read stored inbound messages, including human replies, bounces and opt-outs. Refresh reloads saved messages; checking your mailbox for new replies is a separate approved action."
       actions={
         <>
-          <Link className="button" href="/chat?intent=sync-replies">
-            Sync replies in chat
-          </Link>
           <Refresh loading={loading} onClick={refresh} />
         </>
       }
     >
+      <InboxCheck refreshed={refresh} />
       <section className="panel">
         <div className="filters">
           <div className="search-field">
@@ -225,7 +225,7 @@ export function Inbox({ user }: { user: Account }) {
                   <div className="empty">
                     {query || kind !== "all"
                       ? "No messages match this view."
-                      : "No messages saved yet. Sync replies in chat after connecting your reply inbox in Settings."}
+                      : "No messages saved yet. Use Check for replies above after connecting your reply inbox in Settings."}
                   </div>
                 )}
               </div>
@@ -243,7 +243,20 @@ export function Suppression({ user }: { user: Account }) {
   const [offset, setOffset] = useState(0);
   const [adding, setAdding] = useState(false);
   const [notice, setNotice] = useState("");
+  const [removing, setRemoving] = useState<number | null>(null);
+  const [removeError, setRemoveError] = useState("");
+  const [busy, setBusy] = useState(false);
   const addButton = useRef<HTMLButtonElement>(null);
+  async function removeBlock(row: Suppressed) {
+    if (busy) return;
+    setBusy(true); setRemoveError(""); setNotice("");
+    try {
+      // The server re-checks: opt-outs, unsubscribes and bounces can never be removed.
+      const result = await api<{ note: string }>(`suppression/${row.id}`, { method: "DELETE" });
+      setRemoving(null); setNotice(`${row.email}: ${result.note}`); refresh();
+    } catch (caught) { setRemoveError(caught instanceof Error ? caught.message : "Could not remove this block"); }
+    finally { setBusy(false); }
+  }
   const { data, loading, error: savedError, refresh } = useStoredData<PageData<Suppressed>>(
     `suppression?q=${encodeURIComponent(query)}&offset=${offset}`,
   );
@@ -298,6 +311,15 @@ export function Suppression({ user }: { user: Account }) {
                           <div><dt>Reason</dt><dd>{row.reason || "No reason recorded"}</dd></div>
                           <div><dt>Date</dt><dd><time dateTime={row.suppressed_at}>{dateLabel(row.suppressed_at)}</time></dd></div>
                         </dl>
+                        {row.removable ? (removing === row.id
+                          ? <div className="card-actions" role="group" aria-label={`Remove block for ${row.email}`}>
+                              <span>Allow future outreach to {row.email}? Stopped sequences stay stopped.</span>
+                              <button className="button" disabled={busy} onClick={() => { setRemoving(null); setRemoveError(""); }}>Cancel</button>
+                              <button className="button primary" disabled={busy} onClick={() => void removeBlock(row)}>{busy ? "Removing…" : "Confirm remove"}</button>
+                            </div>
+                          : <button className="button ghost" onClick={() => { setRemoving(row.id); setRemoveError(""); }}>Remove block</button>)
+                          : <p className="settings-help">Opt-out protected: cannot be removed.</p>}
+                        {removing === row.id && removeError && <p className="error" role="alert">{removeError}</p>}
                       </li>
                     ))}
                 </ul>

@@ -17,7 +17,7 @@ test("inbox checks require inline approval, show cost and mailbox, and Cancel is
   render(<InboxCheck refreshed={vi.fn()} />);
   await userEvent.click(screen.getByRole("button", { name: "Check for replies" }));
   await screen.findByRole("heading", { name: "Check your connected inbox?" });
-  expect(screen.getByText(/sender@example.com/).textContent).toContain("AI charges may apply");
+  expect(screen.getByText(/sender@example.com/).textContent).toContain("No AI is used");
   expect(writes()).toHaveLength(1);
   await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
   expect(JSON.parse(String(writes()[1][1]?.body))).toEqual({ action_id: "approval1", approved: false });
@@ -43,38 +43,32 @@ test("attention is read only and routes to the saved record", async () => {
   expect(writes()).toHaveLength(0);
 });
 
-test("AI preparation preserves exact selection and requests draft-only work", async () => {
-  call.mockImplementation(async (path) => {
-    if (path.startsWith("leads")) return { items: [lead], total: 1, limit: 50 };
-    if (path === "chat/threads") return { id: "thread1" };
-    if (path.endsWith("/messages")) return { run: { id: "run1" } };
-    return { messages: [], run: { id: "run1", status: "queued" } };
-  });
-  render(<OutreachComposer actorId={1} initialSelection={[1]} aiReady close={vi.fn()} saved={vi.fn()} />);
+test("AI preparation is one direct backend request and opens the saved draft without Chat", async () => {
+  const prepared = { id: "campaign1", name: "Review requests for restaurants", category: "outreach", status: "draft", automatic_followups: false, steps: [{ subject: "Quick question, {{first_name}}", body: "Hi {{first_name}}, ...", delay_days: 0 }], total: 1, sent: 0, from_address: "sender@example.com", target: "", product: "", booking_link: "", signature: "", delay_basis: "working_days", delay_timezone: "UTC", recipients: [{ id: 1, email: "bruce@example.com", status: "pending", next_step: 0, next_send_at: null }] };
+  call.mockImplementation(async (path) => path.startsWith("leads") ? { items: [lead], total: 1, limit: 50 } : path === "campaigns/prepare" ? prepared : {});
+  const saved = vi.fn();
+  render(<OutreachComposer actorId={1} initialSelection={[1]} aiReady close={vi.fn()} saved={saved} />);
   await userEvent.click(screen.getByRole("button", { name: "Prepare drafts" }));
-  await screen.findByRole("heading", { name: "Preparing your draft" });
-  const request = JSON.parse(String(writes()[1][1]?.body));
-  expect(request.context.selectedLeadIds).toEqual([1]);
-  expect(request.content).toContain("Do not send, activate, sync a mailbox, discover leads or buy emails");
-  expect(writes().some(([path]) => path.includes("/run") || path.includes("approval"))).toBe(false);
+  await screen.findByRole("heading", { name: "Make the message yours" });
+  expect(writes()).toHaveLength(1);
+  expect(writes()[0][0]).toBe("campaigns/prepare");
+  expect(JSON.parse(String(writes()[0][1]?.body))).toEqual({ contact_ids: [1] });
+  expect(call.mock.calls.some(([path]) => path.startsWith("chat/"))).toBe(false);
+  expect((screen.getByLabelText("Subject") as HTMLInputElement).value).toBe("Quick question, {{first_name}}");
+  expect(saved).toHaveBeenCalled();
 });
 
-test("changing selections after a preparation failure creates a new request identity", async () => {
+test("a failed preparation explains itself, keeps the selection and never opens Chat", async () => {
   call.mockImplementation(async (path) => {
-    if (path.startsWith("leads")) return { items: [lead, { ...lead, id: 2, name: "Second lead" }], total: 2, limit: 50 };
-    if (path === "chat/threads") return { id: `thread${writes().filter(([p]) => p === "chat/threads").length}` };
-    throw new Error("Active task must finish");
+    if (path.startsWith("leads")) return { items: [lead], total: 1, limit: 50 };
+    throw new Error("The AI could not write a draft just now. Try again, or write the message yourself.");
   });
   render(<OutreachComposer actorId={1} initialSelection={[1]} aiReady close={vi.fn()} saved={vi.fn()} />);
-  await screen.findByRole("checkbox", { name: /Second lead/ });
   await userEvent.click(screen.getByRole("button", { name: "Prepare drafts" }));
-  await screen.findByRole("alert");
-  await userEvent.click(screen.getByRole("checkbox", { name: /Second lead/ }));
-  await userEvent.click(screen.getByRole("button", { name: "Prepare drafts" }));
-  await waitFor(() => expect(writes().filter(([p]) => p.endsWith("/messages"))).toHaveLength(2));
-  const requests = writes().filter(([p]) => p.endsWith("/messages")).map(([, init]) => JSON.parse(String(init?.body)));
-  expect(requests[0].request_id).not.toBe(requests[1].request_id);
-  expect(requests[1].context.selectedLeadIds).toEqual([1, 2]);
+  expect((await screen.findByRole("alert")).textContent).toContain("write the message yourself");
+  expect(screen.getByRole("heading", { name: "Who would you like to contact?" })).toBeTruthy();
+  expect(call.mock.calls.some(([path]) => path.startsWith("chat/"))).toBe(false);
+  expect((screen.getByRole("button", { name: "Prepare drafts" }) as HTMLButtonElement).disabled).toBe(false);
 });
 
 test("an unfinished inbox approval is restored after mounting without another check", async () => {
@@ -118,4 +112,25 @@ test("an archived Autopilot deep link reveals its saved messages without changin
   expect(call.mock.calls.some(([path]) => path.includes("/preview"))).toBe(false);
   await userEvent.click(screen.getByRole("button", { name: "Open" }));
   expect(screen.queryByRole("heading", { name: archived.name })).toBeNull();
+});
+
+test("a failed delivery can be marked reviewed only after opening it, and stays listed", async () => {
+  let resolved: string | null = null;
+  call.mockImplementation(async (path, init) => {
+    if (path === "autopilot") return { setup: { revision: "r", blockers: [], target: "Owners", product: "Product", sender: "sender@example.com", signature: "", booking_link: "", service_enabled: false }, policy: null, runs: [] };
+    if (path === "outreach") return { reviews: [], window: { start: 8, end: 20, timezone: "UTC" } };
+    if (path === "jobs/job1/resolve" && init?.method === "POST") { resolved = "2026-10-12T22:00:00Z"; return {}; }
+    if (path === "jobs") return { items: [{ id: "job1", kind: "campaign", status: "failed", requested_count: 2, output: "SMTP authentication failed", resolved_at: resolved }] };
+    return { items: [] };
+  });
+  render(<Campaigns user={user} />);
+  await screen.findByRole("heading", { name: "Delivery activity" });
+  expect((screen.getByRole("button", { name: "Mark as reviewed" }).closest("details") as HTMLDetailsElement).open).toBe(false);
+  await userEvent.click(screen.getByText("View result"));
+  expect(screen.getByText("SMTP authentication failed")).toBeTruthy();
+  await userEvent.click(screen.getByRole("button", { name: "Mark as reviewed" }));
+  await waitFor(() => expect(writes().map(([p]) => p)).toContain("jobs/job1/resolve"));
+  expect(await screen.findByText("Reviewed failures (1)")).toBeTruthy();
+  expect(screen.queryByRole("button", { name: "Mark as reviewed" })).toBeNull();
+  expect(writes().some(([p]) => String(p).includes("/run") || String(p).startsWith("jobs/send"))).toBe(false);
 });

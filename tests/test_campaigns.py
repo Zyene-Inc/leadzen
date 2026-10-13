@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from cold_outreach.emails.models import Mailbox, Message, Direction
 from cold_outreach.leads.models import Deal, Lead, Suppression
-from leadzen.config.models import EmailCampaign, CampaignRecipient, ContactPreferences, SiteConfig
+from leadzen.config.models import EmailCampaign, CampaignRecipient, ContactPreferences, OutreachJob, SiteConfig
 from leadzen.configuration import save_dashboard_settings
 from leadzen.campaigns import run_campaign
 
@@ -34,13 +34,20 @@ def make(client, contact_id, category="outreach"):
     return response.json()["id"]
 
 
-def test_contact_import_is_atomic_and_suppression_survives_import(connected):
+def test_contact_import_keeps_valid_rows_and_suppression_survives_import(connected):
     Suppression.objects.create(email="stopped@example.com")
     deal_id = add(connected, "stopped@example.com")
     assert Deal.objects.get(pk=deal_id).state == "Completed"
     count = Lead.objects.count()
-    result = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "valid@example.com"}, {"email": "bad"}]}), content_type="application/json")
-    assert result.status_code == 400 and Lead.objects.count() == count
+    result = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "valid@example.com"}, {"email": "bad"}, {"email": "Valid@Example.com"}, {"email": "stopped@example.com"}]}), content_type="application/json")
+    assert result.status_code == 201, result.content
+    report = result.json()
+    assert report["created"] == 1 and Lead.objects.count() == count + 1
+    assert [f["row"] for f in report["failed"]] == [2] and [d["row"] for d in report["duplicates"]] == [3]
+    assert [s["row"] for s in report["skipped"]] == [4]
+    assert "1 added" in report["summary"] and "1 failed (row 2" in report["summary"]
+    every_bad = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "bad"}]}), content_type="application/json")
+    assert every_bad.status_code == 400 and "No contacts were imported" in every_bad.json()["error"]
 
 
 def test_sequence_enrollment_validation_and_no_duplicate_campaign(connected):
@@ -157,6 +164,16 @@ def test_delete_hides_contact_stops_queue_and_preserves_opt_out_history(connecte
         assert run_campaign(identifier, 1) == 0 and deliver.call_count == 1
     assert connected.delete(f"/api/contacts/{person}").status_code == 200
     assert connected.put(f"/api/contacts/{person}", data='{"email":"person@example.com"}', content_type="application/json").status_code == 404
+    # Adding the address again restores the same record; the opt-out still holds.
+    again = connected.post("/api/contacts", data='{"email":"person@example.com"}', content_type="application/json")
+    assert again.status_code == 201 and again.json()["ids"] == [person] and again.json()["restored"] == 1
+    assert Lead.objects.filter(email__iexact="person@example.com").count() == 1
+    deal = Deal.objects.get(pk=person)
+    assert deal.state == "Completed" and deal.outcome == "unsubscribed" and again.json()["do_not_contact"] == 1
+    assert connected.get("/api/leads").json()["total"] == 1
+    with patch("cold_outreach.core.sending_window.within_sending_window", return_value=True), patch("cold_outreach.emails.sender._deliver") as deliver:
+        assert run_campaign(identifier, 1) == 0
+        deliver.assert_not_called()
     assert connected.post("/api/contacts", data='{"email":"person@example.com"}', content_type="application/json").status_code == 409
 
 
@@ -391,3 +408,49 @@ def test_campaign_worker_claim_cannot_be_replayed_and_uses_saved_limit(connected
         assert sender.call_args.kwargs["recipient_ids"] == ids
     job.refresh_from_db()
     assert job.status == "succeeded"
+
+
+def test_deleted_contact_without_opt_out_can_be_added_again_as_ready(connected):
+    person = add(connected, "again@example.com")
+    assert connected.delete(f"/api/contacts/{person}").status_code == 200
+    response = connected.post("/api/contacts", data=json.dumps({"contacts": [{"email": "again@example.com", "first_name": "Grace", "company": "New Co"}]}), content_type="application/json")
+    assert response.status_code == 201 and response.json()["restored"] == 1 and response.json()["ids"] == [person]
+    deal = Deal.objects.select_related("lead").get(pk=person)
+    assert deal.state == "Ready to Email" and deal.lead.first_name == "Grace" and deal.lead.company == "New Co"
+    assert not ContactPreferences.objects.get(lead=deal.lead).deleted_at
+    assert Lead.objects.filter(email__iexact="again@example.com").count() == 1
+
+
+def test_workspace_can_lift_a_manual_block_but_never_an_opt_out(connected):
+    from cold_outreach.emails.models import Mailbox, Message, Direction
+    manual = connected.post("/api/suppression", data=json.dumps({"email": "manual@example.com", "reason": "Manually suppressed"}), content_type="application/json").json()["record"]
+    opted = connected.post("/api/suppression", data=json.dumps({"email": "optout@example.com", "reason": "Opted out"}), content_type="application/json").json()["record"]
+    later = connected.post("/api/suppression", data=json.dumps({"email": "later@example.com", "reason": "Manually suppressed"}), content_type="application/json").json()["record"]
+    box = Mailbox.objects.first() or Mailbox.objects.create(from_address="sender@example.com")
+    Message.objects.create(mailbox=box, direction=Direction.INBOUND, message_id="later-stop", from_address="later@example.com", to_address="sender@example.com", subject="Re: hi", body_text="STOP", kind="")
+    listed = {row["email"]: row["removable"] for row in connected.get("/api/suppression").json()["items"]}
+    assert listed == {"manual@example.com": True, "optout@example.com": False, "later@example.com": False}
+    refused = connected.delete(f"/api/suppression/{opted['id']}")
+    assert refused.status_code == 409 and "cannot be removed" in refused.json()["error"]
+    assert connected.delete(f"/api/suppression/{later['id']}").status_code == 409
+    removed = connected.delete(f"/api/suppression/{manual['id']}")
+    assert removed.status_code == 200 and removed.json()["removed"] is True
+    assert not Suppression.objects.filter(email="manual@example.com").exists()
+    assert Suppression.objects.filter(email__in=["optout@example.com", "later@example.com"]).count() == 2
+    assert connected.delete(f"/api/suppression/{manual['id']}").status_code == 404
+
+
+def test_failed_job_can_be_marked_reviewed_but_stays_listed(connected):
+    failed = OutreachJob.objects.create(requested_count=2, status="failed", output="SMTP 535 authentication failed")
+    running = OutreachJob.objects.create(requested_count=1, status="running")
+    attention = lambda: [i["id"] for i in connected.get("/api/attention").json()["items"]]
+    assert f"job-{failed.pk}" in attention()
+    assert connected.post(f"/api/jobs/{running.pk}/resolve", data="{}", content_type="application/json").status_code == 409
+    first = connected.post(f"/api/jobs/{failed.pk}/resolve", data="{}", content_type="application/json")
+    assert first.status_code == 200 and first.json()["resolved_at"]
+    again = connected.post(f"/api/jobs/{failed.pk}/resolve", data="{}", content_type="application/json")
+    assert again.json()["resolved_at"] == first.json()["resolved_at"]
+    assert f"job-{failed.pk}" not in attention()
+    listed = {j["id"]: j for j in connected.get("/api/jobs").json()["items"]}
+    assert listed[str(failed.pk)]["status"] == "failed" and "authentication failed" in listed[str(failed.pk)]["output"]
+    assert connected.post("/api/jobs/00000000-0000-0000-0000-000000000000/resolve", data="{}", content_type="application/json").status_code == 404

@@ -43,3 +43,26 @@ def block_address(address, reason="Manually suppressed"):
         deals.exclude(state=DealState.COMPLETED).update(state=DealState.COMPLETED, outcome=Outcome.UNSUBSCRIBED)
         CampaignRecipient.objects.filter(deal__in=deals).exclude(status="completed").update(status="stopped")
     return record, created
+
+
+def removal_blocker(email):
+    """Why this address's block cannot be lifted, or "" when it can.
+
+    Only blocks an employee added ("Manually suppressed") can be removed, and only
+    while no later opt-out, unsubscribe, exact STOP or dead-address bounce exists.
+    """
+    records = Suppression.objects.filter(email__iexact=email)
+    if not records.exists():
+        return "This address is not on the do-not-contact list."
+    if records.exclude(reason__startswith="Manually suppressed").exists() or opt_out_evidence(email):
+        return "This is an opt-out or a delivery block. It cannot be removed."
+    return ""
+
+
+def unsuppress(email):
+    """Lift a manual block. Stopped sequences stay stopped; nothing is sent."""
+    blocker = removal_blocker(email)
+    if blocker:
+        raise ValueError(blocker)
+    with transaction.atomic(using=Suppression.objects.all().db):
+        return Suppression.objects.filter(email__iexact=email).delete()[0]

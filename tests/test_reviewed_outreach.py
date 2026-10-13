@@ -429,3 +429,18 @@ def test_generation_rechecks_revocation_before_pinned_provider_dial(connected):
     from leadzen.outreach import honor_saved_optouts
     honor_saved_optouts(Mailbox.objects.first())
     assert not Suppression.objects.exists()
+
+
+def test_lead_page_draft_targets_exactly_that_lead_and_respects_blocks(connected):
+    from cold_outreach.leads.models import Suppression
+    first, second = person("first@example.com"), person("second@example.com")
+    with patch("leadzen.outreach.generate", side_effect=synthetic_generate) as writer:
+        response = post(connected, "outreach/reviews", {"count": 1, "lead_ids": [second.pk], "request_id": str(uuid.uuid4())})
+        assert response.status_code in (200, 201, 202), response.content
+        data = response.json()
+        assert data["kind"] == "initial" and [d["to"] for d in data["drafts"]] == ["second@example.com"]
+        writer.assert_called_once()
+        Suppression.objects.create(email="first@example.com", reason="Opted out")
+        blocked = post(connected, "outreach/reviews", {"count": 1, "lead_ids": [first.pk], "request_id": str(uuid.uuid4())})
+    assert blocked.status_code >= 400
+    assert writer.call_count == 1  # No AI call for a blocked contact.

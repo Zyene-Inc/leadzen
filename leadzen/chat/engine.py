@@ -22,6 +22,7 @@ from cold_outreach.leads.models import Deal, DealState, Suppression
 from leadzen.config.models import CampaignRecipient, ChatMessage, ChatRun, ChatThread, EmailCampaign, RuntimeSettings, SiteConfig
 from leadzen.configuration import SettingsError, effective
 from leadzen.workspaces import assert_worker_access
+from leadzen.lanes import LaneBusy
 
 TOOLS = Literal["answer", "connections", "overview", "list_leads", "list_replies", "list_campaigns", "find_leads", "draft_campaign", "send_campaign", "pause_campaign", "sync_replies", "get_workspace_status", "get_workspace_context", "get_target", "update_target", "stop_discovery", "get_lead", "find_work_emails", "get_credit_usage", "create_drafts", "get_draft", "update_draft", "regenerate_draft", "send_email", "send_emails", "sync_mailbox", "get_thread", "draft_reply", "send_reply", "suppress_contact", "unsuppress_contact", "get_activity", "add_contacts"]
 MAX_STEPS = 8
@@ -125,11 +126,23 @@ meta questions ("what can you do", "how are you", "who are you") and similar alw
 take the 'answer' tool directly — no tool ever runs for them. Reply warmly and
 briefly; offer one concrete next step if a task might follow ("Tell me which
 audience and I'll pull leads"). Tools exist only to fulfill a stated task.
-For multi-step work (find + enrich + draft + send), your FIRST 'answer' text always
-states the plan in one short paragraph before any tool runs: what you will do, in
-what order, which step needs their confirmation, and what is out of scope. Then
-continue with the tools. Never silently chain tools for a non-trivial request —
-say "Plan: …" first so the user can interrupt. Long-running work (find_leads with
+For every employee message, first decide what it needs:
+- Greeting, thanks or general question: 'answer' directly; no tool.
+- A question about their workspace data: call the read tool that holds the answer,
+  then answer with the actual values (names, links, counts, statuses). list_leads
+  returns each lead's name, company, title and linkedin_url plus a 'total' count;
+  overview gives workspace totals; get_target the saved Target; list_replies stored
+  replies; get_lead one contact; get_activity only recent activity history. Never
+  say a value is missing when a tool result contains it.
+- A request to do something: call the matching action tool. "Find N leads" or
+  "find lead N" means discover N new leads with find_leads unless they name an
+  existing contact; "no email" means includeEmails false.
+Call only the tools the message needs, then answer from their results.
+The 'answer' tool ends your turn: use it only for the final reply or to ask a
+question. To act, call the tool now. For multi-step work (find + enrich + draft +
+send), put a one-sentence "Plan: …" in the text of your FIRST tool decision (what
+you will do, in what order, which step needs their confirmation). Never answer with
+only a plan and stop; if you can run a read-only or approval-gated tool, run it. Long-running work (find_leads with
 background discovery) ends this turn with a saved-progress note; do not invent
 results for steps you have not actually executed this turn.
 Canonical Workspace context is supplied on every step, refreshed from the database.
@@ -175,6 +188,25 @@ with opted_in:true is rejected by the workspace.
 """
 
 
+BULKY = {"profile_text", "timeline", "raw", "html", "body_html"}
+
+
+def compact(value, depth=0):
+    """Tool results as the model needs them: every record and total, not bulk text.
+
+    Results are capped before they reach the model. Bulky per-record text pushed
+    later records and the `total` past the cap, so answers missed links or counts.
+    """
+    if isinstance(value, dict):
+        return {k: compact(v, depth + 1) for k, v in value.items() if k not in BULKY}
+    if isinstance(value, list):
+        items = [compact(v, depth + 1) for v in value[:25]]
+        return items + [f"... {len(value) - 25} more"] if len(value) > 25 else items
+    if isinstance(value, str) and len(value) > 300:
+        return value[:300] + "…"
+    return value
+
+
 def decide(row):
     from pydantic_ai import Agent, PromptedOutput
     from pydantic_ai.models import Model
@@ -188,7 +220,7 @@ def decide(row):
     from leadzen.chat.tools import SCHEMAS, Find, List
     context = {**structured(row.actor_id, row.thread.context), "sender": config.operator_name, "from_address": values.mailbox_address}
     messages = list(row.thread.messages.order_by("-created_at", "-pk")[:24])
-    history = [{"role": m.role, "text": m.content[:4000], "tool_data": json.dumps(m.data, ensure_ascii=False)[:7000]} for m in reversed(messages)]
+    history = [{"role": m.role, "text": m.content[:4000], "tool_data": json.dumps(compact(m.data), ensure_ascii=False)[:7000]} for m in reversed(messages)]
     while len(json.dumps(history, ensure_ascii=False)) > 20000 and len(history) > 1:
         history.pop(0)
     prompt = redact(json.dumps({"workspace": context, "conversation": history}, ensure_ascii=False))
@@ -336,7 +368,7 @@ def prepare(row, tool, args, *, selected=False):
         summary = f"Run {campaign.name} for up to {emails} emails from {values.mailbox_address}"
     else:
         summary = "Sync and classify mailbox replies"
-        preview = {"from_address": values.mailbox_address, "note": "Reads the connected inbox and may use your AI provider for reply classification. Sends nothing."}
+        preview = {"from_address": values.mailbox_address, "note": "Reads the connected inbox and stores new replies. No AI is used and nothing is sent."}
     if row.credits_reserved + credits > 25 or row.emails_reserved + emails > 25:
         raise ValueError("This turn's lead-credit or email budget is exhausted. Start a new request.")
     if tool in {"find_leads", "find_work_emails"}:
@@ -594,7 +626,8 @@ def execute(tool, args, row):
         from leadzen.transports import sync_replies_strict
         from leadzen.ai import install_engine_adapters
         from leadzen.wizard import apply_to_environment
-        prepare_worker_mailbox(require_ai=True)
+        # Reply classification is rule based (no model call), so AI is not required.
+        prepare_worker_mailbox(require_ai=False)
         install_engine_adapters()
         apply_to_environment(SiteConfig.load())
         for box in active_mailboxes()[:1]:
@@ -635,8 +668,13 @@ def perform(row, tool, arguments, label, *, recover_validation=False):
         setup_session(row, tool, arguments)
         from leadzen.discovery_progress import observe
         from contextlib import nullcontext
-        with observe(row) if tool in {"find_leads", "find_work_emails"} else nullcontext():
+        from django.conf import settings
+        from leadzen.lanes import provider_work
+        provider = tool in {"find_leads", "find_work_emails"}
+        with provider_work(settings.DATABASE_PATH) if provider else nullcontext(), observe(row) if provider else nullcontext():
             result = execute(tool, arguments, row)
+    except LaneBusy as exc:
+        result = {"error": str(exc)}
     except ValueError as exc:
         if not recover_validation:
             message.data = {"tool": tool, "result": {"status": "stopped", "note": "Review the final task message before retrying."}}
@@ -737,7 +775,13 @@ def drive(run_id):
             row.steps += 1
             ChatRun.objects.filter(pk=row.pk).update(steps=row.steps, updated_at=timezone.now())
             if decision.tool == "answer":
-                finish(row, "succeeded", decision.text or "Done. Review the tool results above.")
+                # A plan is not a result. Show it and let the model act on it once,
+                # instead of ending the turn with nothing done.
+                text = (decision.text or "").strip()
+                if text.lower().startswith("plan:") and not row.thread.messages.filter(role="assistant", data__plan_run=str(row.pk)).exists() and row.steps < MAX_STEPS:
+                    event(row, "assistant", text, {"plan_run": str(row.pk)})
+                    continue
+                finish(row, "succeeded", text or "Done. Review the tool results above.")
                 return
             args = normalize(decision.tool, decision.arguments)
             from leadzen.chat.tools import CONFIRMED

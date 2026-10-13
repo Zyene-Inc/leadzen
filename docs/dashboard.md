@@ -166,7 +166,7 @@ steps and writes the offer/target to the existing outreach engine's SiteConfig.
 The first completed setup opens an interactive product tour over the real
 workspace. Fourteen steps wait for actual controls, click outcomes and rendered
 routes/forms. Active progress, completion and Skip persist on the employee account;
-refresh resumes the current step, and Settings → Take Product Tour restarts a
+refresh resumes the current step, and Settings → Take the tour restarts a
 completed/skipped tour. Unrelated navigation pauses the guide rather than pulling
 the employee back. Account migration `0004_accountprofile_tour_state` is required;
 see [tour validation](product-tour-validation-2026-10-04.md) for tested behavior and

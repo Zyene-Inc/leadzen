@@ -17,6 +17,7 @@ export type DiscoveryEvent = {
     filters?: Record<string, string>;
     message?: string;
     profiles_returned?: number;
+    email_status?: string;
   };
   created_at: string;
   display_time?: string;
@@ -74,33 +75,27 @@ export const findingActive = (status: string) =>
   ["queued", "running"].includes(status);
 
 export function summaryTitle(data: DiscoveryProgress) {
-  if (data.status === "failed") return "Discovery needs attention";
-  if (
-    data.goal_reached &&
-    !findingActive(data.status) &&
-    data.status !== "paused"
-  )
-    return data.goal.unit === "emails"
-      ? "Email Lookup Complete"
-      : "Discovery Complete";
-  if (data.status === "paused") return "Finding paused";
-  if (["succeeded", "completed"].includes(data.status)) return "Discovery finished";
-  if (!findingActive(data.status)) return "Finding stopped";
-  return `Finding ${data.goal.count} qualified lead${data.goal.count === 1 ? "" : "s"}${data.goal.unit === "emails" ? " with email" : ""}`;
+  const emails = data.goal.unit === "emails";
+  if (data.status === "failed") return emails ? "Email lookup needs attention" : "Discovery needs attention";
+  if (data.goal_reached && !findingActive(data.status) && data.status !== "paused")
+    return emails ? "Email lookup done" : "Discovery done";
+  if (data.status === "paused") return emails ? "Email lookup paused" : "Finding paused";
+  if (["succeeded", "completed"].includes(data.status)) return emails ? "Email lookup finished" : "Discovery finished";
+  if (!findingActive(data.status)) return emails ? "Email lookup stopped" : "Finding stopped";
+  return emails
+    ? `Finding ${data.goal.count} work email${data.goal.count === 1 ? "" : "s"}`
+    : `Finding ${data.goal.count} qualified lead${data.goal.count === 1 ? "" : "s"}`;
 }
 
 export function summaryNote(data: DiscoveryProgress) {
-  if (
-    data.goal_reached &&
-    !findingActive(data.status) &&
-    data.status !== "paused"
-  )
-    return `${data.counts.produced} ${data.goal.unit === "emails" ? "email results" : "qualified leads"} found · ${data.counts.rejected} candidates rejected.`;
-  if (data.status === "paused")
-    return "Saved at an action checkpoint. Resume continues only the remaining goal within the original budget.";
-  if (!findingActive(data.status))
-    return "The run ended before the requested goal. Saved results are kept. Review the transcript and Settings before trying again.";
-  return "Counts reflect persisted profiles and verdicts, not estimated matches in the provider’s index. Qualification or enrichment may also process existing queued profiles.";
+  const emails = data.goal.unit === "emails";
+  if (data.goal_reached && !findingActive(data.status) && data.status !== "paused")
+    return emails
+      ? `${data.counts.produced} verified email${data.counts.produced === 1 ? "" : "s"} found.`
+      : `${data.counts.produced} qualified lead${data.counts.produced === 1 ? "" : "s"} found · ${data.counts.rejected} rejected.`;
+  if (data.status === "paused") return "Saved. Resume finishes only what is left, within the same budget.";
+  if (!findingActive(data.status)) return "Ended before the goal. Results so far are saved.";
+  return "Counts are saved results, not estimates.";
 }
 
 export function statusLabel(data: DiscoveryProgress) {
@@ -138,7 +133,7 @@ export const discoveryActivityLabels: Record<string, string> = {
   evaluating: "Evaluating fit",
   qualified: "Qualified",
   rejected: "Rejected",
-  email_lookup: "Looking up an approved email",
+  email_lookup: "Email lookup result",
 };
 
 export function currentDiscoveryActivity(data: DiscoveryProgress) {

@@ -2185,7 +2185,7 @@ code {
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
-  min-width: 245px;
+  min-width: 150px;
 }
 .row-actions .button {
   padding-inline: 10px;
@@ -3090,3 +3090,159 @@ time,
   .sending-day-options { grid-template-columns: repeat(4, minmax(44px, 1fr)); }
   .sending-time-fields input { font-size: 16px; min-width: 0; }
 }
+
+/* Leads page: counts, inline email lookup and compact row action. */
+.lead-summary { margin: -4px 0 16px; color: var(--muted); font-size: 14px; }
+.lead-summary strong { color: var(--ink); font-weight: 600; }
+.button.small { min-height: 32px; padding: 0 10px; font-size: 13px; margin-top: 6px; }
+td .live-email-review { margin: 10px 0 0; padding: 14px; max-width: 360px; }
+td .live-email-review h3 { font-size: 14px; margin: 0 0 6px; }
+.selection-toolbar + .live-email-review { margin-bottom: 16px; }
+@media (pointer: coarse) { .button.small { min-height: 44px; } }
+
+/* ───────────────────────────────────────────────────────────────
+   Workspace polish: depth, motion and feedback (October 13, 2026)
+   Neutral palette only. Every animation runs once on arrival or on
+   interaction; the global reduced-motion rule above disables them.
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --shadow-sm: 0 1px 2px rgb(10 16 21 / 4%), 0 1px 3px rgb(10 16 21 / 3%);
+  --shadow-md: 0 4px 12px rgb(10 16 21 / 6%), 0 1px 3px rgb(10 16 21 / 4%);
+  --shadow-lg: 0 12px 32px rgb(10 16 21 / 10%), 0 2px 6px rgb(10 16 21 / 4%);
+  --rise: 220ms;
+}
+:root[data-theme="dark"] {
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
+  --shadow-md: 0 6px 16px rgb(0 0 0 / 35%);
+  --shadow-lg: 0 14px 36px rgb(0 0 0 / 45%);
+}
+
+@keyframes zy-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes zy-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zy-drop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@keyframes zy-pop { 0% { transform: scale(.6); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@keyframes zy-sheen { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+
+/* Page arrival: sections rise in quick succession. */
+.main > * { animation: zy-rise var(--rise) var(--ease) both; }
+.main > *:nth-child(2) { animation-delay: 30ms; }
+.main > *:nth-child(3) { animation-delay: 60ms; }
+.main > *:nth-child(4) { animation-delay: 90ms; }
+.main > *:nth-child(5) { animation-delay: 120ms; }
+.main > *:nth-child(6) { animation-delay: 150ms; }
+.main > *:nth-child(n+7) { animation-delay: 180ms; }
+
+/* Surfaces get gentle depth instead of flat outlines. */
+.panel, .metrics, .live-summary, .live-email-review, .outreach-item, .settings-card { box-shadow: var(--shadow-sm); }
+a.panel:hover, .outreach-item:hover, .metric:hover { box-shadow: var(--shadow-md); }
+.outreach-item, .metric { transition: box-shadow 200ms var(--ease), transform 200ms var(--ease), background-color 200ms var(--ease); }
+
+/* Buttons respond to hover and press. */
+.button { transition: border-color 200ms var(--ease), background 200ms var(--ease), color 200ms var(--ease), box-shadow 200ms var(--ease), transform 120ms var(--ease); }
+.button:not(.ghost):hover:not(:disabled) { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.button.primary:hover:not(:disabled) { box-shadow: var(--shadow-md); }
+.button:active:not(:disabled) { transform: translateY(0) scale(.98); box-shadow: none; }
+
+/* Navigation: active page carries a small ink marker. */
+.nav-item { position: relative; }
+.nav-item::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 3px; background: var(--accent); transform: scaleY(0); transition: transform 200ms var(--ease); }
+.nav-item.active::before { transform: scaleY(1); }
+.nav-item:hover:not(.active) { transform: translateX(2px); }
+.nav-item { transition: background 200ms var(--ease), color 200ms var(--ease), transform 200ms var(--ease); }
+
+/* Tables: rows arrive in order, hover is clear, selection is visible. */
+tbody tr { animation: zy-fade 260ms var(--ease) both; }
+tbody tr:nth-child(2) { animation-delay: 25ms; } tbody tr:nth-child(3) { animation-delay: 50ms; }
+tbody tr:nth-child(4) { animation-delay: 75ms; } tbody tr:nth-child(5) { animation-delay: 100ms; }
+tbody tr:nth-child(6) { animation-delay: 125ms; } tbody tr:nth-child(n+7) { animation-delay: 150ms; }
+tbody tr { transition: background-color 160ms var(--ease); }
+tbody tr:has(input[type="checkbox"]:checked) { background: color-mix(in srgb, var(--signal) 6%, var(--surface)); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+input[type="checkbox"]:checked { animation: zy-pop 220ms var(--ease); }
+
+/* Status badges: a small dot repeats the state color; the text still says it. */
+.badge { gap: 6px; border-radius: 999px; padding: 3px 10px; font-weight: 550; }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .75; flex-shrink: 0; }
+.badge.running::before, .badge.queued::before { animation: operation-pulse 1.4s ease-in-out infinite; }
+
+/* Messages and toolbars slide in when they appear. */
+.error, .success, [role="alert"].error { animation: zy-drop 200ms var(--ease) both; }
+.selection-toolbar { position: sticky; top: 8px; z-index: 5; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--panel-radius); background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(8px); box-shadow: var(--shadow-md); animation: zy-drop 200ms var(--ease) both; }
+.live-email-review { animation: zy-rise 200ms var(--ease) both; }
+
+/* Metrics read as numbers first. */
+.metric-value { font-family: var(--font-title); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.metric:hover { background: var(--surface-hover); }
+
+/* Loading text shimmers only while work is actually loading. */
+.empty[role="status"], [aria-busy="true"] > .empty { background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--line) 70%, transparent) 50%, transparent 100%) 0 0 / 200% 100%; animation: zy-sheen 1.4s linear infinite; border-radius: var(--radius); }
+
+/* Inputs: focus is visible and smooth. */
+.input, .select { transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease), background-color 200ms var(--ease); }
+.input:hover:not(:focus):not(:disabled), .select:hover:not(:focus):not(:disabled) { border-color: color-mix(in srgb, var(--muted) 35%, var(--line)); }
+
+/* Disclosure rows open smoothly. */
+details > summary { cursor: pointer; }
+details[open] > *:not(summary) { animation: zy-fade 200ms var(--ease) both; }
+
+/* Links underline on hover for clarity. */
+.text-link { text-underline-offset: 3px; }
+.text-link:hover { text-decoration: underline; }
+
+/* Page title gets a touch more presence. */
+.topbar h1 { font-size: 26px; }
+@media (max-width: 720px) { .topbar h1 { font-size: 22px; } .selection-toolbar { top: 64px; } }
+
+/* Outreach delivery card: its rows sat flush against the card edge. */
+.settings-card:has(> .attention-row) { padding: 16px 18px; }
+.settings-card:has(> .attention-row) > h2 { margin: 0 0 8px; font-size: 16px; }
+.settings-card > .attention-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.settings-card > .attention-row:first-of-type { border-top: 0; }
+
+/* Empty reading panes feel intentional, not blank. */
+.inbox-empty, .conversation-empty { display: grid; place-items: center; text-align: center; min-height: 240px; border: 1px dashed var(--line); border-radius: var(--panel-radius); animation: zy-fade 300ms var(--ease) both; }
+td .row-actions { flex-wrap: nowrap; align-items: center; }
+
+/* Results: headline numbers first, then trend, then campaigns. */
+.results-periods { display: flex; flex-wrap: wrap; gap: 4px; }
+.results-tiles { display: grid; grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.results-tile { display: grid; gap: 4px; align-content: start; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--panel-radius); background: var(--surface); box-shadow: var(--shadow-sm); transition: box-shadow 200ms var(--ease), transform 200ms var(--ease); }
+.results-tile:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.results-tile span { color: var(--muted); font-size: 13px; }
+.results-tile strong { font-family: var(--font-title); font-size: 28px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+.results-tile.lead { background: var(--accent); border-color: var(--accent); }
+.results-tile.lead span, .results-tile.lead small { color: color-mix(in srgb, var(--inverse) 72%, transparent); }
+.results-tile.lead strong { color: var(--inverse); font-size: 36px; }
+.results-tile small { color: var(--faint); font-size: 12px; }
+.results-highlights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.results-highlight { display: grid; gap: 4px; padding: 16px 18px; }
+.results-highlight span { color: var(--muted); font-size: 13px; }
+.results-highlight strong { font-size: 15px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.results-highlight small { color: var(--muted); font-size: 13px; }
+.results-section { margin-bottom: 16px; }
+.results-trend { padding: 12px 18px 16px; display: grid; gap: 14px; }
+.results-bars { position: relative; margin: 0; }
+.results-bars figcaption { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.results-bars figcaption strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.results-bars svg { display: block; width: 100%; height: 72px; overflow: visible; }
+.results-axis { stroke: var(--line); stroke-width: 1; }
+.results-bar { transform-box: fill-box; transform-origin: bottom; animation: zy-grow 420ms var(--ease) both; transition: opacity 120ms var(--ease); }
+.results-bar.soft { fill: color-mix(in srgb, var(--muted) 45%, var(--surface)); }
+.results-bar.ink { fill: var(--ink); }
+.results-bars:hover .results-bar:not(.hover) { opacity: .45; }
+.results-tip { position: absolute; top: 18px; transform: translateX(-50%); margin: 0; padding: 4px 8px; border-radius: 8px; background: var(--ink); color: var(--inverse); font-size: 12px; white-space: nowrap; pointer-events: none; box-shadow: var(--shadow-md); }
+.results-dates { display: flex; justify-content: space-between; color: var(--faint); font-family: var(--font-mono); font-size: 11px; letter-spacing: .02em; }
+.results-table-toggle summary { font-size: 13px; color: var(--muted); }
+.results-campaign { border-top: 1px solid var(--line); }
+.results-campaign > summary { display: grid; grid-template-columns: minmax(0, 1fr) 120px 200px; gap: 16px; align-items: center; padding: 14px 18px; list-style: none; transition: background-color 160ms var(--ease); }
+.results-campaign > summary::-webkit-details-marker { display: none; }
+.results-campaign > summary:hover { background: var(--surface-hover); }
+.results-campaign-name, .results-rate { display: grid; gap: 2px; min-width: 0; }
+.results-campaign-name strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.results-campaign small, .results-minor { color: var(--muted); font-size: 13px; }
+.results-rate strong { font-family: var(--font-title); font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.results-campaign[open] > .table-wrap, .results-campaign[open] > .text-link { margin: 0 18px 14px; display: block; }
+.results-subject { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes zy-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (max-width: 960px) { .results-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .results-tile.lead { grid-column: 1 / -1; } }
+@media (max-width: 640px) { .results-highlights { grid-template-columns: 1fr; } .results-campaign > summary { grid-template-columns: minmax(0, 1fr) auto; } .results-minor { grid-column: 1 / -1; } }

@@ -15,7 +15,7 @@ export function SetupConnectionCheck({
   busy: boolean;
   onTest: () => void;
 }) {
-  const label = kind === "mailbox" ? "Test mailbox" : "Test connection";
+  const label = kind === "mailbox" ? "Test email account" : "Test connection";
   return (
     <div className="setup-connection-check">
       <button
@@ -39,7 +39,7 @@ export function SetupConnectionCheck({
             <div>
               {kind === "ai" && (
                 <>
-                  <strong>Connected — the model answered</strong>
+                  <strong>Connected. The AI answered.</strong>
                   <span>{model}</span>
                 </>
               )}
@@ -60,20 +60,20 @@ export function SetupConnectionCheck({
                   </strong>
                   <span>
                     {check.smtp
-                      ? "Ready to send, subject to consent and sending rules. No test email was sent."
-                      : "Sending API credentials saved. Delivery was not tested; no email was sent."}
+                      ? "Ready to send. No test email was sent."
+                      : "Sending key saved. Sending was not tested. No email was sent."}
                   </span>
                 </>
               )}
               {check.synthetic && (
                 <span className="setup-synthetic">
-                  Synthetic local test — no external provider calls
+                  Local test only. No outside calls.
                 </span>
               )}
             </div>
           </>
         ) : (
-          <span>Not tested for these settings. Test before continuing.</span>
+          <span>Not tested yet. Test before you continue.</span>
         )}
       </div>
     </div>

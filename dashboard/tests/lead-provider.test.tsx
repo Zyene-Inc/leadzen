@@ -38,7 +38,7 @@ describe("Lead provider selection", () => {
     vi.mocked(api).mockResolvedValueOnce({ max_count: 25, max_email_count: 12, provider_name: "AI Ark", profile_budget_per_lead: 1, target: "Practice owners", ready: true, blockers: [], revision: "synthetic-revision", active_run: null }).mockResolvedValueOnce({ run: { id: "synthetic-run" } });
     const actor = userEvent.setup();
     render(<FindLeads user={user} />);
-    await screen.findByText("Maximum AI Ark search + email budget");
+    await screen.findByText("Max AI Ark cost (search + emails)");
     expect(screen.getByText("Up to 3 credits")).toBeTruthy();
     expect(screen.queryByText("Free discovery")).toBeNull();
     await actor.click(screen.getByRole("button", { name: /Start Finding/i }));
@@ -52,7 +52,7 @@ describe("Lead provider selection", () => {
     vi.mocked(api).mockResolvedValueOnce({ max_count: 25, max_email_count: 12, provider_name: "AI Ark", profile_budget_per_lead: 1, target: "Practice owners", ready: true, blockers: [], revision: "synthetic-revision", active_run: null });
     const actor = userEvent.setup();
     render(<FindLeads user={user} />);
-    await screen.findByText(/AI Ark profile-search and email-credit limit/);
+    await screen.findByText(/approves only these choices and the AI Ark credit limit/);
     const input = screen.getByRole("spinbutton") as HTMLInputElement;
     await actor.clear(input);
     await actor.type(input, "20");

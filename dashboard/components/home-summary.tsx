@@ -35,11 +35,11 @@ export type HomeSummary = {
 };
 
 const metrics = [
-  ["found", "People found", "Discovered profiles, including unqualified"],
-  ["qualified", "Qualified leads", "Profiles accepted by the qualifier"],
-  ["with_email", "With email", "Qualified profiles with an address"],
-  ["contacted", "Contacted", "Unique addresses accepted by the provider"],
-  ["replies", "Replies", "People with a stored human reply"],
+  ["found", "People found", "Everyone found, including people who did not fit"],
+  ["qualified", "Qualified", "People who match your target"],
+  ["with_email", "With email", "Qualified people with an email address"],
+  ["contacted", "Emailed", "People you have emailed, all time"],
+  ["replies", "Replies", "People who wrote back, all time"],
 ] as const;
 
 const numberFormatter = new Intl.NumberFormat();
@@ -77,7 +77,7 @@ function CreditBalance({
     <section className="home-credit-bar" aria-label={`${credits.provider_name ?? "BetterContact"} credits`}>
       <div>
         <div className="home-credit-value">
-          {credits.provider_name ?? "BetterContact"} credits <HelpTooltip label="Provider credits">Check your saved balance. Checking credits does not buy profiles or email addresses.</HelpTooltip>{" "}
+          {credits.provider_name ?? "BetterContact"} credits <HelpTooltip label="Provider credits">Checking your balance is free. It does not buy anything.</HelpTooltip>{" "}
           <strong>
             {credits.balance === null
               ? "Not checked"
@@ -86,10 +86,10 @@ function CreditBalance({
         </div>
         <p className="settings-help">
           {!credits.configured
-            ? `Connect ${credits.provider_name ?? "BetterContact"} to discover leads.`
+            ? `Connect ${credits.provider_name ?? "BetterContact"} to find leads.`
             : credits.checked_at
-              ? `${credits.synthetic ? "Synthetic preview. " : ""}Checked ${timestamp(credits.checked_at)}.`
-              : "Check credits to retrieve your balance."}
+              ? `${credits.synthetic ? "Sample data. " : ""}Checked ${timestamp(credits.checked_at)}.`
+              : "Check to see your balance."}
         </p>
         {error && (
           <p className="error" role="alert">
@@ -140,9 +140,9 @@ export function HomeSummaryPanel({
       <div className="home-panels">
         <section className="zy-card panel home-target">
           <div className="panel-head">
-            <h2 className="panel-title">Current target</h2>
+            <h2 className="panel-title">Your target</h2>
             <Link className="button" href="/target">
-              Edit Target
+              Edit target
             </Link>
           </div>
           <div className="home-target-body">
@@ -161,14 +161,14 @@ export function HomeSummaryPanel({
                   ))}
                 </ul>
                 <details className="home-target-details">
-                  <summary>Full targeting instructions</summary>
+                  <summary>Full target</summary>
                   <p>{home.target.summary}</p>
                 </details>
               </>
             ) : (
               <p>
                 {home.target.summary ||
-                  "Choose an industry, country and decision-makers to guide your first search."}
+                  "Pick an industry, country and roles to start."}
               </p>
             )}
             <div className="home-next-action">
@@ -177,16 +177,16 @@ export function HomeSummaryPanel({
                 href={home.target.summary ? "/find-leads" : "/target"}
               >
                 <Icon name="search" />
-                {home.target.summary ? "Find More Leads" : "Set your target"}
+                {home.target.summary ? "Find more leads" : "Set your target"}
               </Link>
-              <HelpTooltip label="Finding leads">Review the lead count and email-credit estimate before starting. Email lookup stays optional.</HelpTooltip>
+              <HelpTooltip label="Finding leads">You see the count and credit cost before you start. Finding emails is optional.</HelpTooltip>
             </div>
           </div>
         </section>
         <section className="zy-card panel">
           <div className="panel-head">
             <div>
-              <h2 className="panel-title">Recent activity</h2>
+              <h2 className="panel-title">Latest decisions</h2>
             </div>
           </div>
           <div className="activity home-decisions" role="region" aria-label="Recent qualification decisions" tabIndex={0}>
@@ -216,14 +216,14 @@ export function HomeSummaryPanel({
             ))}
             {!home.recent_activity.length && (
               <div className="empty">
-                <p>No qualification activity yet.</p>
-                <p>Start a search to see who matches your target and why.</p>
+                <p>No decisions yet.</p>
+                <p>Find leads to see who fits and why.</p>
               </div>
             )}
           </div>
           <div className="home-activity-footer">
-            <Link href="/contacts">Manage contacts</Link>
-            <Link href="/inbox">Review replies</Link>
+            <Link href="/contacts">All leads</Link>
+            <Link href="/inbox">Replies</Link>
           </div>
         </section>
       </div>

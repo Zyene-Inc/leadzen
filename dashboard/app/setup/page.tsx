@@ -23,7 +23,7 @@ export default function SetupPage() {
     token.current = secret;
     if (!secret) {
       setError(
-        "Open the setup link from your invitation email. If it expired, ask your administrator to resend it.",
+        "Open the setup link from your invite email. If it expired, ask your admin for a new one.",
       );
       return;
     }
@@ -41,7 +41,7 @@ export default function SetupPage() {
         setError(
           caught instanceof Error
             ? caught.message
-            : "Unable to verify setup link",
+            : "Could not check the setup link",
         );
       }
     }
@@ -69,7 +69,7 @@ export default function SetupPage() {
       token.current = "";
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "Unable to create password",
+        caught instanceof Error ? caught.message : "Could not create password",
       );
     } finally {
       setBusy(false);
@@ -79,11 +79,11 @@ export default function SetupPage() {
     <main className="login-page">
       <section className="login-card">
         <Brand />
-        <h1>{done ? "You’re ready to sign in." : "Create your password."}</h1>
+        <h1>{done ? "You’re all set" : "Create your password"}</h1>
         <p>
           {person
             ? `Welcome, ${person.name}. Your account is ${person.email}.`
-            : "Verify your employee invitation to get started."}
+            : "Use your invite link to start."}
         </p>
         {error && (
           <div className="error" role="alert">
@@ -92,7 +92,7 @@ export default function SetupPage() {
         )}
         {done ? (
           <Link className="button primary" href="/login">
-            Go to login
+            Sign in
           </Link>
         ) : (
           person && (

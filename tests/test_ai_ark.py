@@ -197,6 +197,33 @@ def test_unsafe_email_is_not_saved(ark_client, domain_type, free, generic):
     assert not lead.email
 
 
+@pytest.mark.parametrize("answer", [
+    {"email": {"state": "PROCESSING", "output": []}},
+    {"email": None},
+    {"link": {"linkedin": "https://www.linkedin.com/in/someone-else"}, "email": {"state": "DONE", "output": []}},
+])
+def test_unusable_email_answer_settles_that_contact_only(ark_client, answer):
+    from leadzen.ai_ark import enrich
+    from leadzen.discovery_progress import observe, current
+    from leadzen.config.models import DiscoveryLookup
+    from openoutfind.crm.models import Lead, Deal, DealState
+    row = start(ark_client, emails=True)
+    lead = Lead.objects.create(profile_url=person()["link"]["linkedin"])
+    Deal.objects.create(lead=lead, state=DealState.QUALIFIED)
+    with observe(row), patch("leadzen.ai.pinned_request", return_value=(200, {}, json.dumps({**person(), **answer}).encode())):
+        enrich(current(), lead)
+    receipt = DiscoveryLookup.objects.get()
+    assert (receipt.state, receipt.email_status, receipt.credits) == ("terminated", "unavailable", 0)
+    lead.refresh_from_db()
+    assert not lead.email
+
+
+def test_profile_echo_ignores_case_and_encoding():
+    from leadzen.ai_ark import same_profile
+    assert same_profile("https://linkedin.com/in/Bruce-Burrows%C3%A9/", "https://www.linkedin.com/in/bruce-burrowsé")
+    assert not same_profile("https://www.linkedin.com/in/someone-else", "https://www.linkedin.com/in/bruce-burrows")
+
+
 @pytest.mark.parametrize("change", ["expired", "cancelled", "unapproved", "wrong_provider"])
 def test_invalid_approval_cannot_reach_provider(ark_client, change):
     from leadzen.ai_ark import search

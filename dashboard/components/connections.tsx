@@ -63,10 +63,10 @@ export function Connections({
           </div>
           <p className="settings-help" id="bettercontact-help">
             {setupMode ? (
-              "Test your key to retrieve the account balance. This check does not search for profiles or buy verified emails."
+              "Testing checks your balance. It buys nothing."
             ) : (
               <>
-                Optional for imported contacts. Saving a key does not test it or spend credits.
+                Not needed for imported contacts. Saving a key costs nothing.
               </>
             )}
           </p>
@@ -100,10 +100,10 @@ export function Connections({
           </div>
           <p className="settings-help" id="bettercontact-status">
             {removing
-              ? "The saved key will be removed when you save."
+              ? "The key will be removed when you save."
               : settings.lead_finder?.api_key_configured
-                ? "Key saved securely. Enter a new key to replace it."
-                : "No key saved. You can add it now or later in Connections."}{" "}
+                ? "Key saved. Enter a new one to replace it."
+                : "No key saved. You can add it later."}{" "}
             <a
               href={ark ? "https://app.ai-ark.com/" : "https://app.bettercontact.rocks/api_requests"}
               target="_blank"
@@ -128,7 +128,7 @@ export function Connections({
               Remove the saved {providerName} key when I save
             </label>
           )}
-          <p className="settings-help">Switching keeps the other provider’s saved key. Only the selected provider is used; there is no automatic fallback.{ark && " AI Ark searches cost 0.5 credits per returned profile, and verified email lookup costs up to 1 credit per person. Review the budget in Find Leads or Chat. Daily Autopilot requires BetterContact."}</p>
+          <p className="settings-help">Only the chosen provider is used. The other key stays saved.{ark && " AI Ark costs 0.5 credits per profile and up to 1 credit per checked email. You see the cost before each search. Daily Autopilot needs BetterContact."}</p>
         </section>
       )}
       {sections.includes("ai") && (
@@ -145,7 +145,7 @@ export function Connections({
         <>
           <section className="panel settings-card">
             <div className="panel-head">
-              <h2 className="panel-title">Email sending connection</h2><HelpTooltip label="Sending provider">Use a verified domain and a provider that permits your email type. Compatible APIs must accept the Resend request format and return an email ID.</HelpTooltip>
+              <h2 className="panel-title">Email sending</h2><HelpTooltip label="Sending provider">Use a verified domain and a provider that allows your email type. Other APIs must accept the Resend format and return an email ID.</HelpTooltip>
             </div>
             <div className="form-grid">
               <label>
@@ -232,7 +232,7 @@ export function Connections({
                     placeholder={
                       settings.mailbox.password_configured
                         ? "Blank keeps the saved password"
-                        : "Mailbox or relay password"
+                        : "Email account password"
                     }
                   />
                 </>
@@ -283,14 +283,14 @@ export function Connections({
             </div>
             {settings.mailbox.transport === "resend" && (
               <p className="settings-help">
-                Resend requires recipient opt-in and does not permit cold
-                outreach. Record opt-in when adding contacts.
+                Resend needs recipient opt-in. No cold outreach. Record opt-in
+                when you add contacts.
               </p>
             )}
             {settings.mailbox.transport === "zeptomail" && (
               <p className="settings-help">
-                ZeptoMail permits transactional messages only. Outreach and
-                follow-up sequences are blocked for this connection.
+                ZeptoMail is for transactional emails only. Outreach and
+                follow-ups are blocked.
               </p>
             )}
 
@@ -298,7 +298,7 @@ export function Connections({
           <section className="panel settings-card">
             <div className="panel-head">
               <h2 className="panel-title">Reply inbox</h2>
-              <HelpTooltip label="Reply inbox">The inbox must belong to your sending email. It is required to detect replies and stop follow-ups. Follow-ups pause if the inbox cannot be read.</HelpTooltip>
+              <HelpTooltip label="Reply inbox">LeadZen reads this inbox to find replies and stop follow-ups.</HelpTooltip>
             </div>
             <div className="form-grid">
               <label>
@@ -334,12 +334,12 @@ export function Connections({
                     ? "Blank uses the SMTP password"
                     : settings.mailbox.imap_password_configured
                       ? "Blank keeps the saved password"
-                      : "Password for this sending email's inbox"
+                      : "Inbox password"
                 }
               />
             </div>
             <p className="settings-help">
-              Use the inbox for your sending email. Follow-ups pause if it cannot be read.
+              Use your sending email’s inbox. Follow-ups pause if it cannot be read.
             </p>
           </section>
         </>

@@ -117,8 +117,8 @@ test("Autopilot review uses the server's Settings snapshot instead of its old au
   render(<Autopilot />);
   await waitFor(() => expect((screen.getByRole("switch") as HTMLButtonElement).disabled).toBe(false));
   await userEvent.click(screen.getByRole("switch"));
-  expect(screen.getByText(/Discovery starts at 9:30 AM/).textContent).toContain("Mon, Wed, Sat");
-  expect(screen.getByText(/Discovery starts at 9:30 AM/).textContent).toContain("New York (Eastern Time)");
+  expect(screen.getByText(/Finds leads at 9:30 AM/).textContent).toContain("Mon, Wed, Sat");
+  expect(screen.getByText(/Finds leads at 9:30 AM/).textContent).toContain("New York (Eastern Time)");
   expect(screen.queryByText(/Asia\/Kolkata|Europe\/London/)).toBeNull();
   expect(screen.queryByLabelText("Timezone")).toBeNull();
   expect(screen.getByRole("link", { name: "Edit schedule in Settings" }).getAttribute("href")).toBe("/settings#sending-hours");
@@ -151,15 +151,15 @@ test("Outreach summary shows the actual schedule and links to Settings without s
 test("automatic follow-up review shows the exact server schedule before approval", async () => {
   call.mockResolvedValue({ window: customWindow, automatic_window: customWindow, revision: "r1", from_address: "sender@example.com", automatic_available: true, delay_basis: "working_days", timezone: "America/New_York", recipients: [{ id: 1, email: lead.email, subject: "Hello", body: "First message", step: 1, followups: [{ step: 2, subject: "Following up", body: "Second message", delay_days: 3 }] }] });
   render(<CampaignSendReview campaignId="c1" count={1} close={vi.fn()} sent={vi.fn()} />);
-  await screen.findByText(/Sending schedule: Mon, Wed, Sat · 9:30 AM–4:45 PM · New York \(Eastern Time\)/);
-  await userEvent.click(screen.getByRole("checkbox", { name: "Approve automatic follow-ups for these recipients" }));
-  expect(screen.getByText(/Follow-ups use Mon, Wed, Sat/).textContent).toContain("9:30 AM–4:45 PM");
+  await screen.findByText(/Sends Mon, Wed, Sat · 9:30 AM–4:45 PM · New York \(Eastern Time\)/);
+  await userEvent.click(screen.getByRole("checkbox", { name: "Approve automatic follow-ups" }));
+  expect(screen.getByText(/You approve only the emails shown.*They send Mon, Wed, Sat/).textContent).toContain("9:30 AM–4:45 PM");
   expect(writes()).toHaveLength(0);
 });
 
 test("lead timeline uses its saved sequence sending schedule", () => {
   render(<LeadTimeline lead={{ ...lead, timeline: { events: [], history_truncated: false, blocked_reason: "", can_stop: false, suppression: null, sequences: [{ id: "c1", name: "Personal outreach", status: "pending", campaign_status: "active", timezone: "America/New_York", automatic: true, sending_schedule: customSchedule, steps: [{ id: "s1", label: "Follow-up", status: "estimated", at: null, subject: "Hello" }] }] } }} load={vi.fn()} />);
-  expect(screen.getByText(/Approved follow-ups run while/).textContent).toContain("Mon, Wed, Sat · 9:30 AM–4:45 PM · New York (Eastern Time)");
+  expect(screen.getByText(/Approved follow-ups send when the scheduler is on/).textContent).toContain("Mon, Wed, Sat · 9:30 AM–4:45 PM · New York (Eastern Time)");
   expect(writes()).toHaveLength(0);
 });
 

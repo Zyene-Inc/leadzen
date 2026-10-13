@@ -36,7 +36,7 @@ describe("Discovery UI uses persisted identities and verdicts", () => {
     const data = { ...progress, status: "succeeded", goal_reached: false };
     expect(summaryTitle(data)).toBe("Discovery finished");
     expect(currentDiscoveryActivity(data)).toBe("Discovery finished");
-    expect(summaryNote(data)).toContain("ended before the requested goal");
+    expect(summaryNote(data)).toContain("Ended before the goal");
     expect(data.counts.produced).toBe(1);
     expect(data.goal.count).toBe(3);
     expect(data.goal_reached).toBe(false);
@@ -54,19 +54,19 @@ describe("Discovery UI uses persisted identities and verdicts", () => {
 
   test("a returned profile is not presented as qualified or assigned an invented reason", () => {
     render(<DiscoveryCandidateRow candidate={{ ...mark, outcome: "pending", reason: "", contact_id: null }} />);
-    expect(screen.getByText("Not evaluated yet")).toBeTruthy();
+    expect(screen.getByText("Not checked yet")).toBeTruthy();
     expect(screen.queryByText("Why rejected:")).toBeNull();
     expect(screen.queryByText("Qualified")).toBeNull();
-    expect(screen.queryByText(/No qualification reason/)).toBeNull();
+    expect(screen.queryByText(/No reason saved/)).toBeNull();
   });
 
   test.each(["qualified", "rejected"])("rediscovering an already %s candidate preserves the actual prior verdict", (outcome) => {
     const candidate = { ...sarah, outcome };
     const { rerender } = render(<DiscoveryActivityItem event={event(1, "discovered", candidate)} />);
-    expect(screen.getByText(`Returned by the profile search. A ${outcome} verdict was already recorded.`)).toBeTruthy();
-    expect(screen.queryByText(/Qualification is still pending/)).toBeNull();
+    expect(screen.getByText(`Found by the search. Already marked ${outcome}.`)).toBeTruthy();
+    expect(screen.queryByText(/Not checked yet/)).toBeNull();
     rerender(<DiscoveryActivityItem event={event(2, "evaluating", candidate)} />);
-    expect(screen.getByText(/A new verdict has not been recorded for this check/)).toBeTruthy();
+    expect(screen.getByText(/No new verdict yet/)).toBeTruthy();
     expect(candidate.outcome).toBe(outcome);
     expect(candidate.reason).toBe(sarah.reason);
   });
@@ -131,7 +131,7 @@ describe("Discovery UI uses persisted identities and verdicts", () => {
 
   test("profile links with credentials are discarded and a missing verdict reason stays unknown", () => {
     render(<DiscoveryActivityItem event={event(1, "rejected", { ...mark, reason: "", profile_url: "https://secret:password@example.com/profile" })} />);
-    expect(screen.getByText("No qualification reason was recorded.")).toBeTruthy();
+    expect(screen.getByText("No reason saved.")).toBeTruthy();
     expect(screen.queryByRole("link")).toBeNull();
   });
 
@@ -149,7 +149,7 @@ describe("Discovery UI uses persisted identities and verdicts", () => {
     expect(screen.getByRole("status").textContent).toBe("Evaluating Sarah Johnson");
     await act(async () => { await vi.advanceTimersByTimeAsync(3000); });
     expect(screen.queryByRole("alert")).toBeNull();
-    expect(screen.getByRole("status").textContent).toBe("Discovery Complete");
+    expect(screen.getByRole("status").textContent).toBe("Discovery done");
     expect(call).toHaveBeenCalledTimes(3);
     await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
     expect(call).toHaveBeenCalledTimes(3);

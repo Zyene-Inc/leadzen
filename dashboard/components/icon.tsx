@@ -24,6 +24,7 @@ const paths = {
     <path d="M21 11a8 8 0 0 1-8 8H6l-4 3V7a4 4 0 0 1 4-4h11a4 4 0 0 1 4 4v4ZM7 8h10M7 12h6" />
   ),
   send: <path d="m12 19 0-14m-6 6 6-6 6 6" />,
+  results: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />,
   inbox: <path d="M3 13V4h18v9M3 13h5l2 3h4l2-3h5v7H3v-7Z" />,
   suppression: (
     <>

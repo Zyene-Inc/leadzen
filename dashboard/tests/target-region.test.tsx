@@ -119,7 +119,7 @@ describe("Provider search scope", () => {
     view.unmount();
     call.mockResolvedValueOnce({ ...progress, status: "completed", goal_reached: true });
     render(<DiscoveryLive user={user} runId="run1" />);
-    expect((await screen.findAllByText("Discovery Complete")).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText("Discovery done")).length).toBeGreaterThan(0);
     expect(screen.queryByText("Provider search:")).toBeNull();
   });
 });

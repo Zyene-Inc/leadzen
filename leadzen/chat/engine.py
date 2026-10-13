@@ -338,7 +338,7 @@ def prepare(row, tool, args, *, selected=False):
         if values.lead_finder_provider == "ai_ark" and find_args.get("audience"):
             raise ValueError("Update your saved Target to change the AI Ark audience")
         credits = budget(find_args["count"], find_args["emails"], selected=selected, values=values)
-        summary = f"Find up to {find_args['count']} new leads" + (" with verified emails" if find_args["emails"] else " without buying email addresses")
+        summary = f"Find up to {find_args['count']} new leads" + (" with verified emails" if find_args["emails"] else " (work emails are a separate approval after you review them)")
         from leadzen.lead_finder import search_scope
         preview = {"audience": find_args["audience"] or SiteConfig.load().campaign_target, "product": SiteConfig.load().product_docs[:3000], **search_scope(find_args, values), "note": "Uses your AI provider and selected lead provider. Partial results are kept; no emails are sent."}
     elif tool == "send_campaign":
@@ -383,7 +383,7 @@ def prepare(row, tool, args, *, selected=False):
 
 def find_leads(args, *, poll_only=False):
     from django.core.management import call_command
-    from cold_outreach.leads.ingest import ingest
+    from leadzen.finder_ingest import ingest
     from leadzen.ai import install_engine_adapters
     from leadzen.wizard import apply_to_environment
     from contextlib import nullcontext
@@ -717,9 +717,29 @@ def discovery_checkpoint(row, result, *, single_action=False):
         else:
             finish(row, "cancelled", "Finding stopped. Saved results are kept.")
     else:
+        from leadzen.config.models import DiscoverySession
+        from leadzen.discovery_progress import counts
+        session = DiscoverySession.objects.filter(run_id=row.pk).first()
         partial = result.get("partial") is True
-        success = "Discovery finished. Review the saved results above or open them in Workspace. No emails were sent." if result.get("discovery") else "Discovery finished. Review the recorded results and your leads. No emails were sent."
-        finish(row, "failed" if partial else "succeeded", "Discovery stopped with partial results. Review leads and connections before starting another search. No emails were sent." if partial else success)
+        # AI Ark reports a provider stop separately from finding fewer than the goal.
+        failed = result.get("failed", partial) is True
+        if session and session.source_ids:
+            found, checked, goal = counts(session)["produced"], session.lookups.filter(state="terminated").count(), len(session.source_ids)
+            if failed:
+                text = f"Email lookup stopped after {checked} of {goal} contacts; {found} verified work email{'' if found == 1 else 's'} saved. The other contacts were not looked up. No emails were sent."
+            else:
+                text = f"Email lookup finished: {found} of {goal} contacts have a verified work email. Contacts without one cannot be emailed yet. No emails were sent."
+            finish(row, "failed" if failed else "succeeded", text)
+            return True
+        if failed:
+            text = "Discovery stopped with partial results. Review leads and connections before starting another search. No emails were sent."
+        elif session and partial:
+            text = f"Discovery finished with {counts(session)['produced']} of {session.goal} qualified leads within the approved budget. Review them above or in Workspace. No emails were sent."
+        else:
+            text = "Discovery finished. Review the saved results above or open them in Workspace. No emails were sent." if result.get("discovery") else "Discovery finished. Review the recorded results and your leads. No emails were sent."
+        if session and session.unit == "leads":
+            text += " Next, ask me to get their work emails (it needs your approval), then to draft outreach."
+        finish(row, "failed" if failed else "succeeded", text)
     return True
 
 

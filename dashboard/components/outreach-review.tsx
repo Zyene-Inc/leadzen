@@ -25,7 +25,7 @@ function FinalConfirmation({ review, cancel, started }: { review: EmailReview; c
   }
   return <section className="outreach-confirm" aria-labelledby="final-send-title">
     <h3 ref={heading} tabIndex={-1} id="final-send-title">Send {review.kind === "reply" ? "this reply" : `emails to ${review.requested_count} ${review.requested_count === 1 ? "person" : "people"}`}?</h3>
-    <p>This action sends real emails from {review.from_address}. Only the approved messages above are included.</p>
+    <p>Sends real emails from {review.from_address}. Only the approved messages above go out.</p>
     <p className="settings-help">{review.note}</p>
     {error && <p className="error" role="alert">{error}</p>}
     <div className="card-actions"><button className="button" disabled={busy} onClick={cancel}>No, go back</button><button className="button primary" disabled={busy} onClick={() => void confirm()}>{busy ? "Starting…" : review.kind === "reply" ? "Yes, send this reply" : "Yes, start outreach"}</button></div>
@@ -35,15 +35,15 @@ function FinalConfirmation({ review, cancel, started }: { review: EmailReview; c
 function Progress({ review, stop }: { review: EmailReview; stop: () => void }) {
   const running = ["queued", "running"].includes(review.status);
   const generating = review.status === "generating";
-  const names: Record<string, string> = { accepted: "Email accepted by provider", pending: running ? "Waiting for sending interval, window or capacity" : "Not sent; new review required", sending: "Sending attempt in progress", review: "Uncertain or failed attempt; do not automatically retry", cancelled: "Cancelled; not sent" };
+  const names: Record<string, string> = { accepted: "Accepted by provider", pending: running ? "Waiting to send" : "Not sent. Needs a new review.", sending: "Sending…", review: "Failed or unclear. Won’t retry on its own.", cancelled: "Cancelled. Not sent." };
   return <section className="panel outreach-progress" aria-labelledby="outreach-progress-title">
-    <h2 id="outreach-progress-title">{generating ? "Preparing drafts" : running ? "Outreach Running" : `Outreach ${review.status}`}</h2>
+    <h2 id="outreach-progress-title">{generating ? "Writing drafts" : running ? "Sending" : `Outreach ${review.status}`}</h2>
     <p role="status">{review.accepted} / {review.requested_count} {review.kind === "reply" ? "replies accepted" : "conversations opened"}</p>
     <progress value={review.accepted} max={review.requested_count} aria-label="Emails accepted by provider" />
     <ul className="outreach-progress-list">{review.drafts.map((d) => <li key={d.id}><span aria-hidden="true">{d.state === "accepted" ? "✓" : d.state === "review" ? "!" : "○"}</span><div><strong>{d.name}</strong><p>{names[d.state] || d.state}{d.accepted_at ? ` · ${sentTime(d.accepted_at)}` : ""}</p></div></li>)}</ul>
-    <p className="settings-help">Acceptance is not proof of delivery or inbox placement. No automatic follow-up is scheduled.</p>
+    <p className="settings-help">Accepted does not mean delivered. No follow-ups are scheduled.</p>
     {running && <button className="button danger" onClick={stop}>Stop outreach</button>}
-    {generating && <button className="button" onClick={stop}>Cancel draft generation</button>}
+    {generating && <button className="button" onClick={stop}>Stop writing drafts</button>}
   </section>;
 }
 
@@ -54,8 +54,8 @@ function reviewReady(data: EmailReview) {
 function ReviewDrafts({ data, update, begin, cancel, startRef, workspacePath }: { data: EmailReview; update: (data: EmailReview) => void; begin: () => void; cancel: () => void; startRef: RefObject<HTMLButtonElement | null>; workspacePath?: string }) {
   const ready = reviewReady(data);
   return <>{data.drafts.map((d) => <EmailPreview key={d.id} draft={d} review={data} update={update} workspacePath={workspacePath} />)}
-    <div className="card-actions"><button className="button" onClick={cancel}>Cancel review</button><button ref={startRef} className="button primary" disabled={!ready} onClick={begin}>{data.kind === "reply" ? "Review & Send" : "Review & send"}</button></div>
-    {!ready && <p className="settings-help">Approve every message above to enable final confirmation.</p>}</>;
+    <div className="card-actions"><button className="button" onClick={cancel}>Cancel review</button><button ref={startRef} className="button primary" disabled={!ready} onClick={begin}>Review & send</button></div>
+    {!ready && <p className="settings-help">Approve each message to continue.</p>}</>;
 }
 
 export default function OutreachReview({ reviewId, closed, closeLabel = "Back to outreach", workspacePath, expectedThreadId }: { reviewId: string; closed?: () => void; closeLabel?: string; workspacePath?: string; expectedThreadId?: number }) {
@@ -69,14 +69,14 @@ export default function OutreachReview({ reviewId, closed, closeLabel = "Back to
     try { setData(await api<EmailReview>(`outreach/reviews/${reviewId}`, { method: "DELETE" })); setActionError(""); }
     catch (caught) { setActionError(caught instanceof Error ? caught.message : "Unable to cancel this review"); }
   }
-  if (!data) return <section className="panel outreach-progress"><p role="status">{loading ? "Loading saved email review…" : error}</p><button className="button" onClick={refresh}>Refresh review</button></section>;
-  if (wrongConversation) return <section className="panel"><p className="error" role="alert">This saved reply belongs to a different conversation.</p>{closed && <button className="button" onClick={closed}>{closeLabel}</button>}</section>;
+  if (!data) return <section className="panel outreach-progress"><p role="status">{loading ? "Loading review…" : error}</p><button className="button" onClick={refresh}>Refresh review</button></section>;
+  if (wrongConversation) return <section className="panel"><p className="error" role="alert">This reply is for a different conversation.</p>{closed && <button className="button" onClick={closed}>{closeLabel}</button>}</section>;
   const ready = reviewReady(data);
   const draftMode = data.status === "draft";
   return <section className="outreach-review" aria-label="Saved email review">
-    <div className="section-heading"><div><p className="eyebrow">Human review</p><h2>Email Preview</h2><p className="settings-help">From {data.from_address}. Review each exact message before approving.</p></div><button className="button" onClick={refresh}>Refresh review</button></div>
+    <div className="section-heading"><div><p className="eyebrow">Your review</p><h2>Email preview</h2><p className="settings-help">From {data.from_address}. Check each message, then approve.</p></div><button className="button" onClick={refresh}>Refresh review</button></div>
     {(error || actionError) && <p className="error" role="alert">{error || actionError}</p>}
-    {data.stale && <p className="error" role="alert">The saved setup, contact or inbox changed. This review cannot send; create a fresh review.</p>}
+    {data.stale && <p className="error" role="alert">Setup, contact or inbox changed. This review can’t send. Start a new one.</p>}
     {!draftMode && <Progress review={data} stop={() => void cancelReview()} />}
     {draftMode && <ReviewDrafts data={data} update={setData} begin={() => setConfirming(true)} cancel={() => void cancelReview()} startRef={startButton} workspacePath={workspacePath} />}
     {confirming && draftMode && ready && <FinalConfirmation key={data.revision} review={data} cancel={() => { setConfirming(false); startButton.current?.focus(); }} started={refresh} />}

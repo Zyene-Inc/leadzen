@@ -74,6 +74,10 @@ def contact_payload(deal, *, detail=False, facts=None):
     stage = "suppressed" if suppressed else "replied" if replies else "contacted" if contacted else "email_found" if deal.lead.email else "qualified" if qualified else "contact"
     receipt = facts["receipt"] if facts is not None else DiscoveryLookup.objects.filter(source_id=source.pk).select_related("session__run__thread").order_by("-session__run__created_at").first() if source else None
     latest_session = facts["session"] if facts is not None else DiscoverySession.objects.filter(source_ids=[source.pk], unit="emails").select_related("run", "run__thread").order_by("-run__created_at").first() if source else None
+    if facts is None and source and not receipt and (not latest_session or latest_session.run.status not in ("queued", "running", "paused")):
+        # A multi-lead lookup has not reached this lead yet; it is still in progress.
+        latest_session = next((session for session in DiscoverySession.objects.filter(unit="emails", run__status__in=["queued", "running", "paused"]).select_related("run", "run__thread")
+                               if source.pk in (session.source_ids or [])), latest_session)
     lookup_session = receipt.session if receipt else latest_session
     lookup = None
     if lookup_session:
@@ -126,6 +130,14 @@ def contact_payloads(deals):
             crm_rank=Window(expression=RowNumber(), partition_by=[F("source_ids")], order_by=[F("run__created_at").desc(), F("run_id").desc()])
         ).filter(crm_rank=1)
         sessions = {s.source_ids[0]: s for s in latest}
+        # Leads waiting in an active multi-lead lookup have no receipt yet.
+        # An older finished single lookup must not hide a bulk lookup that is running now.
+        waiting = {pk for [pk] in unsubmitted if pk not in sessions or sessions[pk].run.status not in ("queued", "running", "paused")}
+        if waiting:
+            for active in DiscoverySession.objects.filter(unit="emails", run__status__in=["queued", "running", "paused"]).select_related("run__thread"):
+                for pk in waiting.intersection(active.source_ids or []):
+                    if pk not in sessions or sessions[pk].run.status not in ("queued", "running", "paused"):
+                        sessions[pk] = active
     thread_ids = {d.thread_id for d in deals if d.thread_id}
     replies = {r["thread_id"]: r["total"] for r in Message.objects.filter(thread_id__in=thread_ids, direction=Direction.INBOUND, kind="human_reply")
         .values("thread_id").annotate(total=Count("pk"))}
@@ -161,12 +173,17 @@ def list_contacts(request):
     elif stage == "contacted":
         rows = rows.filter(email_sent_at__isnull=False)
     elif stage == "replied":
-        rows = rows.filter(crm_replied=True, thread_id__isnull=False)
+        # A suppressed contact shows "Do not contact", so it belongs to that filter.
+        rows = rows.filter(crm_replied=True, crm_suppressed=False, thread_id__isnull=False)
     elif stage == "suppressed":
         rows = rows.filter(crm_suppressed=True).exclude(lead__email="")
     if query:
         rows = rows.filter(Q(crm_name__icontains=query) | Q(lead__email__icontains=query) | Q(lead__first_name__icontains=query) | Q(lead__last_name__icontains=query) | Q(lead__company__icontains=query) | Q(lead__title__icontains=query))
-    return JsonResponse({"items": contact_payloads(list(rows[offset:offset + limit])), "total": rows.count(), "limit": limit, "offset": offset})
+    base = contacts_query()
+    with_email = base.exclude(lead__email="").exclude(lead__email__isnull=True)
+    summary = {"all": base.count(), "email_found": with_email.count(), "needs_email": base.filter(Q(lead__email="") | Q(lead__email__isnull=True)).count(),
+               "contacted": base.filter(email_sent_at__isnull=False).count(), "replied": base.filter(crm_replied=True, crm_suppressed=False, thread_id__isnull=False).count()}
+    return JsonResponse({"items": contact_payloads(list(rows[offset:offset + limit])), "total": rows.count(), "limit": limit, "offset": offset, "summary": summary})
 
 
 def owned_contact(deal_id):
@@ -248,6 +265,93 @@ def work_email(request, deal_id):
             row.status = "queued"
             row.save()
             DiscoverySession.objects.create(run=row, action=row.pending, goal=1, unit="emails", source_ids=source_ids, target=SiteConfig.load().campaign_target)
+            ChatMessage.objects.create(thread=thread, role="user", content=row.pending["summary"], data=selection)
+    except IntegrityError:
+        return error("Another task started. Refresh and review your active task.", 409)
+    chat.launch(request, row)
+    row.refresh_from_db()
+    return JsonResponse({"run": chat.run_payload(row)}, status=202)
+
+
+def emails_review(deals, actor_id):
+    """Per-lead eligibility for one combined work-email lookup."""
+    items = []
+    for deal in deals:
+        review = email_review(deal, actor_id)
+        # The active-task/setup blockers apply to the whole batch, reported once below.
+        items.append({"id": deal.pk, "name": review["name"], "eligible": review["eligible"], "reason": review["reason"],
+                      "revision": review["revision"], "source_id": review["source_id"]})
+    setup = context(actor_id)
+    blocker = " ".join(setup["blockers"]) if not setup["ready"] else "A lead search or email lookup is already running. Try again when it finishes." if setup["active_run"] else ""
+    eligible = [i for i in items if i["eligible"]]
+    from leadzen.lead_finder import label
+    revision = hashlib.sha256(json.dumps(sorted((i["id"], i["revision"]) for i in items)).encode()).hexdigest()
+    return {"items": [{k: v for k, v in i.items() if k not in {"revision", "source_id"}} for i in items], "eligible_ids": [i["id"] for i in eligible],
+            "blocker": blocker, "estimated_credits": len(eligible), "provider_name": label(), "revision": revision, "_sources": [i["source_id"] for i in eligible]}
+
+
+def selected_contacts(raw):
+    ids = raw if isinstance(raw, list) else []
+    if not 1 <= len(ids) <= 25 or any(type(i) is not int for i in ids) or len(set(ids)) != len(ids):
+        raise ValueError("Select 1–25 different leads")
+    deals = [owned_contact(i) for i in sorted(ids)]
+    if not all(deals):
+        raise LookupError("Contact not found")
+    return deals
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+@access(workspace=True)
+def work_emails(request):
+    """Leads page bulk action: one approved lookup task for the selected leads only."""
+    from leadzen.chat import views as chat
+    from leadzen.chat.engine import normalize, prepare
+    body = payload(request) if request.method == "POST" else {}
+    try:
+        raw = body.get("contact_ids") if request.method == "POST" else [int(i) for i in request.GET.get("ids", "").split(",") if i]
+        deals = selected_contacts(raw)
+    except ValueError as exc:
+        return error(str(exc) if "Select" in str(exc) else "Select 1–25 different leads")
+    except LookupError:
+        return error("Contact not found", 404)
+    if request.method == "GET":
+        review = emails_review(deals, request.actor.pk)
+        review.pop("_sources")
+        return JsonResponse(review)
+    try:
+        request_id = uuid.UUID(str(body.get("request_id", "")))
+    except ValueError:
+        return error("A unique request ID is required")
+    ids = sorted(d.pk for d in deals)
+    if type(body.get("estimated_credits")) is not int or body["estimated_credits"] != len(ids):
+        return error("Confirm the exact work-email credit limit before starting")
+    selection = {"contact_ids": ids, "revision": body.get("revision"), "estimated_credits": len(ids)}
+    existing = ChatRun.objects.filter(request_id=request_id).select_related("thread").first()
+    if existing:
+        message = existing.thread.messages.filter(role="user").order_by("created_at", "pk").first()
+        if existing.actor_id != request.actor.pk or existing.thread.actor_id != request.actor.pk or not message or message.data != selection:
+            return error("Request ID already used", 409)
+        return JsonResponse({"run": chat.run_payload(existing)}, status=202)
+    chat.recover_stale(request.actor.pk)
+    if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15 or conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
+        return error("Task limit reached. Try later or archive a conversation", 429)
+    try:
+        with transaction.atomic(using=ChatRun.objects.all().db):
+            review = emails_review(selected_contacts(ids), request.actor.pk)
+            if review["revision"] != body.get("revision") or review["eligible_ids"] != ids or review["blocker"]:
+                return error(review["blocker"] or "The selected leads or setup changed. Review this lookup again.", 409)
+            source_ids = review["_sources"]
+            names = ", ".join(i["name"] for i in review["items"])
+            thread = ChatThread.objects.create(actor_id=request.actor.pk, title=f"Work emails for {len(ids)} lead{'s' if len(ids) != 1 else ''}"[:100], context=dict(WORKSPACE_JOB))
+            row = ChatRun.objects.create(thread=thread, actor_id=request.actor.pk, request_id=request_id, lane="provider")
+            prepare(row, "find_leads", normalize("find_leads", {"count": len(ids), "emails": True}), selected=True)
+            row.refresh_from_db()
+            row.pending = {**row.pending, "approved": True, "single_action": True, "source_identity": selected_identity(source_ids),
+                           "summary": f"Find work emails for {names[:300]} only. Up to {len(ids)} {review['provider_name']} credit{'s' if len(ids) != 1 else ''}. No email sending."}
+            row.status = "queued"
+            row.save()
+            DiscoverySession.objects.create(run=row, action=row.pending, goal=len(ids), unit="emails", source_ids=source_ids, target=SiteConfig.load().campaign_target)
             ChatMessage.objects.create(thread=thread, role="user", content=row.pending["summary"], data=selection)
     except IntegrityError:
         return error("Another task started. Refresh and review your active task.", 409)

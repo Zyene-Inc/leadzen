@@ -86,18 +86,17 @@ export default function DiscoveryEmailReview({
   return (
     <section className="live-email-review" aria-labelledby="email-review-title">
       <h2 ref={heading} id="email-review-title" tabIndex={-1}>
-        Review email lookup
+        Find emails
       </h2>
       <p className="settings-help">
-        Opening this review spends no credits. Select the qualified profiles to
-        enrich, then explicitly confirm the cost.
+        Nothing is charged yet. Pick people, then confirm the cost.
       </p>
-      {!review && !error && <p role="status">Loading eligible leads…</p>}
+      {!review && !error && <p role="status">Loading leads…</p>}
       {review && (
         <>
           <fieldset disabled={busy}>
             <legend className="sr-only">
-              Select qualified profiles for email lookup
+              People to find emails for
             </legend>
             {review.items.map((lead) => (
               <label className="live-email-choice" key={lead.id}>
@@ -122,21 +121,19 @@ export default function DiscoveryEmailReview({
             ))}
             {!review.items.length && (
               <p>
-                No eligible profiles. Emails already found, deleted contacts and
-                previously requested lookups are excluded. Only the results from
-                this run are considered.
+                No eligible profiles. People with emails, deleted contacts and
+                past lookups are skipped. Only this run counts.
               </p>
             )}
           </fieldset>
           <p className="live-cost" aria-live="polite">
-            Estimated {review?.provider_name ?? "BetterContact"} email cost:{" "}
+            {review?.provider_name ?? "BetterContact"} email cost:{" "}
             <strong>
               up to {selected.length} credit{selected.length === 1 ? "" : "s"}
             </strong>
           </p>
           <p className="settings-help">
-            {review.note} Existing qualification gates still apply; some
-            profiles may have no available email.
+            {review.note} Some people may have no email.
           </p>
         </>
       )}
@@ -151,7 +148,7 @@ export default function DiscoveryEmailReview({
           disabled={!review || !selected.length || busy}
           onClick={confirm}
         >
-          {busy ? "Starting…" : "Confirm & Find Emails"}
+          {busy ? "Starting…" : "Confirm & find emails"}
         </button>
         <button className="button" disabled={busy} onClick={close}>
           Cancel

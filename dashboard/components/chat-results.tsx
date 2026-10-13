@@ -25,6 +25,14 @@ function text(value: unknown) {
 function resultKey(item: Record<string, unknown>) {
   return text(item.id) || text(item.email) || JSON.stringify(item);
 }
+/** A contact without an email was not necessarily looked up; say which. */
+function lookupLabel(status: string) {
+  if (status === "not_found") return "No verified email found";
+  if (status === "pending") return "Email lookup in progress";
+  if (status === "review") return "Lookup did not finish — review in Workspace";
+  return "Not looked up";
+}
+
 const toolNames: Record<string, string> = {
   get_workspace_status: "Workspace status", get_workspace_context: "Workspace context",
   get_target: "Audience", update_target: "Audience updated", find_leads: "Lead discovery",
@@ -82,7 +90,7 @@ export function ToolResult({ message, discovery, onCommand }: { message: ChatMes
                     <td><Link className="text-link" href={`/contacts/${text(item.id)}`}>{text(item.name)}</Link>{!!item.title && <small>{text(item.title)}</small>}{!!item.reason && <p>{text(item.reason)}</p>}</td>
                     <td>{text(item.company)}</td>
                     <td>{text(item.email) || "Not verified"}</td>
-                    <td>{text(item.state)}</td>
+                    <td>{text(item.state) === "Ready to Email" && !text(item.email) ? "Needs email" : text(item.state)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -95,7 +103,7 @@ export function ToolResult({ message, discovery, onCommand }: { message: ChatMes
               <span>{text(item.from) || text(item.status)}</span>
               {!!item.body && <p>{text(item.body)}</p>}
               {!!item.email && <p>{text(item.email)} · {text(item.email_status)}</p>}
-              {!item.email && message.data.tool === "find_work_emails" && <p>No verified email found</p>}
+              {!item.email && message.data.tool === "find_work_emails" && <p>{lookupLabel(text(item.email_status))}</p>}
               {!!workspaceLink(item.workspaceUrl) && <Link className="text-link" href={workspaceLink(item.workspaceUrl)!}>Open in Workspace →</Link>}
               {!!item.threadId && onCommand && <button className="button" onClick={() => onCommand(`Draft a reply to conversation ${text(item.threadId)}. Do not send.`)}>Draft reply</button>}
             </div>

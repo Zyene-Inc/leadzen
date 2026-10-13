@@ -53,7 +53,7 @@ export function SetupAudience({
           />
         </label>
         <CountrySelect
-          label="Target country"
+          label="Country"
           countries={countries}
           value={audience.country}
           onChange={(country) => update({ country })}
@@ -72,8 +72,7 @@ export function SetupAudience({
             aria-describedby="target-region-help"
           />
           <span className="settings-help" id="target-region-help">
-            Narrows the provider search, e.g. Texas or Austin, Texas. Leave
-            blank for the whole country.
+            E.g. Texas or Austin, Texas. Leave blank for the whole country.
           </span>
         </div>
         <label>
@@ -115,7 +114,7 @@ export function SetupAudience({
       </fieldset>
       <div className="form-grid">
         <label className="wide">
-          Other roles (comma-separated)
+          Other roles (separate with commas)
           <input
             className="input"
             maxLength={1200}
@@ -168,7 +167,7 @@ export function SetupAudience({
       </fieldset>
       <div className="form-grid">
         <label className="wide">
-          Additional instructions
+          Extra notes
           <textarea
             className="input textarea"
             rows={4}
@@ -186,12 +185,11 @@ export function SetupAudience({
         </details>
       )}
       <div className="setup-preview">
-        <h3>Target preview</h3>
+        <h3>Preview</h3>
         <p>{targetPreview(audience, countries)}</p>
         <p className="settings-help">
-          These are instructions for discovery and AI qualification, not a
-          guarantee that every profile matches. Review contacts before approving
-          outreach.
+          This guides the search. Not every match is perfect, so check leads
+          before you email them.
         </p>
         <label className="setup-confirm">
           <input
@@ -215,7 +213,7 @@ export function SetupAudience({
           }
         />
         I’m authorized to use this mailbox and will respect consent, opt-outs
-        and provider policies.
+        and provider rules.
       </label>
     </section>
   );

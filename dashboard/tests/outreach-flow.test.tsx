@@ -16,7 +16,7 @@ test("inbox checks require inline approval, show cost and mailbox, and Cancel is
   call.mockImplementation(async (path) => path === "inbox/check" ? { thread_id: "thread1", run } : { ...run, status: "cancelled", approval: null });
   render(<InboxCheck refreshed={vi.fn()} />);
   await userEvent.click(screen.getByRole("button", { name: "Check for replies" }));
-  await screen.findByRole("heading", { name: "Check your connected inbox?" });
+  await screen.findByRole("heading", { name: "Check your inbox?" });
   expect(screen.getByText(/sender@example.com/).textContent).toContain("No AI is used");
   expect(writes()).toHaveLength(1);
   await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
@@ -49,7 +49,7 @@ test("AI preparation is one direct backend request and opens the saved draft wit
   const saved = vi.fn();
   render(<OutreachComposer actorId={1} initialSelection={[1]} aiReady close={vi.fn()} saved={saved} />);
   await userEvent.click(screen.getByRole("button", { name: "Prepare drafts" }));
-  await screen.findByRole("heading", { name: "Make the message yours" });
+  await screen.findByRole("heading", { name: "Edit your message" });
   expect(writes()).toHaveLength(1);
   expect(writes()[0][0]).toBe("campaigns/prepare");
   expect(JSON.parse(String(writes()[0][1]?.body))).toEqual({ contact_ids: [1] });
@@ -66,7 +66,7 @@ test("a failed preparation explains itself, keeps the selection and never opens 
   render(<OutreachComposer actorId={1} initialSelection={[1]} aiReady close={vi.fn()} saved={vi.fn()} />);
   await userEvent.click(screen.getByRole("button", { name: "Prepare drafts" }));
   expect((await screen.findByRole("alert")).textContent).toContain("write the message yourself");
-  expect(screen.getByRole("heading", { name: "Who would you like to contact?" })).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Who to contact?" })).toBeTruthy();
   expect(call.mock.calls.some(([path]) => path.startsWith("chat/"))).toBe(false);
   expect((screen.getByRole("button", { name: "Prepare drafts" }) as HTMLButtonElement).disabled).toBe(false);
 });
@@ -124,9 +124,9 @@ test("a failed delivery can be marked reviewed only after opening it, and stays 
     return { items: [] };
   });
   render(<Campaigns user={user} />);
-  await screen.findByRole("heading", { name: "Delivery activity" });
+  await screen.findByRole("heading", { name: "Sending activity" });
   expect((screen.getByRole("button", { name: "Mark as reviewed" }).closest("details") as HTMLDetailsElement).open).toBe(false);
-  await userEvent.click(screen.getByText("View result"));
+  await userEvent.click(screen.getByText("Details"));
   expect(screen.getByText("SMTP authentication failed")).toBeTruthy();
   await userEvent.click(screen.getByRole("button", { name: "Mark as reviewed" }));
   await waitFor(() => expect(writes().map(([p]) => p)).toContain("jobs/job1/resolve"));

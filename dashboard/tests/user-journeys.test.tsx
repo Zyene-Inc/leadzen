@@ -63,7 +63,7 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Fresh user jo
     const conversation = { id: 4, name: "Bruce", address: lead.email, can_reply: true, reply_blocker: "", total_messages: 0, messages: [] };
     call.mockImplementation(async path => path.startsWith("outreach/reviews/") ? { ...review, kind: "reply", thread_id: 8 } : path === "inbox/conversations/4" ? conversation : { items: [], total: 0, limit: 50, offset: 0 });
     render(<Inbox user={user} initialThreadId={4} initialReviewId={review.id} />);
-    await screen.findByText("This saved reply belongs to a different conversation.");
+    await screen.findByText("This reply is for a different conversation.");
     expect(screen.queryByText("Saved copy")).toBeNull();
     expect(screen.queryByRole("button", { name: "Approve" })).toBeNull();
     expect(call.mock.calls.every(([, init]) => !init?.method)).toBe(true);

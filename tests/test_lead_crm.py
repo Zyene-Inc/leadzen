@@ -199,3 +199,74 @@ def test_company_domains_are_links_but_unsafe_urls_are_not(discovery_client):
         deal.lead.website = unsafe
         deal.lead.save()
         assert discovery_client.get(f"/api/contacts/{deal.pk}").json()["website"] == ""
+
+
+def named_prospect(slug):
+    from openoutfind.crm.models import Lead as Profile, Deal as Decision
+    profile = Profile.objects.create(full_name=f"{slug.title()} Synthetic", job_title="Owner", profile_url=f"https://example.com/profile/{slug}")
+    Decision.objects.create(lead=profile, state="Qualified", reason="Owner")
+    lead = Lead.objects.create(lead_id=str(profile.pk), title="Owner", company="Synthetic Practice")
+    return Deal.objects.create(lead=lead), profile
+
+
+def test_bulk_lookup_approves_only_eligible_selection_once(discovery_client):
+    (a, pa), (b, pb) = named_prospect("ada"), named_prospect("bea")
+    manual = Deal.objects.create(lead=Lead.objects.create(lead_id="manual-bulk", email=""))
+    review = discovery_client.get(f"/api/contacts/emails?ids={manual.pk},{a.pk},{b.pk}").json()
+    assert review["eligible_ids"] == [a.pk, b.pk] and review["estimated_credits"] == 2 and not review["blocker"]
+    assert [i["eligible"] for i in review["items"] if i["id"] == manual.pk] == [False]
+    # Approving must match the exact reviewed eligible set.
+    final = discovery_client.get(f"/api/contacts/emails?ids={a.pk},{b.pk}").json()
+    body = {"contact_ids": [b.pk, a.pk], "revision": final["revision"], "estimated_credits": 2, "request_id": str(uuid.uuid4())}
+    with patch("leadzen.chat.views.launch") as launch:
+        assert post(discovery_client, "/api/contacts/emails", {**body, "contact_ids": [manual.pk, a.pk, b.pk], "estimated_credits": 3}).status_code == 409
+        response = post(discovery_client, "/api/contacts/emails", body)
+        assert response.status_code == 202, response.content
+        assert post(discovery_client, "/api/contacts/emails", body).json()["run"]["id"] == response.json()["run"]["id"]
+        launch.assert_called_once()
+    session = DiscoverySession.objects.get(run_id=response.json()["run"]["id"])
+    assert sorted(session.source_ids) == sorted([pa.pk, pb.pk]) and session.goal == 2 and session.unit == "emails"
+    assert session.run.credits_reserved == 2 and session.run.emails_reserved == 0
+
+
+def test_bulk_lookup_rejects_wrong_budget_and_bad_selection(discovery_client):
+    a, _ = named_prospect("cal")
+    review = discovery_client.get(f"/api/contacts/emails?ids={a.pk}").json()
+    with patch("leadzen.chat.views.launch") as launch:
+        assert post(discovery_client, "/api/contacts/emails", {"contact_ids": [a.pk], "revision": review["revision"], "estimated_credits": 0, "request_id": str(uuid.uuid4())}).status_code == 400
+        assert post(discovery_client, "/api/contacts/emails", {"contact_ids": [a.pk, a.pk], "revision": review["revision"], "estimated_credits": 2, "request_id": str(uuid.uuid4())}).status_code == 400
+        assert post(discovery_client, "/api/contacts/emails", {"contact_ids": [999999], "revision": "x", "estimated_credits": 1, "request_id": str(uuid.uuid4())}).status_code == 404
+        launch.assert_not_called()
+
+
+def test_lead_list_reports_workspace_counts(discovery_client):
+    named_prospect("dan")
+    Deal.objects.create(lead=Lead.objects.create(lead_id="manual-count", email="count@example.com"))
+    summary = discovery_client.get("/api/leads?stage=email_found").json()["summary"]
+    assert summary["all"] == 2 and summary["email_found"] == 1 and summary["needs_email"] == 1
+
+
+def test_leads_waiting_in_a_bulk_lookup_show_as_pending(discovery_client):
+    (a, _), (b, _) = named_prospect("eve"), named_prospect("fay")
+    review = discovery_client.get(f"/api/contacts/emails?ids={a.pk},{b.pk}").json()
+    with patch("leadzen.chat.views.launch"):
+        assert post(discovery_client, "/api/contacts/emails", {"contact_ids": [a.pk, b.pk], "revision": review["revision"], "estimated_credits": 2, "request_id": str(uuid.uuid4())}).status_code == 202
+    statuses = {item["id"]: item["email_status"] for item in discovery_client.get("/api/leads").json()["items"]}
+    assert statuses[a.pk] == statuses[b.pk] == "pending"
+    assert discovery_client.get(f"/api/contacts/{a.pk}").json()["email_status"] == "pending"
+
+
+def test_running_bulk_lookup_wins_over_an_older_cancelled_single_lookup(discovery_client):
+    from leadzen.config.models import ChatRun
+    (a, _), (b, _) = named_prospect("gus"), named_prospect("hal")
+    single = lookup_body(discovery_client, a)
+    with patch("leadzen.chat.views.launch"):
+        run_id = post(discovery_client, f"/api/contacts/{a.pk}/email", single).json()["run"]["id"]
+    ChatRun.objects.filter(pk=run_id).update(status="cancelled")  # stopped before any lookup was submitted
+    review = discovery_client.get(f"/api/contacts/emails?ids={a.pk},{b.pk}").json()
+    assert review["eligible_ids"] == [a.pk, b.pk]
+    with patch("leadzen.chat.views.launch"):
+        assert post(discovery_client, "/api/contacts/emails", {"contact_ids": [a.pk, b.pk], "revision": review["revision"], "estimated_credits": 2, "request_id": str(uuid.uuid4())}).status_code == 202
+    statuses = {item["id"]: item["email_status"] for item in discovery_client.get("/api/leads").json()["items"]}
+    assert statuses[a.pk] == "pending"
+    assert discovery_client.get(f"/api/contacts/{a.pk}").json()["email_status"] == "pending"

@@ -225,7 +225,7 @@ def _run(rest: list[str]) -> int:
     """
     from django.core.management import call_command
 
-    from cold_outreach.leads.ingest import ingest
+    from leadzen.finder_ingest import ingest
     from openoutfind.core.errors import OpenOutFindError
     from leadzen import wizard
 

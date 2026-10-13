@@ -47,12 +47,11 @@ export default function Password({ user }: { user: Account }) {
         <Brand />
         <h1 className="auth-heading">Set your password</h1>
         <p>
-          Set a private password for {user.email}. You’ll sign in again to
-          continue to setup.
+          Choose a password for {user.email}. Then sign in again.
         </p>
         <form className="login-form" onSubmit={submit}>
           <SecretInput
-            label="Current / temporary password"
+            label="Current or temporary password"
             id="current"
             className="input"
             name="current_password"
@@ -86,7 +85,7 @@ export default function Password({ user }: { user: Account }) {
             </div>
           )}
           <button type="submit" className="button primary" disabled={busy}>
-            {busy ? "Saving…" : "Save password & sign in again"}
+            {busy ? "Saving…" : "Save and sign in again"}
           </button>
         </form>
         <p>

@@ -18,9 +18,9 @@ export type MCPConsentData = {
 };
 
 const permissions: Record<string, string> = {
-  "leadzen:read": "Read your leads, outreach, inbox and workspace settings.",
+  "leadzen:read": "Read your leads, outreach, inbox and settings.",
   "leadzen:write": "Manage your leads, drafts, outreach and nonsecret settings.",
-  offline_access: "Keep this connection active until you disconnect it or access expires.",
+  offline_access: "Stay connected until you disconnect it or access expires.",
 };
 
 export default function MCPConsent({ user, request }: { user: Account; request: string }) {
@@ -75,20 +75,20 @@ export default function MCPConsent({ user, request }: { user: Account; request: 
   }
 
   return (
-    <WorkspacePage user={user} active="settings" title="Connect your assistant" description="Review access to your own LeadZen workspace before connecting." actions={<Link className="button" href="/settings#mcp-connections">Back to Settings</Link>}>
+    <WorkspacePage user={user} active="settings" title="Connect your assistant" description="Check what it can access before you connect." actions={<Link className="button" href="/settings#mcp-connections">Back to Settings</Link>}>
       <section className={styles.consent} aria-labelledby="mcp-consent-title" aria-busy={loading || busy}>
         <h2 id="mcp-consent-title">{data ? `${data.clientName} wants access` : "Review connection"}</h2>
-        {loading && <p role="status">Loading connection request…</p>}
+        {loading && <p role="status">Loading request…</p>}
         {error && <div className="error" role="alert">{error}{!data && request && <button className="button" type="button" onClick={() => setRevision((value) => value + 1)}>Try again</button>}</div>}
         {data && <>
-          <p>Only connect if you started this request in your assistant and recognize the callback below.</p>
+          <p>Connect only if you started this in your assistant and know the callback below.</p>
           <dl className={styles.consentDetails}>
             <dt>LeadZen account</dt><dd>{user.email}</dd>
             <dt>Assistant callback</dt><dd>{data.redirectHost}</dd>
             <dt>Request expires</dt><dd><time dateTime={data.expiresAt}>{formatNewYorkDateTime(data.expiresAt)}</time> · New York time</dd>
           </dl>
           <ul>{data.scopes.map((scope) => <li key={scope}>{permissions[scope] || scope}</li>)}</ul>
-          <p className={styles.consentNote}>This allows access to your employee workspace. Paid actions and email sending still require a separate approval in LeadZen. You can disconnect this app in Settings at any time.</p>
+          <p className={styles.consentNote}>This gives access to your own workspace. Paid actions and email sending still require a separate approval in LeadZen. Disconnect anytime in Settings.</p>
           <div className={styles.consentActions}>
             <button className="button" type="button" disabled={busy} onClick={() => { void decide("deny"); }}>Deny access</button>
             <button className="button primary" type="button" disabled={busy} onClick={() => { void decide("approve"); }}>{busy ? "Returning to assistant…" : "Connect"}</button>

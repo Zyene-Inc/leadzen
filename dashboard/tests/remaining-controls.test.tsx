@@ -20,7 +20,7 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
     render(<Activity user={user} />);
     await screen.findByText("Lead qualified");
     expect(call.mock.calls.some(([path]) => path === "activity/logs")).toBe(false);
-    await userEvent.click(screen.getByRole("button", { name: "Developer Logs" }));
+    await userEvent.click(screen.getByRole("button", { name: "Developer logs" }));
     await screen.findByText("[INF] synthetic only");
     await userEvent.click(screen.getByRole("button", { name: "Refresh logs" }));
     await userEvent.click(screen.getByRole("button", { name: "Close logs" }));
@@ -33,11 +33,11 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
       : { items: [{ id: 1, email: "manual@example.com", reason: "Manually suppressed", suppressed_at: "2026-10-02T12:00:00Z", removable: true }, { id: 2, email: "optout@example.com", reason: "Opted out", suppressed_at: "2026-10-02T12:00:00Z", removable: false }], total: 2, limit: 50, offset: 0 });
     render(<Suppression user={user} />);
     await screen.findByText("manual@example.com");
-    expect(screen.getAllByRole("button", { name: "Remove block" })).toHaveLength(1);
-    expect(screen.getByText("Opt-out protected: cannot be removed.")).toBeTruthy();
-    await userEvent.click(screen.getByRole("button", { name: "Remove block" }));
+    expect(screen.getAllByRole("button", { name: "Unblock" })).toHaveLength(1);
+    expect(screen.getByText("Opt-out. Can’t be unblocked.")).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", { name: "Unblock" }));
     expect(writes()).toHaveLength(0);
-    await userEvent.click(screen.getByRole("button", { name: "Confirm remove" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm unblock" }));
     await waitFor(() => expect(writes()).toHaveLength(1));
     expect(writes()[0][0]).toBe("suppression/1");
     expect(writes()[0][1]?.method).toBe("DELETE");
@@ -46,8 +46,8 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
   test("a refused removal shows the server reason", async () => {
     call.mockImplementation(async (_path, init) => { if (init?.method === "DELETE") throw new Error("This is an opt-out or a delivery block. It cannot be removed."); return { items: [{ id: 1, email: "manual@example.com", reason: "Manually suppressed", suppressed_at: "2026-10-02T12:00:00Z", removable: true }], total: 1, limit: 50, offset: 0 }; });
     render(<Suppression user={user} />);
-    await userEvent.click(await screen.findByRole("button", { name: "Remove block" }));
-    await userEvent.click(screen.getByRole("button", { name: "Confirm remove" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Unblock" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm unblock" }));
     expect((await screen.findByRole("alert")).textContent).toContain("cannot be removed");
   });
   test("lead page drafts one first email for exactly this lead without Chat", async () => {
@@ -89,7 +89,7 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
     await userEvent.click(screen.getByRole("button", { name: "Previous" }));
     fireEvent.change(screen.getByLabelText("Search suppression"), { target: { value: "bruce@example.com" } });
     await waitFor(() => expect(String(call.mock.lastCall?.[0])).toContain("q=bruce%40example.com"));
-    await userEvent.click(screen.getByRole("button", { name: "Add to suppression list" }));
+    await userEvent.click(screen.getByRole("button", { name: "Block an email" }));
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     await waitFor(() => expect((screen.getByRole("button", { name: "Refresh" }) as HTMLButtonElement).disabled).toBe(false));
     await userEvent.click(screen.getByRole("button", { name: "Refresh" }));
@@ -98,12 +98,12 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
   test("one-lead email review Cancel, final credit choice and duplicate guard", async () => {
     call.mockImplementation(async (path, init) => path.endsWith("/email") ? init?.method ? {} : { eligible: true, reason: "", revision: "e1", name: "Bruce" } : { ...lead, email: "", email_status: "not_requested", lookup: null, timeline: { events: [], sequences: [], blocked_reason: "", can_stop: false, suppression: null } });
     render(<LeadDetail user={user} contactId={1} />);
-    await userEvent.click(await screen.findByRole("button", { name: "Find Work Email" }));
-    await screen.findByText(/Find an email for Bruce/);
+    await userEvent.click(await screen.findByRole("button", { name: "Find work email" }));
+    await screen.findByText(/Search for Bruce’s email/);
     await userEvent.click(screen.getByRole("button", { name: "Cancel" })); expect(writes()).toHaveLength(0);
-    await userEvent.click(screen.getByRole("button", { name: "Find Work Email" }));
-    await screen.findByText(/Find an email for Bruce/);
-    const button = screen.getByRole("button", { name: "Find Email" }); fireEvent.click(button); fireEvent.click(button);
+    await userEvent.click(screen.getByRole("button", { name: "Find work email" }));
+    await screen.findByText(/Search for Bruce’s email/);
+    const button = screen.getByRole("button", { name: "Find email" }); fireEvent.click(button); fireEvent.click(button);
     await waitFor(() => expect(writes()).toHaveLength(1));
     expect(JSON.parse(String(writes()[0][1]?.body))).toMatchObject({ revision: "e1", estimated_credits: 1 });
   });
@@ -137,22 +137,22 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Remaining con
     render(<Admin user={{ ...user, is_admin: true }} />);
     await screen.findByRole("button", { name: "Disable" });
     await userEvent.click(screen.getByRole("button", { name: "Delete" }));
-    await userEvent.click(screen.getByRole("button", { name: "Reset via email" })); expect(writes()).toHaveLength(0);
+    await userEvent.click(screen.getByRole("button", { name: "Send reset link" })); expect(writes()).toHaveLength(0);
     const disable = screen.getByRole("button", { name: "Disable" }); fireEvent.click(disable); fireEvent.click(disable);
-    await screen.findByText("Employee access updated."); expect(writes()).toHaveLength(1);
+    await screen.findByText("Access updated."); expect(writes()).toHaveLength(1);
     expect(JSON.parse(String(writes()[0][1]?.body))).toEqual({ is_active: false });
     vi.mocked(window.confirm).mockReturnValue(true);
-    await userEvent.click(screen.getByRole("button", { name: "Reset via email" }));
-    await screen.findByText("Setup invitation sent. Earlier setup links have been revoked.");
+    await userEvent.click(screen.getByRole("button", { name: "Send reset link" }));
+    await screen.findByText("Invite sent. Old links no longer work.");
     expect(writes()[1][0]).toBe("admin/users/2/invite");
     await userEvent.click(screen.getByRole("button", { name: "Delete" }));
-    await screen.findByText("Employee deleted; access revoked."); expect(writes()[2][1]?.method).toBe("DELETE");
+    await screen.findByText("Employee deleted. Access removed."); expect(writes()[2][1]?.method).toBe("DELETE");
   });
 });
 
 test.each([
   ["stored Inbox", StoredInbox, "Loading inbox…"],
-  ["suppression", Suppression, "Loading suppression list…"],
+  ["suppression", Suppression, "Loading…"],
 ] as const)("%s clears the previous error while refreshing and after recovery", async (_name, View, loadingText) => {
   const recovered = { items: [], total: 0, limit: 50, offset: 0 };
   let complete!: (value: typeof recovered) => void;

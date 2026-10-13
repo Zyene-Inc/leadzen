@@ -38,25 +38,25 @@ export default function CampaignSendReview({ campaignId, count, close, sent }: {
   }
   return <section className="live-email-review" aria-labelledby={`campaign-send-title-${campaignId}`} onKeyDown={(event) => { if (event.key === "Escape" && !busy) close(); }}>
     <h3 ref={heading} id={`campaign-send-title-${campaignId}`} tabIndex={-1}>Confirm outreach</h3>
-    <p>Review the exact recipients and messages below. Confirming queues real emails.</p>
-    {!preview && !error && <p role="status">Loading saved email previews…</p>}
+    <p>Check who gets each email below. Confirming queues real emails.</p>
+    {!preview && !error && <p role="status">Loading emails…</p>}
     {preview && <>
-      <p className="settings-help">From {preview.from_address}. Up to {preview.recipients.length} due email{preview.recipients.length === 1 ? "" : "s"} in this run.</p>
-      {preview.window && <p className="settings-help">Sending schedule: {scheduleSummary(windowSchedule(preview.window))}. Mailbox capacity and pacing apply.</p>}
+      <p className="settings-help">From {preview.from_address} · up to {preview.recipients.length} email{preview.recipients.length === 1 ? "" : "s"} now.</p>
+      {preview.window && <p className="settings-help">Sends {scheduleSummary(windowSchedule(preview.window))}, within mailbox limits.</p>}
       {preview.recipients.map((recipient) => <div className="sequence-step" key={recipient.id}><p className="panel-meta">To {recipient.email} · Email {recipient.step}</p><strong>{recipient.subject}</strong><pre>{recipient.body}</pre></div>)}
-      {!preview.recipients.length && <p>No eligible emails are due yet. Check dates, replies, suppression and recipient permission.</p>}
+      {!preview.recipients.length && <p>No emails are due yet. Check dates, replies, blocks and opt-ins.</p>}
       {preview.recipients.some((recipient) => recipient.followups.length > 0) && <>
-        <label className="check-row"><input type="checkbox" checked={automatic} disabled={busy || queued || !preview.automatic_available} onChange={(event) => setAutomatic(event.target.checked)} /> Approve automatic follow-ups for these recipients</label>
-        {!preview.automatic_available && <p className="settings-help">Automatic follow-ups are unavailable. You can return here to review each follow-up when it is due.</p>}
+        <label className="check-row"><input type="checkbox" checked={automatic} disabled={busy || queued || !preview.automatic_available} onChange={(event) => setAutomatic(event.target.checked)} /> Approve automatic follow-ups</label>
+        {!preview.automatic_available && <p className="settings-help">Automatic follow-ups aren’t available. Review each one here when it’s due.</p>}
         {automatic && preview.recipients.map((recipient) => <div key={`future-${recipient.id}`}>
-          {recipient.followups.map((email) => <div className="sequence-step" key={email.step}><p className="panel-meta">To {recipient.email} · Email {email.step} · {email.delay_days} {preview.delay_basis === "working_days" ? "working" : "calendar"} days after the previous send</p><strong>{email.subject}</strong><pre>{email.body}</pre></div>)}
+          {recipient.followups.map((email) => <div className="sequence-step" key={email.step}><p className="panel-meta">To {recipient.email} · Email {email.step} · {email.delay_days} {preview.delay_basis === "working_days" ? "working" : "calendar"} days after the last email</p><strong>{email.subject}</strong><pre>{email.body}</pre></div>)}
         </div>)}
-        {automatic && <p className="settings-help">Approve only the displayed sequence, valid for up to one year. Follow-ups use {preview.automatic_window || preview.window ? scheduleSummary(windowSchedule((preview.automatic_window ?? preview.window)!)) : "the sending schedule in Settings"}. Pause or archive the campaign, stop a lead, or record an opt-out to stop sending. Changes to content, identity, connections or sending schedule require a new approval.</p>}
+        {automatic && <p className="settings-help">You approve only the emails shown, for up to one year. They send {preview.automatic_window || preview.window ? scheduleSummary(windowSchedule((preview.automatic_window ?? preview.window)!)) : "on the schedule in Settings"}. Stop anytime: pause or archive, stop a lead, or record an opt-out. Changing content, sender, connections or schedule needs new approval.</p>}
       </>}
-      <p className="settings-help">Sending respects mailbox limits, hours and pacing. Replies and opt-outs stop follow-ups. Provider acceptance does not guarantee delivery.</p>
+      <p className="settings-help">Replies and opt-outs stop follow-ups. Accepted does not mean delivered.</p>
     </>}
     {error && <p className="error" role="alert">{error}</p>}
-    {queued && <p className="success" role="status">Outreach queued. Your Outreach list shows delivery progress.</p>}
+    {queued && <p className="success" role="status">Outreach queued. See progress in Outreach.</p>}
     <div className="card-actions">
       <button className="button" disabled={busy} onClick={close}>{queued ? "Close" : "Cancel"}</button>
       {!queued && <button className="button primary" disabled={busy || !preview?.recipients.length} onClick={confirm}>{busy ? "Queuing…" : automatic ? "Approve sequence" : "Confirm & send"}</button>}

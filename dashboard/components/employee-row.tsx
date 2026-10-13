@@ -6,7 +6,7 @@ function accountStatus(account: Account) {
   if (!account.is_active) return { label: "Disabled", tone: "disabled" };
   if (account.invitation_pending) return { label: "Invited", tone: "invited" };
   if (account.onboarded) return { label: "Active", tone: "active" };
-  return { label: "Onboarding", tone: "ready" };
+  return { label: "Setting up", tone: "ready" };
 }
 
 type EmployeeRowProps = {
@@ -36,8 +36,8 @@ export function EmployeeRow({
     {
       id: "invite",
       label: account.invitation_pending
-        ? "Resend invitation"
-        : "Reset via email",
+        ? "Resend invite"
+        : "Send reset link",
       disabled: busy || !account.is_active,
       danger: false,
       run: () => onInvite(account),
@@ -64,7 +64,7 @@ export function EmployeeRow({
       <td>
         <span className={`badge ${status.tone}`}>{status.label}</span>
       </td>
-      <td>{account.workspace_name || "Setup pending"}</td>
+      <td>{account.workspace_name || "Not set up"}</td>
       <td>
         {account.id === currentUserId || account.is_admin ? (
           <span className="panel-meta">Administrator</span>

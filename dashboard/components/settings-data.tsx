@@ -24,7 +24,7 @@ export function SettingsData({ data }: { data: WorkspaceSettings }) {
       if (!response.ok) {
         if (response.status === 401) window.location.assign("/login");
         const result = await response.json();
-        throw new Error(result.error || "Unable to create backup");
+        throw new Error(result.error || "Could not create backup");
       }
       const url = URL.createObjectURL(await response.blob());
       const link = document.createElement("a");
@@ -37,10 +37,10 @@ export function SettingsData({ data }: { data: WorkspaceSettings }) {
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setNotice("Workspace backup downloaded.");
+      setNotice("Backup downloaded.");
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "Unable to create backup",
+        caught instanceof Error ? caught.message : "Could not create backup",
       );
     } finally {
       submitting.current = false;
@@ -50,15 +50,14 @@ export function SettingsData({ data }: { data: WorkspaceSettings }) {
   return (
     <section className="central-settings-section">
       <div className="central-settings-row">
-        <div className="central-settings-label"><h2>Data</h2><HelpTooltip label="Workspace backup">Downloads this workspace’s configuration, leads and messages. Restoring encrypted connections also requires the server’s settings key.</HelpTooltip></div>
+        <div className="central-settings-label"><h2>Data</h2><HelpTooltip label="Workspace backup">Downloads your settings, leads and messages. To restore saved connections, you also need the server’s settings key.</HelpTooltip></div>
         <div className="central-settings-value">
           <strong>Local database</strong>
           <p>
             {data.workspace.data.engine} ·{" "}
-            {databaseSize(data.workspace.data.size_bytes)} · Combined finder and
-            sender data
+            {databaseSize(data.workspace.data.size_bytes)} · Leads and email data
           </p>
-          <details className="central-data-details"><summary>Storage details</summary><code>{data.workspace.data.path}</code></details>
+          <details className="central-data-details"><summary>File location</summary><code>{data.workspace.data.path}</code></details>
         </div>
         <button
           className="button"
@@ -66,11 +65,11 @@ export function SettingsData({ data }: { data: WorkspaceSettings }) {
           disabled={busy}
           onClick={() => void backup()}
         >
-          {busy ? "Creating backup…" : "Backup Database"}
+          {busy ? "Creating backup…" : "Download backup"}
         </button>
       </div>
       <p className="central-data-note">
-        Backups contain private workspace data. Keep them secure.
+        Backups hold private data. Keep them safe.
       </p>
       {error && (
         <p className="error" role="alert">

@@ -49,8 +49,8 @@ export type Contact = {
 };
 
 export const leadFilters = [
-  ["all", "All"], ["qualified", "Qualified"], ["email_found", "Email Found"],
-  ["contacted", "Contacted"], ["replied", "Replied"], ["suppressed", "Suppressed"],
+  ["all", "All"], ["qualified", "Qualified"], ["email_found", "Has email"],
+  ["contacted", "Contacted"], ["replied", "Replied"], ["suppressed", "Do not contact"],
 ] as const;
 
 export function leadStatus(value: string) {
@@ -59,5 +59,5 @@ export function leadStatus(value: string) {
 
 export function emailLabel(lead: Contact) {
   if (lead.email) return lead.email;
-  return lead.email_status === "pending" ? "Lookup in progress" : lead.email_status === "review" ? "Lookup needs review" : lead.email_status === "not_found" ? "No email found" : "Not enriched";
+  return lead.email_status === "pending" ? "Finding email…" : lead.email_status === "review" ? "Search needs review" : lead.email_status === "not_found" ? "No email found" : "No email yet";
 }

@@ -33,7 +33,7 @@ export function AiConnection({
     <section className="panel settings-card">
       <div className="panel-head">
         <h2 className="panel-title">AI connection</h2>
-        <HelpTooltip label="AI connection">Use AI to qualify leads and draft messages. Manual campaigns work without it. Saved keys are never displayed.</HelpTooltip>
+        <HelpTooltip label="AI connection">AI checks leads and writes drafts. Manual campaigns work without it. Saved keys are never shown.</HelpTooltip>
       </div>
       <label className="check-row">
         <input
@@ -41,7 +41,7 @@ export function AiConnection({
           checked={settings.llm.enabled}
           onChange={(e) => llm("enabled", e.target.checked)}
         />
-        Use AI for discovery and automated outreach
+        Use AI to find leads and write emails
       </label>
       {settings.llm.enabled && (
         <div className="form-grid">
@@ -90,7 +90,7 @@ export function AiConnection({
             placeholder={
               settings.llm.api_key_configured
                 ? "Blank keeps the saved key"
-                : "Provider API key"
+                : "AI provider key"
             }
           />
           <label>
@@ -107,9 +107,9 @@ export function AiConnection({
         </div>
       )}
       <p className="settings-help">
-        Custom endpoints need administrator approval.{" "}
+        Custom URLs need admin approval.{" "}
         {setupMode &&
-          "Testing sends one short request to your model; provider usage charges may apply."}
+          "Testing sends one short AI request. Your provider may charge for it."}
       </p>
     </section>
   );

@@ -3,7 +3,7 @@ import { AskLeadZen } from "@/components/ask-leadzen";
 import { useRouter } from "next/navigation";
 import { recordWorkspaceContext, flushWorkspaceContext, useWorkspaceContext } from "@/lib/workspace-context";
 import { PageHeading } from "@/components/page-heading";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Sidebar } from "@/components/sidebar";
 import { Avatar } from "@/components/avatar";
@@ -13,6 +13,11 @@ import { useWorkspaceRevision } from "@/lib/workspace-updates";
 import { api } from "@/lib/client-api";
 import { emailLabel, leadFilters, leadStatus, type Contact } from "@/lib/leads";
 import { LeadLinks } from "@/components/lead-links";
+import { BulkEmailConfirmation, EmailConfirmation } from "@/components/work-email-confirm";
+
+type Summary = { all: number; email_found: number; needs_email: number; contacted: number; replied: number };
+const canEmail = (item: Contact) => !!item.email && item.state === "Ready to Email";
+const canLookUp = (item: Contact) => !item.email && item.qualified && item.email_status === "not_requested" && item.state === "Ready to Email";
 
 type ImportRow = { row: number; email: string; reason: string };
 type ImportReport = { ids: number[]; created: number; restored: number; do_not_contact: number; skipped: ImportRow[]; duplicates: ImportRow[]; failed: ImportRow[]; summary: string };
@@ -52,11 +57,11 @@ function csvRows(source: string) {
     rows.length < 1
   )
     throw new Error(
-      "Use unique column headers, an email column, and 1–100 contacts",
+      "Add an email column, unique headers and 1–100 rows",
     );
   return rows.map((values) => {
     if (values.length !== headers.length)
-      throw new Error("CSV column counts do not match");
+      throw new Error("Every row needs the same number of columns");
     const result = Object.fromEntries(
       headers.map((key, i) => [key, values[i]]),
     );
@@ -66,14 +71,25 @@ function csvRows(source: string) {
 
 export default function Contacts({ user }: { user: Account }) {
   const router = useRouter();
-  const [selected, setSelected] = useState<number[]>([]);
+  // Keep each selected lead's row so the toolbar works across pages and filters.
+  const [picked, setPicked] = useState<Map<number, Contact>>(new Map());
+  const selected = useMemo(() => [...picked.keys()], [picked]);
   const selectedIds = new Set(selected);
+  const ready = [...picked.values()].filter(canEmail);
+  const needEmail = [...picked.values()].filter((item) => !item.email);
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [lookupFor, setLookupFor] = useState<number | null>(null);
+  const [bulkLookup, setBulkLookup] = useState(false);
+  const [lookupRun, setLookupRun] = useState("");
+  function toggle(item: Contact, on: boolean) {
+    setPicked((current) => { const next = new Map(current); if (on) next.set(item.id, item); else next.delete(item.id); return next; });
+  }
   const [importOpen, setImportOpen] = useState(false);
   useWorkspaceContext({ selectedLeadIds: selected, currentLeadId: null, currentDraftId: null, currentThreadId: null, currentCampaignId: null, workspacePath: "/contacts" }, user.id);
   async function prepareOutreach() {
     setBusy(true); setError("");
     try {
-      await recordWorkspaceContext({ selectedLeadIds: selected, currentLeadId: null, currentDraftId: null, currentThreadId: null, currentCampaignId: null, workspacePath: "/outreach" }, user.id);
+      await recordWorkspaceContext({ selectedLeadIds: ready.map((item) => item.id), currentLeadId: null, currentDraftId: null, currentThreadId: null, currentCampaignId: null, workspacePath: "/outreach" }, user.id);
       await flushWorkspaceContext(); router.push("/outreach");
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not select leads"); }
     finally { setBusy(false); }
@@ -95,25 +111,33 @@ export default function Contacts({ user }: { user: Account }) {
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const submitting = useRef(false);
-  const load = useCallback((signal?: AbortSignal) => {
-    setLoading(true);
-    return api<{ items: Contact[]; total: number }>(
+  const latest = useRef(0);
+  const load = useCallback((signal?: AbortSignal, background = false) => {
+    // Background refreshes keep rows (and anything open in them) on screen,
+    // and only the newest request may apply its result.
+    const request = ++latest.current;
+    if (!background) setLoading(true);
+    return api<{ items: Contact[]; total: number; summary?: Summary }>(
         `leads?limit=50&offset=${offset}&q=${encodeURIComponent(query)}&stage=${stage}`,
         { signal },
       ).then((value) => {
-      if (signal?.aborted) return;
+      if (signal?.aborted || request !== latest.current) return;
       setItems(value.items);
+      // Selected leads follow their latest saved state (email found, stopped, edited).
+      const fresh = new Map(value.items.map((item) => [item.id, item]));
+      setPicked((current) => [...current.keys()].some((id) => fresh.has(id)) ? new Map([...current].map(([id, item]) => [id, fresh.get(id) ?? item])) : current);
       setTotal(value.total);
+      if (value.summary) setSummary(value.summary);
       setLoadError("");
     }).catch((caught) => {
-      if (signal?.aborted) return;
+      if (signal?.aborted || request !== latest.current) return;
       setLoadError(
         caught instanceof Error ? caught.message : "Unable to load contacts",
       );
     }).finally(() => {
       // An obsolete search must not clear the next search's loading state.
       // All request errors are handled above, including aborted requests.
-      if (signal?.aborted) return;
+      if (signal?.aborted || request !== latest.current) return;
       setLoading(false);
     });
   }, [query, offset, stage]);
@@ -122,6 +146,29 @@ export default function Contacts({ user }: { user: Account }) {
     void load(controller.signal);
     return () => controller.abort();
   }, [load, workspaceRevision]);
+  // Refresh while a work-email lookup runs so results appear without navigation.
+  // Poll while any lookup is pending, plus a short grace period right after starting
+  // one (the server may not mark rows pending yet). Never poll indefinitely.
+  const [lookupStartedAt, setLookupStartedAt] = useState(0);
+  const pending = items.some((item) => item.email_status === "pending");
+  const [graceOver, setGraceOver] = useState(true);
+  useEffect(() => {
+    if (!lookupStartedAt) return;
+    setGraceOver(false);
+    const timer = window.setTimeout(() => setGraceOver(true), 20000);
+    return () => window.clearTimeout(timer);
+  }, [lookupStartedAt]);
+  const lookingUp = pending || !graceOver;
+  useEffect(() => {
+    if (!lookingUp) return;
+    let inFlight = false;
+    const timer = window.setInterval(() => {
+      if (inFlight || document.hidden) return;
+      inFlight = true;
+      void load(undefined, true).finally(() => { inFlight = false; });
+    }, 4000);
+    return () => window.clearInterval(timer);
+  }, [lookingUp, load]);
   async function mutate(
     path: string,
     method: string,
@@ -178,7 +225,7 @@ export default function Contacts({ user }: { user: Account }) {
     try {
       // Each row is handled on its own; the server reports every skipped or failed row.
       const result = await api<ImportReport>("contacts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contacts }) });
-      setReport(result); setNotice(`Import finished: ${result.summary ?? "done."}`);
+      setReport(result); setNotice(`Import done: ${result.summary ?? ""}`);
       if (result.ids?.length) { setCsv(""); await load(); }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to import contacts");
@@ -189,8 +236,8 @@ export default function Contacts({ user }: { user: Account }) {
       <Sidebar user={user} active="contacts" />
       <main className="main">
         <div className="topbar">
-          <PageHeading title="Leads" help="Review qualified people, find work emails when needed, and track conversations." />
-          <div className="top-actions"><Link className="button primary" href="/find-leads">Find leads</Link><button className="button" aria-expanded={importOpen} aria-controls="lead-import" onClick={() => setImportOpen(!importOpen)}>Import</button>
+          <PageHeading title="Leads" help="People to contact. Find their email, then reach out." />
+          <div className="top-actions"><Link className="button primary" href="/find-leads">Find leads</Link><button className="button" aria-expanded={importOpen} aria-controls={importOpen ? "lead-import" : undefined} onClick={() => setImportOpen(!importOpen)}>Import</button>
           <button
             type="button"
             className="button"
@@ -207,6 +254,7 @@ export default function Contacts({ user }: { user: Account }) {
             {showForm ? "Close form" : "Add contact"}
           </button></div>
         </div>
+        {summary && <p className="lead-summary" aria-label="Lead counts"><strong>{summary.all}</strong> lead{summary.all === 1 ? "" : "s"} · <strong>{summary.email_found}</strong> with email · <strong>{summary.needs_email}</strong> need email · <strong>{summary.contacted}</strong> contacted · <strong>{summary.replied}</strong> replied</p>}
         {(error || loadError) && (
           <div className="error" role="alert">
             {error || loadError}
@@ -261,13 +309,13 @@ export default function Contacts({ user }: { user: Account }) {
                   />
                 </label>
                 <label className="wide">
-                  Opt-in record
+                  Opt-in note
                   <input
                     className="input"
                     name="consent_note"
                     defaultValue={editing?.consent_note ?? ""}
                     maxLength={500}
-                    placeholder="When and how they asked to receive emails"
+                    placeholder="When and how they opted in"
                   />
                 </label>
               </div>
@@ -277,7 +325,7 @@ export default function Contacts({ user }: { user: Account }) {
                   name="opted_in"
                   defaultChecked={editing?.opted_in ?? false}
                 />
-                This person explicitly opted in to receive our emails.
+                They opted in to our emails.
               </label>
               <div className="card-actions">
                 <button
@@ -299,14 +347,15 @@ export default function Contacts({ user }: { user: Account }) {
             </form>
           </section>
         )}
-        <details id="lead-import" className="panel import-panel" open={importOpen} onToggle={(event) => setImportOpen(event.currentTarget.open)}>
+        {importOpen && <details id="lead-import" className="panel import-panel" open={importOpen} onToggle={(event) => setImportOpen(event.currentTarget.open)}>
           <summary>Import CSV</summary>
           <p className="settings-help">
-            Columns: email, first_name, last_name, company, title, opted_in
-            (true/false), consent_note. Up to 100 contacts per import. Each row
-            is checked on its own: invalid or repeated rows and emails already in
-            your leads are skipped, and previously deleted contacts are added
-            back. Do-not-contact addresses stay blocked.
+            Up to 100 rows. Columns: email (required), first_name, last_name,
+            company, title, opted_in (true/false), consent_note.
+          </p>
+          <p className="settings-help">
+            Bad rows and repeats are skipped. Deleted contacts come back. Do
+            Not Contact emails stay blocked.
           </p>
           <textarea
             className="input textarea"
@@ -335,8 +384,15 @@ export default function Contacts({ user }: { user: Account }) {
                 .map((r) => <li key={`${r.kind}-${r.row}`}>Row {r.row}{r.email ? ` · ${r.email}` : ""}: {r.kind}. {r.reason}</li>)}</ul>
             </div>
           )}
-        </details>
-        {selected.length > 0 && <div className="selection-toolbar"><strong>{selected.length} selected</strong><button className="button primary" disabled={busy} onClick={() => void prepareOutreach()}>Prepare outreach</button><AskLeadZen actorId={user.id} context={{ selectedLeadIds: selected, workspacePath: "/contacts" }} /><button className="button ghost" onClick={() => setSelected([])}>Clear</button></div>}
+        </details>}
+        {lookupRun && <div className="success" role="status">{pending || !graceOver ? "Finding emails. Results show here." : "Email lookup finished."} <Link className="text-link" href={`/find-leads/${lookupRun}`}>View progress</Link> <button className="button ghost" onClick={() => setLookupRun("")}>Dismiss</button></div>}
+        {selected.length > 0 && <div className="selection-toolbar"><strong>{selected.length} selected</strong>
+          {needEmail.length > 0 && <button className="button" disabled={busy || bulkLookup} onClick={() => setBulkLookup(true)}>Find emails ({needEmail.length})</button>}
+          <button className="button primary" disabled={busy || !ready.length} title={ready.length ? undefined : "Find emails first"} onClick={() => void prepareOutreach()}>Prepare outreach{ready.length && ready.length !== selected.length ? ` (${ready.length})` : ""}</button>
+          <AskLeadZen actorId={user.id} context={{ selectedLeadIds: selected, workspacePath: "/contacts" }} /><button className="button ghost" onClick={() => { setPicked(new Map()); setBulkLookup(false); }}>Clear</button>
+          {!ready.length && <span className="settings-help">Find emails first to reach out.</span>}
+        </div>}
+        {bulkLookup && needEmail.length > 0 && <BulkEmailConfirmation key={needEmail.map((item) => item.id).join(",")} contactIds={needEmail.map((item) => item.id)} close={() => setBulkLookup(false)} started={(runId) => { setBulkLookup(false); setPicked((current) => new Map([...current].filter(([, item]) => !!item.email))); setLookupRun(runId); setLookupStartedAt(Date.now()); void load(); }} />}
         <section className="panel">
           <div className="filters">
             <div className="search-field">
@@ -349,7 +405,7 @@ export default function Contacts({ user }: { user: Account }) {
                   setOffset(0);
                 }}
                 aria-label="Search leads"
-                placeholder="Search name, company, title or email"
+                placeholder="Search name, company or email"
                 maxLength={200}
               />
             </div>
@@ -369,15 +425,22 @@ export default function Contacts({ user }: { user: Account }) {
             <table>
               <thead>
                 <tr>
-                  <th><span className="sr-only">Select lead</span></th><th>Lead</th>
+                  <th><input type="checkbox" aria-label="Select leads on this page" title="Select up to 25 leads" checked={!!items.length && items.some((item) => selectedIds.has(item.id))} disabled={loading || !items.length} onChange={() => {
+                    const anyOnPage = items.some((item) => selectedIds.has(item.id));
+                    const next = new Map(picked);
+                    if (anyOnPage) items.forEach((item) => next.delete(item.id));
+                    else for (const item of items) if (next.size < 25) next.set(item.id, item);
+                    if (!anyOnPage && items.length + picked.size > 25) setNotice("Selected 25 leads. That is the most for one action.");
+                    setPicked(next);
+                  }} /></th><th>Lead</th>
                   <th>Company</th>
-                  <th>Status / email</th>
-                  <th>Manage</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {!loading && items.map((item) => (
-                  <tr key={item.id}><td><input type="checkbox" aria-label={`Select ${item.name || item.email}`} checked={selectedIds.has(item.id)} disabled={!selectedIds.has(item.id) && (selected.length >= 25 || !item.email || item.state !== "Ready to Email")} onChange={(e) => setSelected(e.target.checked ? [...selected, item.id] : selected.filter((id) => id !== item.id))} /></td>
+                  <tr key={item.id}><td><input type="checkbox" aria-label={`Select ${item.name || item.email}`} checked={selectedIds.has(item.id)} disabled={!selectedIds.has(item.id) && selected.length >= 25} onChange={(e) => toggle(item, e.target.checked)} /></td>
                     <td>
                       <div className="person-cell">
                         <Avatar
@@ -387,7 +450,7 @@ export default function Contacts({ user }: { user: Account }) {
                           <div className="person">
                             <Link className="text-link" href={`/contacts/${item.id}`}>{item.name}</Link>
                           </div>
-                          <div className="subtext">{item.title || "Title not recorded"}</div>
+                          <div className="subtext">{item.title || "No title"}</div>
                         </div>
                       </div>
                     </td>
@@ -404,12 +467,10 @@ export default function Contacts({ user }: { user: Account }) {
                       <div className="subtext">
                         {emailLabel(item)}
                       </div>
-                      <div className="subtext">
-                        {item.opted_in
-                          ? "Opt-in recorded"
-                          : "No opt-in recorded"}
-                      </div>
+                      {item.opted_in && <div className="subtext">Opted in</div>}
                       {item.state === "Completed" && <div className="subtext">Outreach stopped</div>}
+                      {canLookUp(item) && lookupFor !== item.id && <button type="button" className="button small" disabled={busy} aria-expanded={false} onClick={() => setLookupFor(item.id)}>Find email</button>}
+                      {lookupFor === item.id && <EmailConfirmation contactId={item.id} close={() => setLookupFor(null)} started={async () => { setLookupFor(null); setLookupStartedAt(Date.now()); await load(); }} />}
                     </td>
                     <td>
                       <div className="row-actions">
@@ -436,7 +497,7 @@ export default function Contacts({ user }: { user: Account }) {
                                 `contacts/${item.id}`,
                                 "PUT",
                                 { stop: true },
-                                "Outreach stopped; history retained.",
+                                "Outreach stopped. History kept.",
                               )
                             }
                           >
@@ -450,14 +511,14 @@ export default function Contacts({ user }: { user: Account }) {
                           onClick={() => {
                             if (
                               window.confirm(
-                                `Record an opt-out for ${item.email} and block future emails?`,
+                                `Opt out ${item.email}? All future emails will be blocked.`,
                               )
                             )
                               void mutate(
                                 `contacts/${item.id}`,
                                 "PUT",
                                 { suppress: true },
-                                "Contact suppressed. Future emails are blocked.",
+                                "Opted out. Future emails are blocked.",
                               );
                           }}
                         >
@@ -468,6 +529,7 @@ export default function Contacts({ user }: { user: Account }) {
                           className="button ghost danger-button"
                           disabled={busy}
                           aria-label={`Delete ${item.name}`}
+                          title="Delete"
                           aria-expanded={deleting === item.id}
                           aria-controls={
                             deleting === item.id
@@ -479,7 +541,6 @@ export default function Contacts({ user }: { user: Account }) {
                           }
                         >
                           <Icon name="trash" />
-                          Delete
                         </button>
                       </div>
                       {deleting === item.id && (
@@ -490,9 +551,8 @@ export default function Contacts({ user }: { user: Account }) {
                           aria-label={`Confirm deletion of ${item.name}`}
                         >
                           <p>
-                            Remove {item.name} from Leads and stop queued
-                            outreach? Email history and opt-out records are
-                            kept.
+                            Delete {item.name}? Queued emails stop. History
+                            and opt-outs are kept.
                           </p>
                           <div className="row-actions">
                             <button
@@ -504,7 +564,7 @@ export default function Contacts({ user }: { user: Account }) {
                                   `contacts/${item.id}`,
                                   "DELETE",
                                   {},
-                                  "Contact deleted from Contacts. Queued outreach stopped; history and opt-outs retained.",
+                                  "Contact deleted. Queued emails stopped.",
                                 )
                               }
                             >
@@ -529,7 +589,7 @@ export default function Contacts({ user }: { user: Account }) {
             {loading && <div className="empty" role="status">Loading leads…</div>}
             {!loading && !items.length && (
               <div className="empty">
-                {query || stage !== "all" ? "No leads match this search and filter. Try All or a different search." : <>No leads yet. <Link className="text-link" href="/find-leads">Find leads</Link>, add a contact, or import a CSV to begin.</>}
+                {query || stage !== "all" ? "No leads match. Try All or another search." : <>No leads yet. <Link className="text-link" href="/find-leads">Find leads</Link>, add one, or import a CSV.</>}
               </div>
             )}
           </div>

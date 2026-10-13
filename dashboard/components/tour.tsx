@@ -15,11 +15,11 @@ export default function Tour({ user }: { user: Account }) {
     requested.current = true;
     void tour.start(user).catch((caught) => {
       requested.current = false;
-      setError(caught instanceof Error ? caught.message : "Unable to open the tour.");
+      setError(caught instanceof Error ? caught.message : "Could not open the tour.");
     });
   }, [tour?.start, user, retry]);
-  return <WorkspacePage user={user} active="tour" title="Your product tour" description="A guided walkthrough of your real workspace.">
-    <section className="panel"><p role={error ? "alert" : "status"}>{error || "Opening a guided walkthrough of your real workspace…"}</p>
+  return <WorkspacePage user={user} active="tour" title="Product tour" description="A quick guided look at LeadZen.">
+    <section className="panel"><p role={error ? "alert" : "status"}>{error || "Opening the tour…"}</p>
       {error && <button className="button" type="button" onClick={() => { setError(""); setRetry((value) => value + 1); }}>Try again</button>}
     </section>
   </WorkspacePage>;

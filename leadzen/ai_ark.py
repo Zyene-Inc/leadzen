@@ -6,9 +6,10 @@ No retries, bulk jobs, phone purchases, external list writes or provider fallbac
 import hashlib
 import io
 import json
+import logging
 import time
 from decimal import Decimal
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -17,6 +18,7 @@ from django.db import transaction
 from leadzen.configuration import SettingsError, effective
 from leadzen.config.models import DiscoveryLookup, DiscoverySearch, OnboardingState, SiteConfig
 
+logger = logging.getLogger(__name__)
 BASE = "https://api.ai-ark.com/api/developer-portal"
 _last_request = 0.0
 
@@ -167,6 +169,12 @@ def linkedin(value):
     return ""
 
 
+def same_profile(value, url):
+    """AI Ark may echo a LinkedIn slug with different case or percent-encoding."""
+    found = linkedin(value)
+    return bool(found) and unquote(found).casefold() == unquote(url).casefold()
+
+
 def profile(person):
     if not isinstance(person, dict):
         raise SettingsError("AI Ark returned an invalid profile")
@@ -246,15 +254,23 @@ def enrich(monitor, lead):
         return
     receipt = monitor.reserve_lookup({"data": [{"linkedin_url": lead.profile_url}], "enrich_email_address": True})
     result = send(receipt, "/v1/people/export/single", {"url": url})
-    output = []
+    output, unusable = [], False
     if result is not None:
-        if linkedin((result.get("link") or {}).get("linkedin")) != url:
-            raise SettingsError("AI Ark returned a different profile; the email was not saved")
         block = result.get("email")
-        if not isinstance(block, dict) or block.get("state") != "DONE" or not isinstance(block.get("output"), list):
-            raise SettingsError("AI Ark did not return a completed email result")
-        output = block["output"]
+        output = block["output"] if isinstance(block, dict) and isinstance(block.get("output"), list) else []
+        # One contact's unusable answer is that contact's outcome, not a reason to
+        # abandon the rest of the approved selection with an uncertain charge.
+        link = result.get("link") if isinstance(result.get("link"), dict) else {}
+        unusable = same_profile(link.get("linkedin"), url) is False or not isinstance(block, dict) or block.get("state") != "DONE"
     valid = [e for e in output if isinstance(e, dict) and e.get("found") is True and e.get("status") == "VALID"]
+    if unusable:
+        # AI Ark charges one credit only when it reports a valid email.
+        receipt.credits = Decimal(1 if valid else 0)
+        receipt.state, receipt.email_status = "terminated", "unavailable"
+        receipt.save()
+        monitor.guard()
+        monitor.event("email_lookup", {"provider": "AI Ark", "name": (lead.full_name or "")[:240], "email_status": "unavailable", "credits": float(receipt.credits)})
+        return
     usable = [e for e in valid if e.get("domainType") == "SMTP" and e.get("free") is False and e.get("generic") is False]
     address = usable[0].get("address", "") if usable else ""
     if address:
@@ -273,7 +289,7 @@ def enrich(monitor, lead):
     receipt.state, receipt.email_status = "terminated", "valid" if address else "not_found"
     receipt.save()
     monitor.guard()
-    monitor.event("email_lookup", {"provider": "AI Ark", "email_status": receipt.email_status, "credits": float(receipt.credits)})
+    monitor.event("email_lookup", {"provider": "AI Ark", "name": (lead.full_name or "")[:240], "email_status": receipt.email_status, "credits": float(receipt.credits)})
 
 
 def run(args, monitor):
@@ -283,7 +299,7 @@ def run(args, monitor):
     from openoutfind.core.ml.qualifier import qualify_with_llm
     from openoutfind.core.export import lead_record
     from openoutfind.crm.models import Lead, Deal
-    from cold_outreach.leads.ingest import ingest
+    from leadzen.finder_ingest import ingest
     from leadzen.discovery_progress import DiscoveryPaused, _qualify_for_campaign, counts
     from leadzen.discovery import progress_payload
     from leadzen.home import QUALIFIED
@@ -341,10 +357,12 @@ def run(args, monitor):
         partial = counts(session)["produced"] < session.goal
     except DiscoveryPaused:
         paused = True
-    except Exception:
+    except Exception as exc:
         partial = failed = True
+        # Provider messages are fixed strings; the traceback never includes the key.
+        logger.warning("AI Ark run stopped: %s: %s", type(exc).__name__, str(exc)[:300])
         if monitor:
             monitor.event("provider_stopped", {"message": "AI Ark stopped. Completed results are kept; uncertain charges are not retried. Check your connection, balance and saved audience."})
-    return {"stored": stored, "partial": partial, "paused": paused,
+    return {"stored": stored, "partial": partial, "paused": paused, "failed": failed,
             "note": "AI Ark paused at a saved boundary." if paused else "AI Ark stopped before finishing. Completed results are kept; uncertain charges are not retried; no emails were sent." if failed else "AI Ark finished within the approved budget. Partial results are kept; no emails were sent.",
             **({"discovery": progress_payload(monitor.session), "workspaceUrl": f"/find-leads/{monitor.session.pk}"} if monitor else {})}

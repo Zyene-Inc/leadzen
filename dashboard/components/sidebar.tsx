@@ -20,6 +20,7 @@ const workspaceLinks: {
   { id: "overview", icon: "overview", href: "/", label: "Home" },
   { id: "contacts", icon: "contacts", href: "/contacts", label: "Leads" },
   { id: "outreach", icon: "send", href: "/outreach", label: "Outreach" },
+  { id: "results", icon: "results", href: "/results", label: "Results" },
   { id: "inbox", icon: "inbox", href: "/inbox", label: "Inbox" },
   { id: "settings", icon: "settings", href: "/settings", label: "Settings" },
 ];
@@ -45,7 +46,7 @@ function useWorkspaceMode(user: Account, active: string, setError: (message: str
         await flushWorkspaceContext();
       }
       router.push(latest.lastChatId ? `/chat/${latest.lastChatId}` : "/chat");
-    } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not preserve Workspace context"); }
+    } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not open Chat"); }
   }
   return { context, openChat };
 }
@@ -73,7 +74,7 @@ export function Sidebar({
     setError("");
     try {
       const response = await fetch("/api/auth/logout", { method: "POST" });
-      if (!response.ok) throw new Error("Could not sign out. Please retry.");
+      if (!response.ok) throw new Error("Could not sign out. Try again.");
       window.location.assign("/login");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not sign out");
@@ -145,7 +146,7 @@ export function Sidebar({
               </Link>
             ))}
             <details className="workspace-tools" open={["activity", "suppression"].includes(active) || undefined}>
-              <summary className="nav-item">Workspace tools</summary>
+              <summary className="nav-item">More</summary>
               <Link className={`nav-item${active === "activity" ? " active" : ""}`} href="/activity" aria-current={active === "activity" ? "page" : undefined}><Icon name="activity" />Activity</Link>
               <Link className={`nav-item${active === "suppression" ? " active" : ""}`} href="/suppression" aria-current={active === "suppression" ? "page" : undefined}><Icon name="suppression" />Do not contact</Link>
             </details>

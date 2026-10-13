@@ -34,7 +34,7 @@ beforeEach(() => call.mockResolvedValue(metadata));
 
 test("Settings connectors show both real brand favicon sources, no invented connection or read side effect", async () => {
   render(<MCPConnections />);
-  expect(await screen.findByText("No apps connected yet. Connect from Claude or ChatGPT to get started.")).toBeTruthy();
+  expect(await screen.findByText("No apps connected yet.")).toBeTruthy();
   expect((screen.getByRole("img", { name: "Claude logo" }) as HTMLImageElement).src).toContain("url=https://claude.ai&size=256");
   expect((screen.getByRole("img", { name: "ChatGPT logo" }) as HTMLImageElement).src).toContain("url=https://chatgpt.com&size=256");
   expect((screen.getByLabelText("Server URL") as HTMLInputElement).value).toBe(metadata.endpoint);

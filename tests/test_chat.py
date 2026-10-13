@@ -217,10 +217,14 @@ def test_provider_budget_and_cancellation_are_checked_at_sink(chat_client, monke
     thread, run = turn(chat_client)
     ChatRun.objects.filter(pk=run).update(status="running", deadline_at=timezone.now() + timedelta(minutes=10), model_requests=31)
     monkeypatch.setenv("LEADZEN_CHAT_RUN_ID", run)
-    assert_action_access(reserve_model=True)
+    # AI requests are counted, never capped: a search may check as many profiles as its goal needs.
+    for _ in range(5):
+        assert_action_access(reserve_model=True)
+    assert ChatRun.objects.get(pk=run).model_requests == 36
+    ChatRun.objects.filter(pk=run).update(deadline_at=timezone.now() - timedelta(seconds=1))
     with pytest.raises(PermissionError):
         assert_action_access(reserve_model=True)
-    ChatRun.objects.filter(pk=run).update(cancel_requested=True)
+    ChatRun.objects.filter(pk=run).update(deadline_at=timezone.now() + timedelta(minutes=10), cancel_requested=True)
     with pytest.raises(PermissionError):
         assert_action_access()
 
@@ -360,3 +364,65 @@ def test_a_full_page_of_real_shaped_leads_fits_what_the_model_sees():
     visible = data[:TOOL_DATA_LIMIT]
     assert all(f"owner-number-{i}-abc123" in visible for i in range(25)), len(data)
     assert '"total": 25' in visible
+
+
+def discovery_run(chat_client, goal=25):
+    from datetime import timedelta
+    from leadzen.chat.engine import snapshot
+    from leadzen.config.models import ChatRun, DiscoverySession
+    thread, run = turn(chat_client)
+    arguments = {"count": goal, "emails": False, "audience": ""}
+    ChatRun.objects.filter(pk=run).update(status="running", deadline_at=timezone.now() + timedelta(minutes=2))
+    session = DiscoverySession.objects.create(run_id=run, goal=goal, unit="leads",
+        action={"tool": "find_leads", "arguments": arguments, "snapshot": snapshot("find_leads", arguments)})
+    return run, session
+
+
+def test_a_working_search_keeps_its_deadline_ahead_and_a_stalled_one_stops(chat_client):
+    from datetime import timedelta
+    from leadzen.config.models import ChatRun
+    from leadzen.discovery_progress import IDLE_DEADLINE, Monitor
+    run, session = discovery_run(chat_client)
+    Monitor(session).guard()
+    deadline = ChatRun.objects.get(pk=run).deadline_at
+    assert deadline >= timezone.now() + IDLE_DEADLINE - timedelta(seconds=5)
+    ChatRun.objects.filter(pk=run).update(deadline_at=timezone.now() - timedelta(seconds=1))
+    with pytest.raises(PermissionError):
+        Monitor(session).guard()  # a stalled search is not revived
+    assert ChatRun.objects.get(pk=run).deadline_at < timezone.now()
+
+
+def test_a_stopped_search_says_why_and_what_it_found(chat_client):
+    from leadzen.chat.engine import STOP_REASONS_DEFAULT, stop_reason, stopped_text
+    from leadzen.config.models import DiscoveryCandidate
+    _, session = discovery_run(chat_client)
+    for i in range(29):
+        DiscoveryCandidate.objects.create(session=session, source_id=i + 1, discovered=True, evaluated=True,
+                                          outcome="qualified" if i == 0 else "rejected", produced=i == 0)
+    try:
+        try:
+            raise PermissionError("Discovery stopped or exceeded its deadline")
+        except PermissionError as inner:
+            raise RuntimeError("finder wrapped it") from inner
+    except RuntimeError as exc:
+        reason = stop_reason(exc)
+    assert reason == "it made no progress for 10 minutes"
+    text = stopped_text(session, reason)
+    assert text.startswith("Discovery stopped because it made no progress for 10 minutes.")
+    assert "Checked 29 profiles; 1 of 25 matched your Target and were saved." in text
+    assert "Settings → Target" in text and text.endswith("No emails were sent.")
+    assert stop_reason(ValueError("provider said sk-secret")) == STOP_REASONS_DEFAULT
+    assert "Settings → Connections" in stopped_text(session, STOP_REASONS_DEFAULT)
+
+
+def test_an_unexpected_failure_names_its_cause_without_details(chat_client):
+    from leadzen.chat.engine import drive
+    from leadzen.config.models import ChatMessage, ChatRun
+    thread, run = turn(chat_client)
+    class ReadTimeout(Exception):
+        pass
+    with patch("leadzen.chat.engine.decide", side_effect=ReadTimeout("token sk-secret leaked")):
+        drive(run)
+    text = ChatMessage.objects.filter(role="assistant").latest("created_at").content
+    assert ChatRun.objects.get(pk=run).status == "failed"
+    assert "(ReadTimeout)" in text and "sk-secret" not in text

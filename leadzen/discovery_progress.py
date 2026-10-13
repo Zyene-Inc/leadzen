@@ -5,6 +5,7 @@ import re
 import sys
 from contextlib import ExitStack, contextmanager
 from contextvars import ContextVar
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlsplit
 from unittest.mock import patch
@@ -15,6 +16,8 @@ from django.utils import timezone
 from leadzen.config.models import ChatRun, DiscoveryCandidate, DiscoveryEvent, DiscoveryLookup, DiscoverySession
 
 _current = ContextVar("leadzen_discovery_monitor", default=None)
+# A search stays alive while it keeps working; one that stalls this long is stopped.
+IDLE_DEADLINE = timedelta(minutes=10)
 
 _CAMPAIGN_RULES = (
     "\n\nThe campaign target above is the eligibility rule for this search. Product "
@@ -128,6 +131,9 @@ class Monitor:
             raise PermissionError("AI Ark approval expired")
         if self.session.source_ids and selected_identity(self.session.source_ids) != self.session.action.get("source_identity"):
             raise PermissionError("Selected lead identity or deletion state changed")
+        # Progress, not a fixed clock, decides how long a search runs.
+        renewed = timezone.now() + IDLE_DEADLINE
+        ChatRun.objects.filter(pk=row.pk, status="running", cancel_requested=False, deadline_at__lt=renewed).update(deadline_at=renewed)
 
     def boundary(self):
         self.guard()

@@ -23,7 +23,6 @@ const routes: Record<string, string[]> = {
   "jobs/send": ["POST"],
   settings: ["GET", "PUT"],
   "settings/backup": ["POST"],
-  onboarding: ["GET", "PUT"],
   "onboarding/wizard": ["GET", "PUT"],
   "onboarding/test": ["POST"],
   "onboarding/complete": ["POST"],
@@ -31,6 +30,7 @@ const routes: Record<string, string[]> = {
   tour: ["GET", "POST"],
   contacts: ["POST"],
   campaigns: ["GET", "POST"],
+  "campaigns/prepare": ["POST"],
   "chat/context": ["GET", "PUT"],
   "chat/threads": ["GET", "POST"],
   "mcp/connections": ["GET", "POST"],
@@ -102,7 +102,7 @@ async function proxy(request: NextRequest, context: RouteContext) {
         headers: { "Content-Type": "application/json" },
         body,
         signal: AbortSignal.any([request.signal, AbortSignal.timeout(streaming ? 25000 :
-          route === "onboarding/test" || route.startsWith("outreach/reviews") ? 60000 : 15000)]),
+          route === "onboarding/test" || route === "campaigns/prepare" || route.startsWith("outreach/reviews") ? 60000 : 15000)]),
       },
       token,
     );

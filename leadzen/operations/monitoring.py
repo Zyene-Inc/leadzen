@@ -21,8 +21,8 @@ import time
 from urllib.parse import urlsplit
 import uuid
 
-from leadzen.operations.recovery import (RecoveryError, digest, fsync_dir, namespace, owned_lock,
-    private_root, readonly_db, safe_path, verify_snapshot, write_json)
+from leadzen.operations.recovery import (RecoveryError, fsync_dir, namespace, owned_lock,
+    private_root, safe_path, verify_snapshot, write_json)
 
 
 class MonitoringError(RuntimeError):

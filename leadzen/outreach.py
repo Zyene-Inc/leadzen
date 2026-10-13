@@ -259,7 +259,7 @@ def owned_review(request, review_id):
 @access(workspace=True)
 def overview(request):
     from leadzen.sending_schedule import window_payload
-    values, config = effective(), SiteConfig.load()
+    values = effective()
     box = active_mailboxes().first()
     return JsonResponse({"eligible": eligible().count(), "from_address": values.mailbox_address,
                          "remaining_today": box.headroom_today() if box else 0, "next_send_at": box.next_send_at.isoformat() if box and box.next_send_at else None,

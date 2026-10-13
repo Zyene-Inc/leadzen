@@ -360,6 +360,18 @@ class DiscoveryCandidate(models.Model):
         constraints = [models.UniqueConstraint(fields=["session", "source_id"], name="discovery_candidate_unique")]
 
 
+# Background Workspace jobs (discovery, email lookup, reply checks, Autopilot) keep
+# their progress and approvals on a ChatRun. Their thread is a container, not a
+# conversation, so Chat's conversation list leaves it out.
+WORKSPACE_JOB = {"origin": "workspace"}
+
+
+def conversations(threads):
+    """Only real Chat conversations. A plain JSON-key exclude also drops threads
+    without the key in SQLite, so match the absent key explicitly."""
+    return threads.filter(models.Q(context__origin__isnull=True) | ~models.Q(context__origin=WORKSPACE_JOB["origin"]))
+
+
 class SearchPlan(models.Model):
     """BetterContact's learned search state for one target, archived while inactive.
 

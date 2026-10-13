@@ -313,3 +313,35 @@ def test_historical_single_action_without_discovery_metadata_keeps_completion(ch
     assert (row.finished_at is None) == (status == "paused")
     if status == "paused":
         assert row.deadline_at is None
+
+
+def test_plan_only_answer_continues_to_the_tool_once(chat_client):
+    from leadzen.chat.engine import Decision, drive
+    thread, run = turn(chat_client, "Give me their names and LinkedIn")
+    with patch("leadzen.chat.engine.decide", side_effect=[Decision(tool="answer", text="Plan: I'll list your qualified leads."), Decision(tool="list_leads", text="Listing leads"), Decision(tool="answer", text="Here are your leads.")]) as model:
+        drive(run)
+    detail = chat_client.get(f"/api/chat/threads/{thread}").json()
+    assert detail["run"]["status"] == "succeeded" and model.call_count == 3
+    assert [m["role"] for m in detail["messages"]] == ["user", "assistant", "tool", "assistant"]
+    assert detail["messages"][1]["content"].startswith("Plan:") and detail["messages"][-1]["content"] == "Here are your leads."
+
+
+def test_repeated_plan_answer_ends_the_turn(chat_client):
+    from leadzen.chat.engine import Decision, drive
+    thread, run = turn(chat_client, "Do something")
+    with patch("leadzen.chat.engine.decide", side_effect=[Decision(tool="answer", text="Plan: step one."), Decision(tool="answer", text="Plan: step one again.")]) as model:
+        drive(run)
+    detail = chat_client.get(f"/api/chat/threads/{thread}").json()
+    assert detail["run"]["status"] == "succeeded" and model.call_count == 2
+    assert detail["messages"][-1]["content"] == "Plan: step one again."
+
+
+def test_tool_results_reach_the_model_with_every_record_and_total():
+    from leadzen.chat.engine import compact
+    items = [{"name": f"Lead {i}", "linkedin_url": f"https://www.linkedin.com/in/lead-{i}", "profile_text": "x" * 5000, "reason": "y" * 900} for i in range(30)]
+    data = compact({"tool": "list_leads", "result": {"items": items, "total": 30}})
+    text = json.dumps(data)
+    assert "profile_text" not in text and len(text) < 20000
+    assert data["result"]["total"] == 30 and len(data["result"]["items"]) == 26
+    assert data["result"]["items"][24]["linkedin_url"].endswith("lead-24") and data["result"]["items"][-1] == "... 5 more"
+    assert data["result"]["items"][0]["reason"].endswith("…")

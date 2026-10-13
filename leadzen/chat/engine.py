@@ -125,11 +125,23 @@ meta questions ("what can you do", "how are you", "who are you") and similar alw
 take the 'answer' tool directly — no tool ever runs for them. Reply warmly and
 briefly; offer one concrete next step if a task might follow ("Tell me which
 audience and I'll pull leads"). Tools exist only to fulfill a stated task.
-For multi-step work (find + enrich + draft + send), your FIRST 'answer' text always
-states the plan in one short paragraph before any tool runs: what you will do, in
-what order, which step needs their confirmation, and what is out of scope. Then
-continue with the tools. Never silently chain tools for a non-trivial request —
-say "Plan: …" first so the user can interrupt. Long-running work (find_leads with
+For every employee message, first decide what it needs:
+- Greeting, thanks or general question: 'answer' directly; no tool.
+- A question about their workspace data: call the read tool that holds the answer,
+  then answer with the actual values (names, links, counts, statuses). list_leads
+  returns each lead's name, company, title and linkedin_url plus a 'total' count;
+  overview gives workspace totals; get_target the saved Target; list_replies stored
+  replies; get_lead one contact; get_activity only recent activity history. Never
+  say a value is missing when a tool result contains it.
+- A request to do something: call the matching action tool. "Find N leads" or
+  "find lead N" means discover N new leads with find_leads unless they name an
+  existing contact; "no email" means includeEmails false.
+Call only the tools the message needs, then answer from their results.
+The 'answer' tool ends your turn: use it only for the final reply or to ask a
+question. To act, call the tool now. For multi-step work (find + enrich + draft +
+send), put a one-sentence "Plan: …" in the text of your FIRST tool decision (what
+you will do, in what order, which step needs their confirmation). Never answer with
+only a plan and stop; if you can run a read-only or approval-gated tool, run it. Long-running work (find_leads with
 background discovery) ends this turn with a saved-progress note; do not invent
 results for steps you have not actually executed this turn.
 Canonical Workspace context is supplied on every step, refreshed from the database.
@@ -175,6 +187,25 @@ with opted_in:true is rejected by the workspace.
 """
 
 
+BULKY = {"profile_text", "timeline", "raw", "html", "body_html"}
+
+
+def compact(value, depth=0):
+    """Tool results as the model needs them: every record and total, not bulk text.
+
+    Results are capped before they reach the model. Bulky per-record text pushed
+    later records and the `total` past the cap, so answers missed links or counts.
+    """
+    if isinstance(value, dict):
+        return {k: compact(v, depth + 1) for k, v in value.items() if k not in BULKY}
+    if isinstance(value, list):
+        items = [compact(v, depth + 1) for v in value[:25]]
+        return items + [f"... {len(value) - 25} more"] if len(value) > 25 else items
+    if isinstance(value, str) and len(value) > 300:
+        return value[:300] + "…"
+    return value
+
+
 def decide(row):
     from pydantic_ai import Agent, PromptedOutput
     from pydantic_ai.models import Model
@@ -188,7 +219,7 @@ def decide(row):
     from leadzen.chat.tools import SCHEMAS, Find, List
     context = {**structured(row.actor_id, row.thread.context), "sender": config.operator_name, "from_address": values.mailbox_address}
     messages = list(row.thread.messages.order_by("-created_at", "-pk")[:24])
-    history = [{"role": m.role, "text": m.content[:4000], "tool_data": json.dumps(m.data, ensure_ascii=False)[:7000]} for m in reversed(messages)]
+    history = [{"role": m.role, "text": m.content[:4000], "tool_data": json.dumps(compact(m.data), ensure_ascii=False)[:7000]} for m in reversed(messages)]
     while len(json.dumps(history, ensure_ascii=False)) > 20000 and len(history) > 1:
         history.pop(0)
     prompt = redact(json.dumps({"workspace": context, "conversation": history}, ensure_ascii=False))
@@ -737,7 +768,13 @@ def drive(run_id):
             row.steps += 1
             ChatRun.objects.filter(pk=row.pk).update(steps=row.steps, updated_at=timezone.now())
             if decision.tool == "answer":
-                finish(row, "succeeded", decision.text or "Done. Review the tool results above.")
+                # A plan is not a result. Show it and let the model act on it once,
+                # instead of ending the turn with nothing done.
+                text = (decision.text or "").strip()
+                if text.lower().startswith("plan:") and not row.thread.messages.filter(role="assistant", data__plan_run=str(row.pk)).exists() and row.steps < MAX_STEPS:
+                    event(row, "assistant", text, {"plan_run": str(row.pk)})
+                    continue
+                finish(row, "succeeded", text or "Done. Review the tool results above.")
                 return
             args = normalize(decision.tool, decision.arguments)
             from leadzen.chat.tools import CONFIRMED

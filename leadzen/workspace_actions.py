@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from leadzen.config.models import WORKSPACE_JOB, conversations
 from leadzen.accounts.service import access, error, payload
 from leadzen.chat import views as chat
 from leadzen.chat.engine import prepare
@@ -38,7 +39,7 @@ def check_replies(request):
         return error("Finish or stop your active task before checking replies.", 409)
     if ChatRun.objects.filter(actor_id=request.actor.pk, created_at__gt=timezone.now() - timedelta(minutes=10)).count() >= 15:
         return error("Task limit reached. Try again in a few minutes.", 429)
-    if ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True).count() >= 100:
+    if conversations(ChatThread.objects.filter(actor_id=request.actor.pk, archived=False, deleted_at__isnull=True)).count() >= 100:
         return error("Archive an old chat before checking replies again.", 409)
     from leadzen.configuration import effective
     values = effective()
@@ -48,7 +49,7 @@ def check_replies(request):
         return error("Connect AI in Settings to classify replies.", 409)
     try:
         with transaction.atomic(using=ChatRun.objects.all().db):
-            thread = ChatThread.objects.create(actor_id=request.actor.pk, title="Check for replies", context={"workspacePath": "/inbox"})
+            thread = ChatThread.objects.create(actor_id=request.actor.pk, title="Check for replies", context={**WORKSPACE_JOB, "workspacePath": "/inbox"})
             run = ChatRun.objects.create(actor_id=request.actor.pk, thread=thread, request_id=request_id)
             ChatMessage.objects.create(thread=thread, role="user", content="Check my connected inbox for replies and classify them. Do not send emails or take any other action.", data={"workspace_action": "check_replies"})
             prepare(run, "sync_mailbox", {})

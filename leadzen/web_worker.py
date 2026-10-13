@@ -71,7 +71,7 @@ def main(job_id: str, count: int) -> int:
             job.finished_at = timezone.now()
             job.save(update_fields=["status", "output", "finished_at"])
             return code
-    except Exception as error:  # noqa: BLE001 - persist the failure for the dashboard.
+    except Exception:  # noqa: BLE001 - persist the failure for the dashboard.
         job.refresh_from_db(fields=["status"])
         if job.status == "cancelled":
             return 0

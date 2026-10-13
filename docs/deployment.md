@@ -3,8 +3,8 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **October 13, 2026** release of `0273acb`,
-below. An earlier October 13 release of `42e9bbc` was not recorded here; it was
+The most recent deployment is the **October 13, 2026** release of `f77dc31`,
+below, which followed the same day's `0273acb` release. An earlier October 13 release of `42e9bbc` was not recorded here; it was
 the runtime replaced by this one. The October 12 and October 8 records follow. It was recorded by the operator who performed it and copied here
 on October 12 from the closed Zyene-Inc/leadzen#10; it has not been re-verified
 against the live VM since. Every section is dated evidence, not a current
@@ -12,6 +12,30 @@ live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## October 13, 2026 — backend `f77dc31` (no AI cap on searches)
+
+**Source released:** `main` at `f77dc31` (Merge PR #20: no per-task AI request
+cap, searches renew their deadline while working, stopped searches report why).
+Backend only; no migrations or dependency changes. Wheel SHA-256
+`595d89f1eec66b65406b75a9cc9b0eb2ca96f5d029a12258fe35c49e0d8852d8`.
+
+**Recovery points:** VM snapshot `leadzen-api-pre-f77dc31-20261013` (READY);
+on-VM backup `/srv/private/leadzen-pre-upgrade-f77dc31-20261013`; previous runtime
+`/opt/leadzen-0273acb-20261013` left untouched.
+
+**Cut-over:** same script as `0273acb`, with no active tasks at the time. Staged
+`/opt/leadzen-f77dc31-20261013` with `/etc/leadzen-f77dc31.env`; stopped
+services, checkpointed (integrity `ok`), backed up, copied data, smoke-tested,
+ran migrate (nothing to apply), switched both units. Downtime under a minute.
+
+**Verification:** both services active, zero restarts, no warnings; authenticated
+`/api/health` and `/api/ready` 200; anonymous public API 401; dashboard login
+200. No search, email or paid lookup was run during the release.
+
+**Rollback:** restore the two unit files from the on-VM backup (they point at
+`/opt/leadzen-0273acb-20261013`), `systemctl daemon-reload`, start; or restore
+the snapshot.
 
 ## October 13, 2026 — backend, database and dashboard `0273acb`
 

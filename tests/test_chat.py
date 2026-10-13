@@ -345,3 +345,18 @@ def test_tool_results_reach_the_model_with_every_record_and_total():
     assert data["result"]["total"] == 30 and len(data["result"]["items"]) == 26
     assert data["result"]["items"][24]["linkedin_url"].endswith("lead-24") and data["result"]["items"][-1] == "... 5 more"
     assert data["result"]["items"][0]["reason"].endswith("…")
+
+
+
+def test_a_full_page_of_real_shaped_leads_fits_what_the_model_sees():
+    from leadzen.chat.engine import TOOL_DATA_LIMIT, compact
+    lead = lambda i: {"id": i, "lead_id": str(1000 + i), "name": f"Owner Number {i}", "first_name": "Owner", "last_name": f"Number {i}", "email": "", "email_status": "not_requested",
+                      "lookup": {"run_id": "x" * 36, "provider_name": "AI Ark", "status": "succeeded", "receipt_state": "terminated", "credits_used": 1.0, "email_verdict": "", "synthetic": False},
+                      "company": f"Waterfront Cafe and Grill {i}", "title": "Owner / Founder", "website": f"https://cafe{i}.example.com", "linkedin_url": f"https://www.linkedin.com/in/owner-number-{i}-abc123",
+                      "qualified": True, "crm_status": "qualified", "state": "Ready to Email", "outcome": "", "reason": "Owner of a small US restaurant matching the target role, industry, location and size. " * 4,
+                      "email_subject": "", "email_sent_at": None, "reply_count": 0, "opted_in": False, "consent_note": "", "profile_text": "p" * 3000,
+                      "latest_message": {"subject": "s" * 80, "body": "b" * 900}, "workspaceUrl": f"/contacts/{i}"}
+    data = json.dumps(compact({"tool": "list_leads", "result": {"items": [lead(i) for i in range(25)], "total": 25}}), ensure_ascii=False)
+    visible = data[:TOOL_DATA_LIMIT]
+    assert all(f"owner-number-{i}-abc123" in visible for i in range(25)), len(data)
+    assert '"total": 25' in visible

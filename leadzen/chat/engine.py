@@ -191,6 +191,13 @@ with opted_in:true is rejected by the workspace.
 BULKY = {"profile_text", "timeline", "raw", "html", "body_html"}
 
 
+# What the model needs to answer about a contact. Receipts, qualification
+# reasoning and message bodies stay in the Workspace record (get_lead has them).
+# A full page of 25 compact contacts must fit; older history is trimmed first.
+TOOL_DATA_LIMIT = 12000
+CONTACT_KEYS = ("id", "name", "company", "title", "email", "email_status", "crm_status", "linkedin_url", "website", "qualified", "reply_count", "workspaceUrl")
+
+
 def compact(value, depth=0):
     """Tool results as the model needs them: every record and total, not bulk text.
 
@@ -198,6 +205,8 @@ def compact(value, depth=0):
     later records and the `total` past the cap, so answers missed links or counts.
     """
     if isinstance(value, dict):
+        if "linkedin_url" in value and "crm_status" in value:
+            value = {k: value[k] for k in CONTACT_KEYS if k in value}
         return {k: compact(v, depth + 1) for k, v in value.items() if k not in BULKY}
     if isinstance(value, list):
         items = [compact(v, depth + 1) for v in value[:25]]
@@ -220,7 +229,7 @@ def decide(row):
     from leadzen.chat.tools import SCHEMAS, Find, List
     context = {**structured(row.actor_id, row.thread.context), "sender": config.operator_name, "from_address": values.mailbox_address}
     messages = list(row.thread.messages.order_by("-created_at", "-pk")[:24])
-    history = [{"role": m.role, "text": m.content[:4000], "tool_data": json.dumps(compact(m.data), ensure_ascii=False)[:7000]} for m in reversed(messages)]
+    history = [{"role": m.role, "text": m.content[:4000], "tool_data": json.dumps(compact(m.data), ensure_ascii=False)[:TOOL_DATA_LIMIT]} for m in reversed(messages)]
     while len(json.dumps(history, ensure_ascii=False)) > 20000 and len(history) > 1:
         history.pop(0)
     prompt = redact(json.dumps({"workspace": context, "conversation": history}, ensure_ascii=False))

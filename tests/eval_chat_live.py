@@ -14,7 +14,7 @@ from tests.test_discovery import discovery_client
 
 PROMPTS = [
     ("hi", "answer only"),
-    ("give me the names and LinkedIn of my qualified leads", "list_leads, then names + links"),
+    ("give me the names and LinkedIn of my qualified leads", "list_leads, then all 22 names + links"),
     ("how many leads do I have?", "overview or list_leads, then a number"),
     ("can you find lead 3 no email", "find_leads"),
     ("what is my current target?", "get_target"),
@@ -28,6 +28,8 @@ def seed():
     from cold_outreach.leads.models import Lead, Deal
     people = [("Rachel Hogancamp", "Owner", "The Waterfront Cafe"), ("Mike Koeneke", "Co-Founder", "Dexter"), ("Simon Perry", "Founder", "sierge."),
               ("Ana Ruiz", "Owner", "Ruiz Plumbing"), ("Dev Patel", "Founder", "Patel HVAC"), ("Lena Ortiz", "Owner", "Ortiz Bistro")]
+    # A realistic page size: production lists of ~20 leads exposed truncation that 6 did not.
+    people = people + [(f"Owner Number{i}", "Owner", f"Local Bistro {i}") for i in range(16)]
     for i, (name, title, company) in enumerate(people):
         slug = name.lower().replace(" ", "-")
         profile = Profile.objects.create(full_name=name, job_title=title, profile_url=f"https://www.linkedin.com/in/{slug}", profile_text=("Long synthetic profile text. " * 60))
@@ -58,7 +60,8 @@ def test_live_tool_choice(discovery_client, monkeypatch):
         row = ChatRun.objects.get(pk=run)
         if row.status == "awaiting_approval":  # Record it, then decline so the next prompt can run.
             ChatRun.objects.filter(pk=run).update(status="cancelled", pending={})
-        print(f"\n### {prompt!r}  (expected: {expected})\n  status={row.status} steps={row.steps} {time.time()-start:.1f}s tools={tools} sent={deliver.call_count}\n  reply: {(final[-1] if final else row.pending.get('summary') if row.pending else None)!r}"[:900])
+        reply = final[-1] if final else ""
+        print(f"\n### {prompt!r}  (expected: {expected})\n  status={row.status} steps={row.steps} {time.time()-start:.1f}s tools={tools} sent={deliver.call_count} linkedin_links={reply.count('linkedin.com/in/')}\n  reply: {(reply or (row.pending.get('summary') if row.pending else None))!r}"[:600])
 
 
 @pytest.mark.skipif(not os.environ.get("AKML_KEY"), reason="live model evaluation is opt-in")

@@ -119,10 +119,15 @@ scheduled. Reconcile final usage with the provider if its report is absent.
   entering the existing sending service, and rechecks live guards at transport.
   Cards show full From/To/Subject/body before confirmation and report actual provider
   acceptance; queued or deferred messages are never described as sent.
-- Each turn allows eight model decisions, at most 32 guarded AI HTTP requests
-  including the discovery engine, up to 25 verified-email credit reservations,
-  and up to 25 email reservations. Each execution segment has a ten-minute deadline.
-  Other discovery/model-provider charges are separate, not a guaranteed dollar cap.
+- Each turn allows eight model decisions, up to 25 verified-email credit
+  reservations and up to 25 email reservations. AI requests are counted per task
+  but not capped (since October 13, 2026): a search checks as many profiles as it
+  needs to reach its goal, bounded by the 200 lead-provider requests one search
+  may make. Each execution segment has a ten-minute deadline; a search renews it
+  at every provider or AI call, so only a search that stalls for ten minutes
+  stops. A stopped search reports its reason and how many profiles it checked
+  and matched. Model-provider charges grow with the profiles checked; there is
+  no dollar cap.
 - One active chat task per employee; duplicate message requests and worker claims
   cannot replay an action. Conversation/message/rate limits bound resource use.
 - Account revocation, cancellation, approved public endpoints and budgets are

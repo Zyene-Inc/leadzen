@@ -46,8 +46,9 @@ def assert_action_access(*, reserve_model=False):
     row = ChatRun.objects.filter(pk=identifier, status="running", cancel_requested=False).first()
     if not row or not row.deadline_at or row.deadline_at <= timezone.now():
         raise PermissionError("Chat task stopped or exceeded its execution deadline")
-    if reserve_model and ChatRun.objects.filter(pk=identifier, model_requests__lt=32, status="running", cancel_requested=False).update(model_requests=F("model_requests") + 1) != 1:
-        raise PermissionError("Chat model-request budget exhausted")
+    # Counted for visibility, not capped: a search checks every profile it needs to reach its goal.
+    if reserve_model and ChatRun.objects.filter(pk=identifier, status="running", cancel_requested=False).update(model_requests=F("model_requests") + 1) != 1:
+        raise PermissionError("Chat task stopped")
 
 
 class Decision(BaseModel):
@@ -390,6 +391,36 @@ def prepare(row, tool, args, *, selected=False):
     ChatRun.objects.filter(pk=row.pk).update(status="awaiting_approval", pending=action, approval_expires_at=timezone.now() + timedelta(minutes=15), credits_reserved=row.credits_reserved + credits, emails_reserved=row.emails_reserved + emails)
 
 
+# Our own guards raise these; their wording is safe to show. Anything else is a provider or AI error.
+STOP_REASONS = (
+    ("deadline", "it made no progress for 10 minutes"),
+    ("stopped", "it was stopped"),
+    ("cancel", "it was stopped"),
+    ("provider-request limit", "it reached the 200 lead-provider requests allowed for one search"),
+    ("setup changed", "your Target or connections changed during the search"),
+    ("approval expired", "the approval expired"),
+    ("provider changed", "the lead provider was changed during the search"),
+    ("outside", "it reached an action this search is not approved for"),
+)
+
+
+def stop_reason(exc):
+    """A short, credential-free reason a search stopped, for the person and for Chat."""
+    seen = set()
+    while exc is not None and id(exc) not in seen:
+        seen.add(id(exc))
+        if isinstance(exc, PermissionError):
+            message = str(exc).lower()
+            for key, text in STOP_REASONS:
+                if key in message:
+                    return text
+        exc = exc.__cause__ or exc.__context__
+    return STOP_REASONS_DEFAULT
+
+
+STOP_REASONS_DEFAULT = "the lead provider or AI connection returned an error"
+
+
 def find_leads(args, *, poll_only=False):
     from django.core.management import call_command
     from leadzen.finder_ingest import ingest
@@ -475,20 +506,22 @@ def find_leads(args, *, poll_only=False):
         output = ProgressOutput(monitor) if monitor else io.StringIO()
         metadata = io.StringIO()
         partial = paused = False
+        reason = ""
         try:
             # This noun is the engine's verified-credit cap, not --emails on leads.
             with search_plan.scope(plan) if plan else nullcontext(), patch("openoutfind.enrichment.bettercontact._request", bounded_provider), monitor.adapters(poll_only=only_poll) if monitor else nullcontext():
                 call_command("find", str(args["count"]), "emails" if args["emails"] else "leads", "--json", "--new", stdout=output, stderr=metadata)
         except DiscoveryPaused:
             paused = True
-        except Exception:
+        except Exception as exc:
             # Retain complete JSONL records even when a provider/SDK failure is not
             # one of the child's typed refusals. Never echo its exception or metadata.
             partial = True
+            reason = stop_reason(exc)
         output.seek(0)
         stored = ingest(output)
         return {"stored": stored.stored, "suppressed": stored.suppressed, "skipped": stored.skipped,
-                "partial": partial, "paused": paused,
+                "partial": partial, "paused": paused, "stop_reason": reason,
                 "note": "Paused at a saved action boundary. No new work will run until Resume." if paused else "Stored partial results; review Connections and discovery status before retrying." if partial else "Lead discovery completed. No emails sent."}
 
     result = run_once(only_poll=poll_only)
@@ -711,6 +744,22 @@ def finish(row, status, text):
     DiscoverySession.objects.filter(run_id=row.pk).update(phase=status, pause_requested=False, updated_at=timezone.now())
 
 
+def stopped_text(session, reason):
+    """Say why a search stopped and what it found, so the person and Chat know what to do next."""
+    from leadzen.discovery_progress import counts
+    text = f"Discovery stopped because {reason}." if reason else "Discovery stopped with partial results."
+    if session:
+        n = counts(session)
+        text += f" Checked {n['evaluated']} profile{'' if n['evaluated'] == 1 else 's'}; {n['produced']} of {session.goal} matched your Target and were saved."
+        if n["evaluated"] >= 10 and n["qualified"] * 10 < n["evaluated"]:
+            text += " Most profiles did not match. Narrow the job titles or industry in Settings → Target, then search again."
+    elif not reason:
+        text += " Review leads and connections before starting another search."
+    if reason == STOP_REASONS_DEFAULT:
+        text += " Check Settings → Connections."
+    return text + " No emails were sent."
+
+
 def discovery_checkpoint(row, result, *, single_action=False):
     """Chat and Workspace discovery share completion and safe resume semantics."""
     if not result.get("discovery") and not single_action:
@@ -741,7 +790,7 @@ def discovery_checkpoint(row, result, *, single_action=False):
             finish(row, "failed" if failed else "succeeded", text)
             return True
         if failed:
-            text = "Discovery stopped with partial results. Review leads and connections before starting another search. No emails were sent."
+            text = stopped_text(session, result.get("stop_reason") or "")
         elif session and partial:
             text = f"Discovery finished with {counts(session)['produced']} of {session.goal} qualified leads within the approved budget. Review them above or in Workspace. No emails were sent."
         else:
@@ -826,9 +875,12 @@ def drive(run_id):
             if discovery_checkpoint(row, result):
                 return
         finish(row, "succeeded", "This turn reached its eight-step limit. Review the results and ask me to continue; no additional work was scheduled.")
-    except Exception:
+    except Exception as exc:
         row.refresh_from_db()
-        finish(row, "cancelled" if row.cancel_requested else "failed", "Task stopped safely. Check Connections and account access. Some actions may have completed; review contacts and campaign status before retrying. Contact support@zyene.com if needed.")
+        # Name the cause (our guard's reason, or only the error type) so a failure can be diagnosed.
+        reason = stop_reason(exc)
+        cause = reason if reason != STOP_REASONS_DEFAULT else f"the AI or a connection returned an error ({type(exc).__name__})"
+        finish(row, "cancelled" if row.cancel_requested else "failed", f"Task stopped safely because {cause}. Some actions may have completed; review contacts and campaign status before retrying. If it repeats, check Settings → Connections or contact support@zyene.com.")
     finally:
         if previous_run is None:
             os.environ.pop("LEADZEN_CHAT_RUN_ID", None)

@@ -89,13 +89,14 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
   test("CSV rejects malformed input and imports quoted rows correctly", async () => {
     call.mockImplementation(async (_path, init) => init?.method === "POST" ? { ids: [1], created: 1, restored: 0, do_not_contact: 0, skipped: [], duplicates: [], failed: [], summary: "1 added, 0 added again." } : { items: [], total: 0 });
     render(<Contacts user={user} />);
+    await userEvent.click(screen.getByRole("button", { name: "Import" }));
     fireEvent.change(screen.getByLabelText("CSV contacts"), { target: { value: 'email,first_name\n"unclosed' } });
     await userEvent.click(screen.getByRole("button", { name: "Import contacts" }));
     expect(await screen.findByRole("alert")).toHaveProperty("textContent", "CSV contains an unclosed quoted field");
     expect(writes()).toHaveLength(0);
     fireEvent.change(screen.getByLabelText("CSV contacts"), { target: { value: 'email,company,opted_in\nnew@example.com,"Practice, Inc",true' } });
     await userEvent.click(screen.getByRole("button", { name: "Import contacts" }));
-    await screen.findByText(/^Import finished:/);
+    await screen.findByText(/^Import done:/);
     expect(payload()).toEqual({ contacts: [{ email: "new@example.com", company: "Practice, Inc", opted_in: true }] });
   });
   test("CSV import reports added, skipped, repeated and failed rows", async () => {
@@ -104,9 +105,10 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
           failed: [{ row: 2, email: "bad", reason: "Enter a valid email address." }], duplicates: [{ row: 4, email: "a@example.com", reason: "Repeated earlier in this import" }], skipped: [{ row: 3, email: "old@example.com", reason: "Already in your leads" }] }
       : { items: [], total: 0 });
     render(<Contacts user={user} />);
+    await userEvent.click(screen.getByRole("button", { name: "Import" }));
     fireEvent.change(screen.getByLabelText("CSV contacts"), { target: { value: "email\na@example.com\nbad\nold@example.com\na@example.com" } });
     await userEvent.click(screen.getByRole("button", { name: "Import contacts" }));
-    expect(await screen.findByText(/Import finished: 1 added/)).toBeTruthy();
+    expect(await screen.findByText(/Import done: 1 added/)).toBeTruthy();
     const rows = screen.getByLabelText("Rows not imported").querySelectorAll("li");
     expect([...rows].map((r) => r.textContent)).toEqual(["Row 2 · bad: Failed. Enter a valid email address.", "Row 3 · old@example.com: Skipped. Already in your leads", "Row 4 · a@example.com: Repeated. Repeated earlier in this import"]);
   });
@@ -124,7 +126,7 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
     await screen.findByText("Reviewed campaign");
     await userEvent.click(screen.getByRole("button", { name: "Pause outreach" }));
     await userEvent.click(await screen.findByRole("button", { name: "Review & resume" }));
-    await screen.findByText(/No eligible emails are due/);
+    await screen.findByText(/No emails are due yet/);
     expect(writes()).toHaveLength(1); // Opening a paused review must never activate it.
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     await userEvent.click(screen.getByRole("button", { name: "Stop & archive" }));
@@ -150,10 +152,10 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
     expect(screen.getAllByLabelText("Subject")).toHaveLength(1);
     await userEvent.click(screen.getByRole("button", { name: "Add follow-ups" }));
     await userEvent.click(screen.getByRole("button", { name: "Add second follow-up" }));
-    expect(screen.getAllByLabelText("Days after the previous email").map(e => (e as HTMLInputElement).value)).toEqual(["3", "5"]);
+    expect(screen.getAllByLabelText("Days after last email").map(e => (e as HTMLInputElement).value)).toEqual(["3", "5"]);
     expect(screen.queryByRole("button", { name: "Add second follow-up" })).toBeNull();
     await userEvent.click(screen.getByRole("button", { name: "Turn off follow-ups" }));
-    fireEvent.change(screen.getByLabelText("Outreach name"), { target: { value: "New outreach" } });
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "New outreach" } });
     fireEvent.change(screen.getByLabelText("Subject"), { target: { value: "Hello" } });
     fireEvent.change(screen.getByLabelText("Message", { exact: true }), { target: { value: "Reviewed copy" } });
     await userEvent.click(screen.getByRole("button", { name: "Review & send" }));
@@ -167,7 +169,7 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
   test.each(["pause", "stop", "resume"])("discovery %s targets only the current run", async action => {
     call.mockResolvedValue({ ...progress, status: action === "resume" ? "paused" : "running" });
     render(<DiscoveryLive user={user} runId="run1" />);
-    const button = await screen.findByRole("button", { name: action === "pause" ? "Pause Finding" : action === "resume" ? "Resume Finding" : "Stop" });
+    const button = await screen.findByRole("button", { name: action === "pause" ? "Pause" : action === "resume" ? "Resume" : "Stop" });
     fireEvent.click(button); fireEvent.click(button);
     await waitFor(() => expect(writes()).toHaveLength(1));
     expect(writes()[0][0]).toBe(`discovery/run1/${action}`);
@@ -175,9 +177,9 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
   test("completed discovery links and Find Emails open a cancellable paid review", async () => {
     call.mockImplementation(async path => path.endsWith("/emails") ? { revision: "x", note: "", items: [] } : { ...progress, status: "completed", goal_reached: true });
     render(<DiscoveryLive user={user} runId="run1" />);
-    expect((await screen.findByRole("link", { name: "Review Leads" })).getAttribute("href")).toBe("#discovery-results");
-    expect(screen.getByRole("link", { name: "Find More" }).getAttribute("href")).toBe("/find-leads");
-    await userEvent.click(screen.getByRole("button", { name: "Find Emails" }));
+    expect((await screen.findByRole("link", { name: "See leads" })).getAttribute("href")).toBe("#discovery-results");
+    expect(screen.getByRole("link", { name: "Find more" }).getAttribute("href")).toBe("/find-leads");
+    await userEvent.click(screen.getByRole("button", { name: "Find emails" }));
     await screen.findByText(/No eligible profiles/);
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(writes()).toHaveLength(0);
@@ -229,8 +231,8 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("synthetic sqlite fixture", { headers: { "Content-Disposition": 'attachment; filename="workspace.sqlite3"' } }));
     render(<SettingsData data={settings} />);
-    const button = screen.getByRole("button", { name: "Backup Database" }); fireEvent.click(button); fireEvent.click(button);
-    await screen.findByText("Workspace backup downloaded.");
+    const button = screen.getByRole("button", { name: "Download backup" }); fireEvent.click(button); fireEvent.click(button);
+    await screen.findByText("Backup downloaded.");
     expect(fetcher).toHaveBeenCalledOnce(); expect(download).toHaveBeenCalledOnce(); expect(create).toHaveBeenCalledOnce();
   });
   test("mailbox presets emit correct Zoho, Gmail, Microsoft and custom settings", async () => {
@@ -275,8 +277,8 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Workspace con
   });
   test("tour entry opens the guided workspace rather than rendering a slide deck", () => {
     render(<Tour user={user} />);
-    expect(screen.getByRole("heading", { name: "Your product tour" })).toBeTruthy();
-    expect(screen.getByRole("status").textContent).toContain("your real workspace");
+    expect(screen.getByRole("heading", { name: "Product tour" })).toBeTruthy();
+    expect(screen.getByRole("status").textContent).toContain("Opening the tour");
     expect(screen.queryByRole("button", { name: "Next" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Back" })).toBeNull();
     expect(call).not.toHaveBeenCalled();

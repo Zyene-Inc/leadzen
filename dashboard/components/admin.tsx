@@ -24,7 +24,7 @@ export default function Admin({ user }: { user: Account }) {
       setTeam(await api<Team>("admin/users"));
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "Unable to load employees",
+        caught instanceof Error ? caught.message : "Could not load employees",
       );
     }
   }, []);
@@ -44,13 +44,13 @@ export default function Admin({ user }: { user: Account }) {
       const result = await task();
       if (result.invitation_status === "failed")
         setError(
-          "Account saved, but email delivery could not be confirmed. Check Resend and the verified sender, then use Resend invitation.",
+          "Account saved, but the invite email may not have sent. Check Resend and the sender, then choose Resend invite.",
         );
       else setNotice(success);
       await load();
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "Unable to update employee",
+        caught instanceof Error ? caught.message : "Could not update employee",
       );
     } finally {
       submitting.current = false;
@@ -69,27 +69,27 @@ export default function Admin({ user }: { user: Account }) {
           headers: { "Content-Type": "application/json" },
           body,
         }),
-      "Invitation sent. The employee can create their own password using the setup link. The link expires in 48 hours.",
+      "Invite sent. The employee sets their own password. The link lasts 48 hours.",
     );
   }
   function invite(account: Account) {
     if (
       !account.invitation_pending &&
       !window.confirm(
-        `Send a password reset invitation to ${account.email}? Existing sessions will be signed out.`,
+        `Send a password reset link to ${account.email}? They will be signed out.`,
       )
     )
       return;
     void action(
       () => api(`admin/users/${account.id}/invite`, { method: "POST" }),
-      "Setup invitation sent. Earlier setup links have been revoked.",
+      "Invite sent. Old links no longer work.",
     );
   }
   function update(account: Account, remove = false) {
     if (
       remove &&
       !window.confirm(
-        `Delete ${account.email}? This revokes access. Outreach history will be retained.`,
+        `Delete ${account.email}? They lose access. Outreach history is kept.`,
       )
     )
       return;
@@ -102,7 +102,7 @@ export default function Admin({ user }: { user: Account }) {
             ? undefined
             : JSON.stringify({ is_active: !account.is_active }),
         }),
-      remove ? "Employee deleted; access revoked." : "Employee access updated.",
+      remove ? "Employee deleted. Access removed." : "Access updated.",
     );
   }
   const filtered =
@@ -116,7 +116,7 @@ export default function Admin({ user }: { user: Account }) {
       <Sidebar user={user} active="admin" />
       <main className="main">
         <div className="topbar">
-          <PageHeading title="Employee accounts" help="Invite employees, manage access, and see who has completed setup." />
+          <PageHeading title="Employee accounts" help="Invite people, manage access and see who finished setup." />
           <button
             type="button"
             className="button primary"
@@ -126,7 +126,7 @@ export default function Admin({ user }: { user: Account }) {
             aria-controls={creating ? "create-employee" : undefined}
           >
             <Icon name={creating ? "close" : "plus"} />
-            {creating ? "Close form" : "Create Employee"}
+            {creating ? "Close" : "Add employee"}
           </button>
         </div>
         {error && (
@@ -142,10 +142,10 @@ export default function Admin({ user }: { user: Account }) {
         <section className="metrics" aria-label="Employee totals">
           {(
             [
-              ["Total accounts", team?.totals.users],
-              ["Active accounts", team?.totals.active],
-              ["Administrators", team?.totals.admins],
-              ["Setup complete", team?.totals.onboarded],
+              ["Total", team?.totals.users],
+              ["Active", team?.totals.active],
+              ["Admins", team?.totals.admins],
+              ["Setup done", team?.totals.onboarded],
             ] as const
           ).map(([label, count]) => (
             <div className="metric" key={label}>
@@ -157,7 +157,7 @@ export default function Admin({ user }: { user: Account }) {
         {creating && (
           <section className="panel settings-card" id="create-employee">
             <div className="panel-head">
-              <h2 className="panel-title">Create Employee</h2>
+              <h2 className="panel-title">Add employee</h2>
             </div>
             <form onSubmit={create}>
               <div className="form-grid">
@@ -189,7 +189,7 @@ export default function Admin({ user }: { user: Account }) {
                   className="button primary"
                   disabled={busy}
                 >
-                  {busy ? "Creating…" : "Create & send invitation"}
+                  {busy ? "Creating…" : "Add and send invite"}
                 </button>
                 <span className="panel-meta">
                   Employees set their own password. No public signup.
@@ -203,7 +203,7 @@ export default function Admin({ user }: { user: Account }) {
             <div>
               <h2 className="panel-title">Team</h2>
               <div className="panel-meta">
-                Manage employee access and setup invitations
+                Access and invites
               </div>
             </div>
             <button
@@ -257,7 +257,7 @@ export default function Admin({ user }: { user: Account }) {
               </tbody>
             </table>
             {team && !filtered.length && (
-              <div className="empty">No employees match your search.</div>
+              <div className="empty">No matches.</div>
             )}
           </div>
         </section>

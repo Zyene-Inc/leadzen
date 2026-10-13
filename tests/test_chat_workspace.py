@@ -166,6 +166,14 @@ def test_partial_chat_discovery_is_not_reported_as_complete(discovery_client):
     assert "partial results" in ChatThread.objects.get(pk=thread).messages.filter(role="assistant").latest("created_at").content
 
 
+def test_fewer_qualified_leads_without_a_provider_stop_is_reported_honestly(discovery_client):
+    with patch("leadzen.chat.engine.find_leads", return_value={"stored": 1, "partial": True, "failed": False}):
+        thread, row = tool_turn(discovery_client, "find_leads", {"count": 3, "includeEmails": False}, "Find three owners")
+    final = ChatThread.objects.get(pk=thread).messages.filter(role="assistant").latest("created_at").content
+    assert row.status == "succeeded"
+    assert "of 3 qualified leads" in final and "ask me to get their work emails" in final
+
+
 def test_stale_context_is_cleaned_when_reopening_history(discovery_client):
     a = person()
     thread, row = tool_turn(discovery_client, "get_lead", {"leadId": a.pk})
@@ -382,6 +390,22 @@ def test_selected_enrichment_requires_confirmation_and_updates_same_lead(discove
     assert manual["email"] == "sarah@example.com" and manual["email_status"] == "verified"
     assert result(thread)["credits"]["used"] == 1
     other.lead.refresh_from_db(); assert not other.lead.email
+
+
+@pytest.mark.parametrize("outcome,status,text", [
+    ({"partial": True, "failed": False}, "succeeded", "Email lookup finished: 0 of 1 contacts have a verified work email."),
+    ({"partial": True, "failed": True}, "failed", "Email lookup stopped after 0 of 1 contacts"),
+])
+def test_email_lookup_reports_its_own_outcome_not_discovery(discovery_client, outcome, status, text):
+    source, deal = qualified_contact()
+    thread, row = tool_turn(discovery_client, "find_work_emails", {"leadIds": [deal.pk]}, "Get Sarah's work email")
+    approval(discovery_client, row)
+    with patch("leadzen.chat.engine.find_leads", return_value={"stored": 0, **outcome}), patch("leadzen.chat.engine.decide") as model:
+        drive(row.pk)
+    model.assert_not_called()
+    row.refresh_from_db()
+    final = ChatThread.objects.get(pk=thread).messages.filter(role="assistant").latest("created_at").content
+    assert row.status == status and final.startswith(text) and "Discovery" not in final
 
 
 def test_selected_async_email_lookup_polls_accepted_request_until_terminal(discovery_client):

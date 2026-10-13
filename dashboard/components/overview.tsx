@@ -198,7 +198,7 @@ export default function Dashboard({ user }: { user: Account }) {
           <PageHeading
             title={greeting(overview.home.operator_name || user.name)}
             eyebrow={user.workspace_name}
-            help="Find the right people. See who is qualified, contacted and replying. Workspace totals cover all saved targets, including imported contacts."
+            help="Your leads, emails and replies at a glance. Totals include imported contacts."
           />
           <div className="top-actions">
             <button
@@ -223,12 +223,11 @@ export default function Dashboard({ user }: { user: Account }) {
           <section className="panel">
             <div className="panel-head">
               <div>
-                <h2 className="panel-title">Lead queue</h2>
+                <h2 className="panel-title">Leads</h2>
                 <div className="panel-meta">
-                  {total} leads match the current view
+                  {total} shown · updates live
                 </div>
               </div>
-              <span className="panel-meta">Updated live</span>
             </div>
             <div className="filters">
               <div className="search-field">
@@ -237,7 +236,7 @@ export default function Dashboard({ user }: { user: Account }) {
                   className="input"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search person, company, or email"
+                  placeholder="Search name, company or email"
                   aria-label="Search leads"
                 />
               </div>
@@ -248,7 +247,7 @@ export default function Dashboard({ user }: { user: Account }) {
                 aria-label="Filter leads"
               >
                 <option value="all">All stages</option>
-                <option value="Ready to Email">Ready to enrich</option>
+                <option value="Ready to Email">Ready to email</option>
                 <option value="Emailed">Emailed</option>
                 <option value="Completed">Completed</option>
               </select>
@@ -256,7 +255,7 @@ export default function Dashboard({ user }: { user: Account }) {
             <div
               className="table-wrap"
               role="region"
-              aria-label="Lead queue table"
+              aria-label="Leads table"
               tabIndex={0}
             >
               <table>
@@ -265,7 +264,7 @@ export default function Dashboard({ user }: { user: Account }) {
                     <th>Person</th>
                     <th>Company</th>
                     <th>Stage</th>
-                    <th>Last touch</th>
+                    <th>Last email</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -275,10 +274,10 @@ export default function Dashboard({ user }: { user: Account }) {
                         <div className="person">
                           {lead.name || [lead.first_name, lead.last_name]
                             .filter(Boolean)
-                            .join(" ") || "Unnamed lead"}
+                            .join(" ") || "No name"}
                         </div>
                         <div className="subtext">
-                          {lead.email || "No email resolved"}
+                          {lead.email || "No email yet"}
                         </div>
                       </td>
                       <td>
@@ -293,14 +292,14 @@ export default function Dashboard({ user }: { user: Account }) {
                         </span>
                         {lead.reply_count > 0 && (
                           <div className="subtext">
-                            {lead.reply_count} reply
+                            {lead.reply_count} {lead.reply_count === 1 ? "reply" : "replies"}
                           </div>
                         )}
                       </td>
                       <td>
                         <div><time dateTime={lead.email_sent_at || undefined}>{formatDate(lead.email_sent_at)}</time></div>
                         <div className="subtext">
-                          {lead.reason || "No qualification note"}
+                          {lead.reason || "No note"}
                         </div>
                       </td>
                     </tr>
@@ -308,16 +307,15 @@ export default function Dashboard({ user }: { user: Account }) {
                 </tbody>
               </table>
               {leads.length === 0 && (
-                <div className="empty">No leads match this view.</div>
+                <div className="empty">No leads match.</div>
               )}
             </div>
           </section>
           <div className="right-stack">
             <section className="panel send-box">
-              <div className="panel-title">AI-assisted outreach</div>
+              <div className="panel-title">Write emails</div>
               <p>
-                Preview, edit and approve each message, then confirm the exact
-                recipients. Mailbox pacing and daily safeguards stay on the server.
+                AI drafts each email. You approve every message and recipient.
               </p>
               <div className="send-controls">
                 <Link className="button primary" href="/outreach">Review outreach</Link>
@@ -325,16 +323,16 @@ export default function Dashboard({ user }: { user: Account }) {
               {!overview?.ai_ready && (
                 <p>
                   AI is not connected.{" "}
-                  <Link href="/outreach">Prepare outreach</Link> or{" "}
-                  <Link href="/settings">connect an AI provider</Link>.
+                  <Link href="/settings">Connect AI</Link> or{" "}
+                  <Link href="/outreach">write by hand</Link>.
                 </p>
               )}
             </section>
             <section className="panel">
               <div className="panel-head">
                 <div>
-                  <h2 className="panel-title">Mailbox capacity</h2>
-                  <div className="panel-meta">Measured sending headroom</div>
+                  <h2 className="panel-title">Emails left today</h2>
+                  <div className="panel-meta">Per mailbox</div>
                 </div>
               </div>
               <div className="capacity">
@@ -344,7 +342,7 @@ export default function Dashboard({ user }: { user: Account }) {
                       <div className="capacity-label">{box.address}</div>
                       <div className="subtext">
                         {box.paused_today
-                          ? "Paused by provider response"
+                          ? "Paused by email provider"
                           : `${overview?.transport === "smtp" ? "SMTP" : overview?.transport} connection`}
                       </div>
                     </div>
@@ -361,8 +359,7 @@ export default function Dashboard({ user }: { user: Account }) {
             <section className="panel">
               <div className="panel-head">
                 <div>
-                  <h2 className="panel-title">Mailbox activity</h2>
-                  <div className="panel-meta">Latest mailbox events</div>
+                  <h2 className="panel-title">Latest emails</h2>
                 </div>
               </div>
               <div className="activity">
@@ -376,7 +373,7 @@ export default function Dashboard({ user }: { user: Account }) {
                       <div className="activity-main">
                         {item.direction === "in"
                           ? `Reply from ${item.from}`
-                          : `${item.accepted ? "Accepted by provider for" : "Send attempt to"} ${item.to}`}
+                          : `${item.accepted ? "Sent to" : "Tried to send to"} ${item.to}`}
                       </div>
                       <div className="activity-meta">
                         {item.subject || "No subject"} ·{" "}
@@ -394,8 +391,8 @@ export default function Dashboard({ user }: { user: Account }) {
         </div>
         <section className="panel job-panel">
           <div className="panel-head">
-            <h2 className="panel-title">Outreach runs</h2>
-            <Link className="text-link" href="/activity">View activity →</Link>
+            <h2 className="panel-title">Send runs</h2>
+            <Link className="text-link" href="/activity">All activity →</Link>
           </div>
           <div className="activity">
             {jobs.map((job) => (
@@ -404,13 +401,13 @@ export default function Dashboard({ user }: { user: Account }) {
                 <div>
                   <span className={`badge ${job.status}`}>{job.status}</span>
                   <p className="settings-help">
-                    Requested: {job.requested_count} email{job.requested_count === 1 ? "" : "s"} ·{" "}
+                    {job.requested_count} email{job.requested_count === 1 ? "" : "s"} ·{" "}
                     <time dateTime={job.created_at}>{formatDate(job.created_at)}</time>
                   </p>
                 </div>
               </div>
             ))}
-            {!jobs.length && <div className="empty">No outreach runs yet.</div>}
+            {!jobs.length && <div className="empty">No send runs yet.</div>}
           </div>
         </section>
       </main>

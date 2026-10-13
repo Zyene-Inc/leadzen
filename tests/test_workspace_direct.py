@@ -104,3 +104,37 @@ def test_prepare_refuses_enrolled_leads_before_any_ai_call(connected):
         response = prepare(connected, [contact])
     assert response.status_code == 409 and "already enrolled" in response.json()["error"]
     writer.assert_not_called()
+
+
+def test_prepare_draft_accepts_multiline_settings_and_loose_model_tags(connected):
+    contact = add(connected)
+    SiteConfig.objects.update(product_docs="Zyene Reviews\r\nMore Google reviews.\n\tNo contract.", campaign_target="Restaurant owners\nUnited States")
+    step = PreparedStep(name="Reviews", subject="Quick question,\n{{ First_Name }}", body="Hi {{ first_name }}, does {{Company}} ask for reviews?")
+    with patch("leadzen.campaigns.write_initial_step", return_value=step):
+        response = prepare(connected, [contact])
+    assert response.status_code == 201, response.content
+    data = response.json()
+    assert data["steps"][0]["subject"] == "Quick question, {{first_name}}"
+    assert data["steps"][0]["body"] == "Hi {{first_name}}, does {{company}} ask for reviews?"
+    assert data["product"] == "Zyene Reviews\nMore Google reviews.\n\tNo contract."
+
+
+def test_prepare_draft_names_the_rejected_part(connected):
+    contact = add(connected)
+    bad = PreparedStep(name="Bad", subject="Hi {{job_title}}", body="Body")
+    with patch("leadzen.campaigns.write_initial_step", return_value=bad):
+        response = prepare(connected, [contact])
+    assert response.status_code == 502 and "Supported tags" in response.json()["error"]
+
+
+def test_prepare_draft_includes_editable_follow_ups(connected):
+    from leadzen.campaigns import FollowUp
+    contact = add(connected)
+    step = PreparedStep(name="Reviews", subject="Quick question", body="Hi {{first_name}}",
+                        followups=[FollowUp(subject="One more idea", body="Hi {{first_name}}, one idea."), FollowUp(subject="Closing the loop", body="Last note.")])
+    with patch("leadzen.campaigns.write_initial_step", return_value=step):
+        response = prepare(connected, [contact])
+    assert response.status_code == 201, response.content
+    data = response.json()
+    assert [s["delay_days"] for s in data["steps"]] == [0, 3, 5] and data["status"] == "draft"
+    assert not data["automatic_followups"]

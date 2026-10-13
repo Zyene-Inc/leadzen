@@ -60,11 +60,11 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
 
 function ActivityList({ data }: { data: ActivityData }) {
   if (!data.items.length) {
-    return <p className="empty">No activity yet. Lead decisions, discovery results and email events will appear here.</p>;
+    return <p className="empty">No activity yet. Lead searches, decisions and emails show up here.</p>;
   }
   return (
     <div className="workspace-activity-feed">
-      <p className="workspace-activity-note">Latest {data.limit} saved events · {LEADZEN_TIME_ZONE_LABEL}</p>
+      <p className="workspace-activity-note">Last {data.limit} saved events · {LEADZEN_TIME_ZONE_LABEL}</p>
       {groupEvents(data.items).map((group) => (
         <section className="workspace-activity-day" key={group.key} aria-label={group.label}>
           <h2>{group.label}</h2>
@@ -82,25 +82,25 @@ function DeveloperLogs({ close }: { close: () => void }) {
   return (
     <section id="developer-logs" className="panel workspace-developer-logs" aria-labelledby="developer-logs-title">
       <div className="panel-head">
-        <h2 id="developer-logs-title" className="panel-title" tabIndex={-1} ref={heading}>Developer Logs</h2>
+        <h2 id="developer-logs-title" className="panel-title" tabIndex={-1} ref={heading}>Developer logs</h2>
         <div className="top-actions">
           <button className="button" type="button" disabled={loading} onClick={refresh}>Refresh logs</button>
           <button className="button" type="button" onClick={close}>Close logs</button>
         </div>
       </div>
-      <p className="settings-help workspace-logs-note">Saved worker output and the latest log tails. Authentication details are removed.</p>
+      <p className="settings-help workspace-logs-note">Recent worker output. Login details are removed.</p>
       {error && <p className="error records-notice" role="alert">{error}</p>}
-      {loading && !data && <p className="empty" role="status">Loading developer logs…</p>}
-      {!loading && !error && !data?.items.length && <p className="empty">No developer logs have been recorded yet.</p>}
+      {loading && !data && <p className="empty" role="status">Loading logs…</p>}
+      {!loading && !error && !data?.items.length && <p className="empty">No logs yet.</p>}
       {data?.items.map((log) => (
         <article className="workspace-log" key={log.id} aria-label={log.label}>
           <div className="workspace-log-heading">
             <h3>{log.label}</h3>
             <time dateTime={log.at}>{activityTime(log.at).timestamp}</time>
           </div>
-          {log.output ? <pre tabIndex={0} aria-label={`${log.label} output`}>{log.output}</pre> : <p className="settings-help">No worker output recorded.</p>}
-          {log.truncated && <p className="settings-help">Showing the latest portion of this log.</p>}
-          {log.unavailable && <p className="settings-help">The worker log file is unavailable.</p>}
+          {log.output ? <pre tabIndex={0} aria-label={`${log.label} output`}>{log.output}</pre> : <p className="settings-help">No output.</p>}
+          {log.truncated && <p className="settings-help">Showing the end of this log.</p>}
+          {log.unavailable && <p className="settings-help">Log file not found.</p>}
         </article>
       ))}
     </section>
@@ -117,16 +117,16 @@ export function Activity({ user }: { user: Account }) {
   }
   return (
     <WorkspacePage user={user} active="activity" title="Activity"
-      description="Lead decisions, discovery results and email events, newest first."
+      description="Everything that happened, newest first."
       actions={(
         <>
-          <button className="button" type="button" ref={logsButton} aria-expanded={logsOpen} aria-controls="developer-logs" onClick={() => setLogsOpen((open) => !open)}>Developer Logs</button>
+          <button className="button" type="button" ref={logsButton} aria-expanded={logsOpen} aria-controls="developer-logs" onClick={() => setLogsOpen((open) => !open)}>Developer logs</button>
           <button className="button" type="button" disabled={loading} onClick={refresh}><Icon name="refresh" />Refresh</button>
         </>
       )}
     >
       <section className="panel" aria-label="Workspace activity">
-        {error ? <p className="error records-notice" role="alert">{error} Use Refresh to retry.</p>
+        {error ? <p className="error records-notice" role="alert">{error} Click Refresh to try again.</p>
           : loading && !data ? <p className="empty" role="status">Loading activity…</p>
           : data && <ActivityList data={data} />}
       </section>

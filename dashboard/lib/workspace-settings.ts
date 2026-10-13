@@ -48,12 +48,12 @@ export const settingSections = [
 export type SettingSection = (typeof settingSections)[number];
 export const settingTitles: Record<SettingSection, string> = {
   ai: "AI",
-  finder: "Lead Provider",
-  identity: "Identity",
-  mailbox: "Mailbox",
+  finder: "Lead provider",
+  identity: "Your profile",
+  mailbox: "Email account",
   schedule: "Sending hours",
   product: "Product",
-  target: "Target",
+  target: "Audience",
   signature: "Signature",
   booking: "Booking link",
 };
@@ -76,7 +76,7 @@ export function settingSummary(
     case "ai":
       return {
         main: llm.enabled
-          ? llm.provider || "Provider not configured"
+          ? llm.provider || "Not set up"
           : "AI disabled",
         detail: llm.model,
       };
@@ -87,12 +87,12 @@ export function settingSummary(
         detail:
           credits === undefined
             ? "Balance not checked"
-            : `${credits} credits · Saved balance`,
+            : `${credits} credits left`,
       };
     }
     case "identity":
       return {
-        main: workspace.identity.operator_name || "Identity not configured",
+        main: workspace.identity.operator_name || "Not set up",
         detail: [
           workspace.identity.country_name,
           workspace.identity.operator_email,
@@ -102,7 +102,7 @@ export function settingSummary(
       };
     case "mailbox":
       return {
-        main: mailbox.address || "Mailbox not configured",
+        main: mailbox.address || "Not set up",
         detail: mailbox.smtp_host.includes("zoho.")
           ? "Zoho"
           : mailbox.transport === "smtp"
@@ -115,23 +115,23 @@ export function settingSummary(
     }
     case "product":
       return {
-        main: workspace.product.product_name || "Product description",
-        detail: workspace.product.product_docs || "Describe what you offer",
+        main: workspace.product.product_name || "No product yet",
+        detail: workspace.product.product_docs || "Say what you sell",
       };
     case "target":
       return {
-        main: (workspace.target.audience?.industry && tidyIndustry(workspace.target.audience.industry)) || "Target audience",
-        detail: workspace.target.summary || "Choose who you want to reach",
+        main: (workspace.target.audience?.industry && tidyIndustry(workspace.target.audience.industry)) || "No audience yet",
+        detail: workspace.target.summary || "Pick who to reach",
       };
     case "signature":
       return {
         main: mailbox.signature || "No signature saved",
-        detail: "Included in your outreach",
+        detail: "Added to your emails",
       };
     case "booking":
       return {
         main: workspace.booking_link || "No booking link saved",
-        detail: "Optional link for scheduling a conversation",
+        detail: "Optional meeting link",
       };
   }
 }

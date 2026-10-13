@@ -18,15 +18,15 @@ import {
 } from "@/lib/workspace-settings";
 
 const sectionHelp: Record<SettingSection, string> = {
-  ai: "Connect a model for discovery, qualification and drafting. Manual campaigns work without AI. Provider usage can incur charges.",
-  finder: "Choose BetterContact or AI Ark for profiles and verified work emails. You can also add or import contacts yourself.",
-  identity: "Your outreach name and email. These do not change your login or sending mailbox.",
-  mailbox: "The account used to send email and check replies. Test the connection after changing it.",
-  schedule: "Choose outreach days and hours in New York (Eastern Time). Daylight saving time adjusts automatically. Daily Autopilot uses the same selected days and start time for lead discovery. Changes require reviewing automatic approvals again.",
-  product: "Describe what you offer and who it helps. This guides qualification and email drafts.",
-  target: "Choose the people and companies to find. Changes apply to new searches.",
-  signature: "Added to outgoing emails unless a campaign supplies its own signature.",
-  booking: "An optional scheduling URL. Insert the booking-link tag where you want it in a campaign.",
+  ai: "Helps find leads, check fit and write emails. Manual campaigns work without AI. AI use may cost money.",
+  finder: "BetterContact or AI Ark finds people and checked work emails. You can also add contacts yourself.",
+  identity: "Your name and email in outreach. Does not change your login or email account.",
+  mailbox: "Sends your emails and checks replies. Test it after any change.",
+  schedule: "Days and hours to send, in New York (Eastern Time). Daily Autopilot finds leads on these days at the start time. Changes need a new review of automatic approvals.",
+  product: "What you sell and who it helps. Guides lead checks and email drafts.",
+  target: "The people and companies to find. Applies to new searches.",
+  signature: "Added to your emails unless a campaign has its own.",
+  booking: "Optional meeting link. Add the booking-link tag in a campaign to use it.",
 };
 
 function SettingsRow({
@@ -114,17 +114,17 @@ export default function SettingsPage({ user }: { user: Account }) {
   const [notice, setNotice] = useState("");
   function saved(next: WorkspaceSettings) {
     setData(next);
-    setNotice("Settings updated.");
+    setNotice("Saved.");
   }
   return (
     <WorkspacePage
       user={user}
       active="settings"
       title="Settings"
-      description="Your connections, identity, product, audience and data in one place."
+      description="Your accounts, profile, product and audience."
       actions={
         <Link className="button" data-tour="tour-restart" href="/tour">
-          Take Product Tour
+          Take the tour
         </Link>
       }
     >

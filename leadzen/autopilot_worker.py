@@ -141,7 +141,8 @@ def prepare(run):
     from leadzen.mailboxes import active_mailboxes
     from leadzen.transports import sync_replies_strict
     external_guard()
-    sync_replies_strict(active_mailboxes().get(), classify=False)
+    # Rule-based classification only: no AI call, nothing is sent.
+    sync_replies_strict(active_mailboxes().get())
     baseline = Source.objects.order_by("-pk").values_list("pk", flat=True).first() or 0
     session = discover(run, new_source_after=baseline)
     ids = list(session.candidates.filter(produced=True, outcome="qualified", discovered=True, source_id__gt=baseline)

@@ -64,9 +64,9 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Review contro
     call.mockImplementation(async (_, init) => init?.method ? { run: { id: "new-run" } } : { revision: "e-rev", note: "One credit each", items: [{ id: 1, name: "Bruce", title: "Owner", company: "Practice" }] });
     render(<DiscoveryEmailReview runId="run1" close={vi.fn()} />);
     await screen.findByText("Bruce");
-    expect((screen.getByRole("button", { name: "Confirm & Find Emails" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "Confirm & find emails" }) as HTMLButtonElement).disabled).toBe(true);
     await userEvent.click(screen.getByRole("checkbox"));
-    await userEvent.click(screen.getByRole("button", { name: "Confirm & Find Emails" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm & find emails" }));
     const post = call.mock.calls.find(([, init]) => init?.method === "POST")!;
     expect(JSON.parse(String(post[1]?.body))).toMatchObject({ candidate_ids: [1], estimated_credits: 1, revision: "e-rev" });
   });
@@ -121,7 +121,7 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Review contro
     render(<SuppressionForm fixedEmail="bruce@example.com" cancel={cancel} saved={saved} />);
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(cancel).toHaveBeenCalledOnce(); expect(call).not.toHaveBeenCalled();
-    const button = screen.getByRole("button", { name: "Confirm suppression" });
+    const button = screen.getByRole("button", { name: "Block email" });
     fireEvent.click(button); fireEvent.click(button);
     await waitFor(() => expect(saved).toHaveBeenCalledOnce());
     expect(call).toHaveBeenCalledOnce();
@@ -159,9 +159,9 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Review contro
     await userEvent.click(screen.getByRole("button", { name: "Decrease lead count" }));
     await userEvent.click(screen.getByRole("radio", { name: /Find verified emails/ }));
     fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "0" } });
-    expect((screen.getByRole("button", { name: "Start Finding" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "Start finding" }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "3" } });
-    await userEvent.click(screen.getByRole("button", { name: "Start Finding" }));
+    await userEvent.click(screen.getByRole("button", { name: "Start finding" }));
     const post = call.mock.calls.find(([, init]) => init?.method === "POST")!;
     expect(JSON.parse(String(post[1]?.body))).toMatchObject({ count: 3, emails: true, estimated_credits: 3, revision: "f-rev" });
   });
@@ -170,12 +170,12 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Review contro
     const load = vi.fn().mockResolvedValue(undefined);
     const lead = { id: 1, name: "Bruce", email: "bruce@example.com", reply_count: 0, timeline: { events: [], sequences: [], blocked_reason: "", can_stop: true, suppression: null } } as unknown as Contact;
     render(<LeadTimeline lead={lead} load={load} />);
-    await userEvent.click(screen.getByRole("button", { name: "Stop Sequence" }));
+    await userEvent.click(screen.getByRole("button", { name: "Stop sequence" }));
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(call).not.toHaveBeenCalled();
-    await userEvent.click(screen.getByRole("button", { name: "Stop Sequence" }));
+    await userEvent.click(screen.getByRole("button", { name: "Stop sequence" }));
     await userEvent.click(screen.getByRole("button", { name: "Confirm stop" }));
-    expect(await screen.findByText("Sequence stopped. History retained.")).toBeTruthy();
+    expect(await screen.findByText("Sequence stopped. History kept.")).toBeTruthy();
     expect(JSON.parse(String(call.mock.calls[0][1]?.body))).toEqual({ stop: true });
     await userEvent.click(screen.getByRole("button", { name: "Refresh outreach timeline" }));
     expect(load).toHaveBeenCalledTimes(2);
@@ -189,7 +189,7 @@ describe("Connection test refresh", () => {
     render(<SettingsTest kind="ai" data={settings} disabled={false} saved={saved} />);
     await userEvent.click(screen.getByRole("button", { name: "Test" }));
     await userEvent.click(screen.getByRole("button", { name: "Confirm test" }));
-    expect(await screen.findByText("Connection test passed. Reload to see the updated status.")).toBeTruthy();
+    expect(await screen.findByText("Test passed. Reload to see the new status.")).toBeTruthy();
     expect(screen.queryByRole("alert")).toBeNull();
     expect(screen.queryByText("Unable to test connection")).toBeNull();
     expect(saved).not.toHaveBeenCalled();

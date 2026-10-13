@@ -94,7 +94,8 @@ const tourWrites = () => call.mock.calls.filter(([path, init]) => path === "tour
 const featureWrites = () => call.mock.calls.filter(([path, init]) => init?.method && !["tour", "chat/context"].includes(path));
 const stepDialog = async (id: string) => {
   const step = productTourSteps.find(item => item.id === id)!;
-  try { return await screen.findByRole("dialog", { name: step.title }); }
+  // Each step waits for its target to settle (+350ms); allow for a loaded test runner.
+  try { return await screen.findByRole("dialog", { name: step.title }, { timeout: 5000 }); }
   catch (cause) { throw new Error(`Step ${id}: server=${JSON.stringify(serverTour)} route=${window.location.pathname} target=${!!document.querySelector(step.target)} recovery=${document.querySelector(".product-tour-recovery")?.textContent ?? "none"} actions=${JSON.stringify(tourWrites())}`, { cause }); }
 };
 
@@ -116,7 +117,7 @@ test("walks every production step over actual screens and finishes without sendi
   await waitFor(() => expect(serverTour.tourCompleted).toBe(true));
   expect(featureWrites()).toEqual([]);
   expect(tourWrites().map(value => value.currentStep)).toEqual([...productTourSteps.map(step => step.id), "ready"]);
-  expect(screen.getByRole("link", { name: "Take Product Tour" })).toBeTruthy();
+  expect(screen.getByRole("link", { name: "Take the tour" })).toBeTruthy();
   // Normal product remains usable after the tour, including the real editor.
   await userEvent.click(screen.getByRole("button", { name: "Edit Sending hours" }));
   expect(screen.getByLabelText("Start time")).toHaveProperty("value", "08:00");

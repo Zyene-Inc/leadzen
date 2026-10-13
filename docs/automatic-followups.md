@@ -51,8 +51,9 @@ All business dates and daily totals use New York, regardless of operator country
 
 Every automatic send first requires a complete IMAP sync and checks again at the
 transport boundary for a reply, opt-out, changed approval and revoked account.
-Automatic inbox checks store replies without an AI call; classify and prepare
-suggestions separately through the reviewed inbox workflow. SMTP/API traffic
+Automatic inbox checks store and classify replies with the rule-based classifier
+(no AI call), so replies, bounces and opt-outs count immediately. AI reply
+suggestions are prepared separately through the reviewed inbox workflow. SMTP/API traffic
 and any provider usage remain subject to that provider's account terms.
 
 ## Running after owner approval

@@ -27,7 +27,7 @@ export default function LoginForm() {
         const payload = (await response.json().catch(() => ({}))) as {
           error?: string;
         };
-        setError(payload.error ?? "Unable to sign in");
+        setError(payload.error ?? "Could not sign in");
         return;
       }
       const payload = (await response.json()) as {
@@ -67,7 +67,7 @@ export default function LoginForm() {
       <section className="login-card" aria-labelledby="login-title">
         <Brand />
         <h1 id="login-title">Sign in to LeadZen</h1>
-        <p>Zyene's private outreach workspace for its products and services.</p>
+        <p>Zyene's private outreach tool.</p>
         {error && (
           <div className="error" role="alert">
             {error}
@@ -98,7 +98,7 @@ export default function LoginForm() {
           </button>
         </form>
         <p className="login-support">
-          Accounts are created by your administrator.
+          Your admin creates accounts.
           <br />
           <a href="mailto:support@zyene.com">
             Need access? Contact support@zyene.com

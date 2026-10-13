@@ -21,7 +21,7 @@ export function InboxCheck({ refreshed }: { refreshed: () => void }) {
     void api<{ check: Check | null }>("inbox/check", { signal: controller.signal }).then((result) => {
       if (!controller.signal.aborted) setCheck(result.check || null);
     }).catch((caught) => {
-      if (!controller.signal.aborted) setError(caught instanceof Error ? caught.message : "Could not restore your last inbox check");
+      if (!controller.signal.aborted) setError(caught instanceof Error ? caught.message : "Could not load your last check");
     }).finally(() => { if (!controller.signal.aborted) setRestoring(false); });
     return () => controller.abort();
   }, []);
@@ -59,8 +59,8 @@ export function InboxCheck({ refreshed }: { refreshed: () => void }) {
   const waiting = check?.run.status === "awaiting_approval";
   return <section className="inbox-check">
     <button ref={opener} data-tour="inbox-replies" className="button primary" disabled={restoring || busy || running || waiting} onClick={() => { if (check) { request.current = ""; setCheck(null); } void act(); }}>{busy ? "Please wait…" : running ? "Checking replies…" : "Check for replies"}</button>
-    {waiting && <section className="outreach-confirm" aria-label="Approve inbox access" onKeyDown={(e) => { if (e.key === "Escape" && !busy) void act(false); }}><h2 ref={heading} tabIndex={-1}>Check your connected inbox?</h2><p>Read replies from {String(check.run.approval?.preview.from_address || "your mailbox")} and store new replies. No AI is used and no emails will be sent.</p>{error && <p className="error" role="alert">{error}</p>}<div className="card-actions"><button className="button" disabled={busy} onClick={() => void act(false)}>Cancel</button><button className="button primary" disabled={busy} onClick={() => void act(true)}>Approve & check replies</button></div></section>}
+    {waiting && <section className="outreach-confirm" aria-label="Approve inbox access" onKeyDown={(e) => { if (e.key === "Escape" && !busy) void act(false); }}><h2 ref={heading} tabIndex={-1}>Check your inbox?</h2><p>Reads and saves replies to {String(check.run.approval?.preview.from_address || "your email account")}. No AI is used. No emails are sent.</p>{error && <p className="error" role="alert">{error}</p>}<div className="card-actions"><button className="button" disabled={busy} onClick={() => void act(false)}>Cancel</button><button className="button primary" disabled={busy} onClick={() => void act(true)}>Approve & check replies</button></div></section>}
     {!waiting && error && <p className="error" role="alert">{error}</p>}
-    {check && !waiting && <p role="status">{check.run.status === "succeeded" ? "Reply check complete. Inbox is up to date with this check." : running ? "Checking your mailbox. You can keep working." : "The check did not finish. Review the saved result before retrying."} <Link className="text-link" href={`/chat/${check.thread_id}`}>View result</Link></p>}
+    {check && !waiting && <p role="status">{check.run.status === "succeeded" ? "Done. Your inbox is up to date." : running ? "Checking replies. You can keep working." : "The check did not finish. See the result before you try again."} <Link className="text-link" href={`/chat/${check.thread_id}`}>View result</Link></p>}
   </section>;
 }

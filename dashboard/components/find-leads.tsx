@@ -34,20 +34,20 @@ function DiscoveryContext({
 }) {
   return (
     <>
-      <section className="discovery-target" aria-label="Current target">
-        <p className="eyebrow">Current target</p>
+      <section className="discovery-target" aria-label="Your target">
+        <p className="eyebrow">Your target</p>
         {loading ? (
           <div className="skeleton" aria-label="Loading saved target" />
         ) : (
           <p>
             {setup?.target ||
-              "Set your target audience in Purpose & setup before finding leads."}
+              "Set your target first."}
           </p>
         )}
       </section>
       {setup && !setup.ready && (
         <div className="discovery-notice" role="status">
-          <strong>Finish your setup first</strong>
+          <strong>Finish setup first</strong>
           <ul>
             {setup.blockers.map((item) => (
               <li key={item}>{item}</li>
@@ -64,7 +64,7 @@ function DiscoveryContext({
       )}
       {setup?.active_run && (
         <div className="discovery-notice" role="status">
-          An outreach task is already{" "}
+          A task is already{" "}
           {setup.active_run.status.replaceAll("_", " ")}.{" "}
           <Link
             className="text-link"
@@ -74,9 +74,9 @@ function DiscoveryContext({
                 : `/chat/${setup.active_run.thread_id}`
             }
           >
-            Review or stop your active task
+            Open or stop it
           </Link>{" "}
-          before starting another.
+          to start a new one.
         </div>
       )}
     </>
@@ -113,7 +113,7 @@ function DiscoveryOptions({
     <fieldset className="discovery-options" disabled={busy}>
       <legend className="sr-only">Discovery choices</legend>
       <label className="discovery-label" htmlFor="discovery-count">
-        How many qualified leads?
+        How many leads?
       </label>
       <div className="discovery-counter">
         <button
@@ -153,7 +153,7 @@ function DiscoveryOptions({
         id="discovery-count-help"
         className={valid ? "settings-help" : "error"}
       >
-        Choose 1–{maximum} qualified leads per run.
+        1–{maximum} per run.
       </p>
       <fieldset className="discovery-email-options">
         <legend className="discovery-label">Email addresses</legend>
@@ -166,7 +166,7 @@ function DiscoveryOptions({
           />
           <span>
             <strong>Don’t find emails</strong>
-            <span>{profileBudget ? "Paid profile search; no email lookup" : "Free discovery"}</span>
+            <span>{profileBudget ? "Paid search, no emails" : "Free discovery"}</span>
           </span>
         </label>
         <label className={`discovery-choice${emails ? " selected" : ""}`}>
@@ -180,8 +180,8 @@ function DiscoveryOptions({
             <strong>Find verified emails</strong>
             <span>
               {valid
-                ? `Email lookup: up to ${count} ${providerName} credit${count === 1 ? "" : "s"}`
-                : "Choose a lead count to see the credit limit"}
+                ? `Up to ${count} ${providerName} credit${count === 1 ? "" : "s"}`
+                : "Pick a count to see the cost"}
             </span>
           </span>
         </label>
@@ -204,15 +204,15 @@ function DiscoveryReview({
   const credits = count * (profileBudget + (emails ? 1 : 0));
   return (
     <section className="discovery-review" aria-label="Discovery cost preview">
-      <p className="eyebrow">Review before you start</p>
+      <p className="eyebrow">Check before you start</p>
       <div aria-live="polite" aria-atomic="true">
         <h2>
           {valid
             ? `Finding ${count} lead${count === 1 ? "" : "s"}`
-            : "Choose a valid lead count"}
+            : "Pick a valid count"}
         </h2>
         <dl className="discovery-cost">
-          <dt>{profileBudget ? `Maximum ${providerName} search + email budget` : `Estimated ${providerName} email cost`}</dt>
+          <dt>{profileBudget ? `Max ${providerName} cost (search + emails)` : `${providerName} email cost`}</dt>
           <dd>
             {!valid
               ? "Not estimated"
@@ -221,17 +221,17 @@ function DiscoveryReview({
         </dl>
         <p className="settings-help">
           {emails
-            ? "The verified-email run stops at the requested address limit. Some qualified profiles may have no available email."
-            : "Profile discovery only. No email addresses will be purchased."}
+            ? "Stops at your email limit. Some people may have no email."
+            : "No emails will be bought."}
         </p>
-        {profileBudget > 0 && <p className="settings-help">AI Ark charges 0.5 credits per returned profile, including rejected and duplicate profiles. This run searches one batch of up to {count * 2} profiles for up to {count} search credits, plus optional email credits. You may receive fewer qualified leads.</p>}
+        {profileBudget > 0 && <p className="settings-help">AI Ark charges 0.5 credits per profile, even if it does not fit. Searches up to {count * 2} profiles for up to {count} credits, plus email credits if chosen. You may get fewer leads.</p>}
       </div>
       <p className="discovery-safety">
         <Icon name="check" />
         No outreach emails will be sent.
       </p>
       <p className="settings-help">
-        AI-provider usage may incur separate charges.
+        AI use may cost extra.
       </p>
       <button
         className="button primary discovery-start"
@@ -239,12 +239,12 @@ function DiscoveryReview({
         disabled={!canStart}
       >
         {busy && <span className="operation-status-dot" aria-hidden="true" />}
-        {busy ? "Starting…" : "Start Finding"}
+        {busy ? "Starting…" : "Start finding"}
       </button>
       <p className="settings-help">
         {profileBudget
-          ? `Starting approves only the discovery choices and the ${providerName} profile-search and email-credit limit shown above.`
-          : "Starting approves only the discovery choices and email-credit limit shown above."}
+          ? `Starting approves only these choices and the ${providerName} credit limit above.`
+          : "Starting approves only these choices and the credit limit above."}
       </p>
     </section>
   );
@@ -334,9 +334,9 @@ export default function FindLeads({ user }: { user: Account }) {
       <Sidebar user={user} active="find-leads" />
       <main className="main">
         <header className="topbar">
-          <PageHeading title="Find New Leads" help="Find people who fit your target. Watch profiles arrive and see each qualification decision live." />
+          <PageHeading title="Find leads" help="Find people who fit your target. Watch each result live." />
           <Link className="button" href="/target">
-            Edit Target
+            Edit target
           </Link>
         </header>
         <div className="discovery-page">

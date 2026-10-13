@@ -302,3 +302,25 @@ def test_unrelated_suppression_keeps_campaign_approval_valid(connected):
     assert snapshot("send_campaign", args, execution=True) == before
     Suppression.objects.create(email=recipient.deal.lead.email.upper())
     assert snapshot("send_campaign", args, execution=True) != before
+
+
+def test_automatic_follow_up_check_classifies_replies_so_they_count(connected):
+    """Rule-based classification runs (no AI); the reply then counts in Leads, Home and Results."""
+    from cold_outreach.emails.models import FolderCoverage
+    from leadzen.analytics import results
+    campaign, recipient = setup_sequence(connected)
+    box = Mailbox.objects.get()
+    raw = (f"From: {recipient.deal.lead.email}\r\nTo: {campaign.from_address}\r\nSubject: Re: Hello\r\n"
+           "Message-ID: <real-reply@example.com>\r\nDate: Tue, 13 Oct 2026 10:00:00 -0400\r\n\r\nYes, tell me more.\r\n").encode()
+    def mirror(_box):
+        # The reply arrives during the automatic inbox check, stored unclassified.
+        Message.objects.create(mailbox=box, thread=recipient.deal.thread, direction=Direction.INBOUND, message_id="real-reply@example.com",
+                               from_address=recipient.deal.lead.email, to_address=campaign.from_address, subject="Re: Hello", body_text="Yes, tell me more.", raw=raw, kind="")
+        FolderCoverage.objects.update_or_create(mailbox=box, folder="INBOX", defaults={"synced_at": timezone.now() + timedelta(seconds=5)})
+    with patch("cold_outreach.emails.sync.mirror", side_effect=mirror), patch("leadzen.followups.within_window", return_value=True), \
+            patch("cold_outreach.core.sending_window.within_sending_window", return_value=True), patch("cold_outreach.emails.sender._deliver") as deliver:
+        run_due()
+    deliver.assert_not_called()
+    assert Message.objects.get(message_id="real-reply@example.com").kind == "human_reply"
+    leads = connected.get("/api/leads").json()
+    assert leads["summary"]["replied"] == 1

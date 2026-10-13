@@ -9,7 +9,7 @@ from leadzen import setup_wizard
 from leadzen import home
 from leadzen import discovery
 from leadzen import outreach, workspace_actions
-from leadzen import activity, autopilot
+from leadzen import activity, analytics, autopilot
 from leadzen import workspace_settings
 from leadzen.mcp import views as mcp_views
 from leadzen.mcp.transport import endpoint as mcp_endpoint
@@ -34,6 +34,7 @@ urlpatterns = [
     path("api/inbox/check", workspace_actions.check_replies),
     path("api/attention", workspace_actions.attention),
     path("api/outreach", outreach.overview),
+    path("api/results", analytics.view),
     path("api/outreach/reviews", outreach.reviews),
     path("api/outreach/reviews/<uuid:review_id>", outreach.review),
     path("api/outreach/reviews/<uuid:review_id>/drafts/<uuid:draft_id>", outreach.draft),
@@ -75,6 +76,7 @@ urlpatterns = [
     path("api/leads", web.leads),
     path("api/contacts", campaigns.add_contacts),
     path("api/contacts/<int:deal_id>", campaigns.contact),
+    path("api/contacts/emails", crm.work_emails),
     path("api/contacts/<int:deal_id>/email", crm.work_email),
     path("api/campaigns", campaigns.campaigns),
     path("api/campaigns/prepare", campaigns.prepare_campaign),

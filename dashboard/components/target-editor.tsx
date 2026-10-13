@@ -104,7 +104,7 @@ export default function TargetEditor({ user }: { user: Account }) {
       <Sidebar user={user} active="overview" />
       <main className="main">
         <div className="topbar">
-          <PageHeading title="Edit your target" help="Update the audience used for new discovery requests. Existing contacts and past qualification decisions stay unchanged." />
+          <PageHeading title="Edit target" help="Changes apply to new searches only. Saved leads stay as they are." />
         </div>
         {error ? (
           <div className="error" role="alert">
@@ -123,7 +123,7 @@ export default function TargetEditor({ user }: { user: Account }) {
         ) : target ? (
           <TargetForm target={target} />
         ) : (
-          <p role="status">Loading your target…</p>
+          <p role="status">Loading…</p>
         )}
       </main>
     </div>

@@ -95,28 +95,34 @@ export function DiscoveryActivityItem({ event, fresh = false }: { event: Discove
         {verdict && (
           <p className="live-reason discovery-person-reason">
             <span>{kind === "qualified" ? "Why qualified:" : "Why rejected:"}</span>{" "}
-            {data.reason || "No qualification reason was recorded."}
+            {data.reason || "No reason saved."}
           </p>
         )}
         {kind === "discovered" && (
           <p className="settings-help">
-            Returned by the profile search. {priorVerdict
-              ? `A ${data.outcome} verdict was already recorded.`
-              : "Qualification is still pending."}
+            Found by the search. {priorVerdict
+              ? `Already marked ${data.outcome}.`
+              : "Not checked yet."}
           </p>
         )}
         {kind === "evaluating" && (
           <p className="settings-help">
             {priorVerdict
-              ? "Checking this profile again against your target. A new verdict has not been recorded for this check."
-              : "Checking this profile against your target. A verdict has not been recorded yet."}
+              ? "Checking again. No new verdict yet."
+              : "Checking against your target. No verdict yet."}
           </p>
         )}
         {kind === "searching" && data.filters && (
           <p className="discovery-person-meta">{Object.entries(data.filters).map(([key, value]) => `${key}: ${value}`).join(" · ")}</p>
         )}
         {kind === "search_completed" && typeof data.profiles_returned === "number" && (
-          <p>{data.profiles_returned} profile{data.profiles_returned === 1 ? "" : "s"} returned · qualification determines which fit your target</p>
+          <p>{data.profiles_returned} profile{data.profiles_returned === 1 ? "" : "s"} found · next, check who fits</p>
+        )}
+        {kind === "email_lookup" && !!data.email_status && (
+          <p>
+            {data.name ? `${data.name}: ` : ""}
+            {data.email_status === "valid" ? "work email saved" : data.email_status === "unavailable" ? "provider returned no result" : "no work email found"}
+          </p>
         )}
         {data.message && <p className="settings-help">{data.message}</p>}
         {candidate && <CandidateLinks candidate={data} />}
@@ -137,7 +143,7 @@ export function DiscoveryActivityFeed({ events, visible = 18 }: { events: Discov
       </ol>
       {latest.length > visible && (
         <details className="discovery-details">
-          <summary>Earlier activity ({latest.length - visible})</summary>
+          <summary>Earlier steps ({latest.length - visible})</summary>
           <ol className="discovery-activity-list">
             {latest.slice(visible).map((event) => <DiscoveryActivityItem key={event.id} event={event} />)}
           </ol>
@@ -154,14 +160,14 @@ export function DiscoveryCandidateRow({ candidate, fresh = false }: { candidate:
       <div className="discovery-candidate-heading">
         <strong>{candidate.name}</strong>
         <span className={`badge ${candidate.outcome === "qualified" ? "crm-qualified" : candidate.outcome === "rejected" ? "crm-rejected" : ""}`}>
-          {decided ? candidate.outcome === "qualified" ? "Qualified" : "Rejected" : "Not evaluated yet"}
+          {decided ? candidate.outcome === "qualified" ? "Qualified" : "Rejected" : "Not checked yet"}
         </span>
       </div>
       <p className="discovery-person-meta">{[candidate.title, candidate.company].filter(Boolean).join(" · ")}</p>
       {decided && (
         <p className="discovery-person-reason">
           <span>{candidate.outcome === "qualified" ? "Why qualified:" : "Why rejected:"}</span>{" "}
-          {candidate.reason || "No qualification reason was recorded."}
+          {candidate.reason || "No reason saved."}
         </p>
       )}
       {candidate.email && <p className="discovery-person-meta">{candidate.email}</p>}

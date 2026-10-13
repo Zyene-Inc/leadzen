@@ -112,7 +112,7 @@ export function SettingsEditor({
       );
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "Unable to save settings",
+        caught instanceof Error ? caught.message : "Could not save",
       );
     } finally {
       submitting.current = false;
@@ -167,7 +167,7 @@ export function SettingsEditor({
               />
             </label>
             <label className="wide">
-              Describe your product
+              What you sell
               <textarea
                 className="input textarea"
                 required

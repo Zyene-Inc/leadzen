@@ -140,7 +140,7 @@ export function Inbox({ user }: { user: Account }) {
       user={user}
       active="inbox"
       title="Inbox"
-      description="Read stored inbound messages, including human replies, bounces and opt-outs. Refresh reloads saved messages; checking your mailbox for new replies is a separate approved action."
+      description="Replies, bounces and opt-outs. Refresh shows saved messages. Check for replies to get new ones."
       actions={
         <>
           <Refresh loading={loading} onClick={refresh} />
@@ -183,7 +183,7 @@ export function Inbox({ user }: { user: Account }) {
         </div>
         {error ? (
           <p className="error records-notice" role="alert">
-            {error} Use Refresh to retry.
+            {error} Try Refresh.
           </p>
         ) : loading ? (
           <p className="empty" role="status">
@@ -211,12 +211,12 @@ export function Inbox({ user }: { user: Account }) {
                     </summary>
                     <div className="inbox-body">
                       {message.body ||
-                        "No plain-text content was stored for this message."}
+                        "No text saved."}
                     </div>
                     {message.body_truncated && (
                       <p className="settings-help records-notice">
-                        Showing the first 12,000 characters. Read the full
-                        message in your mailbox.
+                        Showing the first 12,000 characters. See your
+                        mailbox for the rest.
                       </p>
                     )}
                   </details>
@@ -225,7 +225,7 @@ export function Inbox({ user }: { user: Account }) {
                   <div className="empty">
                     {query || kind !== "all"
                       ? "No messages match this view."
-                      : "No messages saved yet. Use Check for replies above after connecting your reply inbox in Settings."}
+                      : "No messages yet. Connect your reply inbox in Settings, then Check for replies."}
                   </div>
                 )}
               </div>
@@ -266,10 +266,10 @@ export function Suppression({ user }: { user: Account }) {
       user={user}
       active="suppression"
       title="Do Not Contact"
-      description="Addresses blocked from outreach in your workspace. Opt-outs remain protected even if a contact is deleted or imported again."
-      actions={<><button ref={addButton} className="button primary" onClick={() => setAdding(true)} aria-expanded={adding}>Add to suppression list</button><Refresh loading={loading} onClick={refresh} /></>}
+      description="Emails you will never contact. Opt-outs stay blocked, even if deleted or imported again."
+      actions={<><button ref={addButton} className="button primary" onClick={() => setAdding(true)} aria-expanded={adding}>Block an email</button><Refresh loading={loading} onClick={refresh} /></>}
     >
-      {adding && <SuppressionForm cancel={() => { setAdding(false); addButton.current?.focus(); }} saved={(created) => { setAdding(false); setQuery(""); setOffset(0); refresh(); setNotice(created ? "Address added. Future emails are blocked." : "Already on the list. The original reason and date are retained."); addButton.current?.focus(); }} />}
+      {adding && <SuppressionForm cancel={() => { setAdding(false); addButton.current?.focus(); }} saved={(created) => { setAdding(false); setQuery(""); setOffset(0); refresh(); setNotice(created ? "Blocked. Future emails won’t send." : "Already blocked. Original reason and date kept."); addButton.current?.focus(); }} />}
       {notice && <p className="success records-notice" role="status">{notice}</p>}
       <section className="panel">
         <div className="filters">
@@ -290,11 +290,11 @@ export function Suppression({ user }: { user: Account }) {
         </div>
         {error ? (
           <p className="error records-notice" role="alert">
-            {error} Use Refresh to retry.
+            {error} Try Refresh.
           </p>
         ) : loading ? (
           <p className="empty" role="status">
-            Loading suppression list…
+            Loading…
           </p>
         ) : (
           data && (
@@ -313,12 +313,12 @@ export function Suppression({ user }: { user: Account }) {
                         </dl>
                         {row.removable ? (removing === row.id
                           ? <div className="card-actions" role="group" aria-label={`Remove block for ${row.email}`}>
-                              <span>Allow future outreach to {row.email}? Stopped sequences stay stopped.</span>
+                              <span>Unblock {row.email}? Stopped sequences stay stopped.</span>
                               <button className="button" disabled={busy} onClick={() => { setRemoving(null); setRemoveError(""); }}>Cancel</button>
-                              <button className="button primary" disabled={busy} onClick={() => void removeBlock(row)}>{busy ? "Removing…" : "Confirm remove"}</button>
+                              <button className="button primary" disabled={busy} onClick={() => void removeBlock(row)}>{busy ? "Unblocking…" : "Confirm unblock"}</button>
                             </div>
-                          : <button className="button ghost" onClick={() => { setRemoving(row.id); setRemoveError(""); }}>Remove block</button>)
-                          : <p className="settings-help">Opt-out protected: cannot be removed.</p>}
+                          : <button className="button ghost" onClick={() => { setRemoving(row.id); setRemoveError(""); }}>Unblock</button>)
+                          : <p className="settings-help">Opt-out. Can’t be unblocked.</p>}
                         {removing === row.id && removeError && <p className="error" role="alert">{removeError}</p>}
                       </li>
                     ))}
@@ -326,8 +326,8 @@ export function Suppression({ user }: { user: Account }) {
                 {!data.items.length && (
                   <div className="empty">
                     {query
-                      ? "No suppressed addresses match this search."
-                      : "No suppressed addresses yet. Future opt-outs will appear here."}
+                      ? "No matches."
+                      : "No blocked emails yet. Opt-outs show here."}
                   </div>
                 )}
               </div>

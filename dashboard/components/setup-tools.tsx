@@ -53,7 +53,7 @@ export function SetupTools({
             checked={!discoveryEnabled}
             onChange={(event) => onDiscovery(!event.target.checked)}
           />
-          I’ll add or import contacts manually; set up discovery later
+          I’ll add contacts myself for now
         </label>
       )}
       {(kind !== "discovery" || discoveryEnabled) && (
@@ -69,16 +69,15 @@ export function SetupTools({
       {kind === "discovery" && (
         <div className="setup-credit-guide">
           <div>
-            <strong>Profile discovery</strong>
+            <strong>Finding people</strong>
             <span>{settings.lead_finder.provider === "ai_ark" ? "0.5 credits per returned profile" : "Free"}</span>
           </div>
           <div>
-            <strong>Verified work email</strong>
-            <span>1 credit per standard verified email</span>
+            <strong>Checked work email</strong>
+            <span>1 credit per checked email</span>
           </div>
           <p>
-            Enrichment is optional. Your provider’s plan and catch-all
-            verification rules may vary.
+            Emails are optional. Costs may vary by your provider’s plan.
           </p>
         </div>
       )}
@@ -93,8 +92,7 @@ export function SetupTools({
       )}
       {kind === "ai" && !settings.llm.enabled && (
         <p className="setup-note">
-          Manual campaigns are available without AI. Discovery and agentic chat
-          require an AI connection.
+          Manual campaigns work without AI. Finding leads and Chat need AI.
         </p>
       )}
     </>

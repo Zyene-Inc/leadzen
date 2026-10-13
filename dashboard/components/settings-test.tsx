@@ -5,11 +5,11 @@ import type { CheckKind } from "@/lib/setup-wizard";
 import { checkedDate, type WorkspaceSettings } from "@/lib/workspace-settings";
 
 const testDetails: Record<CheckKind, string> = {
-  ai: "Send one short model request using your saved AI connection. Your provider may charge for this test.",
+  ai: "Sends one short AI request with your saved key. Your AI provider may charge for it.",
   discovery:
-    "Check the selected lead provider’s account balance using your saved key. This does not buy profiles or verified emails.",
+    "Checks your lead provider balance with your saved key. Buys nothing.",
   mailbox:
-    "Sign in to your saved sending connection and reply inbox. This does not send emails or read message bodies.",
+    "Signs in to your saved email account. Sends nothing and reads no emails.",
 };
 function isConfigured(kind: CheckKind, data: WorkspaceSettings) {
   if (kind === "ai") return data.llm.enabled && data.llm.api_key_configured;
@@ -63,7 +63,7 @@ export function SettingsTest({
       });
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "Unable to test connection",
+        caught instanceof Error ? caught.message : "Could not run the test",
       );
       submitting.current = false;
       setBusy(false);
@@ -75,7 +75,7 @@ export function SettingsTest({
     } catch {
       // The test itself passed; only the follow-up refresh failed.
       setOpen(false);
-      setNotice("Connection test passed. Reload to see the updated status.");
+      setNotice("Test passed. Reload to see the new status.");
     } finally {
       submitting.current = false;
       setBusy(false);
@@ -94,8 +94,8 @@ export function SettingsTest({
             : check.connected
               ? "Connected ✓"
               : configured
-                ? "Needs test"
-                : "Not configured"}
+                ? "Not tested"
+                : "Not set up"}
         </span>
         {check.tested_at && (
           <span>

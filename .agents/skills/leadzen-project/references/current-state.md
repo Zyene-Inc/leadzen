@@ -1,5 +1,18 @@
 # Last verified project state
 
+## Results analytics — local source, October 13, 2026 (not deployed)
+
+New Workspace page `/results` (sidebar "Results") and `GET /api/results?period=7|30|90|all`
+(`leadzen/analytics.py`, read-only). Reply rate, emails sent, people emailed,
+bounces, opt-outs, best campaign/message (ranked only at 10+ people), a daily
+sent/replies trend in New York dates, and per-campaign, per-step results. A reply
+is credited to the last campaign step sent before it. Migration `0025_campaignsend`
+adds `CampaignSend` (campaign step → mail-log message) and backfills earlier sends
+from each recipient's thread, marked `inferred` and shown as "older sends estimated".
+`run_campaign` records each attempt. One-off reviewed emails count in totals only.
+The same uncommitted tree also has the Leads bulk email lookup, AI follow-ups,
+the Chat/AI Ark lookup fixes and the Workspace copy/motion pass from this date.
+
 ## Workspace gaps closed — local source, October 12, 2026 (not deployed)
 
 On top of PR #15: background work runs in lanes (`ChatRun.lane`; one active run

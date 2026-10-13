@@ -31,7 +31,7 @@ export default function EmailPreview({ draft, review, update, workspacePath }: {
     {editing ? <form onSubmit={save}>
       <label className="field"><span>Subject</span><input className="input" maxLength={200} required value={subject} disabled={review.kind === "reply" || busy} onChange={(e) => setSubject(e.target.value)} /></label>
       <label className="field"><span>Message</span><textarea className="input email-editor" autoFocus maxLength={10000} required disabled={busy} value={body} onChange={(e) => setBody(e.target.value)} /></label>
-      <p className="settings-help">Your saved signature and opt-out stay in the final preview. Saving clears approval.</p>
+      <p className="settings-help">Signature and opt-out are added. Saving removes approval.</p>
       <div className="card-actions"><button className="button" type="button" disabled={busy} onClick={() => { setEditing(false); editButton.current?.focus(); }}>Cancel edit</button><button type="submit" className="button primary" disabled={busy}>{busy ? "Saving…" : "Save changes"}</button></div>
     </form> : <><p><strong>Subject:</strong> {draft.subject}</p><pre className="email-copy">{draft.preview_body}</pre><div className="card-actions">
       <button type="button" className="button" disabled={!available || busy} onClick={() => void act("regenerate")}>{busy ? "Working…" : "Regenerate"}</button>
@@ -39,7 +39,7 @@ export default function EmailPreview({ draft, review, update, workspacePath }: {
       <button type="button" className="button primary" disabled={!available || busy || draft.approved} onClick={() => void act("approve")}>{draft.approved ? "Approved" : "Approve"}</button>
     </div></>}
     {review.actor_id && <AskLeadZen actorId={review.actor_id} context={{ currentDraftId: draft.id, workspacePath: workspacePath || `/outreach?review=${review.id}` }} />}
-    <p className="settings-help">Regenerate uses your connected AI provider and may incur AI charges. Approve saves your review only; it does not send.</p>
+    <p className="settings-help">Regenerate uses your AI provider; AI charges may apply. Approve does not send.</p>
     {error && <p className="error" role="alert">{error}</p>}
   </article>;
 }

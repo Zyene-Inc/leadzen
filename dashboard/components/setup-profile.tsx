@@ -45,7 +45,7 @@ export function SetupIdentity({
       <div className="panel-head">
         <h2 className="panel-title">About you</h2>
       </div>
-      <HelpText label="Outreach identity">Your name and email identify you in outreach. They are separate from your sending mailbox and do not change your LeadZen login.</HelpText>
+      <HelpText label="Outreach identity">Shown in your outreach. Separate from your email account and your LeadZen login.</HelpText>
       <div className="form-grid">
         <label>
           Your name
@@ -102,7 +102,7 @@ export function SetupOffer({
       <div className="panel-head">
         <h2 className="panel-title">What are you selling?</h2>
       </div>
-      <HelpText label="Writing a useful offer">Describe who your product helps, the problem it solves, and its value. The agent uses this to qualify leads and draft outreach.</HelpText>
+      <HelpText label="Writing a useful offer">Say who it helps and what problem it solves. LeadZen uses this to check leads and write emails.</HelpText>
       <div className="form-grid">
         <label>
           Outreach purpose
@@ -148,7 +148,7 @@ export function SetupOffer({
           />
         </label>
         <label className="wide">
-          Describe your product
+          What you sell
           <textarea
             className="input textarea"
             rows={4}
@@ -158,7 +158,7 @@ export function SetupOffer({
             onChange={(event) =>
               onChange({ ...draft, product_docs: event.target.value })
             }
-            placeholder="What does it do, who is it for, and what problem does it solve?"
+            placeholder="What it does, who it is for, and the problem it solves"
           />
         </label>
         <label className="wide">

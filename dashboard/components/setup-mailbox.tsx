@@ -41,7 +41,7 @@ export function SetupMailboxPreset({
   return (
     <section className="panel settings-card">
       <div className="panel-head">
-        <h2 className="panel-title">Sending mailbox</h2>
+        <h2 className="panel-title">Email account</h2>
       </div>
       <div className="form-grid">
         <label>
@@ -79,7 +79,7 @@ export function SetupMailboxPreset({
             }}
           >
             <option value="custom">
-              Custom / another provider or Zoho region
+              Other provider or Zoho region
             </option>
             {presets.map(([value, label]) => (
               <option key={value} value={value}>
@@ -89,8 +89,8 @@ export function SetupMailboxPreset({
           </select>
         </label>
       </div>
-      <HelpText label="Server settings">Choose a preset or use the SMTP/IMAP servers from your mailbox account. Zoho settings vary by region. Port 465 uses TLS immediately.</HelpText>
-      <HelpText label="App passwords & access">Use an app password when required. Providers that require OAuth or administrator-enabled SMTP/IMAP may not support password-only setup.</HelpText>
+      <HelpText label="Server settings">Pick a preset, or enter the SMTP/IMAP servers from your email provider. Zoho servers differ by region. Port 465 uses TLS.</HelpText>
+      <HelpText label="App passwords & access">Use an app password if your provider asks for one. Some providers need OAuth or admin approval and may not work with a password alone.</HelpText>
     </section>
   );
 }

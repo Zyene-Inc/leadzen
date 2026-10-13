@@ -87,7 +87,7 @@ test("lead history uses New York without a sequence and preserves the canonical 
   expect(container.querySelector("time")?.getAttribute("dateTime")).toBe(at);
   expect(container.querySelector("time")?.textContent).toBe("Oct 2, 2026");
   expect(container.querySelector("time")?.title).toContain("9:30 PM (America/New_York)");
-  expect(screen.getByText(/Recorded event dates use New York \(Eastern Time\)/)).toBeTruthy();
+  expect(screen.getByText(/Times in New York \(Eastern Time\)/)).toBeTruthy();
 });
 
 test("Chat approval expiry uses Eastern time without triggering an action", () => {

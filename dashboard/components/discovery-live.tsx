@@ -95,13 +95,12 @@ function ResultTable({ data }: { data: DiscoveryProgress }) {
       <div className="live-section-heading">
         <h2 id="results-title">Qualified leads</h2>
         <Link className="text-link" href="/contacts">
-          Open Leads →
+          All leads →
         </Link>
       </div>
       {!leads.length ? (
         <p className="settings-help">
-          Qualified profiles will appear here as they are saved. Rejected
-          candidates remain in the activity feed.
+          Qualified people show up here as they are found.
         </p>
       ) : (
         <div
@@ -112,12 +111,12 @@ function ResultTable({ data }: { data: DiscoveryProgress }) {
         >
           <table>
             <caption className="sr-only">
-              Qualified profiles saved by this run
+              Qualified people from this run
             </caption>
             <thead>
               <tr>
-                <th scope="col">Contact</th>
-                <th scope="col">Why qualified</th>
+                <th scope="col">Person</th>
+                <th scope="col">Why they fit</th>
                 <th scope="col">Email</th>
               </tr>
             </thead>
@@ -133,9 +132,9 @@ function ResultTable({ data }: { data: DiscoveryProgress }) {
                     <Profile value={lead.profile_url} />
                   </td>
                   <td className="live-table-reason">
-                    {lead.reason || "No reason recorded"}
+                    {lead.reason || "No reason saved"}
                   </td>
-                  <td>{lead.email || "Not looked up"}</td>
+                  <td>{lead.email || "Not found yet"}</td>
                 </tr>
               ))}
             </tbody>
@@ -144,8 +143,8 @@ function ResultTable({ data }: { data: DiscoveryProgress }) {
       )}
       {candidates.length > 0 && (
         <details className="discovery-details discovery-candidate-history">
-          <summary>Discovered profiles & decisions ({candidates.length})</summary>
-          <p className="settings-help">Recent saved profiles from this run, including rejected candidates and profiles still awaiting evaluation.</p>
+          <summary>Everyone found ({candidates.length})</summary>
+          <p className="settings-help">Includes people who did not fit or are not checked yet.</p>
           <DiscoveryCandidateList candidates={candidates} />
         </details>
       )}
@@ -157,19 +156,19 @@ function FailurePanel({ data }: { data: DiscoveryProgress }) {
   const last = data.current_activity ?? null;
   const activity =
     last && last.data
-      ? `It was evaluating ${last.data.name || "a profile"}${
+      ? `It stopped while checking ${last.data.name || "a profile"}${
           last.data.company ? ` at ${last.data.company}` : ""
-        } when it stopped.`
-      : "The run stopped mid-evaluation.";
+        }.`
+      : "It stopped while checking a profile.";
   return (
     <section className="discovery-notice" aria-labelledby="failure-title">
-      <h3 id="failure-title">Why did this run fail?</h3>
+      <h3 id="failure-title">This run failed</h3>
       <p>
         {activity} Check the{" "}
         <Link className="text-link" href={`/chat/${data.thread_id}`}>
           run transcript
         </Link>{" "}
-        for the exact stop reason, then verify Settings before retrying.
+        for the reason. Check Settings before you try again.
       </p>
     </section>
   );
@@ -177,8 +176,8 @@ function FailurePanel({ data }: { data: DiscoveryProgress }) {
 
 function ProgressSummary({ data }: { data: DiscoveryProgress }) {
   const stats = [
-    ["Discovered", data.counts.discovered],
-    ["Evaluated", data.counts.evaluated],
+    ["Found", data.counts.discovered],
+    ["Checked", data.counts.evaluated],
     ["Qualified", data.counts.qualified],
     ["Rejected", data.counts.rejected],
   ] as const;
@@ -198,8 +197,8 @@ function ProgressSummary({ data }: { data: DiscoveryProgress }) {
         </strong>
         <span>
           {data.goal.unit === "emails"
-            ? "verified email results"
-            : "qualified leads saved"}
+            ? "emails found"
+            : "leads saved"}
         </span>
       </div>
       <progress
@@ -218,25 +217,25 @@ function ProgressSummary({ data }: { data: DiscoveryProgress }) {
         <div>
           <dt>{creditLabel(data)} used</dt>
           <dd>
-            {data.credits.used === null ? "Awaiting report" : data.credits.used}
+            {data.credits.used === null ? "Waiting for count" : data.credits.used}
           </dd>
         </div>
       </dl>
       <DiscoverySearchScope scope={data.search_scope} />
       {data.credits.used === null && (
         <p className="settings-help">
-          {data.credits.reported} credits confirmed so far. An accepted lookup
-          has not reported its final usage; this is not a zero-cost result.
+          {data.credits.reported} credits confirmed so far. More may still be
+          charged; this is not a free result.
         </p>
       )}
       <p className="settings-help">{summaryNote(data)}</p>
       {typeof data.counts.awaiting_evaluation === "number" && data.counts.awaiting_evaluation > 0 && (
         <p className="settings-help">
-          {data.counts.awaiting_evaluation} discovered {data.counts.awaiting_evaluation === 1 ? "profile has" : "profiles have"} no saved qualification verdict yet.
+          {data.counts.awaiting_evaluation} {data.counts.awaiting_evaluation === 1 ? "person is" : "people are"} not checked yet.
         </p>
       )}
       <p className="settings-help">
-        {approvedBudget(data)} AI usage is separate. No outreach emails are sent by this run.
+        {approvedBudget(data)} AI use is extra. This run sends no emails.
       </p>
     </section>
   );
@@ -283,7 +282,7 @@ function RunControls({
             disabled={busy || data.pause_requested || data.stop_requested}
             onClick={() => control("pause")}
           >
-            {data.pause_requested ? "Pausing…" : "Pause Finding"}
+            {data.pause_requested ? "Pausing…" : "Pause"}
           </button>
         )}
         {data.status === "paused" && (
@@ -292,7 +291,7 @@ function RunControls({
             disabled={busy || expired}
             onClick={() => control("resume")}
           >
-            Resume Finding
+            Resume
           </button>
         )}
         <button
@@ -306,8 +305,8 @@ function RunControls({
       </div>
       <p className="settings-help">
         {expired && data.status === "paused"
-          ? "Approval expired. Stop this run and review a fresh search."
-          : "Pause and Stop take effect at the next safe checkpoint. In-flight requests may finish; accepted paid lookups cannot be undone."}
+          ? "Approval expired. Stop this run and start a new search."
+          : "Pause and Stop take effect after the current step. Paid lookups already sent cannot be undone."}
       </p>
       {error && (
         <p className="error" role="alert">
@@ -325,7 +324,7 @@ function FinishedActions({ data }: { data: DiscoveryProgress }) {
     <>
       <div className="live-actions live-finished-actions">
         <a className="button primary" href="#discovery-results">
-          Review Leads
+          See leads
         </a>
         {data.goal.unit === "leads" && data.counts.produced > 0 && (
           <button
@@ -333,11 +332,11 @@ function FinishedActions({ data }: { data: DiscoveryProgress }) {
             onClick={() => setReview(true)}
             disabled={review}
           >
-            Find Emails
+            Find emails
           </button>
         )}
         <Link className="button" href="/find-leads">
-          Find More
+          Find more
         </Link>
       </div>
       {review && (
@@ -361,7 +360,7 @@ export default function DiscoveryLive({
       <Sidebar user={user} active="find-leads" />
       <main className="main">
         <header className="topbar">
-          <PageHeading title="Lead discovery" help="See who qualifies, why, and what your search has used. Results are saved to Leads as they arrive." />
+          <PageHeading title="Finding leads" help="See who fits, why, and the credits used. Leads save as they arrive." />
           {data && (
             <Link className="button" href={`/chat/${data.thread_id}`}>
               View transcript
@@ -373,19 +372,18 @@ export default function DiscoveryLive({
             <div className="discovery-notice" role="alert">
               <p>{error}</p>
               <button className="button" onClick={refresh}>
-                Refresh progress
+                Refresh
               </button>
             </div>
           )}
           {!data && !error && (
-            <p role="status">Loading saved discovery progress…</p>
+            <p role="status">Loading…</p>
           )}
           {data && (
             <>
               {data.synthetic && (
                 <p className="discovery-notice">
-                  Synthetic local preview — sample profiles only. No external
-                  calls or real credits used.
+                  Sample data only. No real credits used.
                 </p>
               )}
               <ProgressSummary data={data} />
@@ -394,7 +392,7 @@ export default function DiscoveryLive({
               <RunControls data={data} refresh={refresh} />
               <FinishedActions key={data.id} data={data} />
               <section className="discovery-target">
-                <p className="eyebrow">Target for this run</p>
+                <p className="eyebrow">Target</p>
                 <p>{data.target}</p>
               </section>
               <div className="live-detail-grid">
@@ -403,15 +401,14 @@ export default function DiscoveryLive({
                   aria-labelledby="activity-title"
                 >
                   <div className="live-section-heading">
-                    <h2 id="activity-title">Live activity</h2>
+                    <h2 id="activity-title">Live steps</h2>
                     <span className="settings-help">Latest first · {data.events.length} saved events</span>
                   </div>
                   {data.events.length ? (
                     <DiscoveryActivityFeed events={data.events} />
                   ) : (
                     <p className="settings-help">
-                      Waiting for the first discovery action. Events appear here
-                      when the finder records them.
+                      Waiting for the first step…
                     </p>
                   )}
                 </section>

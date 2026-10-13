@@ -29,18 +29,18 @@ export function SuppressionForm({ fixedEmail, cancel, saved }: {
     } finally { submitting.current = false; setBusy(false); }
   }
   return <form className="suppression-form" onSubmit={submit} aria-label="Add to suppression list">
-    <h3>Block future emails to this address</h3>
+    <h3>Block this email</h3>
     <div className="suppression-fields">
-      <label>Email address<input ref={emailInput} className="input" name="email" type="email" required maxLength={150} defaultValue={fixedEmail} readOnly={!!fixedEmail} autoComplete="off" /></label>
+      <label>Email<input ref={emailInput} className="input" name="email" type="email" required maxLength={150} defaultValue={fixedEmail} readOnly={!!fixedEmail} autoComplete="off" /></label>
       <label>Reason<select className="input" name="reason" defaultValue="Manually suppressed">
         <option>Manually suppressed</option><option>Opted out</option>
       </select></label>
     </div>
-    <p className="settings-help">This permanently blocks future emails in your workspace, including after the lead is imported again. Existing history is retained.</p>
+    <p className="settings-help">Blocks all future emails for good, even if imported again. History is kept.</p>
     {error && <p className="error" role="alert">{error}</p>}
     <div className="card-actions">
       <button className="button" type="button" disabled={busy} onClick={cancel}>Cancel</button>
-      <button className="button primary" type="submit" disabled={busy}>{busy ? "Adding…" : "Confirm suppression"}</button>
+      <button className="button primary" type="submit" disabled={busy}>{busy ? "Blocking…" : "Block email"}</button>
     </div>
   </form>;
 }

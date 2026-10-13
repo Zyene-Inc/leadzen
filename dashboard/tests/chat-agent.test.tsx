@@ -128,8 +128,10 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Chat agent pa
     expect(workspaceLink(`/inbox?thread=4&review=${id}#fragment`)).toBeNull();
   });
   test("email lookup renders actual status and unknown credit usage", () => {
-    render(<ToolResult message={message("find_work_emails", { items: [{ id: 17, name: "Sarah Johnson", email: "", workspaceUrl: "/contacts/17" }], credits: { used: null } })} />);
+    render(<ToolResult message={message("find_work_emails", { items: [{ id: 17, name: "Sarah Johnson", email: "", email_status: "not_found", workspaceUrl: "/contacts/17" }, { id: 18, name: "Bruce Burrows", email: "", email_status: "not_requested", workspaceUrl: "/contacts/18" }, { id: 19, name: "Jon Bocina", email: "", email_status: "review", workspaceUrl: "/contacts/19" }], credits: { used: null } })} />);
     expect(screen.getByText("No verified email found")).toBeTruthy();
+    expect(screen.getByText("Not looked up")).toBeTruthy();
+    expect(screen.getByText("Lookup did not finish — review in Workspace")).toBeTruthy();
     expect(screen.getByText("Credits actually used: Awaiting provider report")).toBeTruthy();
     expect(screen.getAllByRole("link", { name: /Open in Workspace/ })[0].getAttribute("href")).toBe("/contacts/17");
   });

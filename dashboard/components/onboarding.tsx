@@ -37,7 +37,7 @@ export default function Onboarding({
       <Sidebar user={user} active="onboarding" />
       <main className="main">
         <div className="topbar">
-          <PageHeading title="Set up your workspace" help="Connect your tools, introduce your offer, and define who you want to reach. You can update these in Settings later." />
+          <PageHeading title="Set up your workspace" help="Connect your accounts, describe your offer and pick who to reach. You can change this later in Settings." />
         </div>
         <ol className="setup-steps" aria-label="Setup progress">
           {stepLabels.map((label, index) => (
@@ -128,7 +128,7 @@ export default function Onboarding({
                 Back
               </button>
               <span>
-                Saved as you continue · Connection tests last 24 hours
+                Saves as you go · Tests last 24 hours
               </span>
               <button type="submit" className="button" disabled={activity.busy}>
                 {activity.busy

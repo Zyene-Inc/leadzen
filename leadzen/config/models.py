@@ -285,6 +285,24 @@ class CampaignRecipient(models.Model):
         constraints = [models.UniqueConstraint(fields=["campaign", "deal"], name="campaign_deal_unique")]
 
 
+class CampaignSend(models.Model):
+    """Which campaign step produced one saved outbound message, for Results.
+
+    ``message_pk`` is the sender library's Message row in the same workspace
+    database. Delivery, replies and opt-outs are read from the saved mail log.
+    """
+    campaign = models.ForeignKey(EmailCampaign, on_delete=models.CASCADE, related_name="sends")
+    recipient = models.ForeignKey(CampaignRecipient, on_delete=models.CASCADE, related_name="sends")
+    step = models.PositiveSmallIntegerField()
+    message_pk = models.PositiveIntegerField(db_index=True)
+    sent_at = models.DateTimeField()
+    # Rebuilt from mail history for sends made before this table existed.
+    inferred = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["recipient", "step"], name="campaign_send_step_unique")]
+
+
 class WorkspaceContext(models.Model):
     stream_token = models.UUIDField(null=True, blank=True)
     stream_expires_at = models.DateTimeField(null=True, blank=True)

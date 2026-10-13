@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { DiscoveryActivityFeed, DiscoveryCandidateList, DiscoveryCurrentActivity, DiscoverySearchScope } from "@/components/discovery-activity";
-import { creditLabel, recentDiscoveryCandidates, statusLabel, type DiscoveryProgress } from "@/lib/discovery";
+import { creditLabel, findingActive, recentDiscoveryCandidates, statusLabel, type DiscoveryProgress } from "@/lib/discovery";
 
 export function ChatDiscoveryCard({ data }: { data: DiscoveryProgress }) {
   const candidates = recentDiscoveryCandidates(data);
@@ -26,7 +26,9 @@ export function ChatDiscoveryCard({ data }: { data: DiscoveryProgress }) {
         <div><dt>{creditLabel(data)} used</dt><dd>{data.credits.used === null ? "Awaiting provider report" : data.credits.used}</dd></div>
       </dl>
       <DiscoverySearchScope scope={data.search_scope} />
-      {typeof remaining === "number" && remaining > 0 && <p className="settings-help">{remaining} discovered {remaining === 1 ? "profile has" : "profiles have"} not received a qualification verdict yet.</p>}
+      {typeof remaining === "number" && remaining > 0 && <p className="settings-help">{findingActive(data.status)
+        ? `${remaining} discovered ${remaining === 1 ? "profile has" : "profiles have"} not received a qualification verdict yet.`
+        : `${remaining} extra ${remaining === 1 ? "profile was" : "profiles were"} returned by the search but not evaluated because the goal was reached or the run stopped.`}</p>}
       {candidates.length > 0 && (
         <DiscoveryCandidateList candidates={candidates} label="Recent discovery candidates" />
       )}

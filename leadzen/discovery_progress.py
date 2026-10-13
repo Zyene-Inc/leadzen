@@ -183,7 +183,7 @@ class Monitor:
     def verdict(self, lead):
         from openoutfind.crm.models import Deal, DealState
         from openoutfind.core.export import lead_record
-        from cold_outreach.leads.ingest import ingest
+        from leadzen.finder_ingest import ingest
         from cold_outreach.leads.models import Deal as Contact
         from leadzen.chat.engine import redact
         lead.refresh_from_db()
@@ -199,7 +199,8 @@ class Monitor:
             ingest(io.StringIO(json.dumps(lead_record(deal)) + "\n"))
             row.contact_id = Contact.objects.filter(lead__lead_id=str(lead.pk)).values_list("pk", flat=True).first()
         row.save()
-        if changed:
+        # A selected email lookup re-reads saved verdicts; it does not re-qualify.
+        if changed and not self.session.source_ids:
             self.event(outcome, candidate_payload(row))
 
     def output(self, record):
@@ -452,7 +453,7 @@ class ProgressOutput(io.StringIO):
         self.monitor, self.tail = monitor, ""
 
     def write(self, text):
-        from cold_outreach.leads.ingest import ingest
+        from leadzen.finder_ingest import ingest
         result = super().write(text)
         self.tail += text
         while "\n" in self.tail:

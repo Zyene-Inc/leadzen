@@ -84,7 +84,7 @@ export function MCPConnections() {
       await navigator.clipboard.writeText(endpoint);
       setNotice("Server URL copied.");
     } catch {
-      setActionError("Could not copy the URL. Select the server URL and copy it manually.");
+      setActionError("Could not copy. Select the URL and copy it manually.");
     }
   }
 
@@ -118,7 +118,7 @@ export function MCPConnections() {
       <div className={styles.heading}>
         <div className="central-settings-label">
           <h2 id="mcp-title">Claude &amp; ChatGPT</h2>
-          <HelpTooltip label="MCP connections">MCP lets an assistant use your existing LeadZen workspace. Each employee signs in separately. Your connections never expose another employee’s records or provider secrets.</HelpTooltip>
+          <HelpTooltip label="MCP connections">Lets Claude or ChatGPT use your LeadZen workspace. Each employee connects on their own. No one can see another employee’s records or keys.</HelpTooltip>
         </div>
         <span className={styles.protocol}>MCP</span>
       </div>
@@ -157,11 +157,11 @@ export function MCPConnections() {
             <button className="button" type="button" onClick={() => { void copy(); }}>Copy URL</button>
           </div>
         </div>
-      ) : <p className={styles.blocker} role="status">{data.reason || "Connectors need a public HTTPS server. Ask your administrator to finish setup."}</p>)}
+      ) : <p className={styles.blocker} role="status">{data.reason || "Needs a public HTTPS server. Ask your admin to set it up."}</p>)}
 
       {data && <div className={styles.connections}>
-        <div className={styles.connectionTitle}><h3>Connected apps</h3><button className="button ghost" type="button" onClick={refresh} disabled={loading || busy !== null}>Refresh connections</button></div>
-        {connections.length === 0 ? <p className={styles.status}>No apps connected yet. Connect from Claude or ChatGPT to get started.</p> : connections.map((connection) => (
+        <div className={styles.connectionTitle}><h3>Connected apps</h3><button className="button ghost" type="button" onClick={refresh} disabled={loading || busy !== null}>Refresh</button></div>
+        {connections.length === 0 ? <p className={styles.status}>No apps connected yet.</p> : connections.map((connection) => (
           <div className={styles.connection} key={connection.id}>
             <div className={styles.connectionInfo}>
               <strong>{connection.clientName}</strong>

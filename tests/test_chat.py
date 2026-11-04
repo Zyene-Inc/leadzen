@@ -340,6 +340,89 @@ def test_repeated_plan_answer_ends_the_turn(chat_client):
     assert detail["messages"][-1]["content"] == "Plan: step one again."
 
 
+def recording_model(reply):
+    """A real Pydantic AI model that records what the Chat agent sends it."""
+    from pydantic_ai.messages import ModelResponse, ToolCallPart
+    from pydantic_ai.models.function import DeltaToolCall, FunctionModel
+    seen = []
+    def respond(messages, info):
+        seen.append((messages, info))
+        return ModelResponse(parts=[ToolCallPart(info.output_tools[0].name, reply)])
+    async def stream(messages, info):
+        seen.append((messages, info))
+        yield {0: DeltaToolCall(name=info.output_tools[0].name, json_args=json.dumps(reply))}
+    return FunctionModel(respond, stream_function=stream), seen
+
+
+@pytest.mark.parametrize("text", ["hi", "Hello!", "hey there 👋", "good morning", "thanks so much", "How are you?", "who are you", "what can you do?", "bye for now", "great"])
+def test_greeting_and_small_talk_get_a_plain_reply_with_no_tool(chat_client, text):
+    from leadzen.chat.engine import drive
+    from leadzen.config.models import ChatRun
+    thread, run = turn(chat_client, text)
+    model, seen = recording_model({"text": "Hi! What would you like to work on?"})
+    with patch("leadzen.ai.build_model", return_value=model), patch("leadzen.chat.engine.execute") as tool:
+        drive(run)
+        tool.assert_not_called()
+    messages, info = seen[0]
+    # Only an answer can be produced: no action is in the output schema or tool list.
+    schema = json.dumps(info.output_tools[0].parameters_json_schema)
+    assert len(seen) == 1 and not info.function_tools and not info.allow_text_output
+    assert '"answer"' in schema and "find_leads" not in schema and "list_leads" not in schema
+    assert "Typed tools" not in messages[0].instructions
+    detail = chat_client.get(f"/api/chat/threads/{thread}").json()
+    assert detail["run"]["status"] == "succeeded" and ChatRun.objects.get(pk=run).steps == 1
+    assert [m["role"] for m in detail["messages"]] == ["user", "assistant"]
+    assert detail["messages"][-1]["content"] == "Hi! What would you like to work on?"
+
+
+def test_small_talk_never_runs_a_tool_even_if_the_model_picks_one(chat_client):
+    from leadzen.chat.engine import Decision, drive
+    thread, run = turn(chat_client, "hi")
+    with patch("leadzen.chat.engine.decide", return_value=Decision(tool="overview", text="Plan: check your workspace")) as model, patch("leadzen.chat.engine.execute") as tool:
+        drive(run)
+        tool.assert_not_called()
+    assert model.call_count == 1 and model.call_args.kwargs == {"reply_only": True}
+    detail = chat_client.get(f"/api/chat/threads/{thread}").json()
+    assert [m["role"] for m in detail["messages"]] == ["user", "assistant"]
+    assert not detail["messages"][-1]["content"].startswith("Plan:")
+
+
+@pytest.mark.parametrize("text", ["ok", "yes", "go ahead", "looks good", "send it", "hi, find 10 dentists in Texas", "thanks, now draft emails for them", "list my leads", "what can you do for my dental leads?", "hire a closer"])
+def test_requests_and_confirmations_keep_the_full_toolset(text):
+    from leadzen.chat.engine import conversational
+    assert conversational(text) is False
+
+
+def test_clear_request_uses_tools_and_the_model_sees_the_request_and_its_results(chat_client):
+    from leadzen.chat.engine import Decision, decide, drive
+    from leadzen.config.models import ChatRun
+    thread, run = turn(chat_client, "hi")
+    with patch("leadzen.chat.engine.decide", return_value=Decision(tool="answer", text="Hello!")):
+        drive(run)
+    with patch("leadzen.chat.views.launch"):
+        run = post(chat_client, f"/api/chat/threads/{thread}/messages", {"content": "How many leads do I have?", "request_id": str(uuid.uuid4())}).json()["run"]["id"]
+    calls = []
+    def planner(row, **kwargs):
+        calls.append(kwargs)
+        return Decision(tool="overview", text="Checking totals") if len(calls) == 1 else Decision(tool="answer", text="You have 0 leads.")
+    with patch("leadzen.chat.engine.decide", side_effect=planner):
+        drive(run)
+    assert calls == [{}, {}]
+    detail = chat_client.get(f"/api/chat/threads/{thread}").json()
+    assert [m["role"] for m in detail["messages"]][-3:] == ["user", "tool", "assistant"]
+    assert detail["messages"][-2]["data"]["tool"] == "overview"
+    # The actual agent receives the latest request separately from earlier turns.
+    model, seen = recording_model({"tool": "answer", "text": "You have 0 leads.", "arguments": {}})
+    with patch("leadzen.ai.build_model", return_value=model):
+        decide(ChatRun.objects.get(pk=run))
+    messages, info = seen[0]
+    prompt = json.loads(messages[0].parts[0].content)
+    assert prompt["message"] == "How many leads do I have?"
+    assert [m["role"] for m in prompt["this_turn"]] == ["tool", "assistant"] and '"leads"' in prompt["this_turn"][0]["tool_data"]
+    assert [m["text"] for m in prompt["earlier_conversation"]] == ["hi", "Hello!"]
+    assert "Typed tools" in messages[0].instructions and "find_leads" in json.dumps(info.output_tools[0].parameters_json_schema)
+
+
 def test_tool_results_reach_the_model_with_every_record_and_total():
     from leadzen.chat.engine import compact
     items = [{"name": f"Lead {i}", "linkedin_url": f"https://www.linkedin.com/in/lead-{i}", "profile_text": "x" * 5000, "reason": "y" * 900} for i in range(30)]

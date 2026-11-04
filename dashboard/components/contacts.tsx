@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Sidebar } from "@/components/sidebar";
 import { Avatar } from "@/components/avatar";
 import { Icon } from "@/components/icon";
+import { RowMenu } from "@/components/row-menu";
 import type { Account } from "@/lib/auth";
 import { useWorkspaceRevision } from "@/lib/workspace-updates";
 import { api } from "@/lib/client-api";
@@ -422,7 +423,7 @@ export default function Contacts({ user }: { user: Account }) {
             aria-busy={loading}
             tabIndex={0}
           >
-            <table>
+            <table className="lead-table">
               <thead>
                 <tr>
                   <th><input type="checkbox" aria-label="Select leads on this page" title="Select up to 25 leads" checked={!!items.length && items.some((item) => selectedIds.has(item.id))} disabled={loading || !items.length} onChange={() => {
@@ -486,62 +487,37 @@ export default function Contacts({ user }: { user: Account }) {
                         >
                           Edit
                         </button>
-                        {(item.state === "Ready to Email" ||
-                          item.state === "Emailed") && (
+                        <RowMenu label={`More actions for ${item.name}`}>
+                          {(item.state === "Ready to Email" || item.state === "Emailed") && (
+                            <button type="button" className="button ghost" disabled={busy} onClick={() => void mutate(`contacts/${item.id}`, "PUT", { stop: true }, "Outreach stopped. History kept.")}>
+                              <Icon name="stop" />Stop
+                            </button>
+                          )}
+                          {item.crm_status !== "suppressed" && (
+                            <button
+                              type="button"
+                              className="button ghost danger-button"
+                              disabled={busy || !item.email}
+                              onClick={() => {
+                                if (window.confirm(`Opt out ${item.email}? All future emails will be blocked.`))
+                                  void mutate(`contacts/${item.id}`, "PUT", { suppress: true }, "Opted out. Future emails are blocked.");
+                              }}
+                            >
+                              <Icon name="suppression" />Opt out
+                            </button>
+                          )}
                           <button
                             type="button"
-                            className="button ghost"
+                            className="button ghost danger-button"
                             disabled={busy}
-                            onClick={() =>
-                              void mutate(
-                                `contacts/${item.id}`,
-                                "PUT",
-                                { stop: true },
-                                "Outreach stopped. History kept.",
-                              )
-                            }
+                            aria-label={`Delete ${item.name}`}
+                            aria-expanded={deleting === item.id}
+                            aria-controls={deleting === item.id ? `delete-contact-${item.id}` : undefined}
+                            onClick={() => setDeleting(deleting === item.id ? null : item.id)}
                           >
-                            Stop
+                            <Icon name="trash" />Delete
                           </button>
-                        )}
-                        <button
-                          type="button"
-                          className="button ghost danger-button"
-                          disabled={busy || !item.email}
-                          onClick={() => {
-                            if (
-                              window.confirm(
-                                `Opt out ${item.email}? All future emails will be blocked.`,
-                              )
-                            )
-                              void mutate(
-                                `contacts/${item.id}`,
-                                "PUT",
-                                { suppress: true },
-                                "Opted out. Future emails are blocked.",
-                              );
-                          }}
-                        >
-                          Opt out
-                        </button>
-                        <button
-                          type="button"
-                          className="button ghost danger-button"
-                          disabled={busy}
-                          aria-label={`Delete ${item.name}`}
-                          title="Delete"
-                          aria-expanded={deleting === item.id}
-                          aria-controls={
-                            deleting === item.id
-                              ? `delete-contact-${item.id}`
-                              : undefined
-                          }
-                          onClick={() =>
-                            setDeleting(deleting === item.id ? null : item.id)
-                          }
-                        >
-                          <Icon name="trash" />
-                        </button>
+                        </RowMenu>
                       </div>
                       {deleting === item.id && (
                         <div

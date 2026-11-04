@@ -12,6 +12,7 @@ import { useWorkspaceRevision } from "@/lib/workspace-updates";
 import { api } from "@/lib/client-api";
 import { HomeSummaryPanel, type HomeSummary } from "@/components/home-summary";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { stateLabel } from "@/lib/format";
 
 type Lead = {
   name: string;
@@ -397,9 +398,8 @@ export default function Dashboard({ user }: { user: Account }) {
           <div className="activity">
             {jobs.map((job) => (
               <div className="activity-row" key={job.id}>
-                <span className="activity-dot" />
                 <div>
-                  <span className={`badge ${job.status}`}>{job.status}</span>
+                  <span className={`badge ${job.status}`}>{stateLabel(job.status)}</span>
                   <p className="settings-help">
                     {job.requested_count} email{job.requested_count === 1 ? "" : "s"} ·{" "}
                     <time dateTime={job.created_at}>{formatDate(job.created_at)}</time>

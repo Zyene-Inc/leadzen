@@ -2,7 +2,7 @@
 # It runs bounded CLI jobs or the private API. Development and tests run natively.
 
 # ── Stage 1: build a venv holding the package and its dependencies ──
-FROM python:3.12.15-slim-trixie@sha256:02108f5d322dd89f1c9e552442c25acb0543dfdbc455693a5599624f20d9155d AS deps
+FROM python:3.12.16-slim-trixie@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30 AS deps
 
 # The build helper is itself part of the trusted build input. Install only the
 # pinned, hash-verified wheels and backend dependencies; none reaches runtime.
@@ -17,7 +17,7 @@ RUN uv build --wheel --no-build-isolation --python /usr/local/bin/python --out-d
     && VIRTUAL_ENV=/opt/venv uv pip install --no-cache --no-deps /wheels/*.whl
 
 # ── Stage 2: runtime ────────────────────────────────────────────
-FROM python:3.12.15-slim-trixie@sha256:02108f5d322dd89f1c9e552442c25acb0543dfdbc455693a5599624f20d9155d AS runtime
+FROM python:3.12.16-slim-trixie@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30 AS runtime
 
 # One self-contained directory: the package, its dependencies, and the
 # `leadzen` console script. Nothing from the build stage — no git, no uv.

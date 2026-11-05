@@ -13,6 +13,18 @@ provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
 
+## November 5, 2026 — MCP public URL corrected (owner-approved)
+
+The live backend runs `f77dc31` (`/opt/leadzen-f77dc31-20261013`,
+`/etc/leadzen-f77dc31.env`). `LEADZEN_MCP_PUBLIC_URL` was
+`https://leadzen-api.zyene.com`, without `/mcp`, so every OAuth discovery route
+returned 503 and Claude reported "Couldn't register with leadzen's sign-in
+service". It is now `https://leadzen-api.zyene.com/mcp`. The previous file is
+`/etc/leadzen-f77dc31.env.pre-mcp-url-20261105`. Only `leadzen.service` was
+restarted; it and `leadzen-followups.service` are active. Verified: both
+`/.well-known` metadata routes return 200, and `/mcp` returns a 401 challenge
+that points to the resource metadata. No real client connection was tested.
+
 ## October 13, 2026 — backend, database and dashboard `0273acb`
 
 **Source released:** `main` at `0273acb` (Merge PR #18: bulk email lookup, AI

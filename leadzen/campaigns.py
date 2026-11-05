@@ -23,6 +23,7 @@ from leadzen.config.models import CampaignRecipient, CampaignSend, ContactPrefer
 from leadzen.configuration import SettingsError, effective
 from leadzen.sending_schedule import within_sending_window
 from leadzen.transports import SendingWindowClosed
+from leadzen.reply_sorting import replies
 
 FIELDS = {"first_name": 100, "last_name": 100, "company": 200, "title": 200, "website": 500, "profile_text": 10000}
 TAGS = {"first_name", "last_name", "company", "sender_name", "booking_link"}
@@ -528,7 +529,7 @@ def sending_preview(campaign, count):
             continue
         if initial_attempted(campaign, r):
             continue
-        if d.thread_id and Message.objects.filter(thread_id=d.thread_id, direction=Direction.INBOUND).exists():
+        if d.thread_id and replies(thread_id=d.thread_id).exists():
             continue
         if campaign.category != "outreach" and not ContactPreferences.objects.filter(lead=d.lead, opted_in=True).exists():
             continue
@@ -592,7 +593,7 @@ def approved_job_guard(job):
 def replied_after_outreach(deal):
     """An inbound message from this address after our first email, in any thread."""
     first = Message.objects.filter(direction=Direction.OUTBOUND, to_address__iexact=deal.lead.email).order_by("recorded_at").values_list("recorded_at", flat=True).first()
-    return first is not None and Message.objects.filter(direction=Direction.INBOUND, from_address__iexact=deal.lead.email, recorded_at__gte=first).exists()
+    return first is not None and replies(from_address__iexact=deal.lead.email, recorded_at__gte=first).exists()
 
 
 def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, automatic=False):
@@ -642,7 +643,7 @@ def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, au
         if recipient.next_send_at and recipient.next_send_at > timezone.now():
             continue
         deal = recipient.deal
-        if deal.state == DealState.COMPLETED or ContactPreferences.objects.filter(lead=deal.lead, deleted_at__isnull=False).exists() or Suppression.objects.filter(email__iexact=deal.lead.email).exists() or initial_attempted(campaign, recipient) or (deal.thread_id and Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists()):
+        if deal.state == DealState.COMPLETED or ContactPreferences.objects.filter(lead=deal.lead, deleted_at__isnull=False).exists() or Suppression.objects.filter(email__iexact=deal.lead.email).exists() or initial_attempted(campaign, recipient) or (deal.thread_id and replies(thread_id=deal.thread_id).exists()):
             recipient.status = "stopped"
             recipient.save(update_fields=["status"])
             continue
@@ -655,7 +656,7 @@ def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, au
             # sequence but never counts as a reply in Leads, Home or Results.
             sync_replies_strict(box)
             deal.refresh_from_db()
-            if Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists() or Suppression.objects.filter(email__iexact=deal.lead.email).exists() or (recipient.next_step > 0 and replied_after_outreach(deal)):
+            if replies(thread_id=deal.thread_id).exists() or Suppression.objects.filter(email__iexact=deal.lead.email).exists() or (recipient.next_step > 0 and replied_after_outreach(deal)):
                 recipient.status = "stopped"
                 recipient.save(update_fields=["status"])
                 continue
@@ -691,7 +692,7 @@ def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, au
                 raise PermissionError("Campaign access or recipient permission changed")
             if campaign.category != "outreach" and not ContactPreferences.objects.filter(lead=deal.lead, opted_in=True).exists():
                 raise PermissionError("Recipient opt-in was withdrawn")
-            if deal.thread_id and Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists():
+            if deal.thread_id and replies(thread_id=deal.thread_id).exists():
                 raise PermissionError("A reply arrived before sending")
             if automatic:
                 guard(campaign, recipient, row.pk) if campaign.autopilot_run_id else guard(campaign, recipient)
@@ -710,7 +711,7 @@ def run_campaign(campaign_id, count, *, recipient_ids=None, before_send=None, au
                 if (campaign.status != "active" or any(getattr(campaign, key) != value for key, value in frozen_content.items())
                         or deal.state == DealState.COMPLETED or ContactPreferences.objects.filter(lead=deal.lead, deleted_at__isnull=False).exists()
                         or Suppression.objects.filter(email__iexact=deal.lead.email).exists()
-                        or (deal.thread_id and Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists())
+                        or (deal.thread_id and replies(thread_id=deal.thread_id).exists())
                         or (recipient.next_step > 0 and replied_after_outreach(deal))):
                     raise PermissionError("Campaign or recipient permission changed before sending")
                 if campaign.category != "outreach" and not ContactPreferences.objects.filter(lead=deal.lead, opted_in=True).exists():

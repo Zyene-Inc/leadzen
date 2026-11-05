@@ -3262,3 +3262,7 @@ td .row-actions { flex-wrap: nowrap; align-items: center; }
 @keyframes zy-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (max-width: 960px) { .results-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .results-tile.lead { grid-column: 1 / -1; } }
 @media (max-width: 640px) { .results-highlights { grid-template-columns: 1fr; } .results-campaign > summary { grid-template-columns: minmax(0, 1fr) auto; } .results-minor { grid-column: 1 / -1; } }
+.reply-label { display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; line-height: 18px; color: var(--muted); white-space: nowrap; vertical-align: middle; }
+.reply-label-interested { color: var(--success); border-color: color-mix(in srgb, var(--success) 35%, var(--line)); }
+.reply-label-not_interested, .reply-label-unsubscribe { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, var(--line)); }
+.reply-label-out_of_office, .reply-label-needs_review { color: var(--warning); border-color: color-mix(in srgb, var(--warning) 35%, var(--line)); }

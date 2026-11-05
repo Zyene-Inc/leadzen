@@ -527,3 +527,18 @@ class MailSignal(models.Model):
     reason = models.CharField(max_length=200, blank=True, default="")
     suppressed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ReplyLabel(models.Model):
+    """How one saved inbound reply was sorted, read once by rules (no AI).
+
+    ``label`` is interested, not_interested, out_of_office, unsubscribe,
+    auto_reply or needs_review. ``action`` records what LeadZen did about it:
+    "blocked" (Do not contact) or "held" (follow-ups paused until ``resume_on``).
+    """
+    message_pk = models.PositiveIntegerField(unique=True)
+    label = models.CharField(max_length=16, db_index=True)
+    source = models.CharField(max_length=8, blank=True, default="")
+    return_date = models.DateField(null=True, blank=True)
+    action = models.CharField(max_length=8, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)

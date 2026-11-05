@@ -495,6 +495,17 @@
       "reviewer": "Ashish Dikonda (owner-authorized release review, 2026-11-04)",
       "evidence": "https://security-tracker.debian.org/tracker/CVE-2026-119373; exact Trivy report sha256:60c04b32f114811cd21e63d24c9555684e714a2de606b128c62bbac95edbe12e (https://github.com/Zyene-Inc/leadzen/actions/runs/41936231349).",
       "reason": "The overflow requires a detail=none FTS5 table and a prefix MATCH query. LeadZen, Django and openoutfind create no FTS5 tables and expose no arbitrary-SQL path; LeadZen issues only fixed PRAGMA/schema statements and ORM queries. Recovery opens only operator-supplied backups. The exact report lists no compatible Debian fix (SQLite fix is in 3.54.0)."
+    },
+    {
+      "id": "CVE-2026-76844",
+      "package": "zlib1g",
+      "version": "1:1.3.dfsg+really1.3.1-1+b1",
+      "architecture": "linux/amd64",
+      "expires": "2026-11-18",
+      "disposition": "accepted-risk",
+      "reviewer": "Ashish Dikonda (owner-authorized release review, 2026-11-05)",
+      "evidence": "https://security-tracker.debian.org/tracker/CVE-2026-76844; exact Trivy report sha256:60c43a028ef22650d14a21a006e5556dfc267da4a1fd043061ae6614675a5959 (https://github.com/Zyene-Inc/leadzen/actions/runs/42091259169).",
+      "reason": "The overflow is in zlib's gzFile write path (gz_write after a failed write()). In the image only dpkg-deb and libapt-pkg import gzwrite/gzputs/gzprintf, and LeadZen never runs package tooling; its uid 1000 runtime cannot install packages. CPython's zlib and gzip modules use the deflate stream API, not gzFile, and no native extension in /opt/venv imports it. The exact report lists no compatible Debian fix."
     }
   ],
   "policy": "Keep complete Trivy output. HIGH/CRITICAL matches require compatible patching or an exact package/version/architecture decision with reviewer, reason, primary evidence and expiry. No blanket ignore-unfixed waiver."

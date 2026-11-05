@@ -55,3 +55,25 @@ Ashish Dikonda approved these decisions as owner on November 4, 2026.
 
 Reassess before expiry, and sooner if compatible Trixie fixes become available. Update the image
 and remove each resolved decision, and do not renew an entry without a fresh review.
+
+## Addendum — November 5, 2026
+
+The `security / image` scan for commit `ed51da1`
+([run 42091259169](https://github.com/Zyene-Inc/leadzen/actions/runs/42091259169), report SHA-256
+`60c43a028ef22650d14a21a006e5556dfc267da4a1fd043061ae6614675a5959`) reported three new HIGH matches:
+
+- [CVE-2026-109518](https://security-tracker.debian.org/tracker/CVE-2026-109518) in `apt` and
+  `libapt-pkg7.0` 3.0.3. **Fixed by patching, not accepted.** Commit `6fe78c6` moves the base image to
+  the November 5 rebuild of `python:3.12.16-slim-trixie`
+  (`sha256:4840d514c583a4d3d8cad3940e68dee6f0f6f3635c12fcd0a3d74c21a5b93a54`), which ships apt 3.0.4.
+- [CVE-2026-76844](https://security-tracker.debian.org/tracker/CVE-2026-76844) in `zlib1g`
+  1:1.3.dfsg+really1.3.1-1+b1 is a heap overflow in zlib's `gz_write()` that follows a failed `write()`.
+  Debian lists trixie as affected, with no fix. Trivy's title for this entry wrongly names
+  webpack-dev-middleware, but its description and package are zlib's.
+  Within the image, only `dpkg-deb` and `libapt-pkg` import the `gzwrite`/`gzputs`/`gzprintf` family.
+  LeadZen never runs package tooling, and its uid 1000 runtime cannot install packages. CPython's
+  `zlib` and `gzip` modules use the deflate stream API rather than gzFile. No native extension in
+  `/opt/venv` imports the affected functions.
+
+The CVE-2026-76844 decision expires November 18, 2026, together with the batch above.
+Ashish Dikonda approved it as owner on November 5, 2026.

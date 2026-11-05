@@ -2576,6 +2576,22 @@ summary {
 .central-test-status .connected { color: var(--success); }
 .central-test-confirm { flex-basis: 100%; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); }
 .central-test-confirm p { margin: 0; font-size: 13px; line-height: 1.6; }
+.domain-health .error { flex-basis: 100%; margin: 0; }
+.domain-health-list { flex-basis: 100%; display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.domain-health-item { padding: 12px 16px; border: 1px solid var(--line); border-radius: var(--radius); }
+.domain-health-item p { margin: 4px 0 0; font-size: 13px; line-height: 1.6; color: var(--body); }
+.domain-health-head { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.domain-health-status { font-size: 13px; color: var(--muted); }
+.domain-health-item.pass .domain-health-status { color: var(--success); }
+.domain-health-item.fail .domain-health-status { color: var(--danger); }
+.domain-health-item.unknown .domain-health-status { color: var(--warning); }
+.domain-health-item details { margin-top: 8px; font-size: 13px; }
+.domain-health-item summary { cursor: pointer; min-height: 24px; }
+.domain-health-item ol { margin: 8px 0; padding-left: 20px; line-height: 1.6; }
+.domain-health-fix { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; }
+.domain-health-fix dt { color: var(--muted); }
+.domain-health-fix dd { margin: 0; min-width: 0; }
+.domain-health-fix code { font-family: var(--font-mono, monospace); font-size: 12px; overflow-wrap: anywhere; }
 .central-settings-editor { margin: 24px 0 0 174px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .central-settings-editor h3 { margin: 0 0 20px; font-size: 14px; }
 .central-settings-editor > fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }

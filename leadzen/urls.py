@@ -28,6 +28,7 @@ urlpatterns = [
     path("api/mcp/authorize", mcp_views.consent),
     path("", web.dashboard_entry),
     path("api/settings/backup", workspace_settings.backup),
+    path("api/settings/domain-health", workspace_settings.domain_health),
     path("api/activity", activity.feed),
     path("api/autopilot", autopilot.settings),
     path("api/activity/logs", activity.developer_logs),

@@ -24,6 +24,7 @@ const routes: Record<string, string[]> = {
   "jobs/send": ["POST"],
   settings: ["GET", "PUT"],
   "settings/backup": ["POST"],
+  "settings/domain-health": ["POST"],
   "onboarding/wizard": ["GET", "PUT"],
   "onboarding/test": ["POST"],
   "onboarding/complete": ["POST"],

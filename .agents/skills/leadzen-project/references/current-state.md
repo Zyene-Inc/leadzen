@@ -1,5 +1,21 @@
 # Last verified project state
 
+## Bounces, spam complaints and domain health — branch feat/bounce-domain-health, November 4, 2026 (not deployed)
+
+Ported from Warmbly (Apache-2.0, commit `0df02b5`; see `THIRD_PARTY_NOTICES.md`).
+After every mailbox check, `sync_replies_strict` calls `leadzen/mail_signals.py`,
+which reads each saved inbound report once (`MailSignal`, migration
+`0026_mailsignal`). A hard bounce (permanent DSN whose cause names the recipient,
+`leadzen/dsn.py`) or a spam complaint (ARF abuse report, `leadzen/arf.py`) for one
+of this mailbox's own sends goes on Do not contact through `block_address`, with
+"Hard bounce: …" or "Spam complaint …" as the reason. Soft bounces (4.x.x, full
+mailbox, reputation/policy refusals) are recorded only. The sync rule now keeps
+complaint reports from abuse/feedback senders. Settings → Email account has a
+"Check domain" button (`POST /api/settings/domain-health`, `leadzen/domain_health.py`,
+dnspython) for SPF, DKIM, DMARC and MX of the saved mailbox's domain, with fixes.
+DKIM that cannot be found is "Not verified", never "missing". The local preview
+answers DNS synthetically. No real mailbox or DNS check was run.
+
 ## Results analytics — local source, October 13, 2026 (not deployed)
 
 New Workspace page `/results` (sidebar "Results") and `GET /api/results?period=7|30|90|all`

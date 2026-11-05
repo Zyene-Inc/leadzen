@@ -161,6 +161,15 @@ for profile in AccountProfile.objects.using("default").select_related("user").al
                 Message.objects.create(mailbox=box, thread=thread, direction="in", kind="human_reply", message_id="leadzen-home-synthetic-in", from_address="bruce@preview.example", to_address=box.from_address, received_at=timezone.now(), subject="Synthetic preview reply")
 
 
+class SyntheticDNS:
+    """Domain health in the preview: SPF and MX present, DMARC missing, no network."""
+    def txt(self, name):
+        return (["v=spf1 include:zoho.com ~all"] if name == "preview.example" else []), False
+
+    def mx(self, name):
+        return ["mx.zoho.com"], False
+
+
 def synthetic_probe(values, kind):
     from leadzen.lead_finder import key
     keys = {"ai": values.llm_api_key, "discovery": key(values), "mailbox": values.imap_password or values.mailbox_password}
@@ -323,7 +332,7 @@ def reviewed_preview_launch(request, job):
     threading.Thread(target=work, daemon=True).start()
     return JsonResponse({"job": {"id": str(job.pk)}}, status=202)
 
-with patch("leadzen.accounts.invitations.post_email", catch_mail), patch("smtplib.SMTP", side_effect=RuntimeError("External sending disabled in local preview")), patch("smtplib.SMTP_SSL", side_effect=RuntimeError("External sending disabled in local preview")), patch("leadzen.web._launch_job", reviewed_preview_launch), patch("leadzen.outreach.generate", synthetic_email_drafts), patch("leadzen.outreach.sync_replies_strict"), patch("leadzen.outreach.within_sending_window", return_value=True), patch("cold_outreach.emails.sender._deliver", synthetic_send), patch("cold_outreach.emails.steps.send.space_out", synthetic_space_out), patch("leadzen.chat.views.launch", preview_launch), patch("leadzen.chat.engine.decide", synthetic_decision), patch("leadzen.chat.engine.find_leads", synthetic_find), patch("leadzen.ai.build_model", side_effect=RuntimeError("External models disabled in preview")), patch("leadzen.email_api.post_email", side_effect=RuntimeError("External email disabled in preview")), patch("leadzen.transports.public_socket", side_effect=RuntimeError("External mailbox access disabled in preview")), patch("leadzen.setup_wizard.probe_ai", lambda values: synthetic_probe(values, "ai")), patch("leadzen.setup_wizard.probe_discovery", lambda values: synthetic_probe(values, "discovery")), patch("leadzen.setup_wizard.probe_mailbox", lambda values: synthetic_probe(values, "mailbox")):
+with patch("leadzen.domain_health.Lookups", SyntheticDNS), patch("leadzen.domain_health.reserved", return_value=False), patch("leadzen.accounts.invitations.post_email", catch_mail), patch("smtplib.SMTP", side_effect=RuntimeError("External sending disabled in local preview")), patch("smtplib.SMTP_SSL", side_effect=RuntimeError("External sending disabled in local preview")), patch("leadzen.web._launch_job", reviewed_preview_launch), patch("leadzen.outreach.generate", synthetic_email_drafts), patch("leadzen.outreach.sync_replies_strict"), patch("leadzen.outreach.within_sending_window", return_value=True), patch("cold_outreach.emails.sender._deliver", synthetic_send), patch("cold_outreach.emails.steps.send.space_out", synthetic_space_out), patch("leadzen.chat.views.launch", preview_launch), patch("leadzen.chat.engine.decide", synthetic_decision), patch("leadzen.chat.engine.find_leads", synthetic_find), patch("leadzen.ai.build_model", side_effect=RuntimeError("External models disabled in preview")), patch("leadzen.email_api.post_email", side_effect=RuntimeError("External email disabled in preview")), patch("leadzen.transports.public_socket", side_effect=RuntimeError("External mailbox access disabled in preview")), patch("leadzen.setup_wizard.probe_ai", lambda values: synthetic_probe(values, "ai")), patch("leadzen.setup_wizard.probe_discovery", lambda values: synthetic_probe(values, "discovery")), patch("leadzen.setup_wizard.probe_mailbox", lambda values: synthetic_probe(values, "mailbox")):
     print("Local API ready at http://127.0.0.1:8000. Invitations are caught locally; reviewed outreach uses synthetic acceptance only. All external providers and campaign sends are disabled.", flush=True)
     with make_server("127.0.0.1", 8000, get_wsgi_application(), handler_class=QuietLog, server_class=PreviewServer) as server:
         server.serve_forever()

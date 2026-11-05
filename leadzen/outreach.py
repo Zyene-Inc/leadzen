@@ -563,18 +563,30 @@ def run_review(job, *, wait=False):
 @access(workspace=True)
 def conversations(request):
     from leadzen.web import _workspace_page
+    from leadzen.reply_sorting import LABELS, label_payload, labels_for
+    from leadzen.config.models import ReplyLabel
     limit, offset, query = _workspace_page(request)
+    label = request.GET.get("label", "")
+    if label and label not in LABELS:
+        return error("Unknown reply label")
     threads = Thread.objects.filter(pk__in=Message.objects.filter(direction="in").values("thread_id"))
     if query:
         threads = threads.filter(Q(messages__from_address__icontains=query) | Q(messages__subject__icontains=query) | Q(messages__body_text__icontains=query)).distinct()
     from django.db.models import Max
-    threads = threads.annotate(latest=Max("messages__recorded_at")).order_by("-latest", "-pk")
+    latest_in = Message.objects.filter(thread_id=OuterRef("pk"), direction="in").order_by("-recorded_at", "-pk").values("pk")[:1]
+    threads = threads.annotate(latest=Max("messages__recorded_at"), latest_in=Subquery(latest_in)).order_by("-latest", "-pk")
+    if label:
+        # A conversation is filed under the label of its newest reply.
+        threads = threads.filter(latest_in__in=ReplyLabel.objects.filter(label=label).values("message_pk"))
+    page = list(threads[offset:offset + limit])
+    labels = labels_for(t.latest_in for t in page)
     items = []
-    for t in threads[offset:offset + limit]:
+    for t in page:
         m = t.messages.order_by("-recorded_at", "-pk").first()
         d = Deal.objects.select_related("lead").filter(thread=t, lead__preferences__deleted_at__isnull=True).first()
         items.append({"id": t.pk, "name": " ".join(filter(None, [d.lead.first_name, d.lead.last_name])) if d else m.from_address,
-                      "address": d.lead.email if d else m.from_address, "subject": m.subject, "snippet": m.body_text[:220], "kind": m.kind, "last_at": m.recorded_at.isoformat(), "count": t.messages.count()})
+                      "address": d.lead.email if d else m.from_address, "subject": m.subject, "snippet": m.body_text[:220], "kind": m.kind, "last_at": m.recorded_at.isoformat(), "count": t.messages.count(),
+                      "reply_label": label_payload(labels.get(t.latest_in))})
     return JsonResponse({"items": items, "total": threads.count(), "limit": limit, "offset": offset})
 
 
@@ -587,10 +599,13 @@ def conversation(request, thread_id):
         return error("Conversation not found", 404)
     d = Deal.objects.select_related("lead").filter(thread=t, lead__preferences__deleted_at__isnull=True).first()
     parent = last_inbound(t.pk)
+    from leadzen.reply_sorting import label_payload, labels_for
+    shown = list(t.messages.order_by("-recorded_at", "-pk")[:100])[::-1]
+    labels = labels_for(m.pk for m in shown)
     reason = blocked(d, "reply", parent) if d else "No active contact is associated with this conversation"
     if not reason and not active_mailboxes().filter(pk=t.mailbox_id).exists():
         reason = "Restore this conversation's original sending mailbox"
     return JsonResponse({"id": t.pk, "name": " ".join(filter(None, [d.lead.first_name, d.lead.last_name])) if d else "Saved conversation",
                          "address": d.lead.email if d else parent.from_address if parent else "", "can_reply": not bool(reason), "reply_blocker": reason,
-                         "messages": [{**_message_payload(m), "body": m.body_text[:12000], "body_truncated": len(m.body_text) > 12000} for m in list(t.messages.order_by("-recorded_at", "-pk")[:100])[::-1]],
+                         "messages": [{**_message_payload(m), "body": m.body_text[:12000], "body_truncated": len(m.body_text) > 12000, "reply_label": label_payload(labels.get(m.pk))} for m in shown],
                          "total_messages": t.messages.count()})

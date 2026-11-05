@@ -259,6 +259,8 @@ def sync_replies_strict(mailbox, *, classify=True):
     honor_saved_optouts(mailbox)
     from leadzen.mail_signals import apply_mail_signals
     apply_mail_signals(mailbox)
+    from leadzen.reply_sorting import sort_replies
+    sort_replies(mailbox)
 
 
 def message_exists(mailbox):

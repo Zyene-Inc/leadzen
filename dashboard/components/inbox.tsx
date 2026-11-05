@@ -11,10 +11,18 @@ import { api } from "@/lib/client-api";
 import { useStoredData } from "@/lib/use-stored-data";
 import { sentTime, type EmailReview } from "@/lib/outreach";
 import type { Account } from "@/lib/auth";
+import { replyLabels, replyLabelDetail, type ReplyLabelName } from "@/lib/reply-labels";
 
-type ConversationRow = { id: number; name: string; address: string; subject: string; snippet: string; kind: string; last_at: string; count: number };
+function LabelChip({ value }: { value: ReplyLabel | undefined }) {
+  if (!value) return null;
+  const detail = replyLabelDetail(value.label, value.return_date, value.action);
+  return <span className={`reply-label reply-label-${value.label}`} title={detail || undefined}>{replyLabels[value.label]}{detail && <span className="sr-only">. {detail}</span>}</span>;
+}
+
+type ReplyLabel = { label: ReplyLabelName; return_date: string | null; action: "" | "blocked" | "held" } | null;
+type ConversationRow = { id: number; name: string; address: string; subject: string; snippet: string; kind: string; last_at: string; count: number; reply_label?: ReplyLabel };
 type InboxPage = { items: ConversationRow[]; total: number; limit: number; offset: number };
-type ConversationDetail = { id: number; name: string; address: string; can_reply: boolean; reply_blocker: string; total_messages: number; messages: { id: number; direction: string; from: string; to: string; subject: string; body: string; body_truncated: boolean; sent_at: string | null; kind: string; accepted: boolean }[] };
+type ConversationDetail = { id: number; name: string; address: string; can_reply: boolean; reply_blocker: string; total_messages: number; messages: { id: number; direction: string; from: string; to: string; subject: string; body: string; body_truncated: boolean; sent_at: string | null; kind: string; accepted: boolean; reply_label?: ReplyLabel }[] };
 
 function messageAuthor(direction: string, from: string, contact: ConversationDetail) {
   if (direction === "out") return "You";
@@ -46,22 +54,23 @@ function Conversation({ threadId, close, initialReviewId, actorId }: { threadId:
     {!data && <p role="status">{loading ? "Loading conversation…" : "Could not load this conversation."}</p>}
     {data && <><div className="conversation-messages">
       {data.total_messages > data.messages.length && <p className="settings-help">Latest {data.messages.length} of {data.total_messages} messages.</p>}
-      {data.messages.map((m) => <article key={m.id} className="conversation-message"><div className="email-preview-head"><strong>{messageAuthor(m.direction, m.from, data)}</strong><time>{sentTime(m.sent_at)}</time></div><p className="settings-help">{m.subject} · {m.direction === "out" ? m.accepted ? "Sent" : "Send not confirmed" : m.kind.replaceAll("_", " ") || "Unclassified"}</p><pre className="email-copy">{m.body || "No text saved"}</pre>{m.body_truncated && <p className="settings-help">Cut to the first 12,000 characters.</p>}</article>)}
+      {data.messages.map((m) => <article key={m.id} className="conversation-message"><div className="email-preview-head"><strong>{messageAuthor(m.direction, m.from, data)}</strong><time>{sentTime(m.sent_at)}</time></div><p className="settings-help">{m.subject} · {m.direction === "out" ? m.accepted ? "Sent" : "Send not confirmed" : m.kind.replaceAll("_", " ") || "Unclassified"} <LabelChip value={m.reply_label} /></p>{m.reply_label && replyLabelDetail(m.reply_label.label, m.reply_label.return_date, m.reply_label.action) && <p className="settings-help">{replyLabelDetail(m.reply_label.label, m.reply_label.return_date, m.reply_label.action)}</p>}<pre className="email-copy">{m.body || "No text saved"}</pre>{m.body_truncated && <p className="settings-help">Cut to the first 12,000 characters.</p>}</article>)}
     </div><section className="reply-suggestion" aria-labelledby="suggested-reply-title"><h3 id="suggested-reply-title">Suggested reply</h3><p className="settings-help">Uses AI, which may cost money. Nothing sends until you approve.</p>{!data.can_reply && <p role="status">{data.reply_blocker}</p>}{actionError && <p className="error" role="alert">{actionError}</p>}{!reviewId && <button className="button" disabled={!data.can_reply || busy} onClick={() => void suggest()}>{busy ? "Writing reply…" : "Suggest reply"}</button>}{reviewId && <OutreachReview key={reviewId} reviewId={reviewId} workspacePath={`/inbox?thread=${threadId}&review=${reviewId}`} expectedThreadId={threadId} closeLabel="Back to conversation" closed={() => { void recordWorkspaceContext({ currentDraftId: null, workspacePath: `/inbox?thread=${threadId}` }, actorId); setReviewId(null); requestId.current = ""; refresh(); }} />}</section></>}
   </section>;
 }
 
 export default function Inbox({ user, initialThreadId = null, initialReviewId = null }: { user: Account; initialThreadId?: number | null; initialReviewId?: string | null }) {
   const [query, setQuery] = useState("");
+  const [label, setLabel] = useState<ReplyLabelName | "">("");
   const [offset, setOffset] = useState(0);
   const [threadId, setThreadId] = useState<number | null>(initialThreadId);
   useWorkspaceContext(threadId ? {} : { currentThreadId: null, currentDraftId: null, selectedLeadIds: [], currentLeadId: null, workspacePath: "/inbox" }, user.id);
-  const { data, loading, error, refresh } = useStoredData<InboxPage>(`inbox/conversations?q=${encodeURIComponent(query)}&offset=${offset}`, 5000);
+  const { data, loading, error, refresh } = useStoredData<InboxPage>(`inbox/conversations?q=${encodeURIComponent(query)}&label=${label}&offset=${offset}`, 5000);
   return <div className="shell"><Sidebar user={user} active="inbox" /><main className="main"><header className="topbar"><PageHeading title="Inbox" help="Read replies and answer them." /><div className="top-actions"><Link className="button" href="/inbox/messages">All messages</Link></div></header>
     <InboxCheck refreshed={refresh} />
     {error && <p className="error" role="alert">{error}</p>}
-    <div className={`conversation-layout ${threadId ? "has-conversation" : ""}`}><section className="panel conversation-list" aria-label="Inbox conversations"><div className="filters"><input className="input" aria-label="Search conversations" placeholder="Search person or message" maxLength={200} value={query} onChange={(e) => { setQuery(e.target.value); setOffset(0); }} /></div>
-      {loading && !data ? <p className="empty" role="status">Loading conversations…</p> : !data?.items.length ? <p className="empty">No replies yet. Choose Check for replies.</p> : <ul>{data.items.map((c) => <li key={c.id}><button className="conversation-row" aria-pressed={threadId === c.id} onClick={() => setThreadId(c.id)}><div className="email-preview-head"><strong>{c.name || c.address}</strong><time>{sentTime(c.last_at)}</time></div><span>{c.subject || "No subject"}</span><p>{c.snippet || "No saved text"}</p><small>{c.count} messages</small></button></li>)}</ul>}
+    <div className={`conversation-layout ${threadId ? "has-conversation" : ""}`}><section className="panel conversation-list" aria-label="Inbox conversations"><div className="filters"><input className="input" aria-label="Search conversations" placeholder="Search person or message" maxLength={200} value={query} onChange={(e) => { setQuery(e.target.value); setOffset(0); }} /><select className="select" aria-label="Filter by reply label" value={label} onChange={(e) => { setLabel(e.target.value as ReplyLabelName | ""); setOffset(0); }}><option value="">All replies</option>{(Object.keys(replyLabels) as ReplyLabelName[]).map((key) => <option key={key} value={key}>{replyLabels[key]}</option>)}</select></div>
+      {loading && !data ? <p className="empty" role="status">Loading conversations…</p> : !data?.items.length ? <p className="empty">{label ? `No conversations labelled ${replyLabels[label].toLowerCase()}.` : "No replies yet. Choose Check for replies."}</p> : <ul>{data.items.map((c) => <li key={c.id}><button className="conversation-row" aria-pressed={threadId === c.id} onClick={() => setThreadId(c.id)}><div className="email-preview-head"><strong>{c.name || c.address}</strong><time>{sentTime(c.last_at)}</time></div><span>{c.subject || "No subject"} <LabelChip value={c.reply_label} /></span><p>{c.snippet || "No saved text"}</p><small>{c.count} messages</small></button></li>)}</ul>}
       {data && <div className="records-pagination"><span className="muted">{data.total} conversations</span><div className="top-actions"><button className="button" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - data.limit))}>Previous</button><button className="button" disabled={offset + data.limit >= data.total} onClick={() => setOffset(offset + data.limit)}>Next</button></div></div>}
     </section>{threadId ? <Conversation key={threadId} threadId={threadId} actorId={user.id} initialReviewId={threadId === initialThreadId ? initialReviewId : null} close={() => setThreadId(null)} /> : <section className="conversation-empty"><h2>Pick a conversation</h2><p>Read it and reply.</p></section>}</div>
   </main></div>;

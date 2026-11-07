@@ -1720,7 +1720,7 @@ table {
   font-size: 13px;
 }
 th {
-  padding: 11px 22px;
+  padding: 11px 16px;
   text-align: left;
   color: var(--muted);
   background: var(--canvas);
@@ -2226,6 +2226,7 @@ code {
   gap: 16px;
   max-width: 960px;
 }
+.setup-step-heading ~ .error, .setup-step-heading ~ .success { max-width: 960px; }
 .setup-step-heading {
   font-size: 16px;
   font-weight: 600;
@@ -3027,13 +3028,17 @@ time,
 .attention-row strong { font-size: 14px; font-weight: 500; }
 .needs-attention { margin-bottom: 20px; padding: 18px 20px; }
 .needs-attention h2 { font-size: 16px; margin: 0; }
+.needs-attention > .panel-head { padding: 0 0 12px; }
 .inbox-check { margin: 0 0 20px; }
 .inbox-check > p { font-size: 14px; margin-top: 8px; }
 .inbox-check .outreach-confirm { max-width: 740px; }
 .context-assistant { display: inline-flex; flex-direction: column; }
 .selection-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
 .workspace-tools { margin-top: 8px; border-top: 1px solid var(--line); padding-top: 6px; }
-.workspace-tools > summary { cursor: pointer; list-style: revert; }
+.workspace-tools > summary { cursor: pointer; list-style: none; }
+.workspace-tools > summary::-webkit-details-marker { display: none; }
+.workspace-tools > summary::after { content: ""; width: 7px; height: 7px; margin-left: auto; margin-right: 4px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform 200ms var(--ease); opacity: .7; }
+.workspace-tools[open] > summary::after { transform: translateY(1px) rotate(-135deg); }
 @media (max-width: 600px) {
   .outreach-steps { gap: 10px; }
   .outreach-steps li { font-size: 12px; align-items: flex-start; flex: 1; gap: 6px; }
@@ -3214,6 +3219,8 @@ details[open] > *:not(summary) { animation: zy-fade 200ms var(--ease) both; }
 .settings-card:has(> .attention-row) > h2 { margin: 0 0 8px; font-size: 16px; }
 .settings-card > .attention-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
 .settings-card > .attention-row:first-of-type { border-top: 0; }
+.settings-card > .attention-row { flex-wrap: wrap; }
+.settings-card > .attention-row > details[open] { flex-basis: 100%; }
 
 /* Empty reading panes feel intentional, not blank. */
 .inbox-empty, .conversation-empty { display: grid; place-items: center; text-align: center; min-height: 240px; border: 1px dashed var(--line); border-radius: var(--panel-radius); animation: zy-fade 300ms var(--ease) both; }
@@ -3262,3 +3269,28 @@ td .row-actions { flex-wrap: nowrap; align-items: center; }
 @keyframes zy-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (max-width: 960px) { .results-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .results-tile.lead { grid-column: 1 / -1; } }
 @media (max-width: 640px) { .results-highlights { grid-template-columns: 1fr; } .results-campaign > summary { grid-template-columns: minmax(0, 1fr) auto; } .results-minor { grid-column: 1 / -1; } }
+
+/* Lead row overflow menu: secondary and destructive actions stay one click away. */
+.row-menu { position: relative; display: inline-block; }
+.row-menu > summary { list-style: none; min-width: 44px; justify-content: center; }
+.row-menu > summary::-webkit-details-marker { display: none; }
+.row-menu[open] > summary { background: var(--surface-hover); }
+.row-menu-list { position: fixed; z-index: 40; display: grid; min-width: 168px; padding: 6px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-lg); animation: zy-drop 160ms var(--ease) both; }
+.row-menu-list .button { justify-content: flex-start; width: 100%; gap: 10px; }
+.row-menu-list .button svg { width: 16px; height: 16px; }
+
+/* Phones: each lead reads as a compact card instead of a sideways-scrolling row. */
+@media (max-width: 720px) {
+  .lead-filter-list { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .lead-filter-list::-webkit-scrollbar { display: none; }
+  .lead-filter-list .button { flex-shrink: 0; }
+  .lead-table thead { display: none; }
+  .lead-table, .lead-table tbody { display: block; }
+  .lead-table tr { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 6px 10px; padding: 14px 16px; border-top: 1px solid var(--line); }
+  .lead-table td { display: block; padding: 0; border: 0; min-width: 0; }
+  .lead-table td:first-child { grid-row: span 4; padding-top: 10px; }
+  .lead-table td:nth-child(n+3) { grid-column: 2; }
+  .lead-table td:nth-child(3) { color: var(--muted); font-size: 13px; }
+  .lead-table .subtext { max-width: 100%; }
+  .lead-table .row-actions { justify-content: flex-start; }
+}

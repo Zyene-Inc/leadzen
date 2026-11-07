@@ -130,7 +130,7 @@ export default function Onboarding({
               <span>
                 Saves as you go · Tests last 24 hours
               </span>
-              <button type="submit" className="button" disabled={activity.busy}>
+              <button type="submit" className="button primary" disabled={activity.busy}>
                 {activity.busy
                   ? "Please wait…"
                   : step === 6

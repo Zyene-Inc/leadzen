@@ -180,10 +180,15 @@ def synthetic_probe(values, kind):
 
 from leadzen.chat.engine import decide as sdk_decide
 
-def synthetic_decision(run):
+def synthetic_decision(run, *, reply_only=False):
     from leadzen.chat.engine import Decision
     from leadzen.chat.context import structured
     from pydantic_ai.models.test import TestModel
+    if reply_only:
+        # The engine offers only an answer for small talk; no Workspace tool runs.
+        reply = {"tool": "answer", "text": "Hi! I can find leads for your Target, look up work emails, draft outreach and check replies. What would you like to do? (Synthetic preview reply.)"}
+        with patch("leadzen.ai.build_model", return_value=TestModel(custom_output_args=reply)):
+            return sdk_decide(run, reply_only=True)
     prompt = run.thread.messages.filter(role="user").order_by("-created_at", "-pk").first().content.lower()
     context = structured(run.actor_id, run.thread.context)
     if run.steps == 0:

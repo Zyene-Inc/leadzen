@@ -8,6 +8,7 @@ import http.client
 import importlib
 import ssl
 import json
+import re
 import time
 from urllib.parse import urlparse
 
@@ -159,6 +160,10 @@ def build_model(provider, model, api_key, base_url="", *, request_timeout=40):
     # familiar compatibility base without accidentally doubling that path.
     if provider == "groq" and url.rstrip("/").endswith("/openai/v1"):
         url = url.rstrip("/")[:-len("/openai/v1")]
+    # The Gemini SDK appends /v1beta/models/... itself; a base copied from
+    # Google's REST docs would otherwise request /v1beta/v1beta and 404.
+    if provider == "google":
+        url = re.sub(r"/(v1|v1beta|v1alpha)/?$", "", url.rstrip("/"))
     host = urlparse(url).hostname
     if provider in {"openai", "openai_compatible"}:
         from openai import AsyncOpenAI

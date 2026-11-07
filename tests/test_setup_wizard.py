@@ -242,6 +242,18 @@ def test_real_groq_agent_probe_uses_one_bounded_request_without_tools(wizard, ba
         assert network.call_args.kwargs["timeout"] == 30
 
 
+@pytest.mark.parametrize("base_url", ["", "https://generativelanguage.googleapis.com", "https://generativelanguage.googleapis.com/v1beta", "https://generativelanguage.googleapis.com/v1beta/"])
+def test_real_gemini_agent_probe_does_not_double_the_api_version(wizard, base_url):
+    from leadzen.setup_wizard import candidate, probe_ai
+    reply = {"candidates": [{"content": {"role": "model", "parts": [{"text": "OK"}]}, "finishReason": "STOP", "index": 0}], "usageMetadata": {"promptTokenCount": 10, "candidatesTokenCount": 1, "totalTokenCount": 11}, "modelVersion": "gemini-3.8-flash"}
+    settings = connections()
+    settings["llm"].update(provider="google", model="gemini-3.8-flash", base_url=base_url)
+    with patch("leadzen.ai.pinned_request", return_value=(200, [("content-type", "application/json")], json.dumps(reply).encode())) as network:
+        assert probe_ai(candidate(settings, "ai")) == {"answered": True}
+        assert network.call_count == 1
+        assert network.call_args.args[1].split("?")[0] == "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent"
+
+
 def test_active_probe_lease_and_rate_limit_prevent_provider_calls(wizard):
     from django.utils import timezone
     from datetime import timedelta

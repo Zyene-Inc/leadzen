@@ -8,6 +8,7 @@ import { api } from "@/lib/client-api";
 import { formatTimelineDate, type Contact, type OutreachTimeline, type TimelineEntry } from "@/lib/leads";
 import { scheduleSummary } from "@/lib/sending-schedule";
 import { LEADZEN_TIME_ZONE_LABEL } from "@/lib/date-time";
+import { stateLabel } from "@/lib/format";
 
 function TimelineRow({ entry }: { entry: TimelineEntry }) {
   const complete = entry.status === "accepted" || entry.status === "received";
@@ -22,7 +23,7 @@ function TimelineRow({ entry }: { entry: TimelineEntry }) {
 
 const stoppedMessages: Record<string, string> = {
   reply: "Follow-ups stopped: they replied. Continue in Inbox.",
-  suppressed: "Do Not Contact. Future emails are blocked.",
+  suppressed: "Do not contact. Future emails are blocked.",
   inbound: "Follow-ups stopped: a message came in. See Inbox.",
   completed: "Sequence finished. History is kept.",
 };
@@ -56,15 +57,15 @@ function TimelineControls({ lead, timeline, load }: { lead: Contact; timeline: O
       {timeline.can_stop && <button ref={stopButton} className="button" disabled={busy} onClick={() => setConfirming(true)} aria-expanded={confirming}><Icon name="stop" />Stop sequence</button>}
       {lead.email && !timeline.suppression && <button ref={addButton} className="button" disabled={busy} onClick={() => setAdding(true)} aria-expanded={adding}>Block this email</button>}
       {lead.reply_count > 0 && <Link className="button" href="/inbox">Open Inbox</Link>}
-      <Link className="text-link" href="/suppression">Do Not Contact list</Link>
+      <Link className="text-link" href="/suppression">Do not contact list</Link>
     </div>
     {confirming && <div className="timeline-confirm" role="group" aria-label="Stop sequence confirmation"><p>Stop future emails to {lead.name}? Sent emails and history stay.</p><div className="card-actions"><button className="button" disabled={busy} onClick={() => { setConfirming(false); stopButton.current?.focus(); }}>Cancel</button><button className="button primary" disabled={busy} onClick={() => void stop()}>{busy ? "Stopping…" : "Confirm stop"}</button></div></div>}
-    {adding && <SuppressionForm fixedEmail={lead.email} cancel={closeSuppression} saved={async (created) => { closeSuppression(); setNotice(created ? "Added to Do Not Contact." : "Already blocked. Original reason and date kept."); await load(); noticeElement.current?.focus(); }} />}
+    {adding && <SuppressionForm fixedEmail={lead.email} cancel={closeSuppression} saved={async (created) => { closeSuppression(); setNotice(created ? "Added to Do not contact." : "Already blocked. Original reason and date kept."); await load(); noticeElement.current?.focus(); }} />}
   </>;
 }
 
 function TimelineSequence({ sequence, blocked }: { sequence: OutreachTimeline["sequences"][number]; blocked: boolean }) {
-  const status = sequence.status === "pending" ? sequence.campaign_status : sequence.status === "review" ? "Needs review" : sequence.status;
+  const status = stateLabel(sequence.status === "pending" ? sequence.campaign_status : sequence.status === "review" ? "Needs review" : sequence.status);
   return <div className="timeline-sequence">
     <h3>{sequence.name}<span className="timeline-state">{status}</span></h3>
     {sequence.steps.length > 0 && <><ol className="timeline-list">{sequence.steps.map((entry) => <TimelineRow key={entry.id} entry={entry} />)}</ol><p className="settings-help">Times in {LEADZEN_TIME_ZONE_LABEL}. {sequence.automatic ? `Approved follow-ups send when the scheduler is on, within ${sequence.sending_schedule ? scheduleSummary(sequence.sending_schedule) : "your sending hours in Settings"}.` : "Review each follow-up in Outreach."} Later dates are estimates.</p></>}

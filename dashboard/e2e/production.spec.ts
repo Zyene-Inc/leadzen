@@ -74,6 +74,7 @@ test("synthetic employee creates, edits and deletes contacts; another workspace 
   await expect(page).toHaveURL(/\/login$/);
   await login(page, fixture);
   await page.goto("/contacts");
+  await row.getByLabel(`More actions for ${marker}`, { exact: true }).click();
   await row.getByRole("button", { name: `Delete ${marker}`, exact: true }).click();
   await page.getByRole("button", { name: "Delete contact", exact: true }).click();
   await expect(row).toHaveCount(0);

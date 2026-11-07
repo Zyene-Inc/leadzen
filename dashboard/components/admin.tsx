@@ -119,14 +119,14 @@ export default function Admin({ user }: { user: Account }) {
           <PageHeading title="Employee accounts" help="Invite people, manage access and see who finished setup." />
           <button
             type="button"
-            className="button primary"
+            className={`button${creating ? "" : " primary"}`}
             disabled={busy}
             onClick={() => setCreating(!creating)}
             aria-expanded={creating}
             aria-controls={creating ? "create-employee" : undefined}
           >
             <Icon name={creating ? "close" : "plus"} />
-            {creating ? "Close" : "Add employee"}
+            {creating ? "Cancel" : "Add employee"}
           </button>
         </div>
         {error && (
@@ -159,13 +159,14 @@ export default function Admin({ user }: { user: Account }) {
             <div className="panel-head">
               <h2 className="panel-title">Add employee</h2>
             </div>
-            <form onSubmit={create}>
+            <form onSubmit={create} onKeyDown={(event) => { if (event.key === "Escape" && !busy) setCreating(false); }}>
               <div className="form-grid">
                 <label>
                   Name
                   <input
                     name="name"
                     className="input"
+                    autoFocus
                     required
                     maxLength={150}
                     autoComplete="name"

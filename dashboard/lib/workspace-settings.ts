@@ -115,12 +115,12 @@ export function settingSummary(
     }
     case "product":
       return {
-        main: workspace.product.product_name || "No product yet",
+        main: workspace.product.product_name || (workspace.product.product_docs ? "Unnamed product" : "No product yet"),
         detail: workspace.product.product_docs || "Say what you sell",
       };
     case "target":
       return {
-        main: (workspace.target.audience?.industry && tidyIndustry(workspace.target.audience.industry)) || "No audience yet",
+        main: (workspace.target.audience?.industry && tidyIndustry(workspace.target.audience.industry)) || (workspace.target.summary ? "Custom audience" : "No audience yet"),
         detail: workspace.target.summary || "Pick who to reach",
       };
     case "signature":

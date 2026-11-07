@@ -91,6 +91,7 @@ const paths = {
     </>
   ),
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+  more: <path d="M5 12h.01M12 12h.01M19 12h.01" strokeWidth="3" strokeLinecap="round" />,
   close: <path d="m6 6 12 12M6 18 18 6" />,
   plus: <path d="M12 5v14M5 12h14" />,
   refresh: (

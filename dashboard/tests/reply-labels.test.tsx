@@ -31,7 +31,7 @@ test("Inbox shows reply labels and filters by label without sending anything", a
   expect(chip("Interested")).toBeTruthy();
   expect(chip("Out of office")?.getAttribute("title")).toBe("Back Nov 18. Follow-ups wait until the next business day.");
   await userEvent.selectOptions(screen.getByRole("combobox", { name: "Filter by reply label" }), "interested");
-  await within(list).findByText("1 conversations");
+  await within(list).findByText("1 conversation");
   expect(call.mock.calls.some(([path]) => String(path).includes("label=interested"))).toBe(true);
   expect(call.mock.calls.every(([, init]) => !init?.method || init.method === "GET")).toBe(true);
 });

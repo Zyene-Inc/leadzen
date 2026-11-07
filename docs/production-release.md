@@ -176,7 +176,7 @@ drill=/srv/leadzen-drills/NEW_ABSENT_DIRECTORY
 ```
 
 Stage a **new** runtime directory rather than installing over the running venv.
-Use reviewed `uv==0.11.15`, the hashed runtime lock and the tested wheel with
+Use reviewed `uv==0.13.4`, the hashed runtime lock and the tested wheel with
 `--no-deps`. Keep the previous complete runtime. A network-disabled candidate
 image can instead be loaded from the tested image archive and selected by its
 recorded ID; rebuilding produces a different artifact and requires revalidation.

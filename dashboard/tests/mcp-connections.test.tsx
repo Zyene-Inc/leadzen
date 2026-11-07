@@ -1,5 +1,5 @@
 import { beforeEach, expect, test, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MCPConnections, type MCPConnectionsData } from "@/components/mcp-connections";
 import MCPConsent, { type MCPConsentData } from "@/components/mcp-consent";
@@ -34,37 +34,69 @@ beforeEach(() => call.mockResolvedValue(metadata));
 
 test("Settings connectors show both real brand favicon sources, no invented connection or read side effect", async () => {
   render(<MCPConnections />);
-  expect(await screen.findByText("No apps connected yet.")).toBeTruthy();
+  expect(await screen.findByText(/No apps connected yet/)).toBeTruthy();
   expect((screen.getByRole("img", { name: "Claude logo" }) as HTMLImageElement).src).toContain("url=https://claude.ai&size=256");
   expect((screen.getByRole("img", { name: "ChatGPT logo" }) as HTMLImageElement).src).toContain("url=https://chatgpt.com&size=256");
-  expect((screen.getByLabelText("Server URL") as HTMLInputElement).value).toBe(metadata.endpoint);
+  expect(screen.getByLabelText("Server URL").textContent).toBe(metadata.endpoint);
   expect(writes()).toHaveLength(0);
 });
 
-test("setup guidance expands one provider at a time and explains ChatGPT plan limits", async () => {
+test("setup guidance expands one provider at a time with the URL, sign-in and confirmation steps", async () => {
   render(<MCPConnections />);
   await screen.findByLabelText("Server URL");
   const claude = screen.getByRole("button", { name: "Set up Claude" });
   await userEvent.click(claude);
   expect(claude.getAttribute("aria-expanded")).toBe("true");
-  expect(screen.getByRole("link", { name: /Claude setup guide/ }).getAttribute("href")).toContain("support.claude.com");
-  expect(screen.getByText(/Under OAuth client, choose Register automatically/)).toBeTruthy();
+  const claudeSteps = within(document.getElementById("mcp-setup-claude")!);
+  expect(claudeSteps.getAllByRole("listitem")).toHaveLength(6);
+  expect(claudeSteps.getByLabelText("Remote MCP server URL").textContent).toBe(metadata.endpoint);
+  expect(claudeSteps.getByText("Register automatically")).toBeTruthy();
+  expect(claudeSteps.getByText("Claude wants access")).toBeTruthy();
+  expect(claudeSteps.getByRole("link", { name: /Open Claude connectors/ }).getAttribute("href")).toBe("https://claude.ai/customize/connectors");
+  expect(claudeSteps.getByRole("link", { name: /Claude setup guide/ }).getAttribute("href")).toContain("support.claude.com");
+  expect(claudeSteps.getByText("Check it here")).toBeTruthy();
   const chatgpt = screen.getByRole("button", { name: "Set up ChatGPT" });
   await userEvent.click(chatgpt);
   expect(claude.getAttribute("aria-expanded")).toBe("false");
   expect(chatgpt.getAttribute("aria-expanded")).toBe("true");
-  expect(screen.getByText(/Pro supports read\/fetch access only/)).toBeTruthy();
-  expect(screen.getByRole("link", { name: /ChatGPT setup guide/ }).getAttribute("href")).toContain("help.openai.com");
+  const chatgptSteps = within(document.getElementById("mcp-setup-chatgpt")!);
+  expect(chatgptSteps.getByLabelText("MCP server URL").textContent).toBe(metadata.endpoint);
+  expect(chatgptSteps.getByText("Add custom MCP server")).toBeTruthy();
+  expect(chatgptSteps.getByText("Create as a plugin")).toBeTruthy();
+  expect(chatgptSteps.getByText(/Pro can connect with read-only access/)).toBeTruthy();
+  expect(chatgptSteps.getByRole("link", { name: /ChatGPT setup guide/ }).getAttribute("href")).toContain("help.openai.com");
   expect(writes()).toHaveLength(0);
 });
 
-test("a missing public server reports the actual setup blocker and cannot copy a localhost URL", async () => {
-  call.mockResolvedValue({ ...metadata, available: false, endpoint: null, reason: "Your administrator must configure a public HTTPS MCP server." });
+test("copying from a setup step copies only the configured endpoint and names where to paste it", async () => {
+  const interaction = userEvent.setup();
+  const copy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
   render(<MCPConnections />);
-  expect(await screen.findByText("Your administrator must configure a public HTTPS MCP server.")).toBeTruthy();
+  await interaction.click(await screen.findByRole("button", { name: "Set up ChatGPT" }));
+  await interaction.click(screen.getByRole("button", { name: "Copy MCP server URL" }));
+  expect(copy).toHaveBeenCalledWith(metadata.endpoint);
+  expect(screen.getByRole("status").textContent).toBe("Server URL copied. Paste it into ChatGPT.");
+  expect(screen.getByRole("button", { name: "Copy MCP server URL" }).textContent).toBe("Copied");
+});
+
+test("a missing public server shows the admin fix instead of steps that cannot work", async () => {
+  call.mockResolvedValue({
+    ...metadata, available: false, endpoint: null, reason: "LeadZen's server address for Claude and ChatGPT is not set up yet.",
+    setup: [{ setting: "LEADZEN_MCP_PUBLIC_URL", problem: "must end with /mcp", example: "https://api.leadzen.example/mcp" }],
+  });
+  render(<MCPConnections />);
+  expect(await screen.findByText("Not ready to connect yet")).toBeTruthy();
+  expect(screen.getByText("LEADZEN_MCP_PUBLIC_URL")).toBeTruthy();
+  expect(screen.getByText("https://api.leadzen.example/mcp")).toBeTruthy();
   expect(screen.queryByLabelText("Server URL")).toBeNull();
-  expect(screen.queryByRole("button", { name: "Copy URL" })).toBeNull();
-  expect(screen.getByRole("button", { name: "Set up Claude" })).toBeTruthy();
+  expect(screen.queryByRole("button", { name: /Copy/ })).toBeNull();
+  await userEvent.click(screen.getByRole("button", { name: "Set up Claude" }));
+  expect(screen.getByText(/Steps appear once your admin finishes the server setup/)).toBeTruthy();
+  expect(screen.queryByText("Approve in LeadZen")).toBeNull();
+  const reads = call.mock.calls.length;
+  await userEvent.click(screen.getByRole("button", { name: "Check again" }));
+  await waitFor(() => expect(call.mock.calls.length).toBeGreaterThan(reads));
+  expect(writes()).toHaveLength(0);
 });
 
 test("connector metadata failure stays visible and retry loads the authenticated state", async () => {
@@ -81,7 +113,7 @@ test("URL copy uses only the configured endpoint and reports success", async () 
   const copy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
   render(<MCPConnections />);
   await screen.findByLabelText("Server URL");
-  await interaction.click(screen.getByRole("button", { name: "Copy URL" }));
+  await interaction.click(screen.getByRole("button", { name: "Copy Server URL" }));
   expect(copy).toHaveBeenCalledWith(metadata.endpoint);
   expect(screen.getByRole("status").textContent).toBe("Server URL copied.");
   expect(writes()).toHaveLength(0);
@@ -92,9 +124,11 @@ test("clipboard rejection gives a manual-copy recovery", async () => {
   vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(new Error("No clipboard permission"));
   render(<MCPConnections />);
   await screen.findByLabelText("Server URL");
-  await interaction.click(screen.getByRole("button", { name: "Copy URL" }));
+  await interaction.click(screen.getByRole("button", { name: "Copy Server URL" }));
   expect(screen.getByRole("alert").textContent).toContain("copy it manually");
-  expect((screen.getByLabelText("Server URL") as HTMLInputElement).readOnly).toBe(true);
+  const field = screen.getByLabelText("Server URL");
+  expect(field.getAttribute("aria-readonly")).toBe("true");
+  expect(window.getSelection()?.toString()).toBe(metadata.endpoint);
 });
 
 test("logos fail visibly without substituting a fake brand mark", async () => {

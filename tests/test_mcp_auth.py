@@ -111,6 +111,37 @@ def test_missing_public_https_configuration_disables_connector(db, monkeypatch, 
     assert Client().get("/.well-known/oauth-protected-resource").status_code == 503
 
 
+@pytest.mark.parametrize(("value", "problem", "example"), [
+    (None, "is not set", "https://your-api-host/mcp"),
+    ("https://api.leadzen.example", "must end with /mcp", "https://api.leadzen.example/mcp"),
+    ("https://api.leadzen.example/mcp/", "must end with /mcp", "https://api.leadzen.example/mcp"),
+    ("https://api.leadzen.example/api/mcp", "must end with /mcp", "https://your-api-host/mcp"),
+    ("http://api.leadzen.example/mcp", "must be a public HTTPS URL", "https://your-api-host/mcp"),
+])
+def test_unavailable_connector_names_the_setting_to_fix(db, monkeypatch, account_client, value, problem, example):
+    if value is None:
+        monkeypatch.delenv("LEADZEN_MCP_PUBLIC_URL")
+    else:
+        monkeypatch.setenv("LEADZEN_MCP_PUBLIC_URL", value)
+    body = account_client.get("/api/mcp/connections").json()
+    assert not body["available"] and body["endpoint"] is None
+    assert body["setup"] == [{"setting": "LEADZEN_MCP_PUBLIC_URL", "problem": problem, "example": example}]
+    assert "test-dashboard-token" not in str(body)
+
+
+def test_invalid_dashboard_origin_is_named_without_its_value(db, monkeypatch, account_client):
+    monkeypatch.setenv("LEADZEN_PUBLIC_URL", "https://dashboard.leadzen.example/private-path")
+    body = account_client.get("/api/mcp/connections").json()
+    assert not body["available"]
+    assert [item["setting"] for item in body["setup"]] == ["LEADZEN_PUBLIC_URL"]
+    assert "private-path" not in str(body)
+
+
+def test_configured_connector_reports_no_setup_work(db, account_client):
+    body = account_client.get("/api/mcp/connections").json()
+    assert body["available"] and body["endpoint"] == RESOURCE and body["setup"] == []
+
+
 @pytest.mark.parametrize("callback", ["http://evil.example/callback", "https://user:password@evil.example/callback", "https://evil.example/callback#fragment", "javascript:alert(1)", "https://evil.example/\\path", "https://evil.example\n/callback"])
 def test_bad_registration_never_persists_or_fetches_metadata(db, callback):
     with patch("requests.get") as network:

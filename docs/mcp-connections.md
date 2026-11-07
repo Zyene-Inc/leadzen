@@ -7,12 +7,24 @@ connections with disconnect controls.
 
 ## Employee flow
 
+Settings → **Claude & ChatGPT** → **Set up** shows numbered steps for each
+assistant, with the server URL and a copy button inside the paste step.
+
 1. Copy the server URL from LeadZen Settings.
-2. Add LeadZen as an OAuth custom connector in Claude. Under **OAuth client**,
-   choose **Register automatically**; LeadZen supports dynamic registration,
-   rather than Claude's published identity. In ChatGPT, add a custom MCP app.
-3. Sign in to LeadZen and review the account, callback host and requested access.
-4. Connect, then enable/select LeadZen in the assistant conversation.
+2. Claude: **Customize → Connectors → + Add → Add custom connector**, name
+   **LeadZen**, paste it into **Remote MCP server URL**, **Continue**. Choose
+   **Authentication: Sign in now** and **OAuth client: Register automatically**;
+   LeadZen supports dynamic registration, not Claude's published identity. On
+   Team/Enterprise an owner adds it once under **Organization settings →
+   Connectors → Add → Custom → Web**, then each employee selects **Connect**.
+   ChatGPT: **Plugins → + → Add custom MCP server**, name **LeadZen**, paste the
+   URL under **Connection**, choose OAuth, accept the risk warning and select
+   **Create as a plugin**. A ChatGPT admin publishes it for the workspace.
+3. The assistant opens `/mcp/connect`. Sign in to LeadZen and review the account,
+   assistant callback host and requested access.
+4. Connect, then enable LeadZen in the conversation (Claude: **+ → Connectors**;
+   ChatGPT: type **@** and select LeadZen). Settings → **Refresh** under
+   Connected apps lists the new grant.
 5. Ask for saved leads, inbox messages, outreach, drafts, target or workspace
    settings. Mutations take a new `requestId` UUID. Repeating the same UUID and
    arguments returns the saved operation instead of repeating the action.
@@ -80,8 +92,14 @@ Public client registration is bounded and makes no network requests for arbitrar
 client metadata. Consent shows the untrusted app name and registered callback host;
 the employee must recognize their initiated request before connecting.
 
-No MCP public URL means Settings shows a setup requirement rather than claiming a
-connection is ready. The disposable localhost preview can show the UI but hosted
+No valid MCP public URL means Settings shows **Not ready to connect yet** instead
+of setup steps. `GET /api/mcp/connections` returns `setup`: each blocking backend
+setting name, the problem and a corrected public URL (never secret values). The
+common mistake is an origin without the path: `LEADZEN_MCP_PUBLIC_URL` must be
+exactly `https://<api-host>/mcp`. The October 8, 2026 production record set it to
+`https://leadzen-api.zyene.com`, which fails this check; the fix is
+`https://leadzen-api.zyene.com/mcp` in the active `/etc/leadzen-*.env`, followed
+by an API restart (an owner-approved production change). The disposable localhost preview can show the UI but hosted
 Claude/ChatGPT cannot connect directly to that localhost server. An authorized
 HTTPS rollout and real client connection test are required before claiming live
 compatibility or availability.

@@ -38,3 +38,25 @@ Their original license notices are retained in the installed packages.
 The official DaisyUI Codex skill is installed in `.agents/skills/daisyui`.
 [UI Skills](https://www.ui-skills.com) baseline guidance was read through its
 CLI to support the existing product's visual and accessibility conventions.
+
+## Warmbly (Apache License 2.0)
+
+Parts of LeadZen's deliverability features are ported from
+[Warmbly](https://github.com/warmbly/warmbly), Copyright 2026 Mindroot Ltd,
+licensed under the Apache License, Version 2.0. The full license text is in
+[licenses/warmbly-APACHE-2.0.txt](licenses/warmbly-APACHE-2.0.txt). Warmbly
+publishes no NOTICE file. Apache-2.0 code may be combined into this
+GPL-3.0-or-later project; the combined work is distributed under the GPL, and
+the ported files keep Warmbly's copyright and Apache-2.0 notice.
+
+The source is Warmbly commit `0df02b570cdca6ea567bd70887a4da6f5cc170a1`. Warmbly
+is written in Go; Zyene translated the logic, rules and data to Python and
+modified them for LeadZen. Each derived file names its sources in its header.
+
+| LeadZen file | Warmbly source | What was taken |
+| --- | --- | --- |
+| `leadzen/dsn.py` | `internal/pkg/dsn/dsn.go`, `internal/pkg/dsn/cause.go` | Bounce (DSN) detection and parsing, permanent-versus-transient rules, failure-cause markers and status-code rules |
+| `leadzen/arf.py` | `internal/pkg/arf/arf.go`, `internal/pkg/arf/mime.go` | Spam-complaint (ARF feedback-loop) detection and parsing |
+| `leadzen/mail_signals.py` | `internal/app/worker/wmail/bounce.go`, `internal/app/advanced/inbound_bounce.go`, `internal/app/advanced/service.go` | Which reports block an address, resolving a report to the original send, never guessing a recipient |
+| `leadzen/domain_health.py` | `internal/pkg/dnsauth/dnsauth.go`, `internal/app/advisor/detect_deliverability.go` | SPF/DKIM/DMARC record rules, DKIM selector lists, DMARC inheritance, special-use domains, fix steps and record values |
+| `tests/test_mail_signals.py` | `internal/pkg/dsn/*_test.go`, `internal/pkg/arf/arf_test.go`, `internal/pkg/dnsauth/dnsauth_test.go` | Test cases adapted to the Python port |

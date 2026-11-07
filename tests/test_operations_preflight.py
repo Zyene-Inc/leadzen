@@ -191,10 +191,15 @@ def test_env_reader_rejects_permissive_modes_symlinks_duplicates_substitution(tm
 
 
 def test_old_schema_pending_is_never_release_pass(fixture):
+    from django.apps import apps
+    from django.db.migrations.loader import MigrationLoader
+    newest = max(name for app, name in MigrationLoader(None, ignore_no_migrations=True).disk_migrations if app == "leadzen_config")
+    created = [op.name.lower() for op in MigrationLoader(None).disk_migrations[("leadzen_config", newest)].operations if type(op).__name__ == "CreateModel"]
+    assert created, "The newest leadzen_config migration should create a table for this check"
     with sqlite3.connect(fixture["employee"]) as db:
-        # The newest migration is recorded as unapplied and its column is absent.
-        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name='0025_campaignsend'")
-        db.execute("DROP TABLE leadzen_config_campaignsend")
+        # The newest migration is recorded as unapplied and its table is absent.
+        db.execute("DELETE FROM django_migrations WHERE app='leadzen_config' AND name=?", (newest,))
+        db.execute(f"DROP TABLE {apps.get_model('leadzen_config', created[0])._meta.db_table}")
     strict = fixture["run"]()
     assert strict["status"] == "FAIL"
     assert "SCHEMA_PENDING" in codes(strict)
@@ -545,7 +550,8 @@ def test_real_graph_child_does_not_load_application_settings_or_touch_selected_d
     assert result.returncode == 0
     payload = json.loads(result.stdout)
     assert ["leadzen_accounts", "0004_accountprofile_tour_state"] in payload["leaves"]
-    assert ["leadzen_config", "0025_campaignsend"] in payload["leaves"]
+    newest = max(path.stem for path in (Path(__file__).resolve().parents[1] / "leadzen" / "config" / "migrations").glob("0*.py"))
+    assert ["leadzen_config", newest] in payload["leaves"]
     assert original.read_bytes() == b"not-a-database"
     assert str(original) not in result.stdout + result.stderr
 

@@ -11,6 +11,7 @@ import { api } from "@/lib/client-api";
 import { useStoredData } from "@/lib/use-stored-data";
 import { sentTime, type EmailReview } from "@/lib/outreach";
 import type { Account } from "@/lib/auth";
+import { plural } from "@/lib/format";
 
 type ConversationRow = { id: number; name: string; address: string; subject: string; snippet: string; kind: string; last_at: string; count: number };
 type InboxPage = { items: ConversationRow[]; total: number; limit: number; offset: number };
@@ -61,8 +62,8 @@ export default function Inbox({ user, initialThreadId = null, initialReviewId = 
     <InboxCheck refreshed={refresh} />
     {error && <p className="error" role="alert">{error}</p>}
     <div className={`conversation-layout ${threadId ? "has-conversation" : ""}`}><section className="panel conversation-list" aria-label="Inbox conversations"><div className="filters"><input className="input" aria-label="Search conversations" placeholder="Search person or message" maxLength={200} value={query} onChange={(e) => { setQuery(e.target.value); setOffset(0); }} /></div>
-      {loading && !data ? <p className="empty" role="status">Loading conversations…</p> : !data?.items.length ? <p className="empty">No replies yet. Choose Check for replies.</p> : <ul>{data.items.map((c) => <li key={c.id}><button className="conversation-row" aria-pressed={threadId === c.id} onClick={() => setThreadId(c.id)}><div className="email-preview-head"><strong>{c.name || c.address}</strong><time>{sentTime(c.last_at)}</time></div><span>{c.subject || "No subject"}</span><p>{c.snippet || "No saved text"}</p><small>{c.count} messages</small></button></li>)}</ul>}
-      {data && <div className="records-pagination"><span className="muted">{data.total} conversations</span><div className="top-actions"><button className="button" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - data.limit))}>Previous</button><button className="button" disabled={offset + data.limit >= data.total} onClick={() => setOffset(offset + data.limit)}>Next</button></div></div>}
+      {loading && !data ? <p className="empty" role="status">Loading conversations…</p> : !data?.items.length ? <p className="empty">No replies yet. Choose Check for replies.</p> : <ul>{data.items.map((c) => <li key={c.id}><button className="conversation-row" aria-pressed={threadId === c.id} onClick={() => setThreadId(c.id)}><div className="email-preview-head"><strong>{c.name || c.address}</strong><time>{sentTime(c.last_at)}</time></div><span>{c.subject || "No subject"}</span><p>{c.snippet || "No saved text"}</p><small>{plural(c.count, "message")}</small></button></li>)}</ul>}
+      {data && <div className="records-pagination"><span className="muted">{plural(data.total, "conversation")}</span><div className="top-actions"><button className="button" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - data.limit))}>Previous</button><button className="button" disabled={offset + data.limit >= data.total} onClick={() => setOffset(offset + data.limit)}>Next</button></div></div>}
     </section>{threadId ? <Conversation key={threadId} threadId={threadId} actorId={user.id} initialReviewId={threadId === initialThreadId ? initialReviewId : null} close={() => setThreadId(null)} /> : <section className="conversation-empty"><h2>Pick a conversation</h2><p>Read it and reply.</p></section>}</div>
   </main></div>;
 }

@@ -511,3 +511,19 @@ class AutopilotRun(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["actor_id", "workday"], name="one_autopilot_workday")]
+
+
+class MailSignal(models.Model):
+    """What one saved inbound message meant for delivery, read once.
+
+    ``message_pk`` is the sender library's Message row in the same workspace
+    database. Hard bounces and spam complaints block the address; soft bounces
+    are kept as a record only.
+    """
+    message_pk = models.PositiveIntegerField(unique=True)
+    kind = models.CharField(max_length=16)
+    address = models.CharField(max_length=320, blank=True, default="")
+    cause = models.CharField(max_length=24, blank=True, default="")
+    reason = models.CharField(max_length=200, blank=True, default="")
+    suppressed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)

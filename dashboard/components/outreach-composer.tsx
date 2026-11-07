@@ -9,6 +9,7 @@ import { useWorkspaceContext } from "@/lib/workspace-context";
 import { HelpText } from "@/components/help-tooltip";
 import { AskLeadZen } from "@/components/ask-leadzen";
 import CampaignSendReview from "@/components/campaign-send-review";
+import { plural } from "@/lib/format";
 
 type EditableStep = SequenceStep & { key: string };
 const editableSteps = (steps: SequenceStep[]): EditableStep[] => steps.map((step) => ({ ...step, key: crypto.randomUUID() }));
@@ -82,7 +83,7 @@ export function OutreachComposer({ actorId, initialSelection, existing, aiReady,
       <p className="settings-help">{aiReady ? "Writes a first email and two follow-ups you can edit. Uses your AI provider; AI charges may apply. No emails are sent." : "Write your message next. Connect AI in Settings to get drafts."}</p>
     </section>}
     {stage === 2 && <form onSubmit={save}><fieldset disabled={busy} className="outreach-fields">
-      <section className="panel settings-card"><div className="form-grid"><label className="wide">Name<input className="input" required maxLength={160} value={name} onChange={(e) => setName(e.target.value)} /></label></div><p className="settings-help">{selected.length} recipients{draft ? ` · ${draft.from_address}` : ""}</p>
+      <section className="panel settings-card"><div className="form-grid"><label className="wide">Name<input className="input" required maxLength={160} value={name} onChange={(e) => setName(e.target.value)} /></label></div><p className="settings-help">{plural(selected.length, "recipient")}{draft ? ` · ${draft.from_address}` : ""}</p>
         <details><summary>Offer and details</summary><div className="form-grid"><label>Email type<select className="select" value={category} disabled={!!draft} onChange={(e) => { setCategory(e.target.value); if (e.target.value === "transactional") setSteps((current) => current.slice(0, 1)); }}><option value="outreach">Outreach</option><option value="opted_in">Opted-in campaign</option><option value="transactional">Transactional notification</option></select></label>{(["target", "product", "booking_link", "signature"] as const).map((key) => <label key={key} className="wide">{({ target: "Target", product: "Product", booking_link: "Booking link", signature: "Signature" })[key]}<textarea className="input" rows={2} value={offer[key]} maxLength={key === "booking_link" ? 500 : 2000} onChange={(e) => setOffer({ ...offer, [key]: e.target.value })} /></label>)}</div></details>
         <HelpText label="Personalize">Use {"{{first_name}}, {{last_name}}, {{company}}, {{sender_name}} or {{booking_link}}. The final review shows each person’s full email, signature and opt-out text."}</HelpText>
       </section>

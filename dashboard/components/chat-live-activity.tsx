@@ -11,13 +11,14 @@ const terminalLabels: Record<string, string> = {
   succeeded: "Task complete", completed: "Task complete", failed: "Task needs attention",
   cancelled: "Task stopped", stopped: "Task stopped", paused: "Task paused", awaiting_approval: "Approval needed",
 };
-function activityLabel(run: ChatRun, active: boolean, discovery: DiscoveryProgress | undefined, tool: string | undefined, writing: boolean) {
+function activityLabel(run: ChatRun, active: boolean, discovery: DiscoveryProgress | undefined, tool: string | undefined, writing: boolean, acted: boolean) {
   if (run.approval) return "Approval needed";
   if (!active) return terminalLabels[run.status] || "Task status unavailable";
   if (run.cancel_requested) return "Stopping task";
   if (run.status === "queued") return "Waiting to start";
   if (discovery && tool) return currentDiscoveryActivity(discovery);
-  return tool || (writing ? "Writing a response" : "Working on your request");
+  // Before any action runs the model is only deciding; a plain reply never touches Workspace.
+  return tool || (writing ? "Writing a response" : acted ? "Working on your request" : "Thinking");
 }
 function actionState(result: Record<string, unknown> | undefined, active: boolean) {
   if (result?.error || result?.status === "failed") return "Needs attention";
@@ -64,11 +65,11 @@ function RunActivity({ conversation, run }: { conversation: Conversation; run: C
   }).length;
   // A finished conversational reply needs no activity panel; failures still explain themselves.
   if (!active && !run.approval && run.status === "succeeded" && !actions.length && !discovery) return null;
-  const label = activityLabel(run, active, discovery, tool?.content, writing);
+  const label = activityLabel(run, active, discovery, tool?.content, writing, actions.length > 0);
   const detail = discovery
     ? `${discovery.counts.discovered} profiles found · ${discovery.counts.produced} / ${discovery.goal.count} ${discovery.goal.unit === "emails" ? "email results" : "qualified leads"} · ${discovery.counts.evaluated} evaluated`
     : completed ? `${completed} ${completed === 1 ? "action" : "actions"} completed`
-    : active ? "Using your connected model and Workspace" : "View recorded activity";
+    : active ? (actions.length ? "Using your connected model and Workspace" : "Using your connected model") : "View recorded activity";
   return (
     <section className="chat-live-activity" aria-label="Task activity" data-active={active} data-status={run.status}>
       <details open={expanded} onToggle={event => setExpanded(event.currentTarget.open)}>

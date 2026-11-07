@@ -265,7 +265,7 @@ export function Suppression({ user }: { user: Account }) {
     <WorkspacePage
       user={user}
       active="suppression"
-      title="Do Not Contact"
+      title="Do not contact"
       description="Emails you will never contact. Opt-outs stay blocked, even if deleted or imported again."
       actions={<><button ref={addButton} className="button primary" onClick={() => setAdding(true)} aria-expanded={adding}>Block an email</button><Refresh loading={loading} onClick={refresh} /></>}
     >

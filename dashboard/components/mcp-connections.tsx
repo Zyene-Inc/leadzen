@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { HelpTooltip } from "@/components/help-tooltip";
 import { api } from "@/lib/client-api";
 import { formatNewYorkDateTime } from "@/lib/date-time";
@@ -14,39 +14,105 @@ export type MCPConnection = {
   lastUsedAt: string | null;
 };
 
+export type MCPSetupProblem = {
+  setting: string;
+  problem: string;
+  example: string;
+};
+
 export type MCPConnectionsData = {
   endpoint: string | null;
   available: boolean;
   reason: string | null;
+  setup?: MCPSetupProblem[];
   connections: MCPConnection[];
 };
 
-const providers = [
+type Step = { title: string; body: ReactNode; url?: string; link?: { href: string; label: string } };
+
+type Provider = {
+  id: "claude" | "chatgpt";
+  name: string;
+  domain: string;
+  guide: string;
+  availability: string;
+  steps: Step[];
+};
+
+// Labels follow the official guides (Claude custom connectors and OpenAI's
+// "Connecting custom MCP servers in ChatGPT", checked November 4, 2026).
+const providers: Provider[] = [
   {
     id: "claude",
     name: "Claude",
     domain: "claude.ai",
     guide: "https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp",
+    availability: "Works on Claude web and desktop for Free, Pro, Max, Team and Enterprise. Free allows one custom connector. On Team or Enterprise, an owner adds LeadZen once in Organization settings → Connectors → Add → Custom → Web; then each employee finds it in Customize → Connectors, selects Connect and continues at step 4.",
     steps: [
-      "Open Claude → Customize → Connectors → Add custom connector.",
-      "Name it LeadZen, paste the server URL and use OAuth. Under OAuth client, choose Register automatically.",
-      "Sign in to LeadZen, review access and connect. Enable LeadZen in your conversation.",
+      {
+        title: "Open Claude connectors",
+        body: <>In Claude, go to <b>Customize → Connectors</b>, select <b>+ Add</b>, then <b>Add custom connector</b>.</>,
+        link: { href: "https://claude.ai/customize/connectors", label: "Open Claude connectors" },
+      },
+      {
+        title: "Name it and paste the server URL",
+        body: <>Enter the name <b>LeadZen</b>. Copy the URL below into <b>Remote MCP server URL</b>, then select <b>Continue</b>.</>,
+        url: "Remote MCP server URL",
+      },
+      {
+        title: "Choose sign-in settings",
+        body: <>Under <b>Authentication</b>, choose <b>Sign in now</b>. Under <b>OAuth client</b>, choose <b>Register automatically</b>. No client ID, secret or request headers are needed. Select <b>Add</b>.</>,
+      },
+      {
+        title: "Approve in LeadZen",
+        body: <>A LeadZen page opens. Sign in if asked. Check that it says <b>Claude wants access</b>, your email is shown and the assistant callback is a Claude address, then select <b>Connect</b>. You return to Claude.</>,
+      },
+      {
+        title: "Turn it on in a chat",
+        body: <>In a conversation, select <b>+ → Connectors</b> and switch on <b>LeadZen</b>. Try “Show my newest leads.”</>,
+      },
+      {
+        title: "Check it here",
+        body: <>Select <b>Refresh</b> under Connected apps below. Claude appears with the time it connected.</>,
+      },
     ],
-    availability: "On Team or Enterprise, your organization owner adds the connector first. Availability depends on your Claude plan.",
   },
   {
     id: "chatgpt",
     name: "ChatGPT",
     domain: "chatgpt.com",
     guide: "https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt",
+    availability: "Full access needs ChatGPT Business, Enterprise or Edu on the web; it is not available in the mobile apps. On Business, only admins and owners can add LeadZen. On Enterprise or Edu, admins can let selected members add it. Pro can connect with read-only access.",
     steps: [
-      "Ask your ChatGPT workspace admin to enable developer mode and create a custom app in Apps.",
-      "Name it LeadZen, paste the server URL and choose OAuth. Sign in to LeadZen to review access.",
-      "Scan the tools, create the app and select LeadZen in your chat. Your admin can publish it for the team.",
+      {
+        title: "Open ChatGPT Plugins",
+        body: <>On chatgpt.com, open <b>Plugins</b>, select <b>+</b>, then <b>Add custom MCP server</b>. If you can’t, ask your ChatGPT admin to add and publish LeadZen, then continue at step 5.</>,
+        link: { href: "https://chatgpt.com/plugins", label: "Open ChatGPT Plugins" },
+      },
+      {
+        title: "Name it and paste the server URL",
+        body: <>Enter the name <b>LeadZen</b>. Under <b>Connection</b>, paste the URL below.</>,
+        url: "MCP server URL",
+      },
+      {
+        title: "Choose OAuth and create",
+        body: <>For authentication, choose <b>OAuth</b>. LeadZen registers ChatGPT automatically, so no client ID or secret is needed. Check <b>I understand and want to continue</b>, then select <b>Create as a plugin</b>.</>,
+      },
+      {
+        title: "Approve in LeadZen",
+        body: <>A LeadZen page opens. Sign in if asked. Check that it says <b>ChatGPT wants access</b>, your email is shown and the assistant callback is a ChatGPT or OpenAI address, then select <b>Connect</b>. Back in ChatGPT, review the LeadZen tools it found.</>,
+      },
+      {
+        title: "Use it in a chat",
+        body: <>Start a new conversation, type <b>@</b> and select <b>LeadZen</b>. To share it with your team, a ChatGPT admin publishes it from <b>Admin console → Plugins → Manage Legacy Apps → Drafts → Publish</b>. Teammates then find it in <b>Settings → Plugins</b> and each approves their own LeadZen account.</>,
+      },
+      {
+        title: "Check it here",
+        body: <>Select <b>Refresh</b> under Connected apps below. ChatGPT appears with the time it connected.</>,
+      },
     ],
-    availability: "Full tools require ChatGPT Business, Enterprise or Edu on web with workspace permission. Pro supports read/fetch access only.",
   },
-] as const;
+];
 
 function CompanyLogo({ name, domain }: { name: string; domain: string }) {
   const [failed, setFailed] = useState(false);
@@ -66,6 +132,41 @@ function CompanyLogo({ name, domain }: { name: string; domain: string }) {
   );
 }
 
+function selectContents(element: HTMLElement | null) {
+  const selection = element ? window.getSelection() : null;
+  if (!element || !selection) return;
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function ServerURL({ id, label, endpoint, onCopy }: { id: string; label: string; endpoint: string; onCopy: () => Promise<boolean> }) {
+  const [copied, setCopied] = useState(false);
+  const value = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 2000);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+  return (
+    <div className={styles.server}>
+      <span className={styles.serverLabel} id={`${id}-label`}>{label}</span>
+      <div className={styles.serverControl}>
+        {/* Wrapping text keeps the whole URL visible on phones, unlike a one-line input. */}
+        <code ref={value} id={id} className={styles.serverValue} role="textbox" aria-readonly="true" aria-labelledby={`${id}-label`} tabIndex={0} onFocus={(event) => selectContents(event.currentTarget)}>{endpoint}</code>
+        <button className="button" type="button" aria-label={`Copy ${label}`} onClick={() => {
+          void onCopy().then((done) => {
+            setCopied(done);
+            // Leave the URL selected beside the button so it can be copied manually.
+            if (!done) selectContents(value.current);
+          });
+        }}>{copied ? "Copied" : "Copy URL"}</button>
+      </div>
+    </div>
+  );
+}
+
 export function MCPConnections() {
   const { data, setData, error, loading, refresh } = useStoredData<MCPConnectionsData>("mcp/connections");
   const [open, setOpen] = useState<string | null>(null);
@@ -76,15 +177,18 @@ export function MCPConnections() {
   const inFlight = useRef(false);
   const connections = Array.isArray(data?.connections) ? data.connections : [];
   const endpoint = data?.available && data.endpoint ? data.endpoint : null;
+  const setup = Array.isArray(data?.setup) ? data.setup : [];
 
-  async function copy() {
-    if (!endpoint) return;
+  async function copy(destination?: string) {
+    if (!endpoint) return false;
     setActionError("");
     try {
       await navigator.clipboard.writeText(endpoint);
-      setNotice("Server URL copied.");
+      setNotice(destination ? `Server URL copied. Paste it into ${destination}.` : "Server URL copied.");
+      return true;
     } catch {
-      setActionError("Could not copy. Select the URL and copy it manually.");
+      setActionError("Could not copy. The URL is selected; copy it manually.");
+      return false;
     }
   }
 
@@ -122,7 +226,7 @@ export function MCPConnections() {
         </div>
         <span className={styles.protocol}>MCP</span>
       </div>
-      <p className={styles.description}>Use your workspace from Claude or ChatGPT.</p>
+      <p className={styles.description}>Use your workspace from Claude or ChatGPT. Choose Set up for step-by-step instructions.</p>
       <p className={styles.approval}>Sending and paid actions still need approval in LeadZen.</p>
 
       {loading && !data && <p className={styles.status} role="status">Loading connections…</p>}
@@ -130,9 +234,24 @@ export function MCPConnections() {
       {actionError && <div className="error" role="alert">{actionError}</div>}
       {notice && <p className={styles.notice} role="status">{notice}</p>}
 
+      {data && (endpoint
+        ? <ServerURL id="mcp-server-url" label="Server URL" endpoint={endpoint} onCopy={() => copy()} />
+        : <div className={styles.blocker} role="status" aria-labelledby="mcp-blocker-title">
+          <h3 id="mcp-blocker-title">Not ready to connect yet</h3>
+          <p>{data.reason || "LeadZen’s server address for Claude and ChatGPT is not set up yet."} Setup steps appear here once it is.</p>
+          {setup.length > 0 && <>
+            <p className={styles.blockerLead}>For your LeadZen admin, on the API server:</p>
+            <ul>{setup.map((item) => (
+              <li key={item.setting}><code>{item.setting}</code> {item.problem}. Set it to <code>{item.example}</code></li>
+            ))}</ul>
+            <p>Then restart the LeadZen API and select Check again.</p>
+          </>}
+          <button className="button" type="button" onClick={refresh} disabled={loading}>Check again</button>
+        </div>)}
+
       <div className={styles.providers}>
         {providers.map((provider) => (
-          <div key={provider.id} className={styles.provider}>
+          <div key={provider.id} className={`${styles.provider} ${open === provider.id ? styles.providerOpen : ""}`}>
             <div className={styles.providerHeading}>
               <CompanyLogo name={provider.name} domain={provider.domain} />
               <h3>{provider.name}</h3>
@@ -140,7 +259,14 @@ export function MCPConnections() {
             </div>
             {open === provider.id && (
               <div id={`mcp-setup-${provider.id}`} className={styles.setup}>
-                <ol>{provider.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+                {endpoint ? <ol className={styles.steps}>{provider.steps.map((step) => (
+                  <li key={step.title}>
+                    <strong>{step.title}</strong>
+                    <p>{step.body}</p>
+                    {step.url && <ServerURL id={`mcp-server-url-${provider.id}`} label={step.url} endpoint={endpoint} onCopy={() => copy(provider.name)} />}
+                    {step.link && <a className={styles.stepLink} href={step.link.href} target="_blank" rel="noopener noreferrer">{step.link.label} <span aria-hidden="true">↗</span></a>}
+                  </li>
+                ))}</ol> : <p className={styles.waiting}>{data ? "Steps appear once your admin finishes the server setup above." : "Loading setup steps…"}</p>}
                 <p className={styles.availability}>{provider.availability}</p>
                 <a href={provider.guide} target="_blank" rel="noopener noreferrer">{provider.name} setup guide <span aria-hidden="true">↗</span></a>
               </div>
@@ -149,19 +275,9 @@ export function MCPConnections() {
         ))}
       </div>
 
-      {data && (endpoint ? (
-        <div className={styles.server}>
-          <label htmlFor="mcp-server-url">Server URL</label>
-          <div className={styles.serverControl}>
-            <input id="mcp-server-url" className="input" readOnly value={endpoint} onFocus={(event) => event.target.select()} spellCheck={false} />
-            <button className="button" type="button" onClick={() => { void copy(); }}>Copy URL</button>
-          </div>
-        </div>
-      ) : <p className={styles.blocker} role="status">{data.reason || "Needs a public HTTPS server. Ask your admin to set it up."}</p>)}
-
       {data && <div className={styles.connections}>
         <div className={styles.connectionTitle}><h3>Connected apps</h3><button className="button ghost" type="button" onClick={refresh} disabled={loading || busy !== null}>Refresh</button></div>
-        {connections.length === 0 ? <p className={styles.status}>No apps connected yet.</p> : connections.map((connection) => (
+        {connections.length === 0 ? <p className={styles.status}>No apps connected yet. After you approve in LeadZen, select Refresh.</p> : connections.map((connection) => (
           <div className={styles.connection} key={connection.id}>
             <div className={styles.connectionInfo}>
               <strong>{connection.clientName}</strong>

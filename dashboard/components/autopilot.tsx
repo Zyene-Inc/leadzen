@@ -6,6 +6,7 @@ import { useStoredData } from "@/lib/use-stored-data";
 import { HelpTooltip } from "@/components/help-tooltip";
 import { defaultSendingSchedule, NEW_YORK_TIMEZONE, NEW_YORK_TIMEZONE_LABEL, normalizeSendingSchedule, scheduleDayLabel, scheduleSummary, scheduleTime, type SendingSchedule } from "@/lib/sending-schedule";
 import { formatNewYorkDateTime } from "@/lib/date-time";
+import { plural } from "@/lib/format";
 
 type Scope = {
   timezone: string; daily_contacts: number; monthly_contacts: number;
@@ -114,7 +115,7 @@ export function Autopilot() {
 
 function PolicyStatus({ policy, serviceEnabled }: { policy: NonNullable<State["policy"]>; serviceEnabled: boolean }) {
   return <>
-    <p className="settings-help">Up to {policy.scope.daily_contacts} new contacts/day · {policy.scope.followup_days.length} follow-ups · authorization ends {formatNewYorkDateTime(policy.expires_at, { dateStyle: "medium" })}</p>
+    <p className="settings-help">Up to {policy.scope.daily_contacts} new contacts/day · {plural(policy.scope.followup_days.length, "follow-up")} · authorization ends {formatNewYorkDateTime(policy.expires_at, { dateStyle: "medium" })}</p>
     {policy.expired && <p className="error" role="status">Approval expired. Turn off, then approve again.</p>}
     {policy.setup_changed && <p className="error" role="status">Setup changed. Turn off, then approve again.</p>}
     {policy.issue && <p className="error" role="status">{policy.issue}</p>}
@@ -127,5 +128,5 @@ function PolicyStatus({ policy, serviceEnabled }: { policy: NonNullable<State["p
 function RunHistory({ runs }: { runs: State["runs"] }) {
   const latest = runs[0];
   if (!latest) return null;
-  return <details className="autopilot-results"><summary>{latest.workday} · {phases[latest.phase] || latest.phase} · {latest.accepted} email{latest.accepted === 1 ? "" : "s"} sent</summary>{runs.map((run) => <div key={run.id} className="sequence-step"><strong>{run.workday} · {phases[run.phase] || run.phase}</strong><p className="panel-meta">{run.contacts} contacts · {run.accepted} email{run.accepted === 1 ? "" : "s"} sent · {run.reserved_credits} credits reserved · {run.ai_requests} AI requests</p>{run.issue && <p className="error">{run.issue}</p>}{run.discovery_ids?.map((id) => <Link className="button ghost" key={id} href={`/find-leads/${id}`}>View search</Link>)}{run.campaign_ids.map((id) => <Link className="button ghost" key={id} href={`/outreach?campaign=${id}`}>View emails</Link>)}</div>)}</details>;
+  return <details className="autopilot-results"><summary>{latest.workday} · {phases[latest.phase] || latest.phase} · {latest.accepted} email{latest.accepted === 1 ? "" : "s"} sent</summary>{runs.map((run) => <div key={run.id} className="sequence-step"><strong>{run.workday} · {phases[run.phase] || run.phase}</strong><p className="panel-meta">{plural(run.contacts, "contact")} · {run.accepted} email{run.accepted === 1 ? "" : "s"} sent · {run.reserved_credits} credits reserved · {plural(run.ai_requests, "AI request")}</p>{run.issue && <p className="error">{run.issue}</p>}{run.discovery_ids?.map((id) => <Link className="button ghost" key={id} href={`/find-leads/${id}`}>View search</Link>)}{run.campaign_ids.map((id) => <Link className="button ghost" key={id} href={`/outreach?campaign=${id}`}>View emails</Link>)}</div>)}</details>;
 }

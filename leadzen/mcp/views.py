@@ -18,7 +18,7 @@ from leadzen.accounts.service import access, audit, payload
 from leadzen.mcp.auth import (
     CHALLENGE, CODE_SECONDS, CONNECTION_SECONDS, OPAQUE, REQUEST_SECONDS, SCOPES, VERIFIER,
     account_is_live, configuration, connection_live, digest, issue_tokens, oauth_error,
-    oauth_response, opaque, pkce_challenge, secure_url, throttle,
+    oauth_response, opaque, pkce_challenge, secure_url, setup_problems, throttle,
 )
 from leadzen.mcp.models import MCPAccessToken, MCPAuthorizationRequest, MCPClient, MCPConnection, MCPRefreshToken
 
@@ -261,7 +261,8 @@ def connections(request):
         mcpauthorizationrequest__consumed_at__isnull=False,
     ).distinct().order_by("-created_at")[:20]
     return oauth_response({"endpoint": ready[0] if ready else None, "available": ready is not None,
-                           "reason": None if ready else "A public HTTPS MCP endpoint is required before connecting.",
+                           "reason": None if ready else "LeadZen's server address for Claude and ChatGPT is not set up yet.",
+                           "setup": [] if ready else setup_problems(),
                            "connections": [{"id": str(item.pk), "clientName": item.client.name,
                                             "createdAt": item.created_at.isoformat(),
                                             "lastUsedAt": item.last_used_at.isoformat() if item.last_used_at else None}

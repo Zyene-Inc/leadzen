@@ -81,6 +81,32 @@ def configuration():
     return resource, issuer, dashboard
 
 
+def setup_problems():
+    """Name each backend setting that blocks configuration(), for the admin fix.
+
+    Only public URL setting names and a corrected public URL are returned, never
+    secrets. A bare HTTPS API origin is the common mistake, so suggest its /mcp URL.
+    """
+    problems = []
+    raw = os.environ.get("LEADZEN_MCP_PUBLIC_URL", "").strip()
+    example = "https://your-api-host/mcp"
+    try:
+        parsed = urlsplit(secure_url(raw))
+        problem = None if parsed.path == "/mcp" and not parsed.query else "must end with /mcp"
+        if problem and parsed.path in {"", "/", "/mcp/"} and not parsed.query:
+            example = urlunsplit((parsed.scheme, parsed.netloc, "/mcp", "", ""))
+    except ValueError:
+        problem = "is not set" if not raw else "must be a public HTTPS URL"
+    if problem:
+        problems.append({"setting": "LEADZEN_MCP_PUBLIC_URL", "problem": problem, "example": example})
+    try:
+        secure_url(os.environ.get("LEADZEN_PUBLIC_URL", "").strip(), origin_only=True)
+    except ValueError:
+        problems.append({"setting": "LEADZEN_PUBLIC_URL", "problem": "must be the dashboard's public HTTPS address, without a path",
+                         "example": "https://your-dashboard-host"})
+    return problems
+
+
 def oauth_response(value, status=200):
     response = JsonResponse(value, status=status)
     response["Cache-Control"] = "no-store"

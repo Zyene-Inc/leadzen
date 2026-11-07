@@ -33,6 +33,17 @@ describe("Chat live activity", () => {
     rerender(<ChatLiveActivity conversation={{ ...plain, run: { ...plain.run!, status: "failed" } }} />);
     expect(container.querySelector(".chat-live-activity")).not.toBeNull();
   });
+  it("says the model is thinking, not using Workspace, before any action runs", () => {
+    const greeting = { ...conversation(), discovery: undefined, run: { ...conversation().run!, discovery_id: null },
+      messages: [{ id: "user", role: "user", content: "hi", data: {}, created_at: started }] } as Conversation;
+    const { rerender } = render(<ChatLiveActivity conversation={greeting} />);
+    expect(screen.getByText("Thinking")).toBeTruthy();
+    expect(screen.getByText("Using your connected model")).toBeTruthy();
+    expect(screen.queryByText("Working on your request")).toBeNull();
+    const acted = { ...greeting, messages: [...greeting.messages, { id: "tool", role: "tool", content: "Listing leads", data: { tool: "list_leads", result: { items: [] } }, created_at: started }] } as Conversation;
+    rerender(<ChatLiveActivity conversation={acted} />);
+    expect(screen.getByText("Working on your request")).toBeTruthy();
+  });
   it("starts compact, reveals only recorded activity and keeps Workspace links available", () => {
     const { container } = render(<ChatLiveActivity conversation={conversation()} />);
     expect(container.querySelector("details")?.open).toBe(false);

@@ -179,6 +179,8 @@ def configure_transports():
         return part
 
     sync._fetch = fetch_complete
+    from leadzen.mail_signals import keep_reports
+    sync._is_our_conversation = keep_reports(sync._is_our_conversation)
 
     class PinnedSMTP(smtp_class(sender._SMTP)):
         def login(self, user, password, *, initial_response_ok=True):
@@ -255,6 +257,8 @@ def sync_replies_strict(mailbox, *, classify=True):
         project_pending()
     from leadzen.outreach import honor_saved_optouts
     honor_saved_optouts(mailbox)
+    from leadzen.mail_signals import apply_mail_signals
+    apply_mail_signals(mailbox)
 
 
 def message_exists(mailbox):

@@ -3,14 +3,52 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **November 7, 2026** release of `ffe0c30`,
-below. Earlier records follow, newest first. The October 8 record was copied
+The most recent deployment is the **November 7, 2026** backend release of
+`9300040`, below. Earlier records follow, newest first. The October 8 record was copied
 here on October 12 from the closed Zyene-Inc/leadzen#10 and has not been
 re-verified against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## November 7, 2026 — backend `9300040` (Gemini base URL fix)
+
+**Source released:** `main` at `9300040` (PR #30). `build_model` strips a trailing
+`/v1`, `/v1beta` or `/v1alpha` from a Google base URL. The production workspace had
+`https://generativelanguage.googleapis.com/v1beta` saved, so the google-genai SDK
+requested `/v1beta/v1beta/models/gemini-3.8-flash:generateContent` and every
+Gemini call returned 404 (three failed Test connection attempts, 20:40–20:42 UTC).
+Wheel SHA-256 `e611732c2b9d3336e85e838b3b56a0c7d8475885c90485c4a829ce58f1cb24c5`,
+built the same way from a clean `git archive` of `9300040`.
+`requirements-production.lock` is unchanged from `ffe0c30`.
+
+**Recovery points:** on-VM backup `/srv/private/leadzen-pre-upgrade-9300040-20261107`
+(data after WAL checkpoint, env file, both unit files); previous runtime
+`/opt/leadzen-ffe0c30-20261107` left untouched. No new VM snapshot: there were no
+migrations, and the `ffe0c30` snapshot and backup remain.
+
+**Staging and cut-over (21:30:50–21:31:11 UTC):** fresh virtualenv at
+`/opt/leadzen-9300040-20261107` (`pip check` clean); `/etc/leadzen-9300040.env`
+(root 600) repointed from the `ffe0c30` file. Both databases checkpointed
+(busy 0, integrity `ok`), backed up and copied; `migrate` reported no migrations to
+apply; WSGI import smoke test; both units repointed and started.
+
+**Production verification:** both services active; authenticated `/api/health`
+and `/api/ready` 200; anonymous `/api/health` 401; no error-level journal
+entries. With the live code and a fake key over a mocked transport (no Gemini
+call), the saved base URL now requests
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent`.
+No real provider call, email or paid lookup was made.
+
+**Vercel:** not part of this release. The dashboard is unchanged since `2b71226`;
+Vercel built `dpl_GznXR2eY3tmEarYrHjdT3curMBCT` (`9300040`) but did not assign
+`leadzen.zyene.com`, which stays on `dpl_BTFdtmuRRu6aeFuRmSapRDQSnYk8`
+(`2b71226`), the same dashboard code.
+
+**Rollback path:** stop services → restore the two unit files from the on-VM
+backup (they point at `/opt/leadzen-ffe0c30-20261107` and its env file) →
+`systemctl daemon-reload` → start.
 
 ## November 7, 2026 — backend, database and dashboard `ffe0c30`
 

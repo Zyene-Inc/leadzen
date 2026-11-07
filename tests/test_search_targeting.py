@@ -296,3 +296,35 @@ def test_chat_approval_preview_and_progress_carry_search_scope(discovery_client)
     scope = progress_payload(session)["search_scope"]
     assert scope and "AI Ark searches your saved Target" in scope["search"]
     assert "AI Ark" in session.action["preview"]["search"]
+
+
+@pytest.mark.parametrize("size,expected", [("1-10", "1-10 employees"), ("501+", "501+ employees"), ("any", None)])
+def test_qualifier_is_told_the_size_band_the_search_enforced(discovery_client, size, expected):
+    """Lead Finder rows omit headcount; a sized Target must not reject them all as unsupported."""
+    import uuid
+    from leadzen import search_plan
+    from leadzen.config.models import ChatRun, ChatThread, DiscoverySession
+    from leadzen.discovery_progress import Monitor
+    save_target({**AUDIENCE, "company_size": size})
+    plan, _ = search_plan.activate(search_plan.spec({"audience": ""}))
+    thread = ChatThread.objects.create(actor_id=1)
+    run = ChatRun.objects.create(thread=thread, actor_id=1, request_id=uuid.uuid4(), status="running", deadline_at=timezone.now() + timedelta(minutes=10))
+    session = DiscoverySession.objects.create(run=run, action={"arguments": {}}, goal=1, unit="leads")
+    seen = []
+
+    def model(profile_text, product_docs, campaign_target):
+        seen.append(campaign_target)
+        return 1, "Fits"
+
+    with patch("openoutfind.core.ml.qualifier.qualify_with_llm", model):
+        with patch.object(Monitor, "boundary"), Monitor(session).adapters():
+            from openoutfind.core.ml import qualifier
+            with search_plan.scope(plan):
+                assert qualifier.qualify_with_llm("dentist owner dental practices texas", product_docs="x", campaign_target="Find dentists") == (1, "Fits")
+            qualifier.qualify_with_llm("dentist", product_docs="x", campaign_target="Find dentists")
+    inside, outside = seen
+    assert "Verified by the lead search" not in outside
+    if expected:
+        assert f"restricted to companies of {expected}" in inside and "If a required fact is unsupported, reject" in inside
+    else:
+        assert "Verified by the lead search" not in inside

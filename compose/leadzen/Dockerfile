@@ -33,6 +33,7 @@ RUN apt-get update \
         gosu=1.17-3+b4 \
         nano=8.4-1+deb13u1 \
         libpcre2-8-0=10.46-1~deb13u3 \
+        zlib1g=1:1.3.dfsg+really1.3.1-1+deb13u1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Runtime never installs packages; omit the base image's unused installer.

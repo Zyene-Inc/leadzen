@@ -22,7 +22,7 @@ const defaults: Scope = { timezone: NEW_YORK_TIMEZONE, daily_contacts: 10, month
   daily_ai_requests: 60, monthly_ai_requests: 1200, authorization_days: 30, followup_days: [3, 5], tone: "Brief, professional and helpful" };
 const fields = [
   ["daily_contacts", "New contacts / day", 25], ["monthly_contacts", "New contacts / month", 500],
-  ["daily_credits", "Email credits / day", 25], ["monthly_credits", "Email credits / month", 500],
+  ["daily_credits", "Provider credits / day", 25], ["monthly_credits", "Provider credits / month", 500],
   ["daily_ai_requests", "AI requests / day", 200], ["monthly_ai_requests", "AI requests / month", 4000],
   ["authorization_days", "Allow for (days)", 90],
 ] as const;
@@ -78,7 +78,7 @@ function AutopilotSetup({ data, close, saved }: { data: State; close: () => void
     <label>Writing style<textarea maxLength={500} required value={scope.tone} onChange={(event) => setScope({ ...scope, tone: event.target.value })} /></label>
     <label className="checkbox-label"><input type="checkbox" checked={scope.followup_days.length > 0} onChange={(event) => setScope({ ...scope, followup_days: event.target.checked ? [3, 5] : [] })} />Add follow-ups</label>
     {!!scope.followup_days.length && <><div className="form-grid">{followupSlots.slice(0, scope.followup_days.length).map(({ id, index }) => <label key={id}>Follow-up {index + 1}: sending days after previous email<input type="number" required min={1} max={30} value={scope.followup_days[index] || ""} onChange={(event) => setScope({ ...scope, followup_days: scope.followup_days.map((value, position) => position === index ? numericInput(event.target.value) : value) })} /></label>)}</div><HelpTooltip label="Follow-up timing">Counts only your sending days. With a Saturday-only schedule, 1 day means next Saturday.</HelpTooltip></>}
-    <p className="settings-help">AI and email lookups can cost money. These limits cap requests and credits, not dollars. Reserved credits count even if a provider reply is lost. Follow-ups stop on any reply or opt-out. Inbox errors pause sending.</p>
+    <p className="settings-help">AI and email lookups can cost money. These limits cap requests and credits, not dollars. Reserved credits count even if a provider reply is lost. With AI Ark, each new contact uses about 2 credits (profiles plus email), so a day finds at most half the daily credit limit. Follow-ups stop on any reply or opt-out. Inbox errors pause sending.</p>
     <label className="checkbox-label"><input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />I authorize recurring lead finding, paid email lookups, AI writing, inbox checks and automatic sending{scope.followup_days.length ? " including follow-ups" : ""} on this schedule and within these limits, with no daily review.</label>
     {!!review.blockers.length && <ul className="error">{review.blockers.map((blocker) => <li key={blocker}>{blocker}</li>)}</ul>}
     {error && <p role="alert" className="error">{error}</p>}
@@ -121,7 +121,7 @@ function PolicyStatus({ policy, serviceEnabled }: { policy: NonNullable<State["p
     {policy.issue && <p className="error" role="status">{policy.issue}</p>}
     {policy.heartbeat_stale && serviceEnabled && <p className="error" role="status">Autopilot worker is not responding. Tell your admin.</p>}
     {policy.next_start && <p className="panel-meta">Next scheduled start: {formatNewYorkDateTime(policy.next_start)} · {NEW_YORK_TIMEZONE_LABEL}</p>}
-    <details><summary>Your limits</summary><p className="settings-help">{policy.scope.daily_credits} email credits/day, {policy.scope.monthly_credits}/month · {policy.scope.daily_ai_requests} AI requests/day, {policy.scope.monthly_ai_requests}/month · {policy.scope.monthly_contacts} new contacts/month. Planned batches count toward limits.</p></details>
+    <details><summary>Your limits</summary><p className="settings-help">{policy.scope.daily_credits} provider credits/day, {policy.scope.monthly_credits}/month · {policy.scope.daily_ai_requests} AI requests/day, {policy.scope.monthly_ai_requests}/month · {policy.scope.monthly_contacts} new contacts/month. Planned batches count toward limits.</p></details>
   </>;
 }
 

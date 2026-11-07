@@ -127,7 +127,8 @@ class Monitor:
             raise PermissionError("Discovery stopped or exceeded its deadline")
         if snapshot("find_leads", self.session.action["arguments"]) != self.session.action["snapshot"]:
             raise PermissionError("Discovery setup changed")
-        if self.session.action.get("provider") == "ai_ark" and (not row.approval_expires_at or row.approval_expires_at <= self.started):
+        if (self.session.action.get("provider") == "ai_ark" and self.session.action.get("authorization") != "autopilot"
+                and (not row.approval_expires_at or row.approval_expires_at <= self.started)):
             raise PermissionError("AI Ark approval expired")
         if self.session.source_ids and selected_identity(self.session.source_ids) != self.session.action.get("source_identity"):
             raise PermissionError("Selected lead identity or deletion state changed")

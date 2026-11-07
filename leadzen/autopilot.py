@@ -49,8 +49,6 @@ def setup(actor_id):
     from leadzen.sending_schedule import get_schedule
     values, config = effective(), SiteConfig.load()
     blockers = list(context(actor_id)["blockers"])
-    if values.lead_finder_provider == "ai_ark":
-        blockers.append("AI Ark requires per-run profile-search approval. Use Find Leads or Chat; Daily Autopilot currently requires BetterContact.")
     if not values.mailbox_address or not (values.mailbox_password if values.mail_transport == "smtp" else values.mail_api_key):
         blockers.append("Connect a sending mailbox in Settings.")
     if not values.imap_host or not (values.imap_password or values.mailbox_password):
@@ -224,7 +222,27 @@ def execution(run):
         _current.reset(token)
 
 
-def external_guard(*, reserve_model=False, reserve_credit=False):
+def authorized_run(policy_id):
+    """The scheduled run executing in this process, under that exact standing policy.
+
+    Autopilot's approved daily and monthly credit limits replace a per-run
+    approval; they are enforced again by external_guard at every reservation."""
+    identifier = _current.get()
+    if not identifier:
+        raise PermissionError("Autopilot authorization is valid only inside its scheduled run")
+    run = AutopilotRun.objects.select_related("policy").get(pk=identifier)
+    if str(run.policy_id) != str(policy_id):
+        raise PermissionError("This discovery belongs to a different Autopilot authorization")
+    check_policy(run.policy)
+    return run
+
+
+def ai_ark_contact_limit(policy, limit):
+    """AI Ark buys up to two profiles (1 credit) and one email (1 credit) per contact."""
+    return min(limit, policy.scope["daily_credits"] // 2, 12)
+
+
+def external_guard(*, reserve_model=False, reserve_credit=False, credits=1):
     """Called by actual AI/provider sinks; persistent conservative reservations."""
     delivery = _delivery.get()
     if delivery:
@@ -240,14 +258,16 @@ def external_guard(*, reserve_model=False, reserve_credit=False):
                 or local.date() != run.workday or not within_delivery_window(run.policy, local, initial=True)):
             raise PermissionError("Today's Autopilot work stopped or its execution window ended")
         scope = run.policy.scope
-        for reserve, field, daily, monthly in [(reserve_model, "model_requests", "daily_ai_requests", "monthly_ai_requests"),
-                                               (reserve_credit, "email_credits", "daily_credits", "monthly_credits")]:
+        for reserve, amount, field, daily, monthly in [(reserve_model, 1, "model_requests", "daily_ai_requests", "monthly_ai_requests"),
+                                                       (reserve_credit, credits, "email_credits", "daily_credits", "monthly_credits")]:
             if not reserve:
                 continue
+            if type(amount) is not int or amount < 1:
+                raise PermissionError("Invalid Autopilot reservation")
             total = AutopilotRun.objects.filter(actor_id=run.actor_id, workday__year=run.workday.year, workday__month=run.workday.month).aggregate(n=Sum(field))["n"] or 0
-            if getattr(run, field) >= scope[daily] or total >= scope[monthly]:
+            if getattr(run, field) + amount > scope[daily] or total + amount > scope[monthly]:
                 raise PermissionError("Autopilot's approved provider budget is exhausted")
-            setattr(run, field, getattr(run, field) + 1)
+            setattr(run, field, getattr(run, field) + amount)
             run.save(update_fields=[field, "updated_at"])
 
 

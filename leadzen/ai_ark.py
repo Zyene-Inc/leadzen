@@ -90,13 +90,21 @@ def credit_balance(values=None):
 def authorize(monitor):
     monitor.boundary()
     from leadzen.config.models import ChatRun
-    row = ChatRun.objects.get(pk=monitor.session.run_id)
-    if not row.approval_expires_at or row.approval_expires_at <= monitor.started:
-        raise PermissionError("The AI Ark approval expired")
     action = monitor.session.action
+    if action.get("authorization") == "autopilot":
+        # The standing policy's credit limits are the approval; each purchase
+        # still reserves against them in external_guard before it is sent.
+        from leadzen.autopilot import authorized_run
+        authorized_run(action.get("policy_id"))
+    else:
+        row = ChatRun.objects.get(pk=monitor.session.run_id)
+        if not row.approval_expires_at or row.approval_expires_at <= monitor.started:
+            raise PermissionError("The AI Ark approval expired")
+        if action.get("approved") is not True:
+            raise PermissionError("Review and approve the AI Ark credit budget before searching")
     from leadzen.lead_finder import budget
     maximum = budget(monitor.session.goal, monitor.session.unit == "emails", selected=bool(monitor.session.source_ids))
-    if (action.get("approved") is not True or action.get("provider") != "ai_ark"
+    if (action.get("provider") != "ai_ark"
             or type(action.get("credits")) is not int or not maximum <= action["credits"] <= 25):
         raise PermissionError("Review and approve the AI Ark credit budget before searching")
 
@@ -222,6 +230,10 @@ def search(monitor):
     from leadzen.home import current_target
     filters = search_filters(current_target(SiteConfig.load(), state)["audience"])
     size = session.goal * 2
+    # Autopilot only: hold this page's worst-case cost (0.5 per profile) against
+    # the approved daily and monthly credit limits before anything is bought.
+    from leadzen.autopilot import external_guard
+    external_guard(reserve_credit=True, credits=session.goal)
     # Advance past every profile already bought for these filters, whatever lead
     # count bought it. Older receipts hashed their page size into the key.
     query_hash = query_digest(filters)

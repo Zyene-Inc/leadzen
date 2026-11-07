@@ -44,8 +44,12 @@ def discover(run, *, emails=False, source_ids=None, new_source_after=None):
         thread = ChatThread.objects.create(actor_id=run.actor_id, title=f"Autopilot · {run.workday} · {'emails' if emails else 'leads'}", context=dict(WORKSPACE_JOB))
         row = ChatRun.objects.create(thread=thread, actor_id=run.actor_id, request_id=uuid.uuid4(), lane="provider",
             status="running", deadline_at=run.deadline_at)
+        from leadzen.configuration import effective
+        from leadzen.lead_finder import budget
+        provider = effective().lead_finder_provider
         action = {"arguments": args, "snapshot": snapshot("find_leads", args),
-                  "authorization": "autopilot", "policy_id": str(run.policy_id)}
+                  "authorization": "autopilot", "policy_id": str(run.policy_id), "provider": provider,
+                  "credits": budget(args["count"], emails, selected=bool(source_ids))}
         if source_ids:
             action["source_identity"] = selected_identity(source_ids)
         if not emails:
@@ -148,7 +152,9 @@ def prepare(run):
     ids = list(session.candidates.filter(produced=True, outcome="qualified", discovered=True, source_id__gt=baseline)
                .order_by("pk").values_list("source_id", flat=True)[:run.checkpoint["contact_limit"]])
     checkpoint(run, "enriching", source_ids=ids)
-    ids = [i for i in ids if not DiscoveryLookup.objects.filter(source_id=i).exists()][:run.policy.scope["daily_credits"]]
+    # Searching may already have used part of today's credits (AI Ark charges for profiles).
+    remaining = max(0, run.policy.scope["daily_credits"] - AutopilotRun.objects.get(pk=run.pk).email_credits)
+    ids = [i for i in ids if not DiscoveryLookup.objects.filter(source_id=i).exists()][:remaining]
     if not ids:
         checkpoint(run, "needs_attention" if run.checkpoint.get("partial_discovery") else "completed", contacts=0)
         return
@@ -277,6 +283,14 @@ def workspace_tick():
                 monthly = sum(r.checkpoint.get("contact_limit", 0) for r in AutopilotRun.objects.filter(
                     actor_id=policy.actor_id, workday__year=now.year, workday__month=now.month).exclude(pk=run.pk))
                 limit = min(policy.scope["daily_contacts"], max(0, policy.scope["monthly_contacts"] - monthly))
+                from leadzen.configuration import effective
+                if limit and effective().lead_finder_provider == "ai_ark":
+                    from leadzen.autopilot import ai_ark_contact_limit
+                    limit = ai_ark_contact_limit(policy, limit)
+                    if not limit:
+                        checkpoint(run, "needs_attention")
+                        AutopilotRun.objects.filter(pk=run.pk).update(issue="AI Ark needs at least 2 credits per contact. Raise the daily credit limit.")
+                        continue
                 if not limit:
                     checkpoint(run, "needs_attention")
                     AutopilotRun.objects.filter(pk=run.pk).update(issue="Monthly new-contact limit reached.")

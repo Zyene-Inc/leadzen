@@ -17,6 +17,7 @@ from django.views.decorators.http import require_http_methods
 from leadzen.accounts.service import access, error, payload
 from leadzen.config.models import AutopilotPolicy, AutopilotRun, CampaignRecipient, SiteConfig
 from leadzen.timezone import NEW_YORK, TIME_ZONE
+from leadzen.reply_sorting import replies
 
 _current = ContextVar("autopilot_run", default=None)
 _delivery = ContextVar("autopilot_delivery", default=None)
@@ -276,7 +277,7 @@ def send_guard(campaign, recipient, own_message=None):
     if (deal.state == DealState.COMPLETED or Suppression.objects.filter(email__iexact=deal.lead.email).exists()
             or ContactPreferences.objects.filter(lead=deal.lead, deleted_at__isnull=False).exists()
             or duplicate_initial
-            or (deal.thread_id and Message.objects.filter(thread_id=deal.thread_id, direction=Direction.INBOUND).exists())):
+            or (deal.thread_id and replies(thread_id=deal.thread_id).exists())):
         # This is a terminal recipient decision, not a mailbox/policy failure.
         # Persist it even at the transport boundary so the due queue can advance.
         CampaignRecipient.objects.filter(pk=recipient.pk, status__in=["pending", "sending"]).update(status="stopped")

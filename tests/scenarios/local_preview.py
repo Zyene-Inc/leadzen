@@ -6,6 +6,7 @@ Run with LEADZEN_PREVIEW_DIR pointing at a mktemp leadzen-preview.* directory.
 import json
 import os
 import pathlib
+from datetime import timedelta
 import sys
 import threading
 import time
@@ -145,6 +146,22 @@ for profile in AccountProfile.objects.using("default").select_related("user").al
                 Message.objects.create(mailbox=box, thread=thread, direction="in", kind="human_reply", message_id="review-fixture-in", from_address=reply_lead.email, to_address=box.from_address, subject="Re: Synthetic patient reviews", body_text="Thanks. Can you send pricing?", received_at=timezone.now())
                 reply_deal.state, reply_deal.thread, reply_deal.mailbox = "Emailed", thread, box
                 reply_deal.save()
+            away_lead, _ = Lead.objects.get_or_create(lead_id="review-fixture-away", defaults={"first_name": "Ann", "last_name": "Away (sample out of office)", "email": "ann-away@preview.example", "company": "Synthetic Dental Practice"})
+            away_deal, _ = Deal.objects.get_or_create(lead=away_lead)
+            if not away_deal.thread_id:
+                box = active_mailboxes().first()
+                thread = Thread.objects.create(mailbox=box)
+                Message.objects.create(mailbox=box, thread=thread, direction="out", kind="outbound", message_id="away-fixture-out", from_address=box.from_address, to_address=away_lead.email, subject="Synthetic patient reviews", body_text="Hi Ann, would a review management demo help?", sent_at=timezone.now())
+                back = (timezone.localdate() + timedelta(days=9)).strftime("%B %-d")
+                Message.objects.create(mailbox=box, thread=thread, direction="in", kind="auto_reply", message_id="away-fixture-in", from_address=away_lead.email, to_address=box.from_address, subject="Automatic reply: Synthetic patient reviews", body_text=f"I am out of the office until {back} with limited access to email.", received_at=timezone.now())
+                away_deal.state, away_deal.thread, away_deal.mailbox = "Emailed", thread, box
+                away_deal.save()
+            # Label the sample replies with the real rules, as a mailbox check would.
+            from leadzen.config.models import ReplyLabel
+            from leadzen.reply_sorting import label_message
+            for message in Message.objects.filter(direction="in", message_id__in=["review-fixture-in", "away-fixture-in"]):
+                label, source, back_on = label_message(message)
+                ReplyLabel.objects.get_or_create(message_pk=message.pk, defaults={"label": label, "source": source, "return_date": back_on, "action": "held" if label == "out_of_office" else ""})
         if profile.user.email == "employee@preview.example" and profile.onboarding_completed_at:
             from openoutfind.crm.models import Lead as FoundLead, Deal as FoundDeal
             # Disposable dashboard fixtures only. These are not provider results.

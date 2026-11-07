@@ -1,5 +1,21 @@
 # Last verified project state
 
+## Reply sorting in Inbox — branch feat/reply-sorting, November 4, 2026 (not deployed)
+
+Stacked on feat/bounce-domain-health. Ported from Warmbly's rule-based reply
+classifier (`leadzen/reply_classify.py`, `leadzen/reply_phrases.py`; no AI
+calls). After each mailbox check, `leadzen/reply_sorting.py` labels each reply
+once (`ReplyLabel`, migration `0027_replylabel`): interested, not interested,
+out of office, unsubscribe, automatic reply or needs review. Unsubscribe →
+Do not contact ("Asked to unsubscribe in a reply"); never for bulk mail with
+List-Unsubscribe, and the sender's own opt-out footer is removed first. Out of
+office → pending campaign follow-ups for that address wait until the next
+business day after the parsed return date (7 days when none, only for replies
+from the last 14 days). Campaign and Autopilot stop checks now ignore labelled
+away messages via `reply_sorting.replies`; unlabelled mail still stops a
+sequence. Inbox shows label chips and a label filter. Replies still need the
+employee's approval; nothing new sends.
+
 ## Bounces, spam complaints and domain health — branch feat/bounce-domain-health, November 4, 2026 (not deployed)
 
 Ported from Warmbly (Apache-2.0, commit `0df02b5`; see `THIRD_PARTY_NOTICES.md`).

@@ -35,9 +35,9 @@ _ADMITTED_MISMATCH = (
 )
 
 
-def _qualify_for_campaign(profile_text, product_docs, campaign_target, qualifier):
+def _qualify_for_campaign(profile_text, product_docs, campaign_target, qualifier, verified=""):
     label, reason = qualifier(profile_text, product_docs=product_docs,
-                              campaign_target=campaign_target + _CAMPAIGN_RULES)
+                              campaign_target=campaign_target + _CAMPAIGN_RULES + verified)
     if label == 1 and any(pattern.search(reason) for pattern in _ADMITTED_MISMATCH):
         return 0, "Campaign target mismatch acknowledged by the qualification: " + reason
     return label, reason
@@ -389,7 +389,8 @@ class Monitor:
             # Profile text is not a canonical ID. Identical firmographics can
             # belong to several people; show the phase without guessing whom.
             self.evaluating(matches[0] if len(matches) == 1 else None)
-            return _qualify_for_campaign(profile_text, product_docs, campaign_target, original_llm)
+            from leadzen.search_plan import enforced_facts
+            return _qualify_for_campaign(profile_text, product_docs, campaign_target, original_llm, enforced_facts())
 
         def verdict(qualifier, lead, *args, **kwargs):
             original_verdict(qualifier, lead, *args, **kwargs)

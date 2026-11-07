@@ -13,12 +13,14 @@ import hashlib
 import json
 import re
 from contextlib import ExitStack, contextmanager
+from contextvars import ContextVar
 from unittest.mock import patch
 
 from django.db import transaction
 from django.utils import timezone
 
 KEEP_ARCHIVES = 20
+_active = ContextVar("leadzen_search_plan_spec", default=None)
 HEADCOUNT = {"1-10": (1, 10), "2-50": (2, 50), "11-50": (11, 50), "51-200": (51, 200),
              "201-500": (201, 500), "501+": (501, 1_000_000)}
 
@@ -45,6 +47,24 @@ def spec(args):
         return {"target": normalized(config.campaign_target), "place": "", "headcount": None, "seniority": []}
     return {"target": normalized(config.campaign_target), "place": place(audience),
             "headcount": HEADCOUNT.get(audience["company_size"]), "seniority": sorted(audience.get("seniority") or [])}
+
+
+def enforced_facts():
+    """Restrictions the provider query itself enforced, for the qualifier.
+
+    Lead Finder rows never carry company headcount, so a qualifier told to reject
+    unsupported facts rejected every profile for a sized Target, even though each
+    query already filtered on that exact band. Location and seniority stay for the
+    qualifier to check, because the profile text carries them.
+    """
+    value = _active.get()
+    if not value or not value.get("headcount"):
+        return ""
+    low, high = value["headcount"]
+    size = f"{low}+ employees" if high >= 1_000_000 else f"{low}-{high} employees"
+    return ("\n\nVerified by the lead search: every profile here came from a provider query "
+            f"restricted to companies of {size}. Treat the company-size restriction as satisfied; "
+            "do not reject a profile because its text omits the employee count.")
 
 
 def fingerprint(value):
@@ -206,4 +226,8 @@ def scope(plan):
         stack.enter_context(patch.object(QueryNode, "to_filters", to_filters))
         from openoutfind.core.pipeline import top_up
         stack.enter_context(patch.object(top_up, "fetch_qualification_candidates", candidates))
-        yield
+        token = _active.set(value)
+        try:
+            yield
+        finally:
+            _active.reset(token)

@@ -3,15 +3,68 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **October 13, 2026** release of `f77dc31`,
-below, which followed the same day's `0273acb` release. An earlier October 13 release of `42e9bbc` was not recorded here; it was
-the runtime replaced by this one. The October 12 and October 8 records follow. It was recorded by the operator who performed it and copied here
-on October 12 from the closed Zyene-Inc/leadzen#10; it has not been re-verified
-against the live VM since. Every section is dated evidence, not a current
+The most recent deployment is the **November 7, 2026** release of `ffe0c30`,
+below. Earlier records follow, newest first. The October 8 record was copied
+here on October 12 from the closed Zyene-Inc/leadzen#10 and has not been
+re-verified against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## November 7, 2026 — backend, database and dashboard `ffe0c30`
+
+**Source released:** `main` at `ffe0c30`. It includes PRs #21 (Oct 13 release
+record), #22 (UI/UX audit), #23 and #28 (dependency and image advisories), #24
+(Chat tool judgment), #25 (bounce/complaint blocking and domain health, ported
+from Warmbly), #26 (reply labels, ported from Warmbly) and #27 (Claude/ChatGPT
+connection setup). Wheel SHA-256
+`8439d25a965b241365de417995c79bf9e111c96c9b092afca590f2ddb6a8775f`, built with
+`uv build --build-constraints requirements-build.lock --require-hashes` from a
+clean `git archive` of `ffe0c30`.
+
+**Verified before release (live VM):** `f77dc31` at `/opt/leadzen-f77dc31-20261013`
+with `/etc/leadzen-f77dc31.env`; one initialized workspace (`97bd43a2-…`); no
+worker jobs running and no service log entries in the previous 20 minutes.
+
+**Recovery points:** VM snapshot `leadzen-api-pre-ffe0c30-20261107` (READY, 30 GB);
+on-VM backup `/srv/private/leadzen-pre-upgrade-ffe0c30-20261107` (data after WAL
+checkpoint, env file, both unit files); previous runtime
+`/opt/leadzen-f77dc31-20261013` left untouched with its unmigrated data.
+
+**Staging (no downtime):** a fresh virtualenv at `/opt/leadzen-ffe0c30-20261107`
+from `requirements-production.lock` with `--require-hashes --no-deps`, then the
+wheel with `--no-deps`; `pip check` clean. New runtime packages include
+certifi 2026.10.23, dnspython 2.9.2, fastembed 0.9.1, filelock 4.2.9, pillow
+13.0.0 and pyasn1 0.6.5. `/etc/leadzen-ffe0c30.env` (root 600) is the previous
+file with paths pointed at the new runtime; `LEADZEN_MCP_PUBLIC_URL` keeps `/mcp`.
+
+**Cut-over (19:53:16–19:54:07 UTC):** stopped both services; checkpointed both
+databases (busy 0, integrity `ok`) and backed up; copied data; migrated the
+control database and the workspace to `leadzen_config.0027_replylabel` (applied
+`0026_mailsignal` and `0027_replylabel`, both table additions) as the service
+user with Autopilot and follow-ups forced off; integrity `ok` after each; WSGI
+import smoke test; pointed both units at the new runtime and env file; started.
+
+**Vercel:** automatic domain assignment was paused before the merges, so
+`leadzen.zyene.com` stayed on `f77dc31` while the PRs landed. After the backend
+cut-over, `dpl_8Ja4dDyEMZswsP1X4txsaicgbcoB` (`ffe0c30`) was promoted and
+`autoAssignCustomDomains` was turned back on.
+
+**Production verification:** both services active with zero restarts and no
+warnings in the journal; authenticated `/api/health` and `/api/ready` 200
+(database and migrations true); anonymous `/api/health` and `/api/ready` 401;
+`/mcp` returns a 401 challenge pointing to
+`/.well-known/oauth-protected-resource/mcp` (200), and
+`/.well-known/oauth-authorization-server` returns 200; dashboard login page
+200 on `ffe0c30`. A signed-in browser check was not performed during the release.
+No email was sent and no search or paid lookup was run.
+
+**Rollback path:** stop services → restore the two unit files from the on-VM
+backup (they point at `/opt/leadzen-f77dc31-20261013` and its env file) →
+`systemctl daemon-reload` → start; then promote the previous Vercel production
+deployment (`f77dc31`). Or recreate the VM from the snapshot. Migrations `0026`
+and `0027` only add tables, so the older runtime runs on them unchanged.
 
 ## November 5, 2026 — MCP public URL corrected (owner-approved)
 

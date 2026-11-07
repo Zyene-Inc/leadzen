@@ -107,7 +107,7 @@ export function Sidebar({
         </div>
       </div>
       <div className="navigation-area" id="workspace-navigation">
-        {(!user.is_admin || user.onboarded) && (
+        {user.onboarded && (
           <nav className="sidebar-modes" aria-label="Navigation mode">
             <Link
               data-tour="nav-workspace"
@@ -129,14 +129,23 @@ export function Sidebar({
           </nav>
         )}
         {active === "chat" && chatNavigation}
-        {active !== "chat" && (!user.is_admin || user.onboarded) && (
+        {!user.onboarded && !user.is_admin && (
+          <nav aria-label="Workspace">
+            <div className="nav-label">Get started</div>
+            <Link className="nav-item active" href="/onboarding" aria-current={active === "onboarding" ? "page" : undefined} onClick={() => setMenuOpen(false)}>
+              <Icon name="onboarding" />
+              Set up workspace
+            </Link>
+          </nav>
+        )}
+        {active !== "chat" && user.onboarded && (
           <nav aria-label="Workspace">
             <div className="nav-label">Your workspace</div>
             {workspaceLinks.map((item) => (
               <Link
                 key={item.id}
                 data-tour={`nav-${item.id}`}
-                className={`nav-item${workspaceActive === item.id ? " active" : ""}${item.id === "activity" ? " nav-group-start" : ""}`}
+                className={`nav-item${workspaceActive === item.id ? " active" : ""}`}
                 href={item.href}
                 aria-current={workspaceActive === item.id ? "page" : undefined}
                 onClick={() => setMenuOpen(false)}
@@ -147,8 +156,8 @@ export function Sidebar({
             ))}
             <details className="workspace-tools" open={["activity", "suppression"].includes(active) || undefined}>
               <summary className="nav-item">More</summary>
-              <Link className={`nav-item${active === "activity" ? " active" : ""}`} href="/activity" aria-current={active === "activity" ? "page" : undefined}><Icon name="activity" />Activity</Link>
-              <Link className={`nav-item${active === "suppression" ? " active" : ""}`} href="/suppression" aria-current={active === "suppression" ? "page" : undefined}><Icon name="suppression" />Do not contact</Link>
+              <Link className={`nav-item${active === "activity" ? " active" : ""}`} href="/activity" aria-current={active === "activity" ? "page" : undefined} onClick={() => setMenuOpen(false)}><Icon name="activity" />Activity</Link>
+              <Link className={`nav-item${active === "suppression" ? " active" : ""}`} href="/suppression" aria-current={active === "suppression" ? "page" : undefined} onClick={() => setMenuOpen(false)}><Icon name="suppression" />Do not contact</Link>
             </details>
           </nav>
         )}
@@ -166,7 +175,7 @@ export function Sidebar({
               onClick={() => setMenuOpen(false)}
             >
               <Icon name="admin" />
-              Team accounts
+              Employee accounts
             </Link>
           </nav>
         )}

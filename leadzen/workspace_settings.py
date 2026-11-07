@@ -134,3 +134,19 @@ def backup(request):
     except (OSError, sqlite3.Error, SettingsError):
         snapshot.close()
         return JsonResponse({"error": "The workspace backup could not be created. Try again or contact your administrator."}, status=503)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@access(workspace=True)
+def domain_health(request):
+    """Look up the saved sending domain's SPF, DKIM, DMARC and MX records.
+
+    Only DNS is read; nothing is sent and no provider is contacted. The domain
+    always comes from the saved mailbox, never from the browser.
+    """
+    from leadzen.domain_health import check
+    address = effective().mailbox_address or ""
+    if "@" not in address:
+        raise SettingsError("Connect an email account first")
+    return JsonResponse({**check(address.rsplit("@", 1)[1]), "checked_at": timezone.now().isoformat()})

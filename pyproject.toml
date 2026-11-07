@@ -10,7 +10,7 @@ description = "LeadZen by Zyene — AI lead discovery and outreach for the Zyene
 readme = "README.md"
 requires-python = ">=3.11"
 license = "GPL-3.0-or-later"
-license-files = ["LICENCE.md", "THIRD_PARTY_NOTICES.md"]
+license-files = ["LICENCE.md", "THIRD_PARTY_NOTICES.md", "licenses/*.txt"]
 authors = [{ name = "Zyene", email = "support@zyene.com" }]
 keywords = [
     "lead-generation",
@@ -68,6 +68,8 @@ dependencies = [
     # than inherited from the finder: the rule above is that this file names what *this*
     # package imports directly.
     "pytz>=2024.1",
+    # Sending-domain health reads SPF, DKIM, DMARC and MX records directly.
+    "dnspython>=2.7,<3",
 ]
 
 [project.optional-dependencies]
@@ -89,4 +91,4 @@ Homepage = "https://leadzen.zyene.com"
 packages = ["leadzen"]
 
 [tool.hatch.build.targets.sdist]
-include = ["leadzen", "README.md", "LICENCE.md", "THIRD_PARTY_NOTICES.md", "LEGAL_NOTICE.md", "PRIVACY_NOTICE.md", "pyproject.toml"]
+include = ["leadzen", "README.md", "LICENCE.md", "THIRD_PARTY_NOTICES.md", "licenses", "LEGAL_NOTICE.md", "PRIVACY_NOTICE.md", "pyproject.toml"]

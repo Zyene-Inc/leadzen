@@ -6,6 +6,7 @@ import { WorkspacePage } from "@/components/workspace-records";
 import { SettingsEditor } from "@/components/settings-editor";
 import { SettingsTest } from "@/components/settings-test";
 import { SettingsData } from "@/components/settings-data";
+import { DomainHealth } from "@/components/domain-health";
 import { MCPConnections } from "@/components/mcp-connections";
 import type { Account } from "@/lib/auth";
 import { useStoredData } from "@/lib/use-stored-data";
@@ -91,6 +92,9 @@ function SettingsRow({
           disabled={locked}
           saved={saved}
         />
+      )}
+      {!editing && section === "mailbox" && (
+        <DomainHealth address={data.mailbox.address} disabled={locked} />
       )}
       {editing && (
         <SettingsEditor

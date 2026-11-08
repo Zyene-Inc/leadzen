@@ -4,13 +4,61 @@ LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
 The most recent deployment is the **November 7, 2026** backend release of
-`9300040`, below. Earlier records follow, newest first. The October 8 record was copied
+`eaf12a7`, below. Earlier records follow, newest first. The October 8 record was copied
 here on October 12 from the closed Zyene-Inc/leadzen#10 and has not been
 re-verified against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## November 7, 2026 — backend `eaf12a7` (AI Ark in Autopilot, BetterContact size fix)
+
+**Source released:** `main` at `eaf12a7` (PR #32, which also carries the closed
+PR #33). Two changes:
+
+- Daily Autopilot can use AI Ark. The standing Autopilot policy's credit limits
+  replace AI Ark's per-run Chat approval, only inside the scheduled run that owns
+  that policy. Each search page reserves its cost (1 credit per contact) before
+  purchase; an AI Ark day is `min(daily contacts, daily credits // 2, 12)`.
+- BetterContact Find Leads rejected nearly every profile: the qualifier rejects
+  unsupported facts, a saved Target always states a company size, and Lead Finder
+  profile text never carries headcount. The qualifier is now told the headcount
+  band the provider query already enforced. Not yet confirmed against production
+  rejection reasons; reading them was not authorized.
+
+Wheel SHA-256 `8c369e0f86f866c93bf92262d4f7d23539b8c8b8666422bdafbbf4d19a5ce31f`,
+built the same way from a clean `git archive` of `eaf12a7`.
+`requirements-production.lock` is unchanged from `9300040`.
+
+**Recovery points:** on-VM backup `/srv/private/leadzen-pre-upgrade-eaf12a7-20261107`
+(21 MB: data after WAL checkpoint, env file, both unit files); previous runtime
+`/opt/leadzen-9300040-20261107` left untouched. No new VM snapshot: there were no
+migrations.
+
+**Staging and cut-over (00:23:48–00:24:37 UTC, November 8):** fresh virtualenv at
+`/opt/leadzen-eaf12a7-20261107` (`pip check` clean); `/etc/leadzen-eaf12a7.env`
+(root 600) repointed from the `9300040` file. Both databases checkpointed
+(busy 0, integrity `ok`), backed up and copied; `migrate` reported no migrations to
+apply; WSGI import smoke test; both units repointed and started. Directory names
+keep the `20261107` date used when the release was prepared.
+
+**Production verification:** both services active; authenticated `/api/health`
+and `/api/ready` 200; anonymous `/api/health` 401; no error-level journal
+entries. The installed package no longer contains the "currently requires
+BetterContact" Autopilot blocker and contains `authorized_run` and
+`enforced_facts`. No provider call, email or paid lookup was made. The AI Ark
+account currently answers its free credit check with HTTP 403 (no API access in
+the plan, or a past-due invoice), so AI Ark Autopilot cannot run until that is
+resolved on the AI Ark side.
+
+**Vercel:** not redeployed. This release changes only two lines of dashboard help
+text (credit labels and the AI Ark note); they reach `leadzen.zyene.com` with the
+next dashboard deployment.
+
+**Rollback path:** stop services → restore the two unit files from the on-VM
+backup (they point at `/opt/leadzen-9300040-20261107` and its env file) →
+`systemctl daemon-reload` → start.
 
 ## November 7, 2026 — backend `9300040` (Gemini base URL fix)
 

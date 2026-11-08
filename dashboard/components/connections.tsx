@@ -128,7 +128,7 @@ export function Connections({
               Remove the saved {providerName} key when I save
             </label>
           )}
-          <p className="settings-help">Only the chosen provider is used. The other key stays saved.{ark && " AI Ark costs 0.5 credits per profile and up to 1 credit per checked email. You see the cost before each search. Daily Autopilot needs BetterContact."}</p>
+          <p className="settings-help">Only the chosen provider is used. The other key stays saved.{ark && " AI Ark costs 0.5 credits per profile and up to 1 credit per checked email. You see the cost before each search. Daily Autopilot uses its own approved credit limits, about 2 credits per contact."}</p>
         </section>
       )}
       {sections.includes("ai") && (

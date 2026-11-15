@@ -2,6 +2,7 @@
 import json
 import time
 import subprocess
+from types import SimpleNamespace
 import sys
 import uuid
 from datetime import timedelta
@@ -218,37 +219,58 @@ def run(request, run_id, action=None):
         ChatRun.objects.filter(pk=row.pk, status__in=["queued", "awaiting_approval", "paused"]).update(status="cancelled", finished_at=timezone.now())
         row.refresh_from_db()
         return JsonResponse(run_payload(row))
-    if row.thread.context.get("mcpConnectionId"):
-        from leadzen.mcp.auth import connection_live
-        try:
-            connection_live(row.thread.context["mcpConnectionId"], request.actor.pk)
-        except PermissionError:
-            return error("This app was disconnected. Request a new action after reconnecting.", 403)
     body = payload(request)
     if type(body.get("approved")) is not bool:
         return error("Approval must be true or false")
+    try:
+        decided = decide_approval(row, request.actor, body["approved"], body.get("action_id"))
+    except ApprovalError as exc:
+        return error(str(exc), exc.status)
+    return JsonResponse(run_payload(decided), status=202 if decided.status == "queued" else 200)
+
+
+class ApprovalError(Exception):
+    def __init__(self, message, status=409):
+        super().__init__(message)
+        self.status = status
+
+
+def decide_approval(row, actor, approved, action_id, *, source="portal"):
+    """Record one employee decision on one exact prepared action.
+
+    The portal and an employee-enabled MCP connection share these checks: the
+    action ID must match, approval must be unexpired, and the snapshot of the
+    connections, campaign and contacts must be unchanged.
+    """
+    if row.thread.context.get("mcpConnectionId"):
+        from leadzen.mcp.auth import connection_live
+        try:
+            connection_live(row.thread.context["mcpConnectionId"], actor.pk)
+        except PermissionError:
+            raise ApprovalError("This app was disconnected. Request a new action after reconnecting.", 403) from None
     from leadzen.chat.engine import snapshot
     with transaction.atomic(using=ChatRun.objects.all().db):
         row.refresh_from_db()
-        if row.status != "awaiting_approval" or body.get("action_id") != row.pending.get("id"):
-            return error("This approval is no longer available", 409)
-        if not body["approved"]:
+        if row.status != "awaiting_approval" or not action_id or action_id != row.pending.get("id"):
+            raise ApprovalError("This approval is no longer available")
+        if not approved:
             ChatRun.objects.filter(pk=row.pk, status="awaiting_approval").update(status="cancelled", finished_at=timezone.now())
             ChatMessage.objects.create(thread=row.thread, role="assistant", content="Action declined. No new lead lookup or email send was started.")
             row.refresh_from_db()
-            return JsonResponse(run_payload(row))
+            return row
         try:
             unchanged = snapshot(row.pending["tool"], row.pending["arguments"], row=row) == row.pending["snapshot"]
         except ValueError:
             unchanged = False
         if not row.approval_expires_at or row.approval_expires_at <= timezone.now() or not unchanged:
-            return error("Approval expired or the connections, campaign or contacts changed. Decline and request a fresh action.", 409)
-        row.pending = {**row.pending, "approved": True}
+            raise ApprovalError("Approval expired or the connections, campaign or contacts changed. Decline and request a fresh action.")
+        row.pending = {**row.pending, "approved": True, "approvedVia": source}
         row.status = "queued"
         row.save()
-        ChatMessage.objects.create(thread=row.thread, role="approval", content="You approved: " + row.pending["summary"], data={"approval": {key: row.pending[key] for key in ("id", "tool", "credits", "emails", "preview")}})
-    launch(request, row)
-    return JsonResponse(run_payload(row), status=202)
+        prefix = "You approved in your connected assistant: " if source == "mcp" else "You approved: "
+        ChatMessage.objects.create(thread=row.thread, role="approval", content=prefix + row.pending["summary"], data={"approval": {key: row.pending[key] for key in ("id", "tool", "credits", "emails", "preview") if key in row.pending}, "source": source})
+    launch(SimpleNamespace(actor=actor), row)
+    return row
 
 
 @csrf_exempt

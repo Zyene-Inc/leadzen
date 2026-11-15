@@ -549,7 +549,7 @@ def test_real_graph_child_does_not_load_application_settings_or_touch_selected_d
                             capture_output=True, text=True, timeout=30)
     assert result.returncode == 0
     payload = json.loads(result.stdout)
-    assert ["leadzen_accounts", "0004_accountprofile_tour_state"] in payload["leaves"]
+    assert ["leadzen_accounts", "0005_mcpconnection_allow_approvals"] in payload["leaves"]
     newest = max(path.stem for path in (Path(__file__).resolve().parents[1] / "leadzen" / "config" / "migrations").glob("0*.py"))
     assert ["leadzen_config", newest] in payload["leaves"]
     assert original.read_bytes() == b"not-a-database"

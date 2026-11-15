@@ -3,14 +3,67 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **November 7, 2026** backend release of
-`eaf12a7`, below. Earlier records follow, newest first. The October 8 record was copied
+The most recent deployment is the **November 15, 2026** backend release of
+`4ba845e`, below. Earlier records follow, newest first. The October 8 record was copied
 here on October 12 from the closed Zyene-Inc/leadzen#10 and has not been
 re-verified against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## November 15, 2026 — backend and database `4ba845e` (in-chat MCP approvals)
+
+**Source released:** `main` at `4ba845e` (PR #36; `main` also carries PR #35, a
+dashboard-only change). A connected assistant can approve a prepared action
+(`approve_operation`) on connections where the employee turned on **Allow approvals
+from this app** in Settings → Claude & ChatGPT. The setting is off by default.
+`decline_operation` is always available. Both use the portal's approval checks. Owner
+approved the migration and restart in session on November 15. Wheel SHA-256
+`ab0edd92d3c95eeb59b947a2d7c6184807b05ab65756de054a2c52f3382b78c5`, built with
+`uv build --wheel --build-constraints requirements-build.lock --require-hashes` from a
+clean `git archive` of `4ba845e`. `requirements-production.lock` is unchanged from
+`eaf12a7`.
+
+**Verified before release (live VM):** `eaf12a7` at `/opt/leadzen-eaf12a7-20261107`
+with `/etc/leadzen-eaf12a7.env`; **two** initialized workspaces (`91e7b196-…` and
+`97bd43a2-…`); no worker jobs running at cut-over. A first cut-over attempt at
+23:48:29 UTC aborted at preflight on a transient worker, before any change.
+
+**Recovery points:** VM snapshot `leadzen-api-pre-4ba845e-20261115` (READY, 30 GB,
+disk `openoutreach-api`); on-VM backup
+`/srv/private/leadzen-pre-upgrade-4ba845e-20261115` (23 MB: data after WAL
+checkpoint, env file, both unit files); previous runtime
+`/opt/leadzen-eaf12a7-20261107` left untouched with its unmigrated data.
+
+**Staging (no downtime):** fresh virtualenv at `/opt/leadzen-4ba845e-20261115` from
+the lock with `--require-hashes --no-deps`, then the wheel with `--no-deps`;
+`pip check` clean. `/etc/leadzen-4ba845e.env` (root 600) is the previous file
+with paths pointed at the new runtime.
+
+**Cut-over (23:48:47–23:49:23 UTC):** stopped both services; checkpointed all three
+databases (busy 0, integrity `ok`) and backed up; copied data; migrated the control
+database and both workspaces with `leadzen_accounts.0005_mcpconnection_allow_approvals`
+(adds one boolean column, default false). Migrations ran as the service user with
+Autopilot and follow-ups forced off. Integrity was `ok` after each. Then a WSGI
+import smoke test; both units repointed at the new runtime and env file; started.
+
+**Production verification:** both services active with zero restarts and no
+warning-level journal entries; authenticated `/api/health` and `/api/ready` 200
+(database and migrations true); anonymous `/api/health`, `/api/ready` and `/mcp`
+401; `/.well-known/oauth-protected-resource/mcp` and
+`/.well-known/oauth-authorization-server` 200; dashboard login 200. No email was
+sent and no search or paid lookup was run. A real Claude connector approval was not
+exercised.
+
+**Vercel:** `dpl_6UVeJXGC1VfX41385D1xcUZW4HRh` (`4ba845e`) built for production
+automatically and is READY. It carries the Settings toggle and PR #35's dashboard
+changes.
+
+**Rollback path:** stop services → restore the two unit files from the on-VM
+backup (they point at `/opt/leadzen-eaf12a7-20261107` and its env file) →
+`systemctl daemon-reload` → start. Or recreate the VM from the snapshot. Migration
+`0005` only adds a column, so the older runtime runs on the migrated data unchanged.
 
 ## November 7, 2026 — backend `eaf12a7` (AI Ark in Autopilot, BetterContact size fix)
 

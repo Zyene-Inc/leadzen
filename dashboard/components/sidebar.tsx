@@ -11,18 +11,28 @@ import { Icon, type IconName } from "@/components/icon";
 import type { Account } from "@/lib/auth";
 import { useProductTour } from "@/components/product-tour-provider";
 
-const workspaceLinks: {
-  id: string;
-  icon: IconName;
-  href: string;
-  label: string;
-}[] = [
-  { id: "overview", icon: "overview", href: "/", label: "Home" },
-  { id: "contacts", icon: "contacts", href: "/contacts", label: "Leads" },
-  { id: "outreach", icon: "send", href: "/outreach", label: "Outreach" },
-  { id: "results", icon: "results", href: "/results", label: "Results" },
-  { id: "inbox", icon: "inbox", href: "/inbox", label: "Inbox" },
-  { id: "settings", icon: "settings", href: "/settings", label: "Settings" },
+type NavLink = { id: string; icon: IconName; href: string; label: string };
+
+// Grouped like Explee's sidebar: main pages, then Mailbox, then Setup.
+const navGroups: { label: string; items: NavLink[] }[] = [
+  {
+    label: "",
+    items: [
+      { id: "overview", icon: "overview", href: "/", label: "Dashboard" },
+      { id: "contacts", icon: "contacts", href: "/contacts", label: "Leads" },
+      { id: "outreach", icon: "send", href: "/outreach", label: "Outreach" },
+      { id: "results", icon: "results", href: "/results", label: "Results" },
+    ],
+  },
+  { label: "Mailbox", items: [{ id: "inbox", icon: "inbox", href: "/inbox", label: "Inbox" }] },
+  {
+    label: "Setup",
+    items: [
+      { id: "settings", icon: "settings", href: "/settings", label: "Settings" },
+      { id: "activity", icon: "activity", href: "/activity", label: "Activity" },
+      { id: "suppression", icon: "suppression", href: "/suppression", label: "Do not contact" },
+    ],
+  },
 ];
 
 function useWorkspaceMode(user: Account, active: string, setError: (message: string) => void) {
@@ -103,8 +113,8 @@ export function Sidebar({
         </span>
         <div>
           <div className="workspace-name">Zyene</div>
-          <div className="workspace-caption">Internal workspace</div>
         </div>
+        <span className="workspace-plan">Internal</span>
       </div>
       <div className="navigation-area" id="workspace-navigation">
         {user.onboarded && (
@@ -140,25 +150,27 @@ export function Sidebar({
         )}
         {active !== "chat" && user.onboarded && (
           <nav aria-label="Workspace">
-            <div className="nav-label">Your workspace</div>
-            {workspaceLinks.map((item) => (
-              <Link
-                key={item.id}
-                data-tour={`nav-${item.id}`}
-                className={`nav-item${workspaceActive === item.id ? " active" : ""}`}
-                href={item.href}
-                aria-current={workspaceActive === item.id ? "page" : undefined}
-                onClick={() => setMenuOpen(false)}
-              >
-                <Icon name={item.icon} />
-                {item.label}
-              </Link>
+            {navGroups.map((group) => (
+              <div className="nav-group" key={group.label || "main"}>
+                {group.label && <div className="nav-label">{group.label}</div>}
+                {group.items.map((item) => {
+                  const current = workspaceActive === item.id || active === item.id;
+                  return (
+                    <Link
+                      key={item.id}
+                      data-tour={`nav-${item.id}`}
+                      className={`nav-item${current ? " active" : ""}`}
+                      href={item.href}
+                      aria-current={current ? "page" : undefined}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Icon name={item.icon} />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
             ))}
-            <details className="workspace-tools" open={["activity", "suppression"].includes(active) || undefined}>
-              <summary className="nav-item">More</summary>
-              <Link className={`nav-item${active === "activity" ? " active" : ""}`} href="/activity" aria-current={active === "activity" ? "page" : undefined} onClick={() => setMenuOpen(false)}><Icon name="activity" />Activity</Link>
-              <Link className={`nav-item${active === "suppression" ? " active" : ""}`} href="/suppression" aria-current={active === "suppression" ? "page" : undefined} onClick={() => setMenuOpen(false)}><Icon name="suppression" />Do not contact</Link>
-            </details>
           </nav>
         )}
         {user.is_admin && (
@@ -179,34 +191,37 @@ export function Sidebar({
             </Link>
           </nav>
         )}
-        <div className="sidebar-footer">
-          <div className="sidebar-person">
+        <details className="sidebar-footer account-menu">
+          <summary className="sidebar-person" aria-label="Account menu">
             <Avatar name={user.name || user.email} />
             <div>
               <strong>{user.name || user.email}</strong>
-              <div>{user.is_admin ? "Administrator" : "Employee"}</div>
+              <div className="account-email">{user.email}</div>
             </div>
+            <Icon name="chevrons" />
+          </summary>
+          <div className="account-menu-list">
+            <div className="account-menu-role">{user.is_admin ? "Administrator" : "Employee"}</div>
+            <a className="support-link" href="mailto:support@zyene.com">
+              <Icon name="help" />
+              Contact Zyene support
+            </a>
+            <button
+              type="button"
+              className="button ghost signout-button"
+              onClick={logout}
+              disabled={busy}
+            >
+              <Icon name="logout" />
+              {busy ? "Signing out…" : "Sign out"}
+            </button>
           </div>
-          <div className="account-email">{user.email}</div>
-          <button
-            type="button"
-            className="button ghost signout-button"
-            onClick={logout}
-            disabled={busy}
-          >
-            <Icon name="logout" />
-            {busy ? "Signing out…" : "Sign out"}
-          </button>
-          {error && (
-            <p className="error" role="alert">
-              {error}
-            </p>
-          )}
-          <a className="support-link" href="mailto:support@zyene.com">
-            <Icon name="help" />
-            Contact Zyene support
-          </a>
-        </div>
+        </details>
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
       </div>
     </aside>
   );

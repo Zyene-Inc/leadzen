@@ -4,6 +4,7 @@ import Link from "next/link";
 import { api } from "@/lib/client-api";
 import { useStoredData } from "@/lib/use-stored-data";
 import { HelpTooltip } from "@/components/help-tooltip";
+import { Icon } from "@/components/icon";
 import { defaultSendingSchedule, NEW_YORK_TIMEZONE, NEW_YORK_TIMEZONE_LABEL, normalizeSendingSchedule, scheduleDayLabel, scheduleSummary, scheduleTime, type SendingSchedule } from "@/lib/sending-schedule";
 import { formatNewYorkDateTime } from "@/lib/date-time";
 import { plural } from "@/lib/format";
@@ -103,7 +104,7 @@ export function Autopilot() {
     finally { lock.current = false; setBusy(false); }
   }
   return <section className="panel settings-card autopilot-card" aria-label="Daily Autopilot">
-    <div className="panel-head"><div><div className="autopilot-title"><h2>Daily Autopilot</h2><HelpTooltip label="About Daily Autopilot">Finds leads, finds emails, writes and sends within your limits. Turning it off stops pending work. Sent emails cannot be recalled.</HelpTooltip></div><p className="panel-meta">{on ? policyStartLabel(policy.scope) : "Finds leads, writes and sends for you each day."}</p></div><button ref={toggle} className={`button ${on ? "primary" : ""}`} role="switch" aria-label="Daily Autopilot" aria-checked={on} disabled={!data || busy} onClick={() => { if (on) void turnOff(); else if (!editing) setEditing(data); }}>{busy ? "Stopping…" : on ? "On" : "Off"}</button></div>
+    <div className="panel-head"><span className="autopilot-icon" aria-hidden="true"><Icon name="refresh" /></span><div className="autopilot-head-copy"><div className="autopilot-title"><h2>Daily Autopilot</h2><HelpTooltip label="About Daily Autopilot">Finds leads, finds emails, writes and sends within your limits. Turning it off stops pending work. Sent emails cannot be recalled.</HelpTooltip></div><p className="panel-meta">{on ? policyStartLabel(policy.scope) : "Finds leads, writes and sends for you each day."}</p></div><button ref={toggle} className={`switch${on ? " on" : ""}${busy ? " busy" : ""}`} role="switch" aria-label="Daily Autopilot" aria-checked={on} disabled={!data || busy} onClick={() => { if (on) void turnOff(); else if (!editing) setEditing(data); }}><span className="switch-thumb" aria-hidden="true" /><span className="sr-only">{busy ? "Stopping…" : on ? "On" : "Off"}</span></button></div>
     {(error || loadError) && <p className="error" role="alert">{error || loadError}</p>}
     {data && !data.setup.service_enabled && <p className="settings-help">Autopilot is off on the server. Ask your admin to turn it on.</p>}
     {on && policy && <PolicyStatus policy={policy} serviceEnabled={!!data?.setup.service_enabled} />}

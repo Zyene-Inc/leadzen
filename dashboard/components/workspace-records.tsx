@@ -58,7 +58,8 @@ export function WorkspacePage({
   return (
     <div className="shell">
       <Sidebar user={user} active={active} />
-      <main className="main">
+      {/* Setup pages use Explee's centered 768px column. */}
+      <main className={`main${["settings", "suppression", "onboarding", "tour"].includes(active) ? " main-narrow" : ""}`}>
         <header className="topbar">
           <PageHeading title={title} help={description} />
           <div className="top-actions">{actions}</div>

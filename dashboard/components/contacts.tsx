@@ -86,6 +86,8 @@ export default function Contacts({ user }: { user: Account }) {
     setPicked((current) => { const next = new Map(current); if (on) next.set(item.id, item); else next.delete(item.id); return next; });
   }
   const [importOpen, setImportOpen] = useState(false);
+  // Dashboard's "Import CSV" card links here with ?import=1.
+  useEffect(() => { if (new URLSearchParams(window.location.search).get("import") === "1") setImportOpen(true); }, []);
   useWorkspaceContext({ selectedLeadIds: selected, currentLeadId: null, currentDraftId: null, currentThreadId: null, currentCampaignId: null, workspacePath: "/contacts" }, user.id);
   async function prepareOutreach() {
     setBusy(true); setError("");

@@ -73,44 +73,46 @@ function CreditBalance({
       setBusy(false);
     }
   }
+  const name = credits.provider_name ?? "BetterContact";
   return (
-    <section className="home-credit-bar" aria-label={`${credits.provider_name ?? "BetterContact"} credits`}>
-      <div>
-        <div className="home-credit-value">
-          {credits.provider_name ?? "BetterContact"} credits <HelpTooltip label="Provider credits">Checking your balance is free. It does not buy anything.</HelpTooltip>{" "}
-          <strong>
-            {credits.balance === null
-              ? "Not checked"
-              : numberFormatter.format(credits.balance)}
-          </strong>
-        </div>
-        <p className="settings-help">
+    <section className="home-card credit-card" aria-label={`${name} credits`}>
+      <div className="credit-card-top">
+        <h2 className="home-card-title">
+          {name} credits <HelpTooltip label="Provider credits">Checking your balance is free. It does not buy anything.</HelpTooltip>
+        </h2>
+        <strong className="credit-card-value">
+          {credits.balance === null
+            ? "—"
+            : numberFormatter.format(credits.balance)}
+        </strong>
+      </div>
+      <div className="credit-card-bottom">
+        <span className="pill">
           {!credits.configured
-            ? `Connect ${credits.provider_name ?? "BetterContact"} to find leads.`
+            ? "Not connected"
             : credits.checked_at
-              ? `${credits.synthetic ? "Sample data. " : ""}Checked ${timestamp(credits.checked_at)}.`
-              : "Check to see your balance."}
-        </p>
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
+              ? `${credits.synthetic ? "Sample · " : ""}Checked ${timestamp(credits.checked_at)}`
+              : "Not checked"}
+        </span>
+        {credits.configured ? (
+          <button
+            type="button"
+            className="button button-outline"
+            disabled={busy}
+            onClick={() => void refresh()}
+          >
+            {busy ? "Checking…" : "Check credits"}
+          </button>
+        ) : (
+          <Link className="button button-outline" href="/settings">
+            Connect {name}
+          </Link>
         )}
       </div>
-      {credits.configured ? (
-        <button
-          type="button"
-          className="button"
-          disabled={busy}
-          onClick={() => void refresh()}
-        >
-          <Icon name="refresh" />
-          {busy ? "Checking…" : "Check credits"}
-        </button>
-      ) : (
-        <Link className="button" href="/settings">
-          Connect {credits.provider_name ?? "BetterContact"}
-        </Link>
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
       )}
     </section>
   );
@@ -126,6 +128,7 @@ export function HomeSummaryPanel({
   const audience = home.target.audience;
   return (
     <>
+      <div className="section-row"><h2 className="section-label">Performance</h2></div>
       <section className="zy-stats metrics home-metrics" aria-label="Outreach totals">
         {metrics.map(([key, label, note]) => (
           <div className="zy-stat metric" key={key}>
@@ -136,7 +139,17 @@ export function HomeSummaryPanel({
           </div>
         ))}
       </section>
-      <CreditBalance credits={home.credits} onRefresh={onRefresh} />
+      <div className="home-cards">
+        <section className="home-card import-card" aria-label="Import your own leads">
+          <span className="import-card-art" aria-hidden="true"><Icon name="upload" /></span>
+          <div className="import-card-copy">
+            <h2 className="home-card-title">Import your own leads</h2>
+            <p>Upload your list, then review emails before anything sends</p>
+          </div>
+          <Link className="button primary" href="/contacts?import=1">Import CSV</Link>
+        </section>
+        <CreditBalance credits={home.credits} onRefresh={onRefresh} />
+      </div>
       <div className="home-panels">
         <section className="zy-card panel home-target">
           <div className="panel-head">

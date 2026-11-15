@@ -1,20 +1,20 @@
 .section { min-width: 0; }
 .heading { display: flex; align-items: center; gap: 8px; }
-.heading h2 { margin: 0; font-size: 14px; font-weight: 600; }
-.protocol { color: var(--muted); font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
-.description { margin: 5px 0 0; font-size: 14px; color: var(--body); }
-.approval { margin: 3px 0 12px; font-size: 13px; color: var(--muted); }
+.heading h2 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.protocol { color: var(--muted); font-size: 12px; font-weight: 500; background: var(--neutral-fill); border-radius: 9999px; padding: 2px 8px; }
+.description { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
+.approval { margin: 2px 0 12px; font-size: 12px; color: var(--muted); }
 .providers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 12px; }
 .providerOpen { grid-column: 1 / -1; }
-.provider { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
+.provider { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--panel-radius); padding: 12px; }
 .providerHeading { display: flex; align-items: center; gap: 10px; }
 .providerHeading h3 { font-size: 14px; margin: 0; font-weight: 600; }
 .providerHeading > button { margin-left: auto; flex-shrink: 0; }
 .logo { width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; border-radius: 7px; background: #fff; padding: 3px; }
-.logoUnavailable { font-size: 11px; max-width: 44px; line-height: 1.2; color: var(--muted); }
-.setup { padding-top: 8px; font-size: 13px; }
+.logoUnavailable { font-size: 12px; max-width: 44px; line-height: 1.2; color: var(--muted); }
+.setup { padding-top: 8px; font-size: 14px; }
 .steps { margin: 8px 0; padding-left: 20px; }
-.steps li { margin-bottom: 12px; padding-left: 2px; color: var(--body); line-height: 1.6; }
+.steps li { margin-bottom: 12px; padding-left: 2px; color: var(--body); line-height: 1.4; }
 .steps li::marker { color: var(--muted); font-weight: 600; }
 .steps strong { display: block; font-weight: 600; }
 .steps p { margin: 2px 0 0; overflow-wrap: anywhere; }
@@ -22,27 +22,27 @@
 .steps .server { margin-top: 8px; }
 .stepLink { display: inline-block; margin-top: 4px; }
 .waiting { color: var(--muted); margin: 8px 0; }
-.setup a { font-size: 13px; }
-.availability { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 10px 0; }
+.setup a { font-size: 14px; }
+.availability { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 10px 0; }
 .server { margin: 0 0 12px; }
 .serverLabel { display: block; font-size: 12px; font-weight: 550; margin-bottom: 5px; }
 .serverControl { display: flex; align-items: stretch; gap: 8px; min-width: 0; }
-.serverValue { flex: 1 1 auto; min-width: 0; display: block; padding: 11px 12px; min-height: 44px; font-family: var(--font-mono); font-size: 13px; line-height: 20px; color: var(--body); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow-wrap: anywhere; user-select: all; }
+.serverValue { flex: 1 1 auto; min-width: 0; display: block; padding: 11px 12px; min-height: 44px; font-family: var(--font-mono); font-size: 14px; line-height: 20px; color: var(--body); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow-wrap: anywhere; user-select: all; }
 .serverValue:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .serverControl button { flex-shrink: 0; }
-.blocker { margin: 0 0 12px; padding: 12px; font-size: 13px; line-height: 1.6; color: var(--body); background: var(--warning-soft); border: 1px solid var(--line); border-radius: var(--radius); overflow-wrap: anywhere; }
+.blocker { margin: 0 0 12px; padding: 12px; font-size: 14px; line-height: 1.4; color: var(--body); background: var(--warning-soft); border: 1px solid var(--line); border-radius: var(--radius); overflow-wrap: anywhere; }
 .blocker h3 { margin: 0; font-size: 14px; font-weight: 600; color: var(--warning); }
 .blocker p { margin: 4px 0 0; }
 .blocker ul { margin: 4px 0 0; padding-left: 18px; }
 .blocker code { font-family: var(--font-mono); font-size: 12px; overflow-wrap: anywhere; }
 .blocker > button { margin-top: 10px; }
 .blockerLead { font-weight: 550; }
-.status { color: var(--muted); font-size: 13px; margin: 4px 0; }
-.notice { color: var(--success); font-size: 13px; margin: 8px 0; }
+.status { color: var(--muted); font-size: 14px; margin: 4px 0; }
+.notice { color: var(--success); font-size: 14px; margin: 8px 0; }
 .connections { margin-top: 14px; }
 .connectionTitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.connectionTitle h3 { font-size: 13px; font-weight: 550; margin: 0; }
-.connectionTitle button { font-size: 13px; }
+.connectionTitle h3 { font-size: 14px; font-weight: 550; margin: 0; }
+.connectionTitle button { font-size: 14px; }
 .connection { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
 .connectionInfo { min-width: 0; }
 .connectionInfo strong { font-size: 14px; font-weight: 550; overflow-wrap: anywhere; }
@@ -52,7 +52,7 @@
 .actions { display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; }
 .consent { max-width: 560px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .consent h2 { font-size: 17px; font-weight: 550; margin: 0 0 10px; overflow-wrap: anywhere; }
-.consent p, .consent li { font-size: 14px; line-height: 1.6; }
+.consent p, .consent li { font-size: 14px; line-height: 1.4; }
 .consent p { color: var(--body); }
 .consent ul { padding-left: 20px; margin: 16px 0; }
 .consent li { margin: 6px 0; }

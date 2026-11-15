@@ -91,6 +91,9 @@ const paths = {
     </>
   ),
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+  chevrons: <path d="m7 15 5 5 5-5M7 9l5-5 5 5" />,
+  upload: <path d="M12 15V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />,
+  credit: <path d="M3 7h18v10H3zM3 11h18" />,
   more: <path d="M5 12h.01M12 12h.01M19 12h.01" strokeWidth="3" strokeLinecap="round" />,
   close: <path d="m6 6 12 12M6 18 18 6" />,
   plus: <path d="M12 5v14M5 12h14" />,

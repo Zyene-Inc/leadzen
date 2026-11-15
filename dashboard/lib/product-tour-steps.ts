@@ -141,7 +141,7 @@ export const productTourSteps: readonly TourStep[] = [
     route: "/settings",
     target: '[data-tour="tour-restart"]',
     title: "You’re ready to go",
-    body: "Start with your leads or the attention list on Home. You can take this tour again from Settings whenever you need it.",
+    body: "Start with your leads or the attention list on the Dashboard. You can take this tour again from Settings whenever you need it.",
     placement: "bottom",
   },
 ];

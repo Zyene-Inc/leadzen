@@ -102,7 +102,7 @@ export default function TargetEditor({ user }: { user: Account }) {
   return (
     <div className="shell">
       <Sidebar user={user} active="overview" />
-      <main className="main">
+      <main className="main main-narrow">
         <div className="topbar">
           <PageHeading title="Edit target" help="Changes apply to new searches only. Saved leads stay as they are." />
         </div>

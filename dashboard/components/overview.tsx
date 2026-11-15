@@ -1,5 +1,5 @@
 "use client";
-import { formatNewYorkDateTime, newYorkHour } from "@/lib/date-time";
+import { formatNewYorkDateTime } from "@/lib/date-time";
 import { NeedsAttention } from "@/components/needs-attention";
 import { PageHeading } from "@/components/page-heading";
 
@@ -76,12 +76,37 @@ function formatDate(value: string | null) {
   return formatNewYorkDateTime(value, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
-function greeting(name: string) {
-  const hour = newYorkHour(new Date());
-  const period = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
-  const firstName = name.trim().split(/\s+/)[0];
-  return `Good ${period}${firstName ? `, ${firstName}` : ""}`;
+// Explee-style status card at the top of the Dashboard. Reads saved overview only.
+function SendingStatus({ overview }: { overview: Overview }) {
+  const boxes = overview.mailboxes ?? [];
+  const sent = overview.today?.sent ?? 0;
+  const left = boxes.reduce((sum, box) => sum + Math.max(0, box.remaining_today), 0);
+  const paused = boxes.some((box) => box.paused_today);
+  const state = !boxes.length ? "off" : paused ? "warn" : "on";
+  const title = state === "off" ? "No mailbox connected" : paused ? "Sending is paused" : "Sending is on schedule";
+  const detail = state === "off"
+    ? "Connect a mailbox in Settings to send email."
+    : `${sent} sent today, ${left} left today${paused ? " · paused by email provider" : ""}`;
+  return (
+    <section className="status-card" aria-label="Sending status">
+      <span className={`status-dot ${state}`} aria-hidden="true" />
+      <div className="status-copy">
+        <h2>{title}</h2>
+        <p>{detail}</p>
+      </div>
+      <div className="status-actions">
+        <Link className="button" href="/settings">View schedule</Link>
+        <Link className="button primary" href="/outreach">View emails</Link>
+      </div>
+    </section>
+  );
 }
+
+const recentTabs = [
+  ["emails", "Latest emails"],
+  ["capacity", "Emails left today"],
+  ["runs", "Send runs"],
+] as const;
 
 export default function Dashboard({ user }: { user: Account }) {
   const workspaceRevision = useWorkspaceRevision();
@@ -93,6 +118,7 @@ export default function Dashboard({ user }: { user: Account }) {
   const [state, setState] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [recent, setRecent] = useState<(typeof recentTabs)[number][0]>("emails");
 
   const load = useCallback(
     async (signal?: AbortSignal) => {
@@ -154,7 +180,7 @@ export default function Dashboard({ user }: { user: Account }) {
         <Sidebar user={user} active="overview" />
         <main className="main" aria-busy="true" aria-label="Loading workspace">
           <div className="topbar dashboard-topbar">
-            <div><p className="eyebrow">{user.workspace_name} / Dashboard</p><h1>Your workspace</h1></div>
+            <div><h1>{user.workspace_name || "Dashboard"}</h1></div>
             <div className="top-actions"><ThemeToggle /></div>
           </div>
           <div className="loading-layout">
@@ -171,7 +197,7 @@ export default function Dashboard({ user }: { user: Account }) {
         <Sidebar user={user} active="overview" />
         <main className="main">
           <div className="topbar dashboard-topbar">
-            <h1>Your workspace</h1>
+            <h1>{user.workspace_name || "Dashboard"}</h1>
             <div className="top-actions"><ThemeToggle /></div>
           </div>
           <p className="error" role="alert">
@@ -197,8 +223,7 @@ export default function Dashboard({ user }: { user: Account }) {
       <main className="main">
         <div className="topbar dashboard-topbar">
           <PageHeading
-            title={greeting(overview.home.operator_name || user.name)}
-            eyebrow={user.workspace_name}
+            title={user.workspace_name || "Dashboard"}
             help="Your leads, emails and replies at a glance. Totals include imported contacts."
           />
           <div className="top-actions">
@@ -218,197 +243,181 @@ export default function Dashboard({ user }: { user: Account }) {
             {error}
           </div>
         )}
+        <SendingStatus overview={overview} />
         <NeedsAttention />
         <HomeSummaryPanel home={overview.home} onRefresh={load} />
-        <div className="layout-grid">
-          <section className="panel">
-            <div className="panel-head">
-              <div>
-                <h2 className="panel-title">Leads</h2>
-                <div className="panel-meta">
-                  {total} shown · updates live
-                </div>
-              </div>
+        <div className="section-row">
+          <h2 className="section-label">Leads <span className="count-pill">{total}</span></h2>
+          <div className="section-actions">
+            <div className="search-field">
+              <Icon name="search" />
+              <input
+                className="input"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search name, company or email"
+                aria-label="Search leads"
+              />
             </div>
-            <div className="filters">
-              <div className="search-field">
-                <Icon name="search" />
-                <input
-                  className="input"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search name, company or email"
-                  aria-label="Search leads"
-                />
-              </div>
-              <select
-                className="select"
-                value={state}
-                onChange={(event) => setState(event.target.value)}
-                aria-label="Filter leads"
-              >
-                <option value="all">All stages</option>
-                <option value="Ready to Email">Ready to email</option>
-                <option value="Emailed">Emailed</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-            <div
-              className="table-wrap"
-              role="region"
-              aria-label="Leads table"
-              tabIndex={0}
+            <select
+              className="select"
+              value={state}
+              onChange={(event) => setState(event.target.value)}
+              aria-label="Filter leads"
             >
-              <table>
-                <thead>
-                  <tr>
-                    <th>Person</th>
-                    <th>Company</th>
-                    <th>Stage</th>
-                    <th>Last email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leads.map((lead) => (
-                    <tr key={lead.id}>
-                      <td>
-                        <div className="person">
-                          {lead.name || [lead.first_name, lead.last_name]
-                            .filter(Boolean)
-                            .join(" ") || "No name"}
-                        </div>
-                        <div className="subtext">
-                          {lead.email || "No email yet"}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="person">
-                          {lead.company || "Unknown company"}
-                        </div>
-                        <div className="subtext">{lead.title || ""}</div>
-                      </td>
-                      <td>
-                        <span className={statusClass(lead.state)}>
-                          {lead.state}
-                        </span>
-                        {lead.reply_count > 0 && (
-                          <div className="subtext">
-                            {lead.reply_count} {lead.reply_count === 1 ? "reply" : "replies"}
-                          </div>
-                        )}
-                      </td>
-                      <td>
-                        <div><time dateTime={lead.email_sent_at || undefined}>{formatDate(lead.email_sent_at)}</time></div>
-                        <div className="subtext">
-                          {lead.reason || "No note"}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {leads.length === 0 && (
-                <div className="empty">No leads match.</div>
-              )}
-            </div>
-          </section>
-          <div className="right-stack">
-            <section className="panel send-box">
-              <div className="panel-title">Write emails</div>
-              <p>
-                AI drafts each email. You approve every message and recipient.
-              </p>
-              <div className="send-controls">
-                <Link className="button primary" href="/outreach">Review outreach</Link>
-              </div>
-              {!overview?.ai_ready && (
-                <p>
-                  AI is not connected.{" "}
-                  <Link href="/settings">Connect AI</Link> or{" "}
-                  <Link href="/outreach">write by hand</Link>.
-                </p>
-              )}
-            </section>
-            <section className="panel">
-              <div className="panel-head">
-                <div>
-                  <h2 className="panel-title">Emails left today</h2>
-                  <div className="panel-meta">Per mailbox</div>
-                </div>
-              </div>
-              <div className="capacity">
-                {overview?.mailboxes.map((box) => (
-                  <div className="capacity-row" key={box.address}>
-                    <div>
-                      <div className="capacity-label">{box.address}</div>
-                      <div className="subtext">
-                        {box.paused_today
-                          ? "Paused by email provider"
-                          : `${overview?.transport === "smtp" ? "SMTP" : overview?.transport} connection`}
-                      </div>
-                    </div>
-                    <div className="capacity-value">
-                      {box.remaining_today}/{box.daily_limit}
-                    </div>
-                  </div>
-                )) ?? <div className="empty">No mailbox connected.</div>}
-                {overview?.mailboxes.length === 0 && (
-                  <div className="empty">No mailbox connected.</div>
-                )}
-              </div>
-            </section>
-            <section className="panel">
-              <div className="panel-head">
-                <div>
-                  <h2 className="panel-title">Latest emails</h2>
-                </div>
-              </div>
-              <div className="activity">
-                {overview?.activity.map((item) => (
-                  <div
-                    className="activity-row"
-                    key={`${item.sent_at}-${item.from}-${item.to}-${item.subject}`}
-                  >
-                    <div className="activity-dot" />
-                    <div>
-                      <div className="activity-main">
-                        {item.direction === "in"
-                          ? `Reply from ${item.from}`
-                          : `${item.accepted ? "Sent to" : "Tried to send to"} ${item.to}`}
-                      </div>
-                      <div className="activity-meta">
-                        {item.subject || "No subject"} ·{" "}
-                        <time dateTime={item.sent_at || undefined}>{formatDate(item.sent_at)}</time>
-                      </div>
-                    </div>
-                  </div>
-                )) ?? <div className="empty">No activity yet.</div>}
-                {overview?.activity.length === 0 && (
-                  <div className="empty">No activity yet.</div>
-                )}
-              </div>
-            </section>
+              <option value="all">All stages</option>
+              <option value="Ready to Email">Ready to email</option>
+              <option value="Emailed">Emailed</option>
+              <option value="Completed">Completed</option>
+            </select>
+            <Link className="button" href="/contacts"><Icon name="contacts" />All leads</Link>
           </div>
         </div>
-        <section className="panel job-panel">
-          <div className="panel-head">
-            <h2 className="panel-title">Send runs</h2>
-            <Link className="text-link" href="/activity">All activity →</Link>
+        <section className="panel home-leads">
+          <div
+            className="table-wrap"
+            role="region"
+            aria-label="Leads table"
+            tabIndex={0}
+          >
+            <table>
+              <thead>
+                <tr>
+                  <th>Lead</th>
+                  <th>Company</th>
+                  <th>State</th>
+                  <th>Last email</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map((lead) => (
+                  <tr key={lead.id}>
+                    <td>
+                      <div className="person">
+                        {lead.name || [lead.first_name, lead.last_name]
+                          .filter(Boolean)
+                          .join(" ") || "No name"}
+                      </div>
+                      <div className="subtext">
+                        {lead.email || "No email yet"}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="person">
+                        {lead.company || "Unknown company"}
+                      </div>
+                      <div className="subtext">{lead.title || ""}</div>
+                    </td>
+                    <td>
+                      <span className={statusClass(lead.state)}>
+                        {lead.state}
+                      </span>
+                      {lead.reply_count > 0 && (
+                        <div className="subtext">
+                          {lead.reply_count} {lead.reply_count === 1 ? "reply" : "replies"}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <div><time dateTime={lead.email_sent_at || undefined}>{formatDate(lead.email_sent_at)}</time></div>
+                      <div className="subtext">
+                        {lead.reason || "No note"}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {leads.length === 0 && (
+              <div className="empty">No leads match.</div>
+            )}
           </div>
-          <div className="activity">
-            {jobs.map((job) => (
-              <div className="activity-row" key={job.id}>
-                <div>
-                  <span className={`badge ${job.status}`}>{stateLabel(job.status)}</span>
-                  <p className="settings-help">
-                    {job.requested_count} email{job.requested_count === 1 ? "" : "s"} ·{" "}
-                    <time dateTime={job.created_at}>{formatDate(job.created_at)}</time>
-                  </p>
-                </div>
-              </div>
+        </section>
+        <div className="section-row">
+          <div className="segmented" role="tablist" aria-label="Recent sending">
+            {recentTabs.map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={recent === id}
+                className={recent === id ? "selected" : ""}
+                onClick={() => setRecent(id)}
+              >
+                {label}
+                {id === "emails" && <span className="segmented-count">{overview.activity?.length ?? 0}</span>}
+              </button>
             ))}
-            {!jobs.length && <div className="empty">No send runs yet.</div>}
           </div>
+          <Link className="text-link" href="/activity">View activity →</Link>
+        </div>
+        <section className="panel home-recent" role="tabpanel" aria-label={recentTabs.find(([id]) => id === recent)?.[1]}>
+          {recent === "emails" && (
+            <div className="activity">
+              {(overview.activity ?? []).map((item) => (
+                <div
+                  className="activity-row"
+                  key={`${item.sent_at}-${item.from}-${item.to}-${item.subject}`}
+                >
+                  <div className="activity-dot" />
+                  <div>
+                    <div className="activity-main">
+                      {item.direction === "in"
+                        ? `Reply from ${item.from}`
+                        : `${item.accepted ? "Sent to" : "Tried to send to"} ${item.to}`}
+                    </div>
+                    <div className="activity-meta">
+                      {item.subject || "No subject"} ·{" "}
+                      <time dateTime={item.sent_at || undefined}>{formatDate(item.sent_at)}</time>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {!overview.activity?.length && <div className="empty">No activity yet.</div>}
+            </div>
+          )}
+          {recent === "capacity" && (
+            <div className="capacity">
+              {(overview.mailboxes ?? []).map((box) => (
+                <div className="capacity-row" key={box.address}>
+                  <div>
+                    <div className="capacity-label">{box.address}</div>
+                    <div className="subtext">
+                      {box.paused_today
+                        ? "Paused by email provider"
+                        : `${overview.transport === "smtp" ? "SMTP" : overview.transport} connection`}
+                    </div>
+                  </div>
+                  <div className="capacity-value">
+                    {box.remaining_today}/{box.daily_limit}
+                  </div>
+                </div>
+              ))}
+              {!overview.mailboxes?.length && <div className="empty">No mailbox connected.</div>}
+            </div>
+          )}
+          {recent === "runs" && (
+            <div className="activity">
+              {jobs.map((job) => (
+                <div className="activity-row" key={job.id}>
+                  <div>
+                    <span className={`badge ${job.status}`}>{stateLabel(job.status)}</span>
+                    <p className="settings-help">
+                      {job.requested_count} email{job.requested_count === 1 ? "" : "s"} ·{" "}
+                      <time dateTime={job.created_at}>{formatDate(job.created_at)}</time>
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {!jobs.length && <div className="empty">No send runs yet.</div>}
+            </div>
+          )}
+          {!overview.ai_ready && (
+            <p className="home-ai-note">
+              AI is not connected. <Link href="/settings">Connect AI</Link> or{" "}
+              <Link href="/outreach">write by hand</Link>.
+            </p>
+          )}
         </section>
       </main>
     </div>

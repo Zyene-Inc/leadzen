@@ -182,6 +182,16 @@ def test_oauth_pkce_consent_token_and_employee_connection_round_trip(db, monkeyp
     assert listing["connections"][0]["lastUsedAt"]
     assert not any(key in listing["connections"][0] for key in ("access_token", "refresh_token", "password"))
     assert AccountAudit.objects.filter(actor=user, action="mcp_connected").exists()
+    # In-chat approvals start off and only the signed-in employee can change them.
+    assert listing["connections"][0]["allowApprovals"] is False
+    connection_id = listing["connections"][0]["id"]
+    assert post(dashboard(user), "/api/mcp/connections", {"connectionId": connection_id, "allowApprovals": "yes"}).status_code == 400
+    toggled = post(dashboard(user), "/api/mcp/connections", {"connectionId": connection_id, "allowApprovals": True})
+    assert toggled.status_code == 200 and toggled.json() == {"id": connection_id, "allowApprovals": True}
+    connection.refresh_from_db()
+    assert connection.allow_approvals is True and connection.revoked_at is None
+    assert dashboard(user).get("/api/mcp/connections").json()["connections"][0]["allowApprovals"] is True
+    assert AccountAudit.objects.filter(actor=user, action="mcp_approvals_enabled").exists()
 
 
 @pytest.fixture

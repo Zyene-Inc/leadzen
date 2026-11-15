@@ -98,7 +98,7 @@ def test_public_endpoint_requires_independent_oauth_not_dashboard_secret(monkeyp
 def test_real_tool_registry_is_discoverable_and_cannot_select_private_handlers(rpc):
     result = json.loads(rpc("tools/list").content)["result"]
     tools = {tool["name"]: tool for tool in result["tools"]}
-    assert len(tools) == 40
+    assert len(tools) == 42
     assert tools["get_settings"]["annotations"]["readOnlyHint"]
     assert tools["send_email"]["inputSchema"]["additionalProperties"] is False
     assert "approvalToken" not in tools["send_email"]["inputSchema"]["properties"]

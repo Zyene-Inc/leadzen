@@ -252,6 +252,15 @@ def connections(request):
             connection = None
         if connection is None:
             return oauth_response({"error": "Connection not found."}, 404)
+        if "allowApprovals" in body:
+            # Only the signed-in employee, in the portal, can turn this on.
+            if type(body["allowApprovals"]) is not bool:
+                return oauth_response({"error": "Choose whether this app can approve actions."}, 400)
+            if connection.revoked_at is not None or connection.expires_at <= now:
+                return oauth_response({"error": "Connection not found."}, 404)
+            MCPConnection.objects.using("default").filter(pk=connection.pk, user=request.actor).update(allow_approvals=body["allowApprovals"])
+            audit(request.actor, "mcp_approvals_enabled" if body["allowApprovals"] else "mcp_approvals_disabled", request.actor.pk)
+            return oauth_response({"id": str(connection.pk), "allowApprovals": body["allowApprovals"]})
         MCPConnection.objects.using("default").filter(pk=connection.pk, user=request.actor).update(revoked_at=now)
         audit(request.actor, "mcp_disconnected", request.actor.pk)
         return oauth_response({"revoked": True})
@@ -265,7 +274,8 @@ def connections(request):
                            "setup": [] if ready else setup_problems(),
                            "connections": [{"id": str(item.pk), "clientName": item.client.name,
                                             "createdAt": item.created_at.isoformat(),
-                                            "lastUsedAt": item.last_used_at.isoformat() if item.last_used_at else None}
+                                            "lastUsedAt": item.last_used_at.isoformat() if item.last_used_at else None,
+                                            "allowApprovals": item.allow_approvals}
                                            for item in items]})
 
 

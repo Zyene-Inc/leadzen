@@ -28,20 +28,38 @@ assistant, with the server URL and a copy button inside the paste step.
 5. Ask for saved leads, inbox messages, outreach, drafts, target or workspace
    settings. Mutations take a new `requestId` UUID. Repeating the same UUID and
    arguments returns the saved operation instead of repeating the action.
-6. For discovery, enrichment, AI drafting, mailbox sync or sending, open the
-   returned `portalUrl`. LeadZen presents the exact action for employee approval.
-   `get_operation` reads its recorded state and result without restarting it.
+6. For discovery, enrichment, AI drafting, mailbox sync or sending, LeadZen
+   prepares the exact action and waits for the employee's approval. By default
+   the employee opens the returned `portalUrl` and approves there. `get_operation`
+   reads its recorded state and result without restarting it.
+   **Approve in the chat (optional):** in Settings → **Claude & ChatGPT** →
+   Connected apps, the employee can turn on **Allow approvals from this app**
+   for one connection. That connection's `get_operation` then returns
+   `approvalInChat: true` with the `actionId`. The assistant shows the approval
+   details (credits, provider, recipients, messages), and after the employee
+   says yes in the conversation it calls `approve_operation` with `operationId`
+   and `actionId`. `decline_operation` works without the setting. The approval
+   uses the same checks as the portal: exact single-use action ID, the
+   15-minute expiry, an unchanged setup/message snapshot, and connection
+   ownership. Send-time suppression, pacing, allowance and sending-window
+   checks still apply. The Chat history records "You approved in your connected
+   assistant". The setting is off for every new connection, can only be changed
+   by the signed-in employee in the portal, and is audited
+   (`mcp_approvals_enabled` / `mcp_approvals_disabled`).
 7. Disconnect from Settings to revoke the grant. New requests and queued/running
    external actions recheck access, including immediately before transport bytes.
 
 Imported profiles, lead notes and inbound emails remain untrusted content. An
 assistant cannot turn their text into authority to send, buy email addresses,
-restore an opt-out or enable Autopilot. Credentials, account administration,
+restore an opt-out or enable Autopilot. With in-chat approvals turned on, the
+assistant must have the employee's explicit yes in the conversation before it
+calls `approve_operation`. Leave the setting off for clients that run
+unattended. Credentials, account administration,
 provider tests, backups and new recurring authorizations stay in the portal.
 
 ## Supported capabilities
 
-The static registry in `leadzen/mcp/tools.py` supplies 40 strictly typed tools:
+The static registry in `leadzen/mcp/tools.py` supplies 42 strictly typed tools:
 
 - Workspace status/context, lead search/details, add/edit/import/delete contacts.
 - Discovery and selected verified email lookup, stored credit usage and stop.
@@ -51,6 +69,7 @@ The static registry in `leadzen/mcp/tools.py` supplies 40 strictly typed tools:
 - Nonsecret settings read/update, lead target, Autopilot state/pause, activity,
   suppression and portal-reviewed removal of manual suppression.
 - Poll or cancel an operation owned by the same employee and connection.
+- Approve (when enabled for the connection) or decline a prepared operation.
 
 Automatic follow-up and Autopilot standing authorization remain an explicit portal
 review. Scheduling and all employee-facing times use **America/New_York**, including

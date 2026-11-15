@@ -597,7 +597,7 @@ public hosts can be configured with `LEADZEN_LLM_HOSTS`, `LEADZEN_MAIL_HOSTS`, o
 The October 3 deployment recorded configuration migration 0014 and account
 migration 0002. The current source requires **all** migrations through
 `leadzen_config.0019_discoverylookup_source_index` and
-`leadzen_accounts.0004_accountprofile_tour_state` in the control database and
+`leadzen_accounts.0005_mcpconnection_allow_approvals` in the control database and
 every initialized employee database. Apply them only after quiescing intake,
 scheduler and all worker types and creating matching recovery backups. The
 October 12 release above applied `leadzen_config.0021_search_plan` to the control

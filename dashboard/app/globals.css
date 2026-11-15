@@ -3145,7 +3145,7 @@ td .live-email-review h3 { font-size: 14px; margin: 0 0 6px; }
 @keyframes zy-sheen { from { background-position: -200% 0; } to { background-position: 200% 0; } }
 
 /* Page arrival: sections rise in quick succession. */
-.main > * { animation: zy-rise var(--rise) var(--ease) both; }
+.main > * { animation: zy-rise var(--rise) var(--ease) backwards; }
 .main > *:nth-child(2) { animation-delay: 30ms; }
 .main > *:nth-child(3) { animation-delay: 60ms; }
 .main > *:nth-child(4) { animation-delay: 90ms; }
@@ -3172,7 +3172,7 @@ a.panel:hover, .outreach-item:hover, .metric:hover { box-shadow: var(--shadow-md
 .nav-item { transition: background 200ms var(--ease), color 200ms var(--ease), transform 200ms var(--ease); }
 
 /* Tables: rows arrive in order, hover is clear, selection is visible. */
-tbody tr { animation: zy-fade 260ms var(--ease) both; }
+tbody tr { animation: zy-fade 260ms var(--ease) backwards; }
 tbody tr:nth-child(2) { animation-delay: 25ms; } tbody tr:nth-child(3) { animation-delay: 50ms; }
 tbody tr:nth-child(4) { animation-delay: 75ms; } tbody tr:nth-child(5) { animation-delay: 100ms; }
 tbody tr:nth-child(6) { animation-delay: 125ms; } tbody tr:nth-child(n+7) { animation-delay: 150ms; }
@@ -3204,7 +3204,7 @@ input[type="checkbox"]:checked { animation: zy-pop 220ms var(--ease); }
 
 /* Disclosure rows open smoothly. */
 details > summary { cursor: pointer; }
-details[open] > *:not(summary) { animation: zy-fade 200ms var(--ease) both; }
+details[open] > *:not(summary) { animation: zy-fade 200ms var(--ease) backwards; }
 
 /* Links underline on hover for clarity. */
 .text-link { text-underline-offset: 3px; }
@@ -4274,3 +4274,8 @@ td { padding: 8px 16px; }
   --accent-hover: #0B7853;
   --signal: #0C855D;
 }
+
+/* Row menus: entrance animations use "backwards" so finished rows and panels stop
+   forming their own layers (and containing blocks for the fixed menu). The row
+   with an open menu is also lifted above the rows that follow it. */
+tr:has(> td .row-menu[open]) { position: relative; z-index: 5; }

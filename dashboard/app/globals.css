@@ -4267,3 +4267,10 @@ td { padding: 8px 16px; }
 .workspace-symbol { width: 16px; height: 16px; border-radius: 3px; font-size: 10px; }
 .badge::before { opacity: 1; }
 .home-leads td:nth-child(2) .person { font-weight: 400; }
+/* Accessibility: Explee's #0D9467 gives 3.85:1 with white text. Use its own
+   10%-darker hover shade (4.64:1) so buttons and green text meet WCAG AA. */
+:root, :root[data-theme="dark"] {
+  --accent: #0C855D;
+  --accent-hover: #0B7853;
+  --signal: #0C855D;
+}

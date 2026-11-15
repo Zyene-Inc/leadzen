@@ -21,7 +21,7 @@ test("trusted HTTPS renders, hydrates, sets private security headers and preserv
   await contrast(page, "button[type=submit]");
   await noHorizontalOverflow(page);
   await login(page, fixture);
-  await expect(page.getByRole("heading", { name: /Good (morning|afternoon|evening)/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Dashboard", exact: true })).toHaveAttribute("aria-current", "page");
   const session = (await context.cookies()).find(cookie => cookie.name === "leadzen_dashboard_session");
   expect(Boolean(session?.value)).toBe(true);
   expect(session).toMatchObject({ secure: true, httpOnly: true, sameSite: "Lax", path: "/" });
@@ -31,6 +31,7 @@ test("trusted HTTPS renders, hydrates, sets private security headers and preserv
   await page.getByRole("radio", { name: "Light mode", exact: true }).press("Space");
   await expect(page.getByRole("radio", { name: "Light mode", exact: true })).toBeChecked();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.getByLabel("Account menu", { exact: true }).click();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
   expect((await context.cookies()).some(cookie => cookie.name === "leadzen_dashboard_session" && Boolean(cookie.value))).toBe(false);
@@ -57,6 +58,7 @@ test("synthetic employee creates, edits and deletes contacts; another workspace 
   await expect(row).toContainText("Edited disposable fixture");
   const detailHref = await row.locator("a[href^='/contacts/']").first().getAttribute("href");
   expect(detailHref).toMatch(/^\/contacts\/\d+$/);
+  await page.getByLabel("Account menu", { exact: true }).click();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
   await login(page, fixture, "foreign");
@@ -70,6 +72,7 @@ test("synthetic employee creates, edits and deletes contacts; another workspace 
   await denied;
   await expect(page.getByText(marker, { exact: true })).toHaveCount(0);
   await expect(page.getByText(email, { exact: true })).toHaveCount(0);
+  await page.getByLabel("Account menu", { exact: true }).click();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
   await login(page, fixture);
@@ -150,5 +153,5 @@ test("forced synthetic password change revokes the old session and requires logi
   await page.goto("/contacts");
   await expect(page).toHaveURL(/\/login$/);
   await login(page, fixture, "password_change", password);
-  await expect(page.getByRole("heading", { name: /Good (morning|afternoon|evening)/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Dashboard", exact: true })).toHaveAttribute("aria-current", "page");
 });

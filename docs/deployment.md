@@ -3,14 +3,110 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **November 16, 2026 (UTC)** backend, database
-and dashboard release of `1fbe843`, below. Earlier records follow, newest first. The October 8 record was copied
+The most recent deployment is the **November 16, 2026 (UTC)** backend and dashboard
+release of `651c4c8` with the fresh-start data cleanup, below. All recovery points
+named in earlier records (VM snapshots, on-VM backups and old runtimes) were
+deleted in that release and no longer exist. Earlier records follow, newest first. The October 8 record was copied
 here on October 12 from the closed Zyene-Inc/leadzen#10 and has not been
 re-verified against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## November 16, 2026 (UTC) — backend and dashboard `651c4c8` (write your own Inbox reply), fresh-start data cleanup
+
+**Source released:** `main` at `651c4c8`, the merge of Zyene-Inc/leadzen#44. The
+Inbox gains **Write reply**: `POST /api/outreach/reviews` with `manual: true`
+creates a blank reply draft with no model call, which then uses the same edit,
+approve and exact-send steps as AI drafts. `main` also carries the dashboard-only
+#40 (one green Dashboard button) and #42 (Explee-style Inbox). The owner asked in
+session for the backend deploy, the deletion of all backups and a fresh start for
+employee data.
+
+- Wheel SHA-256 `c8f17bc540619a2af4a254889ebc3faf5754f2117661610c46c5d8791045edac`,
+  built with `uv build --wheel --build-constraints requirements-build.lock
+  --require-hashes` from a clean `git archive` of `651c4c8`.
+- `requirements-production.lock` (`31d3a095…554e`) is unchanged from `1fbe843`.
+- No migration. The only backend change since `1fbe843` is `leadzen/outreach.py`.
+
+**Vercel:** the `main` push built `dpl_FGq6eM2pit2yXqJh7exvuYfxgVoo` (`651c4c8`,
+READY). `leadzen.zyene.com` stayed on `dpl_3CEXhE5AmYxnkBkj8muoQFWDBaoe`
+(`0a5ddb7`) at first. It served the new deployment shortly afterwards, before
+the backend cut-over; the promotion was not made from this release session. For those few minutes Write reply returned an error, because
+the old backend required AI for every reply draft.
+
+**Verified before release (live VM):** `1fbe843` at `/opt/leadzen-1fbe843-20261116`
+with `/etc/leadzen-1fbe843.env`. There were two initialized workspaces (`91e7b196-…`
+for harris.lane@zyene.com and `97bd43a2-…` for karthik@zyenereviews.com). The
+administrator account (support@zyene.com) has no workspace. No outreach job or chat
+run was queued or running at cut-over.
+
+**Staging (no downtime):** fresh virtualenv at `/opt/leadzen-651c4c8-20261116` from
+the lock with `--require-hashes --no-deps`, then the wheel with `--no-deps`;
+`pip check` was clean. `/etc/leadzen-651c4c8.env` (root 600) is the previous file
+with paths pointed at the new runtime.
+
+**Cut-over (services restarted at 22:30:30 UTC):**
+1. Stopped both services.
+2. Checkpointed all three databases (busy 0, integrity `ok`), then copied the data
+   into the new runtime.
+3. Fresh-start cleanup in the new copy of Karthik's workspace only (see below).
+   Integrity `ok` after `VACUUM`. Old job log files were removed.
+4. WSGI and scheduler import smoke test and `migrate --check` passed as the
+   service user with the new env file.
+5. Repointed both units at the new runtime and env file, and started them.
+
+The script would have restored the old units and restarted `1fbe843` on any error;
+it was not needed.
+
+**Fresh-start data cleanup (owner request, irreversible):**
+- **Karthik's workspace (`97bd43a2-…`), deleted:** leads (3,970 `outfind_crm_lead`
+  and 71 `outsend_leads_lead`), 1,897 companies, 998 + 71 deals, 4,492 discovery
+  candidates, 5,018 discovery events, 35 discovery sessions, 5 searches, 13 paid
+  lookup records, search plans and keywords, 6 campaigns with 15 recipients and 10
+  sends, 25 emails in 17 threads with 11 delivery events, 11 mail signals, 3 reply
+  labels, 3 email reviews with 3 drafts, 7 outreach jobs, 71 chat threads with 382
+  messages and 120 runs, 71 contact preference rows, the workspace chat context,
+  and all 4 Autopilot policies with 2 runs.
+- **Kept in that workspace:** the workspace user row, onboarding state, runtime
+  settings (AI and mail providers with their encrypted API keys), site
+  configuration (product, target, operator), the sending mailbox, the mailbox
+  folder-sync watermark (so old messages are not re-imported), and the
+  do-not-contact list (1 address).
+- **Harris's workspace (`91e7b196-…`)** held only settings and was not changed.
+- **Control database** (all accounts, passwords, login sessions, MCP clients,
+  connections and tokens, audit log, invitations) was not changed. After release:
+  3 accounts, 4 login sessions, 1 MCP connection.
+
+**Backups deleted after verification (owner request, irreversible):**
+- All 9 VM snapshots (`leadzen-api-pre-resize-20261007` through
+  `leadzen-api-pre-1fbe843-20261116`).
+- All 14 on-VM backup folders under `/srv/private/leadzen-*`.
+- All 11 previous runtimes under `/opt/leadzen-*` (with their data copies) and their
+  `/etc/leadzen-*.env` files.
+
+Only `/opt/leadzen-651c4c8-20261116` and `/etc/leadzen-651c4c8.env` remain. Disk
+use fell from 15 GB to 8.6 GB of 29 GB.
+
+**Production verification:**
+- Both services are active with zero restarts and no warning-level journal entries.
+- Authenticated `/api/health` and `/api/ready` returned 200 (database and
+  migrations true).
+- Anonymous `leadzen-api.zyene.com/api/health` and `/mcp` returned 401.
+- `https://leadzen.zyene.com/login` returned 200 and serves
+  `dpl_FGq6eM2pit2yXqJh7exvuYfxgVoo`.
+
+No email was sent, and no search or lookup was run. A signed-in browser check of
+Write reply on production was not performed.
+
+**Effect on live behavior:** Karthik starts with an empty workspace and Autopilot
+off. The free LinkedIn email lookup from `1fbe843` is unchanged (on by default).
+
+**Rollback path:** no snapshot, backup or old runtime exists. To roll back, build
+and stage an earlier commit's wheel the same way, point the units at it and
+restart. In Vercel, promote `dpl_3CEXhE5AmYxnkBkj8muoQFWDBaoe` (`0a5ddb7`). Deleted
+data cannot be restored.
 
 ## November 16, 2026 (UTC) — backend, database and dashboard `1fbe843` (free LinkedIn email lookup)
 

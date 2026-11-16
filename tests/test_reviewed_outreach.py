@@ -254,6 +254,45 @@ def test_reply_suggestion_never_sends_and_uses_fixed_thread_identity(connected):
     assert Message.objects.order_by("pk").last().thread_id == thread.pk
 
 
+def test_manual_reply_starts_blank_without_model_and_sends_only_after_approval(connected):
+    deal = person()
+    thread, incoming = conversation(deal)
+    with patch("leadzen.outreach.generate") as model, patch("cold_outreach.emails.sender._deliver") as deliver:
+        result = post(connected, "outreach/reviews", {"count": 1, "thread_id": thread.pk, "manual": True, "request_id": str(uuid.uuid4())})
+        assert result.status_code == 201, result.content
+        data = result.json()
+        draft = data["drafts"][0]
+        assert data["kind"] == "reply" and data["status"] == "draft" and draft["to"] == deal.lead.email
+        assert draft["subject"] == "Re: Patient reviews" and draft["body"] == "" and not draft["approved"]
+        empty = post(connected, f"outreach/reviews/{data['id']}/drafts/{draft['id']}", {"action": "approve", "revision": draft["revision"]})
+        assert empty.status_code == 409
+        edited = post(connected, f"outreach/reviews/{data['id']}/drafts/{draft['id']}", {"action": "edit", "revision": draft["revision"], "subject": draft["subject"], "body": "Hi Bruce,\n\nHappy to send pricing today."})
+        assert edited.status_code == 200, edited.content
+        model.assert_not_called()
+        deliver.assert_not_called()
+    job = queued(connected, edited.json())
+    from leadzen.outreach import run_review
+    with patch("leadzen.outreach.sync_replies_strict"), patch("cold_outreach.emails.sender._deliver", side_effect=accepted) as deliver:
+        assert run_review(job) == 1
+    sent = deliver.call_args.args[1]
+    assert sent["In-Reply-To"] == f"<{incoming.message_id}>" and sent["Subject"] == "Re: Patient reviews"
+    assert "Happy to send pricing today." in str(sent)
+
+
+def test_manual_reply_works_without_ai_and_only_for_one_inbox_conversation(connected):
+    thread, incoming = conversation(person())
+    with patch("leadzen.outreach.provider_policy") as policy, patch("leadzen.outreach.generate") as model:
+        policy.return_value.ai_enabled, policy.return_value.llm_api_key, policy.return_value.mailbox_address = False, "", "sender@example.com"
+        assert post(connected, "outreach/reviews", {"count": 1, "thread_id": thread.pk, "request_id": str(uuid.uuid4())}).status_code == 400
+        assert post(connected, "outreach/reviews", {"count": 1, "thread_id": thread.pk, "manual": True, "request_id": str(uuid.uuid4())}).status_code == 201
+        assert post(connected, "outreach/reviews", {"count": 1, "manual": True, "request_id": str(uuid.uuid4())}).status_code == 400
+        assert post(connected, "outreach/reviews", {"count": 1, "thread_id": thread.pk, "manual": "yes", "request_id": str(uuid.uuid4())}).status_code == 400
+        model.assert_not_called()
+    incoming.kind = "opt_out"
+    incoming.save()
+    assert post(connected, "outreach/reviews", {"count": 1, "thread_id": thread.pk, "manual": True, "request_id": str(uuid.uuid4())}).status_code == 409
+
+
 @pytest.mark.parametrize("kind", ["opt_out", "bounce", "auto_reply", "unrelated"])
 def test_ineligible_inbound_cannot_generate_or_send_reply(connected, kind):
     thread, incoming = conversation(person())

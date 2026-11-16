@@ -3,14 +3,109 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **November 7, 2026** backend release of
-`eaf12a7`, below. Earlier records follow, newest first. The October 8 record was copied
+The most recent deployment is the **November 15, 2026** backend and database
+release of `4ba845e`, below, which followed the same day's dashboard release of
+`13718cb`. Earlier records follow, newest first. The October 8 record was copied
 here on October 12 from the closed Zyene-Inc/leadzen#10 and has not been
 re-verified against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## November 15, 2026 — backend and database `4ba845e` (in-chat MCP approvals)
+
+**Source released:** `main` at `4ba845e` (PR #36; `main` also carries PR #35, a
+dashboard-only change). A connected assistant can approve a prepared action
+(`approve_operation`) on connections where the employee turned on **Allow approvals
+from this app** in Settings → Claude & ChatGPT. The setting is off by default.
+`decline_operation` is always available. Both use the portal's approval checks. Owner
+approved the migration and restart in session on November 15. Wheel SHA-256
+`ab0edd92d3c95eeb59b947a2d7c6184807b05ab65756de054a2c52f3382b78c5`, built with
+`uv build --wheel --build-constraints requirements-build.lock --require-hashes` from a
+clean `git archive` of `4ba845e`. `requirements-production.lock` is unchanged from
+`eaf12a7`.
+
+**Verified before release (live VM):** `eaf12a7` at `/opt/leadzen-eaf12a7-20261107`
+with `/etc/leadzen-eaf12a7.env`; **two** initialized workspaces (`91e7b196-…` and
+`97bd43a2-…`); no worker jobs running at cut-over. A first cut-over attempt at
+23:48:29 UTC aborted at preflight on a transient worker, before any change.
+
+**Recovery points:** VM snapshot `leadzen-api-pre-4ba845e-20261115` (READY, 30 GB,
+disk `openoutreach-api`); on-VM backup
+`/srv/private/leadzen-pre-upgrade-4ba845e-20261115` (23 MB: data after WAL
+checkpoint, env file, both unit files); previous runtime
+`/opt/leadzen-eaf12a7-20261107` left untouched with its unmigrated data.
+
+**Staging (no downtime):** fresh virtualenv at `/opt/leadzen-4ba845e-20261115` from
+the lock with `--require-hashes --no-deps`, then the wheel with `--no-deps`;
+`pip check` clean. `/etc/leadzen-4ba845e.env` (root 600) is the previous file
+with paths pointed at the new runtime.
+
+**Cut-over (23:48:47–23:49:23 UTC):** stopped both services; checkpointed all three
+databases (busy 0, integrity `ok`) and backed up; copied data; migrated the control
+database and both workspaces with `leadzen_accounts.0005_mcpconnection_allow_approvals`
+(adds one boolean column, default false). Migrations ran as the service user with
+Autopilot and follow-ups forced off. Integrity was `ok` after each. Then a WSGI
+import smoke test; both units repointed at the new runtime and env file; started.
+
+**Production verification:** both services active with zero restarts and no
+warning-level journal entries; authenticated `/api/health` and `/api/ready` 200
+(database and migrations true); anonymous `/api/health`, `/api/ready` and `/mcp`
+401; `/.well-known/oauth-protected-resource/mcp` and
+`/.well-known/oauth-authorization-server` 200; dashboard login 200. No email was
+sent and no search or paid lookup was run. A real Claude connector approval was not
+exercised.
+
+**Vercel:** `dpl_6UVeJXGC1VfX41385D1xcUZW4HRh` (`4ba845e`) built for production
+automatically and is READY. It carries the Settings toggle and PR #35's dashboard
+changes.
+
+**Rollback path:** stop services → restore the two unit files from the on-VM
+backup (they point at `/opt/leadzen-eaf12a7-20261107` and its env file) →
+`systemctl daemon-reload` → start. Or recreate the VM from the snapshot. Migration
+`0005` only adds a column, so the older runtime runs on the migrated data unchanged.
+
+## November 15, 2026 — dashboard `13718cb` (Explee-matched UI)
+
+**Source released:** `main` at `13718cb`, the merge of Zyene-Inc/leadzen#35.
+Dashboard-only: no backend, migration, environment or configuration change.
+
+- The owner asked for the dashboard to match the Explee Auto-GTM web app's look
+  and feel. Colors, text sizes, corner radii and shadows were taken from Explee's
+  shipped stylesheets with REA, read through a signed-in Chrome debugging session.
+  Light: background `#F8F8F8`, cards white, text `#0B0B0B`, grey `#808080`,
+  borders 8% black. Dark: background `#0B0B0B`, cards `#161616`, text `#EEEEEE`.
+  Type uses Geist only: 28px titles, 18px card titles, 14px UI text, 12px uppercase labels.
+- Explee's green `#0D9467` gives 3.85:1 contrast with white text and failed the
+  browser check's 4.5:1 rule. The release uses Explee's own darker hover shade
+  `#0C855D` (4.64:1).
+- Layout: grouped sidebar (Mailbox, Setup) with an account menu holding Sign out;
+  Dashboard rebuilt around a sending status card, Performance cards, Import CSV
+  and credits cards, and tabbed recent sending; Inbox split pane; centered
+  768px Settings column with card sections; purple Autopilot card with a switch.
+  Approvals, sending and data behavior are unchanged.
+- This intentionally departs from the `leadzen-ui-quality` skill (ink/paper
+  palette, Archivo titles, 44px desktop targets). That skill has not been updated yet.
+
+**Review and checks:** PR #35 was merged by the owner's explicit request with
+admin rights, bypassing the required review (an author cannot approve their own
+PR). All 9 CI checks passed first, including the browser regression job, after
+`e1bb55c` fixed the contrast failure and updated the end-to-end tests for the
+account menu and the new Dashboard heading. Locally: TypeScript, 1306 dashboard
+tests and the production build passed.
+
+**Vercel:** the `main` push built `dpl_9k8MpFvQ1SADLeKubbccuTFaNJf3`
+(23:14:27–23:14:53 UTC, READY), and `leadzen.zyene.com` took it automatically
+along with `leadzen-by-zyene.vercel.app` (`autoAssignCustomDomains` on).
+
+**Production verification:** `https://leadzen.zyene.com/login` returned 200 and its
+stylesheets contain the new tokens and components (`#0c855d`, `#f8f8f8`,
+`#a16fff`, `.account-menu`, `.status-card`). A signed-in browser check of the live
+site was not performed. No email was sent and no provider call or paid lookup was made.
+
+**Rollback path:** promote the previous production deployment
+`dpl_GKn6tHR1dfPMcpzNw8scpu4QHu7c` (`5e53fb5`) in Vercel. No backend action is needed.
 
 ## November 7, 2026 — backend `eaf12a7` (AI Ark in Autopilot, BetterContact size fix)
 

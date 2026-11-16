@@ -18,6 +18,8 @@ def synthetic_settings_key(monkeypatch):
     # read-only fixtures executed after a worker test installed that adapter.
     # Missing-key regressions explicitly remove this value in their own test.
     monkeypatch.setenv("LEADZEN_SETTINGS_KEY", Fernet.generate_key().decode())
+    # The free email lookup is a network sink; only its own tests switch it on.
+    monkeypatch.setenv("LEADZEN_FREE_EMAIL_LOOKUP", "off")
 
 
 @pytest.fixture

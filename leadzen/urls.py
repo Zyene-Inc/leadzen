@@ -79,6 +79,7 @@ urlpatterns = [
     path("api/contacts/<int:deal_id>", campaigns.contact),
     path("api/contacts/emails", crm.work_emails),
     path("api/contacts/<int:deal_id>/email", crm.work_email),
+    path("api/contacts/<int:deal_id>/free-email", crm.free_work_email),
     path("api/campaigns", campaigns.campaigns),
     path("api/campaigns/prepare", campaigns.prepare_campaign),
     path("api/campaigns/<uuid:campaign_id>", campaigns.campaign),

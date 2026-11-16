@@ -34,8 +34,25 @@ function LookupUsage({ lookup }: { lookup: NonNullable<Contact["lookup"]> }) {
   return <p className="settings-help">{lookup.credits_used} {lookup.provider_name ?? "BetterContact"} {label} used{lookup.synthetic ? " (synthetic preview only)" : ""}.</p>;
 }
 
+function FreeLookupOutcome({ free }: { free: NonNullable<Contact["free_lookup"]> }) {
+  const messages: Record<NonNullable<Contact["free_lookup"]>["status"], string> = {
+    running: "Checking the free lookup…",
+    found: "Found by the free lookup. No credits used.",
+    not_found: "The free lookup found no email. You can buy one with a BetterContact credit.",
+    unverified: "The free lookup couldn’t verify an email at this company. You can buy one with a BetterContact credit.",
+    error: "The free lookup was unavailable. Try it again, or buy the email.",
+  };
+  return <p className="settings-help" role="status">{messages[free.status]}</p>;
+}
+
+function canTryFree(lead: Contact) {
+  return !lead.email && lead.qualified && /^https:\/\/(www\.|m\.)?linkedin\.com\/in\//i.test(lead.linkedin_url) && (!lead.free_lookup || lead.free_lookup.retry);
+}
+
 function WorkEmail({ lead, load }: { lead: Contact; load: () => Promise<void> }) {
   const [reviewing, setReviewing] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [freeError, setFreeError] = useState("");
   const [draftReview, setDraftReview] = useState<string | null>(null);
   const [drafting, setDrafting] = useState(false);
   const [draftError, setDraftError] = useState("");
@@ -53,20 +70,37 @@ function WorkEmail({ lead, load }: { lead: Contact; load: () => Promise<void> })
     } catch (caught) { setDraftError(caught instanceof Error ? caught.message : "Could not draft an email"); draftRequest.current = ""; }
     finally { setDrafting(false); }
   }
+  async function freeLookup() {
+    if (checking) return;
+    setChecking(true); setFreeError("");
+    try {
+      // Free and synchronous: no credits, no approval needed, and nothing is sent.
+      await api(`contacts/${lead.id}/free-email`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      await load();
+    } catch (caught) { setFreeError(caught instanceof Error ? caught.message : "The free lookup didn’t finish"); }
+    finally { setChecking(false); }
+  }
   const lookup = lead.lookup;
+  const free = lead.free_lookup;
+  const tryFree = canTryFree(lead) && !active.has(lookup?.status ?? "");
+  const freeMissed = !!free && ["not_found", "unverified", "error"].includes(free.status);
   function close() { setReviewing(false); opener.current?.focus(); }
   return <section className="panel settings-card" aria-labelledby="lead-contact-title">
     <h2 id="lead-contact-title">Contact</h2>
     <p className="eyebrow">Work email</p>
-    <p className="lead-email-address">{lead.email || (lookup ? "No email yet" : "Not searched yet")}</p>
+    <p className="lead-email-address">{lead.email || (lookup || free ? "No email yet" : "Not searched yet")}</p>
     <EmailOutcome lead={lead} />
+    {free && (!lookup || free.status === "found") && <FreeLookupOutcome free={checking ? { ...free, status: "running" } : free} />}
+    {checking && !free && <p className="settings-help" role="status">Checking the free lookup…</p>}
     {lookup && <LookupUsage lookup={lookup} />}
     <div className="card-actions">
-      {!lead.email && !active.has(lookup?.status ?? "") && <button ref={opener} className="button primary" onClick={() => setReviewing(true)} aria-expanded={reviewing} aria-controls={reviewing ? "work-email-confirm" : undefined}>Find work email</button>}
+      {tryFree && <button className="button primary" disabled={checking} onClick={() => void freeLookup()}>{checking ? "Checking…" : free?.retry ? "Retry free lookup" : "Try free lookup"}</button>}
+      {!lead.email && !active.has(lookup?.status ?? "") && <button ref={opener} className={`button${tryFree ? "" : " primary"}`} disabled={checking} onClick={() => setReviewing(true)} aria-expanded={reviewing} aria-controls={reviewing ? "work-email-confirm" : undefined}>{freeMissed ? "Buy work email" : "Find work email"}</button>}
       {lookup?.run_id && <Link className="button" href={`/find-leads/${lookup.run_id}`}>View progress</Link>}
       {lead.email && <Link className="button primary" href={`/outreach?lead=${lead.id}`}>Prepare outreach</Link>}
       {canDraft && !draftReview && <button className="button" disabled={drafting} onClick={() => void draftEmail()}>{drafting ? "Drafting…" : "Draft email"}</button>}
     </div>
+    {freeError && <p className="error" role="alert">{freeError}</p>}
     {draftError && <p className="error" role="alert">{draftError}</p>}
     {draftReview && <OutreachReview key={draftReview} reviewId={draftReview} workspacePath={`/contacts/${lead.id}`} closeLabel="Back to lead" closed={() => { setDraftReview(null); draftRequest.current = ""; void load(); }} />}
     {reviewing && <EmailConfirmation contactId={lead.id} close={close} started={load} />}

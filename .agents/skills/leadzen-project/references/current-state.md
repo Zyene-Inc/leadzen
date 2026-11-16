@@ -1,5 +1,34 @@
 # Last verified project state
 
+## Free LinkedIn email lookup before BetterContact purchase — working tree on feat/mcp-in-chat-approval, November 15, 2026 (not committed, not deployed)
+
+`leadzen/free_email.py` calls ApplyBolt's LinkedIn email finder
+(`POST https://api.applybolt.app/public/findEmailByLinkedIn`, the same service Track My
+OPT's Networking page uses). The owner reports a paid, written agreement with ApplyBolt.
+The call runs server-side through `pinned_request` (kind `APPLYBOLT`, host allowlisted in
+`leadzen/ai.py`) and sends only the normalized `linkedin.com/in/<slug>` URL. There is no
+API key: the endpoint is keyless. An address is saved only when ApplyBolt marks it `valid`
+and its company or email domain matches the lead's. It is then saved like a purchased
+one: profile email, finder deal `RESOLVED`, and the sender ingest with suppression
+checks. Each profile is looked up at most once (`FreeEmailLookup`, migration
+`0028_freeemaillookup`); only errors can be retried. The lookup starts the moment a lead
+qualifies (`Monitor.verdict` → `free_email.Pipeline`): up to 4 run in worker threads while
+discovery continues. Only the HTTPS call runs in a worker (`pinned_request(...,
+preauthorized=True)`, APPLYBOLT only), after `assert_action_access` ran in the discovery
+thread. All claims and writes stay in the discovery thread. `find_leads` waits for the last
+lookups and reports `free_emails`. A search that also buys emails waits for each free lookup,
+so a hit is never bought. Chat's completion text says how many qualified leads got a free
+email and offers the paid lookup (approval required) for the rest. Autopilot sends to free
+hits directly. Policy scope `buy_missing_emails` (an explicit radio choice in the setup form;
+missing on older policies means buy) decides whether misses use paid credits within the
+limits. Lead detail adds "Try free lookup" (`POST /api/contacts/<id>/free-email`, 45 s
+provider timeout, 60 s proxy timeout). After a miss it shows "Buy work email".
+`LEADZEN_FREE_EMAIL_LOOKUP=off` disables it, and the test suite defaults it off.
+`LEADZEN_FREE_EMAIL_HOURLY_LIMIT` (default 60) caps lookups per workspace.
+Validated with synthetic tests only (`tests/test_free_email.py`,
+`tests/test_free_email_autopilot.py`, `dashboard/tests/free-email-lookup.test.tsx`,
+`dashboard/tests/autopilot.test.tsx`). No live ApplyBolt call was made.
+
 ## Reply sorting in Inbox — branch feat/reply-sorting, November 4, 2026 (not deployed)
 
 Stacked on feat/bounce-domain-health. Ported from Warmbly's rule-based reply

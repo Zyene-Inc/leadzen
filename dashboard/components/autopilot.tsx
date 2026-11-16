@@ -13,6 +13,8 @@ type Scope = {
   timezone: string; daily_contacts: number; monthly_contacts: number;
   daily_credits: number; monthly_credits: number; daily_ai_requests: number;
   monthly_ai_requests: number; authorization_days: number; followup_days: number[]; tone: string; sending_schedule?: SendingSchedule;
+  /** What to do when the free LinkedIn lookup finds no email. Unset until the employee chooses. */
+  buy_missing_emails?: boolean;
 };
 type State = {
   setup: { revision: string; blockers: string[]; target: string; product: string; sender: string; signature: string; booking_link: string; service_enabled: boolean; sending_schedule?: SendingSchedule };
@@ -59,7 +61,7 @@ function AutopilotSetup({ data, close, saved }: { data: State; close: () => void
   useEffect(() => { heading.current?.focus(); }, []);
   async function enable(event: React.FormEvent) {
     event.preventDefault();
-    if (lock.current || !accepted) return;
+    if (lock.current || !accepted || scope.buy_missing_emails === undefined) return;
     lock.current = true; setBusy(true); setError("");
     const body = JSON.stringify({ ...scope, enabled: true, authorize_automatic_outreach: true, revision: review.revision });
     if (requestId.current.body !== body) requestId.current = { id: crypto.randomUUID(), body };
@@ -79,11 +81,18 @@ function AutopilotSetup({ data, close, saved }: { data: State; close: () => void
     <label>Writing style<textarea maxLength={500} required value={scope.tone} onChange={(event) => setScope({ ...scope, tone: event.target.value })} /></label>
     <label className="checkbox-label"><input type="checkbox" checked={scope.followup_days.length > 0} onChange={(event) => setScope({ ...scope, followup_days: event.target.checked ? [3, 5] : [] })} />Add follow-ups</label>
     {!!scope.followup_days.length && <><div className="form-grid">{followupSlots.slice(0, scope.followup_days.length).map(({ id, index }) => <label key={id}>Follow-up {index + 1}: sending days after previous email<input type="number" required min={1} max={30} value={scope.followup_days[index] || ""} onChange={(event) => setScope({ ...scope, followup_days: scope.followup_days.map((value, position) => position === index ? numericInput(event.target.value) : value) })} /></label>)}</div><HelpTooltip label="Follow-up timing">Counts only your sending days. With a Saturday-only schedule, 1 day means next Saturday.</HelpTooltip></>}
+    <fieldset className="autopilot-email-choice" style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
+      <legend style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>Work emails</legend>
+      <p className="settings-help">Every qualified lead gets the free LinkedIn email lookup first, with no credits used. Leads it finds go straight to outreach.</p>
+      <p className="settings-help">When the free lookup finds no email:</p>
+      <label className="checkbox-label"><input type="radio" name="buy-missing-emails" required checked={scope.buy_missing_emails === true} onChange={() => setScope({ ...scope, buy_missing_emails: true })} />Buy it with BetterContact credits, within the credit limits below</label>
+      <label className="checkbox-label"><input type="radio" name="buy-missing-emails" required checked={scope.buy_missing_emails === false} onChange={() => setScope({ ...scope, buy_missing_emails: false })} />Don’t buy. Skip that lead; I can buy its email later from the lead’s page</label>
+    </fieldset>
     <p className="settings-help">AI and email lookups can cost money. These limits cap requests and credits, not dollars. Reserved credits count even if a provider reply is lost. With AI Ark, each new contact uses about 2 credits (profiles plus email), so a day finds at most half the daily credit limit. Follow-ups stop on any reply or opt-out. Inbox errors pause sending.</p>
-    <label className="checkbox-label"><input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />I authorize recurring lead finding, paid email lookups, AI writing, inbox checks and automatic sending{scope.followup_days.length ? " including follow-ups" : ""} on this schedule and within these limits, with no daily review.</label>
+    <label className="checkbox-label"><input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />I authorize recurring lead finding, {scope.buy_missing_emails === false ? "free email lookups only" : "free and paid email lookups"}, AI writing, inbox checks and automatic sending{scope.followup_days.length ? " including follow-ups" : ""} on this schedule and within these limits, with no daily review.</label>
     {!!review.blockers.length && <ul className="error">{review.blockers.map((blocker) => <li key={blocker}>{blocker}</li>)}</ul>}
     {error && <p role="alert" className="error">{error}</p>}
-    <div className="card-actions"><button type="submit" className="button primary" disabled={busy || !accepted || !!review.blockers.length}>{busy ? "Enabling…" : "Enable automatic outreach"}</button><button type="button" className="button" disabled={busy} onClick={close}>Cancel</button></div>
+    <div className="card-actions"><button type="submit" className="button primary" disabled={busy || !accepted || scope.buy_missing_emails === undefined || !!review.blockers.length}>{busy ? "Enabling…" : "Enable automatic outreach"}</button><button type="button" className="button" disabled={busy} onClick={close}>Cancel</button></div>
   </form>;
 }
 
@@ -116,7 +125,7 @@ export function Autopilot() {
 
 function PolicyStatus({ policy, serviceEnabled }: { policy: NonNullable<State["policy"]>; serviceEnabled: boolean }) {
   return <>
-    <p className="settings-help">Up to {policy.scope.daily_contacts} new contacts/day · {plural(policy.scope.followup_days.length, "follow-up")} · authorization ends {formatNewYorkDateTime(policy.expires_at, { dateStyle: "medium" })}</p>
+    <p className="settings-help">Up to {policy.scope.daily_contacts} new contacts/day · {policy.scope.buy_missing_emails === false ? "free email lookup only" : "buys emails the free lookup misses"} · {plural(policy.scope.followup_days.length, "follow-up")} · authorization ends {formatNewYorkDateTime(policy.expires_at, { dateStyle: "medium" })}</p>
     {policy.expired && <p className="error" role="status">Approval expired. Turn off, then approve again.</p>}
     {policy.setup_changed && <p className="error" role="status">Setup changed. Turn off, then approve again.</p>}
     {policy.issue && <p className="error" role="status">{policy.issue}</p>}

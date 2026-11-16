@@ -78,6 +78,8 @@ async function proxy(request: NextRequest, context: RouteContext) {
       ? ["POST"]
       : /^contacts\/\d+\/email$/.test(route)
         ? ["GET", "POST"]
+        : /^contacts\/\d+\/free-email$/.test(route)
+          ? ["POST"]
         : /^contacts\/\d+$/.test(route)
           ? ["GET", "PUT", "DELETE"]
         : /^suppression\/\d+$/.test(route)
@@ -109,7 +111,7 @@ async function proxy(request: NextRequest, context: RouteContext) {
         headers: { "Content-Type": "application/json" },
         body,
         signal: AbortSignal.any([request.signal, AbortSignal.timeout(streaming ? 25000 :
-          route === "onboarding/test" || route === "campaigns/prepare" || route.startsWith("outreach/reviews") ? 60000 : 15000)]),
+          route === "onboarding/test" || route === "campaigns/prepare" || route.startsWith("outreach/reviews") || /^contacts\/\d+\/free-email$/.test(route) ? 60000 : 15000)]),
       },
       token,
     );

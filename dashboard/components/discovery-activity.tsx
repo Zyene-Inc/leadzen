@@ -121,6 +121,7 @@ export function DiscoveryActivityItem({ event, fresh = false }: { event: Discove
         {kind === "email_lookup" && !!data.email_status && (
           <p>
             {data.name ? `${data.name}: ` : ""}
+            {data.source === "free" ? "free lookup, " : ""}
             {data.email_status === "valid" ? "work email saved" : data.email_status === "unavailable" ? "provider returned no result" : "no work email found"}
           </p>
         )}

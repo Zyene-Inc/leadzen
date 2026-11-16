@@ -96,7 +96,7 @@ function SendingStatus({ overview }: { overview: Overview }) {
       </div>
       <div className="status-actions">
         <Link className="button" href="/settings">View schedule</Link>
-        <Link className="button primary" href="/outreach">View emails</Link>
+        <Link className="button" href="/outreach">View emails</Link>
       </div>
     </section>
   );

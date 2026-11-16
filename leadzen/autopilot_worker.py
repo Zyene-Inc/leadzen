@@ -152,15 +152,25 @@ def prepare(run):
     ids = list(session.candidates.filter(produced=True, outcome="qualified", discovered=True, source_id__gt=baseline)
                .order_by("pk").values_list("source_id", flat=True)[:run.checkpoint["contact_limit"]])
     checkpoint(run, "enriching", source_ids=ids)
-    # Searching may already have used part of today's credits (AI Ark charges for profiles).
-    remaining = max(0, run.policy.scope["daily_credits"] - AutopilotRun.objects.get(pk=run.pk).email_credits)
-    ids = [i for i in ids if not DiscoveryLookup.objects.filter(source_id=i).exists()][:remaining]
-    if not ids:
+    # The free LinkedIn lookup ran as each lead qualified. Its verified hits go straight
+    # to outreach; only the misses can use paid credits, and only if the policy allows it.
+    from leadzen.autopilot import buys_missing_emails
+    from leadzen.config.models import FreeEmailLookup
+    free_found = set(FreeEmailLookup.objects.filter(source_id__in=ids, status="found").values_list("source_id", flat=True))
+    produced = {str(c.source_id): c.data.get("email", "").lower() for c in session.candidates.filter(outcome="qualified", source_id__in=free_found)}
+    missing = [i for i in ids if i not in free_found]
+    verified = list(free_found)
+    if missing and buys_missing_emails(run.policy):
+        # Searching may already have used part of today's credits (AI Ark charges for profiles).
+        remaining = max(0, run.policy.scope["daily_credits"] - AutopilotRun.objects.get(pk=run.pk).email_credits)
+        missing = [i for i in missing if not DiscoveryLookup.objects.filter(source_id=i).exists()][:remaining]
+        if missing:
+            paid = discover(run, emails=True, source_ids=missing)
+            verified += list(paid.lookups.filter(state="terminated", email_status__in=["valid", "deliverable"], credits__isnull=False).values_list("source_id", flat=True))
+            produced.update({str(c.source_id): c.data.get("email", "").lower() for c in paid.candidates.filter(produced=True, outcome="qualified")})
+    if not verified:
         checkpoint(run, "needs_attention" if run.checkpoint.get("partial_discovery") else "completed", contacts=0)
         return
-    session = discover(run, emails=True, source_ids=ids)
-    verified = session.lookups.filter(state="terminated", email_status__in=["valid", "deliverable"], credits__isnull=False).values_list("source_id", flat=True)
-    produced = {str(c.source_id): c.data.get("email", "").lower() for c in session.candidates.filter(produced=True, outcome="qualified")}
     deals = list(Deal.objects.filter(lead__lead_id__in=[str(i) for i in verified], state=DealState.READY,
                                    lead__preferences__deleted_at__isnull=True).exclude(lead__email="")
                  .exclude(lead__email__in=Suppression.objects.values("email"))

@@ -209,6 +209,48 @@ class Monitor:
         # A selected email lookup re-reads saved verdicts; it does not re-qualify.
         if changed and not self.session.source_ids:
             self.event(outcome, candidate_payload(row))
+        if outcome == "qualified" and not self.session.source_ids:
+            self.free_email(lead)
+
+    def free_email(self, lead):
+        """Free LinkedIn email lookup the moment a lead qualifies.
+
+        A profile search starts it in the background and keeps searching. A search that
+        also buys emails waits for it, so a free hit is never bought again."""
+        from leadzen import free_email
+        if not free_email.enabled() or lead.email:
+            return
+        if self.session.unit == "leads":
+            if not hasattr(self, "free"):
+                self.free = free_email.Pipeline(self, limit=max(self.session.goal * 2, 10))
+            self.free.start(lead)
+            self.free.collect()
+            return
+        totals = self.__dict__.setdefault("free_waited", {"checked": 0, "found": 0, "not_found": 0, "errors": 0, "stopped": ""})
+        try:
+            status = free_email.lookup(lead, monitor=self)
+        except (free_email.Busy, free_email.RateLimited):
+            status = ""
+        if status and status != "running":
+            totals["checked"] += 1
+            totals[{"found": "found", "error": "errors"}.get(status, "not_found")] += 1
+        lead.refresh_from_db()
+
+    def free_email_settled(self, lead, status, email):
+        row = self.session.candidates.filter(source_id=lead.pk).first()
+        if row and email:
+            row.data["email"] = email
+            row.save(update_fields=["data"])
+        self.event("email_lookup", {"provider": "Free lookup", "source": "free", "name": (lead.full_name or "")[:240],
+                                    "email_status": {"found": "valid", "error": "unavailable"}.get(status, "not_found")})
+
+    def finish_free_emails(self):
+        """Wait for background lookups this run started. None when it started none."""
+        free = getattr(self, "free", None)
+        if free is None:
+            return self.__dict__.pop("free_waited", None)
+        del self.free
+        return free.finish()
 
     def output(self, record):
         from openoutfind.crm.models import Lead

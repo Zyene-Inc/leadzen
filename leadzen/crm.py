@@ -87,8 +87,12 @@ def contact_payload(deal, *, detail=False, facts=None):
                   "credits_used": float(receipt.credits) if receipt and receipt.credits is not None else None,
                   "email_verdict": receipt.email_status if receipt else "",
                   "synthetic": lookup_session.synthetic}
+    from leadzen import free_email
+    free = (facts["free"] if facts is not None else free_email.payload(source.pk if source else None)) if source else None
     email_status = "available" if deal.lead.email else "not_requested"
-    if deal.lead.email and source and source.email == deal.lead.email and receipt and receipt.state == "terminated":
+    if deal.lead.email and free and free["status"] == "found" and free.get("email") == deal.lead.email.lower():
+        email_status = "verified"
+    elif deal.lead.email and source and source.email == deal.lead.email and receipt and receipt.state == "terminated":
         email_status = "verified" if receipt.email_status in {"valid", "deliverable"} else "catch_all_safe" if receipt.email_status == "catch_all_safe" else "available"
     elif not deal.lead.email and lookup:
         email_status = "pending" if lookup["status"] in {"queued", "running", "paused"} else "not_found" if receipt and receipt.state == "terminated" else "review"
@@ -97,6 +101,7 @@ def contact_payload(deal, *, detail=False, facts=None):
               "name": " ".join(filter(None, [deal.lead.first_name, deal.lead.last_name])) or (source.full_name if source else "") or deal.lead.email or "Unnamed contact",
               "first_name": deal.lead.first_name, "last_name": deal.lead.last_name,
               "email": deal.lead.email, "email_status": email_status, "lookup": lookup,
+              "free_lookup": {k: v for k, v in free.items() if k != "email"} if free else None,
               "company": deal.lead.company or ((source.company.name or source.company.domain) if source and source.company else ""),
               "title": deal.lead.title or (source.job_title if source else ""),
               "website": website_link(deal.lead.website or (source.company.domain if source and source.company else "")), "linkedin_url": safe_profile(deal.lead.linkedin_url or (source.profile_url if source else "")),
@@ -118,8 +123,12 @@ def contact_payloads(deals):
     """Batch saved facts for one bounded page without per-contact query growth."""
     keys = [int(d.lead.lead_id) for d in deals if d.lead.lead_id.isdecimal() and len(d.lead.lead_id) <= 18]
     latest_receipt = DiscoveryLookup.objects.filter(source_id=OuterRef("pk")).order_by("-session__run__created_at", "-pk")
+    from leadzen import free_email
+    from leadzen.config.models import FreeEmailLookup
+    free_row = FreeEmailLookup.objects.filter(source_id=OuterRef("pk"))
     sources = {str(p.pk): p for p in Profile.objects.filter(pk__in=keys, synthetic=False).select_related("company")
-        .annotate(crm_receipt_id=Subquery(latest_receipt.values("pk")[:1]))}
+        .annotate(crm_receipt_id=Subquery(latest_receipt.values("pk")[:1]), crm_free_status=Subquery(free_row.values("status")[:1]),
+                  crm_free_email=Subquery(free_row.values("email")[:1]), crm_free_checked=Subquery(free_row.values("checked_at")[:1]))}
     decisions = {d.lead_id: d for d in Decision.objects.filter(lead_id__in=[p.pk for p in sources.values()])}
     receipts = {r.source_id: r for r in DiscoveryLookup.objects.filter(pk__in=[p.crm_receipt_id for p in sources.values() if p.crm_receipt_id])
         .select_related("session__run__thread")}
@@ -138,6 +147,7 @@ def contact_payloads(deals):
                 for pk in waiting.intersection(active.source_ids or []):
                     if pk not in sessions or sessions[pk].run.status not in ("queued", "running", "paused"):
                         sessions[pk] = active
+    frees = {p.pk: free_email.row_payload(p.crm_free_status, p.crm_free_email, p.crm_free_checked) for p in sources.values() if p.crm_free_status}
     thread_ids = {d.thread_id for d in deals if d.thread_id}
     replies = {r["thread_id"]: r["total"] for r in Message.objects.filter(thread_id__in=thread_ids, direction=Direction.INBOUND, kind="human_reply")
         .values("thread_id").annotate(total=Count("pk"))}
@@ -151,7 +161,7 @@ def contact_payloads(deals):
         source = sources.get(str(int(source_key))) if source_key.isdecimal() and len(source_key) <= 18 else None
         key = source.pk if source else None
         result.append(contact_payload(deal, facts={"source": source, "decision": decisions.get(key), "receipt": receipts.get(key),
-            "session": sessions.get(key), "replies": replies.get(deal.thread_id, 0), "message": messages.get(deal.crm_latest_message_id)}))
+            "session": sessions.get(key), "free": frees.get(key), "replies": replies.get(deal.thread_id, 0), "message": messages.get(deal.crm_latest_message_id)}))
     return result
 
 
@@ -271,6 +281,36 @@ def work_email(request, deal_id):
     chat.launch(request, row)
     row.refresh_from_db()
     return JsonResponse({"run": chat.run_payload(row)}, status=202)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@access(workspace=True)
+def free_work_email(request, deal_id):
+    """Run the free LinkedIn email lookup for one saved lead now. It never uses provider credits."""
+    from leadzen import free_email
+    deal = owned_contact(deal_id)
+    if not deal:
+        return error("Contact not found", 404)
+    source = source_profile(deal)
+    if not source:
+        return error("Only a saved discovery profile can be looked up. LeadZen will not guess a profile from a name or email.", 409)
+    decision, _, _ = free_email.facts(source)
+    reason = "An email address is already saved." if deal.lead.email else free_email.ineligible(source, decision)
+    if reason:
+        return error(reason, 409)
+    if not free_email.within_limit():
+        return error("The hourly free lookup limit was reached. Try again later.", 429)
+    try:
+        status = free_email.lookup(source, retry=True)
+    except free_email.Busy:
+        return error("A free lookup for this lead is already running.", 409)
+    except free_email.RateLimited:
+        return error("The free lookup service is busy. Try again in a few minutes.", 429)
+    except PermissionError:
+        return error("This lookup was stopped.", 409)
+    deal = owned_contact(deal_id)
+    return JsonResponse({"status": status, "contact": contact_payload(deal) if deal else None})
 
 
 def emails_review(deals, actor_id):

@@ -195,6 +195,11 @@ def generate(review, drafts):
     return run_agent_sync(run())
 
 
+def reply_subject(parent):
+    """Replies keep the conversation's subject so they stay in its thread."""
+    return (parent.subject if parent.subject.lower().startswith("re:") else "Re: " + parent.subject)[:200]
+
+
 def validated_copy(subject, body):
     if not isinstance(subject, str) or not subject.strip() or len(subject) > 200 or any(ord(c) < 32 for c in subject):
         raise ValueError("Enter a single-line subject of up to 200 characters")
@@ -287,6 +292,11 @@ def reviews(request):
     instructions = body.get("instructions", "")
     if not isinstance(instructions, str) or len(instructions) > 4000:
         return error("Use revision instructions of up to 4000 characters")
+    # manual=True starts a blank reply the employee writes themselves: no model
+    # call, but the same edit, approve and exact-send steps as an AI draft.
+    manual = body.get("manual", False)
+    if type(manual) is not bool or (manual and (thread_id is None or instructions)):
+        return error("Write-your-own drafts are for one Inbox reply")
     if lead_ids is not None and (not isinstance(lead_ids, list) or len(lead_ids) != count or any(type(i) is not int or i < 1 for i in lead_ids) or len(set(lead_ids)) != len(lead_ids) or thread_id is not None):
         return error("Choose the exact distinct Workspace lead IDs")
     kind, parent = "initial", None
@@ -308,7 +318,7 @@ def reviews(request):
             return error("Request ID was already used for different choices", 409)
         return JsonResponse(review_payload(prior))
     values = provider_policy(kind)
-    if not values.ai_enabled or not values.llm_api_key:
+    if not manual and (not values.ai_enabled or not values.llm_api_key):
         return error("Connect AI to generate drafts. Manual campaigns remain available.")
     box = active_mailboxes().first()
     if not box or not values.mailbox_address:
@@ -322,14 +332,17 @@ def reviews(request):
             return error("Not enough eligible contacts with email addresses", 409)
     alias = EmailReview.objects.all().db
     with transaction.atomic(using=alias):
-        if EmailReview.objects.filter(actor_id=request.actor.pk, status="generating").exists():
+        if not manual and EmailReview.objects.filter(actor_id=request.actor.pk, status="generating").exists():
             return error("Draft generation is already running", 409)
         if EmailReview.objects.filter(actor_id=request.actor.pk, created_at__gte=timezone.now() - timedelta(minutes=10)).count() >= 10:
-            return error("Draft generation limit reached. Try again later.", 429)
-        row = EmailReview.objects.create(actor_id=request.actor.pk, request_id=request_id, kind=kind, from_address=box.from_address, signature=box.signature or "", requested_count=count, context_hash="")
-        drafts = [ReviewedEmail.objects.create(review=row, deal=d, reply_to=parent, instructions=instructions) for d in deals]
+            return error("Draft limit reached. Try again later.", 429)
+        row = EmailReview.objects.create(actor_id=request.actor.pk, request_id=request_id, kind=kind, from_address=box.from_address, signature=box.signature or "", requested_count=count, context_hash="",
+                                         **({"status": "draft", "generation_calls": 0} if manual else {}))
+        drafts = [ReviewedEmail.objects.create(review=row, deal=d, reply_to=parent, instructions=instructions, **({"subject": reply_subject(parent)} if manual else {})) for d in deals]
         row.context_hash = context_hash(row)
         row.save(update_fields=["context_hash"])
+    if manual:
+        return JsonResponse(review_payload(row), status=201)
     try:
         compose(row, drafts)
     except Exception:

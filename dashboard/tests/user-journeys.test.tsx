@@ -50,6 +50,20 @@ for (let repetition = 1; repetition <= 10; repetition++) describe(`Fresh user jo
     await userEvent.click(screen.getByRole("button", { name: "Back to conversation" }));
     expect(recordWorkspaceContext).toHaveBeenLastCalledWith({ currentDraftId: null, workspacePath: "/inbox?thread=4" }, user.id);
   });
+  test("Write reply opens a blank draft in the editor without asking AI, and it cannot be approved empty", async () => {
+    const conversation = { id: 4, name: "Bruce", address: lead.email, can_reply: true, reply_blocker: "", total_messages: 0, messages: [] };
+    const blank = { ...review, kind: "reply" as const, thread_id: 4, drafts: [{ ...review.drafts[0], subject: "Re: Hello", body: "", preview_body: "" }] };
+    call.mockImplementation(async path => path === "outreach/reviews" || path.startsWith("outreach/reviews/") ? blank : path === "inbox/conversations/4" ? conversation : { items: [], total: 0, limit: 50, offset: 0 });
+    render(<Inbox user={user} initialThreadId={4} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Write reply" }));
+    const editor = await screen.findByLabelText("Message");
+    expect((editor as HTMLTextAreaElement).value).toBe("");
+    const created = call.mock.calls.find(([path, init]) => path === "outreach/reviews" && init?.method === "POST");
+    expect(JSON.parse(String(created?.[1]?.body))).toMatchObject({ thread_id: 4, count: 1, manual: true });
+    await userEvent.click(screen.getByRole("button", { name: "Cancel edit" }));
+    expect((screen.getByRole("button", { name: "Approve" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByRole("button", { name: "Draft with AI" })).toBeTruthy();
+  });
   test("returning from Chat restores the existing reply without generating another", async () => {
     const conversation = { id: 4, name: "Bruce", address: lead.email, can_reply: true, reply_blocker: "", total_messages: 0, messages: [] };
     call.mockImplementation(async path => path.startsWith("outreach/reviews/") ? { ...review, kind: "reply", thread_id: 4 } : path === "inbox/conversations/4" ? conversation : { items: [], total: 0, limit: 50, offset: 0 });

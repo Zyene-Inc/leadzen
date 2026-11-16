@@ -62,19 +62,21 @@ function Conversation({ threadId, close, initialReviewId, actorId, actorName }: 
   const { data, error, loading, refresh } = useStoredData<ConversationDetail>(`inbox/conversations/${threadId}`, 5000);
   useWorkspaceContext({ currentThreadId: data && !error ? data.id : null, currentDraftId: null, selectedLeadIds: [], currentLeadId: null, workspacePath: data && !error ? `/inbox?thread=${data.id}` : "/inbox" }, actorId);
   const [reviewId, setReviewId] = useState<string | null>(initialReviewId);
-  const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState("");
-  const requestId = useRef("");
+  const [busy, setBusyKind] = useState<"" | "manual" | "ai">("");
+  const requestIds = useRef({ manual: "", ai: "" });
   const submitting = useRef(false);
-  async function suggest() {
+  // "manual" opens an empty draft you type yourself (no AI); "ai" asks LeadZen to suggest one.
+  // Both go through the same edit and approve steps before anything sends.
+  async function start(kind: "manual" | "ai") {
     if (submitting.current || !data?.can_reply) return;
-    submitting.current = true; setBusy(true); setActionError("");
-    requestId.current ||= crypto.randomUUID();
+    submitting.current = true; setBusyKind(kind); setActionError("");
+    requestIds.current[kind] ||= crypto.randomUUID();
     try {
-      const review = await api<EmailReview>("outreach/reviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ thread_id: threadId, count: 1, request_id: requestId.current }) });
+      const review = await api<EmailReview>("outreach/reviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ thread_id: threadId, count: 1, request_id: requestIds.current[kind], ...(kind === "manual" ? { manual: true } : {}) }) });
       setReviewId(review.id);
-    } catch (caught) { setActionError(caught instanceof Error ? caught.message : "Unable to suggest a reply"); }
-    finally { submitting.current = false; setBusy(false); }
+    } catch (caught) { setActionError(caught instanceof Error ? caught.message : kind === "manual" ? "Unable to start a reply" : "Unable to suggest a reply"); }
+    finally { submitting.current = false; setBusyKind(""); }
   }
   const last = data ? data.messages.length - 1 : -1;
   return <section className="conversation-detail" aria-label="Conversation">
@@ -97,14 +99,17 @@ function Conversation({ threadId, close, initialReviewId, actorId, actorName }: 
       <section className="reply-suggestion conversation-composer" aria-labelledby="suggested-reply-title">
         <div className="composer-box">
           <div className="composer-to"><span>To</span><span className="composer-chip">{data.address}</span></div>
-          <h3 id="suggested-reply-title">Suggested reply</h3>
+          <h3 id="suggested-reply-title">Reply</h3>
           {!data.can_reply && <p className="composer-note" role="status">{data.reply_blocker}</p>}
           {actionError && <p className="error" role="alert">{actionError}</p>}
           {reviewId
-            ? <OutreachReview key={reviewId} reviewId={reviewId} workspacePath={`/inbox?thread=${threadId}&review=${reviewId}`} expectedThreadId={threadId} closeLabel="Back to conversation" closed={() => { void recordWorkspaceContext({ currentDraftId: null, workspacePath: `/inbox?thread=${threadId}` }, actorId); setReviewId(null); requestId.current = ""; refresh(); }} />
+            ? <OutreachReview key={reviewId} reviewId={reviewId} workspacePath={`/inbox?thread=${threadId}&review=${reviewId}`} expectedThreadId={threadId} closeLabel="Back to conversation" closed={() => { void recordWorkspaceContext({ currentDraftId: null, workspacePath: `/inbox?thread=${threadId}` }, actorId); setReviewId(null); requestIds.current = { manual: "", ai: "" }; refresh(); }} />
             : <>
-              {data.can_reply && <p className="composer-placeholder">LeadZen writes a reply from this conversation for you to edit and approve.</p>}
-              <div className="composer-actions"><span className="composer-note">Uses AI, which may cost money. Nothing sends until you approve.</span><button type="button" className="button primary" disabled={!data.can_reply || busy} onClick={() => void suggest()}>{busy ? "Writing reply…" : "Suggest reply"}</button></div>
+              {data.can_reply && <p className="composer-placeholder">Write your own reply, or let LeadZen suggest one. Nothing sends until you approve.</p>}
+              <div className="composer-actions">
+                <div className="composer-ai"><button type="button" className="button ghost" disabled={!data.can_reply || !!busy} onClick={() => void start("ai")}><Icon name="sparkle" />{busy === "ai" ? "Writing reply…" : "Suggest reply"}</button><span className="composer-note">Uses AI, which may cost money.</span></div>
+                <button type="button" className="button primary" disabled={!data.can_reply || !!busy} onClick={() => void start("manual")}>{busy === "manual" ? "Opening…" : "Write reply"}</button>
+              </div>
             </>}
         </div>
       </section>

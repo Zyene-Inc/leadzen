@@ -3,15 +3,96 @@
 LeadZen is Zyene's internal tool for outreach about its products and services,
 not the Zyene Reviews company.
 
-The most recent deployment is the **November 15, 2026** backend and database
-release of `4ba845e`, below, which followed the same day's dashboard release of
-`13718cb`. Earlier records follow, newest first. The October 8 record was copied
+The most recent deployment is the **November 16, 2026 (UTC)** backend, database
+and dashboard release of `1fbe843`, below. Earlier records follow, newest first. The October 8 record was copied
 here on October 12 from the closed Zyene-Inc/leadzen#10 and has not been
 re-verified against the live VM since. Every section is dated evidence, not a current
 live-state guarantee or continuing authorization to deploy, send emails or spend
 provider credits. Follow the
 [October 4 production audit](production-readiness-audit-2026-10-04.md) for
 release requirements.
+
+## November 16, 2026 (UTC) — backend, database and dashboard `1fbe843` (free LinkedIn email lookup)
+
+**Source released:** `main` at `1fbe843`, the merge of Zyene-Inc/leadzen#41.
+Each lead that qualifies now gets a free work-email lookup from its LinkedIn
+profile through ApplyBolt's LinkedIn email finder
+(`api.applybolt.app/public/findEmailByLinkedIn`). The owner reports a paid, written
+agreement with ApplyBolt for this use. An address is saved only when ApplyBolt
+marks it valid and it matches the lead's company. Chat offers the paid BetterContact
+lookup only for misses, with approval. Autopilot sends to free hits. A new required
+setup choice decides whether Autopilot buys misses; policies saved before it
+continue to buy. The owner asked in session for the merge and the production deploy.
+
+- Wheel SHA-256 `cc8a0e1126f83aa66337e7a1c9141c91dc0306fe0a1d0f6ec7577caecc287e6f`,
+  built with `uv build --wheel --build-constraints requirements-build.lock
+  --require-hashes` from a clean `git archive` of `1fbe843`.
+- `requirements-production.lock` (`31d3a095…554e`) is unchanged from `4ba845e`.
+- Migration: `leadzen_config.0028_freeemaillookup` adds one table and changes no
+  existing data.
+
+**Verified before release (live VM):** `4ba845e` at `/opt/leadzen-4ba845e-20261115`
+with `/etc/leadzen-4ba845e.env`. There were two initialized workspaces (`91e7b196-…`
+and `97bd43a2-…`), and no workspace worker or queued/running chat task at
+cut-over. 14 GB of disk was free. The VM resolved and reached `api.applybolt.app:443`;
+no lookup request was sent.
+
+**Recovery points:**
+- VM snapshot `leadzen-api-pre-1fbe843-20261116` (READY, disk `openoutreach-api`).
+- On-VM backup `/srv/private/leadzen-pre-upgrade-1fbe843-20261116` (23 MB: data
+  after WAL checkpoint, env file, both unit files).
+- The previous runtime `/opt/leadzen-4ba845e-20261115` is untouched, with its
+  unmigrated data.
+
+**Staging (no downtime):** fresh virtualenv at `/opt/leadzen-1fbe843-20261116` from
+the lock with `--require-hashes --no-deps`, then the wheel with `--no-deps`;
+`pip check` was clean. `/etc/leadzen-1fbe843.env` (root 600) is the previous file
+with paths pointed at the new runtime.
+
+**Cut-over (01:18:27–01:18:51 UTC):**
+1. Stopped both services.
+2. Checkpointed all three databases (busy 0, integrity `ok`), backed them up and
+   copied the data.
+3. Migrated the control database and both workspaces with `0028` as the service
+   user, through `systemd-run` with the new env file and Autopilot and follow-ups
+   forced off.
+4. Integrity was `ok` and `0028` plus its table were present in all three databases.
+5. Ran a WSGI and scheduler import smoke test.
+6. Repointed both units at the new runtime and env file, and started them.
+
+The script would have restored the old units and restarted `4ba845e` on any error;
+it was not needed.
+
+**Production verification:**
+- Both services are active with zero restarts and no warning-level journal entries.
+- Authenticated `/api/health` and `/api/ready` returned 200 (database and
+  migrations true).
+- Anonymous `/api/health`, `/api/ready` and `leadzen-api.zyene.com/mcp` returned 401.
+- Both OAuth discovery documents returned 200.
+- `https://leadzen.zyene.com/login` returned 200.
+
+No email was sent, and no search, free lookup or paid lookup was run. A signed-in
+browser check of the new lead-page and Autopilot controls was not performed.
+
+**Vercel:** the `main` push built `dpl_8VBi8w8PtGWhMXJnNp6TyQtcbWeK` (`1fbe843`,
+READY), and `leadzen.zyene.com` took it automatically.
+
+**Effect on live behavior:** the free lookup is on by default
+(`LEADZEN_FREE_EMAIL_LOOKUP` unset, so on; `LEADZEN_FREE_EMAIL_HOURLY_LIMIT`
+unset, so 60 per workspace per hour). The next chat search or scheduled Autopilot
+run sends qualified leads' LinkedIn profile URLs to ApplyBolt. To turn it off, add
+`LEADZEN_FREE_EMAIL_LOOKUP=off` to `/etc/leadzen-1fbe843.env` and restart both units.
+
+**Rollback path:**
+1. Stop both services.
+2. Restore the two unit files from the on-VM backup (they point at
+   `/opt/leadzen-4ba845e-20261115` and its env file).
+3. Run `systemctl daemon-reload`, then start the services.
+4. In Vercel, promote the previous production deployment
+   `dpl_4u5NHoUTsUiTPeQRWcs1YsfiHDLs` (`55640a2`).
+
+Or recreate the VM from the snapshot. Migration `0028` only adds a table, so the
+older runtime runs on the migrated data unchanged.
 
 ## November 15, 2026 — backend and database `4ba845e` (in-chat MCP approvals)
 

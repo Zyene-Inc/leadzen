@@ -2,6 +2,8 @@
 
 OAuth grants access to records; it does not approve spending, inbox access, or
 sending. External actions become one durable Chat approval and one bounded worker.
+The employee approves in the portal, or, when they turned it on for this
+connection, tells their assistant, which records it with approve_operation.
 """
 import uuid
 from datetime import timedelta
@@ -143,6 +145,10 @@ class UpdateSettings(Arguments):
     changes: SettingChanges
 
 
+class Decision(Operation):
+    actionId: str = Field(min_length=1, max_length=100, description="The exact approval.id shown by get_operation for this operation.")
+
+
 class StopDiscovery(Arguments):
     runId: str = Field(pattern=r"^[0-9a-fA-F-]{36}$")
 
@@ -191,14 +197,19 @@ ENTRIES = {
     "unsuppress_contact": (Lead, "Prepare portal review of removal of a manual block; terminal opt-outs stay blocked and sequences stay stopped.", True, True),
     "get_operation": (Operation, "Poll actual result, approval and saved status for this connection's operation. Never repeats it.", False, False),
     "cancel_operation": (Operation, "Cancel this connection's pending operation. In-flight provider acceptance cannot be recalled.", True, False),
+    "approve_operation": (Decision, "Approve one prepared operation awaiting approval, exactly as get_operation shows it (credits, recipients, messages). Call only after showing the employee those details and receiving their explicit yes in this conversation. Works only when the employee turned on approvals for this connection in LeadZen Settings.", False, True),
+    "decline_operation": (Decision, "Decline one prepared operation awaiting approval. Nothing is looked up, drafted or sent.", False, False),
 }
+# Decisions on an existing operation: they need write access but no new requestId,
+# because the operation ID and its single-use action ID already make them idempotent.
+DECISIONS = {"approve_operation", "decline_operation"}
 SCHEMAS = {name: create_model("MCP" + "".join(part.title() for part in name.split("_")), __base__=(schema, Request)) if mutation else schema
            for name, (schema, _description, mutation, _external) in ENTRIES.items()}
 
 
 def list_tools():
     return [{"name": name, "description": description, "inputSchema": SCHEMAS[name].model_json_schema(),
-             "annotations": {"readOnlyHint": not mutation, "destructiveHint": name == "delete_lead", "idempotentHint": True, "openWorldHint": external or name == "update_draft"}}
+             "annotations": {"readOnlyHint": not mutation and name not in DECISIONS, "destructiveHint": name in {"delete_lead", "approve_operation"}, "idempotentHint": True, "openWorldHint": external or name == "update_draft"}}
             for name, (_schema, description, mutation, external) in ENTRIES.items()]
 
 
@@ -226,11 +237,43 @@ def operation_payload(row):
     path = f"/chat/{row.thread_id}"
     from leadzen.mcp.auth import configuration
     origin = configuration()[2].rstrip("/")
+    awaiting = row.status == "awaiting_approval"
+    in_chat = awaiting and _approvals_allowed(row)
     return _portal_links(redact({"operationId": str(row.pk), "status": row.status, "operation": run_payload(row),
                    "result": result.data.get("result") if result else None, "portalUrl": origin + path,
-                   "note": "Open the portal to review and approve the exact action. No external action has started." if row.status == "awaiting_approval"
+                   **({"approvalInChat": in_chat, "actionId": row.pending.get("id")} if awaiting else {}),
+                   "note": ("No external action has started. Show the employee the approval details (credits, provider, recipients, messages) and ask them to approve or decline. "
+                            "Call approve_operation with this operationId and actionId only after their explicit yes in this conversation; otherwise call decline_operation. "
+                            "They can also approve in the portal.") if in_chat
+                   else "Open the portal to review and approve the exact action. No external action has started. (Approvals from this assistant are off; the employee can turn them on in LeadZen Settings → Claude & ChatGPT.)" if awaiting
                    else "Open the saved discovery in LeadZen to resume only the remaining approved goal. Polling does not resume work." if row.status == "paused"
                    else "This is saved operation state. Polling does not restart, approve or repeat work."}))
+
+
+def _approvals_allowed(row):
+    from leadzen.mcp.auth import connection_live
+    try:
+        return bool(connection_live(row.thread.context.get("mcpConnectionId"), row.actor_id).allow_approvals)
+    except PermissionError:
+        return False
+
+
+def _decide(actor, connection, name, args):
+    from leadzen.chat.views import ApprovalError, decide_approval
+    row = _operation(actor, connection, args["operationId"])
+    approving = name == "approve_operation"
+    if approving and not connection_allows_approvals(connection):
+        raise PermissionError("Approvals from this assistant are turned off. Turn them on in LeadZen Settings → Claude & ChatGPT, or approve with the portal link.")
+    try:
+        decided = decide_approval(row, actor, approving, args["actionId"], source="mcp")
+    except ApprovalError as exc:
+        raise ValueError(str(exc)) from None
+    return operation_payload(decided)
+
+
+def connection_allows_approvals(connection):
+    from leadzen.mcp.auth import connection_live
+    return bool(connection_live(connection.pk, connection.user_id).allow_approvals)
 
 
 def _portal_links(value):
@@ -377,6 +420,10 @@ def call_tool(actor, connection, name, arguments):
     required_scope = "leadzen:write" if mutation else "leadzen:read"
     if required_scope not in live.scopes:
         raise PermissionError("This connection does not grant this capability")
+    if name in DECISIONS:
+        if "leadzen:write" not in live.scopes:
+            raise PermissionError("This connection does not grant this capability")
+        return _decide(actor, connection, name, args)
     if not mutation:
         return _portal_links(redact(_execute_local(actor, connection, name, args)))
     request_id = args.pop("requestId")

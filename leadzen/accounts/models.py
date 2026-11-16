@@ -75,6 +75,9 @@ class MCPConnection(models.Model):
     expires_at = models.DateTimeField()
     last_used_at = models.DateTimeField(null=True, blank=True)
     revoked_at = models.DateTimeField(null=True, blank=True)
+    # Off by default. When the employee turns it on in Settings, this assistant
+    # may record the employee's in-conversation approval of a prepared action.
+    allow_approvals = models.BooleanField(default=False)
 
 
 class MCPAuthorizationRequest(models.Model):

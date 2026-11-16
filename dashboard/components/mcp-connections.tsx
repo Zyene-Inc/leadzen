@@ -12,6 +12,7 @@ export type MCPConnection = {
   clientName: string;
   createdAt: string;
   lastUsedAt: string | null;
+  allowApprovals?: boolean;
 };
 
 export type MCPSetupProblem = {
@@ -217,6 +218,31 @@ export function MCPConnections() {
     }
   }
 
+  async function setApprovals(connection: MCPConnection, allow: boolean) {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setBusy(connection.id);
+    setActionError("");
+    setNotice("");
+    try {
+      const result = await api<{ id: string; allowApprovals: boolean }>("mcp/connections", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ connectionId: connection.id, allowApprovals: allow }),
+      });
+      if (result.allowApprovals !== allow) throw new Error("The setting did not change. Try again.");
+      if (data) setData({ ...data, connections: connections.map((item) => item.id === connection.id ? { ...item, allowApprovals: allow } : item) });
+      setNotice(allow
+        ? `${connection.clientName} can now approve actions when you say yes in the chat.`
+        : `${connection.clientName} can no longer approve actions. Use the LeadZen link instead.`);
+    } catch (caught) {
+      setActionError(caught instanceof Error ? caught.message : "Could not change this setting. Try again.");
+    } finally {
+      inFlight.current = false;
+      setBusy(null);
+    }
+  }
+
   return (
     <section className={`central-settings-section ${styles.section}`} id="mcp-connections" aria-labelledby="mcp-title">
       <div className={styles.heading}>
@@ -227,7 +253,7 @@ export function MCPConnections() {
         <span className={styles.protocol}>MCP</span>
       </div>
       <p className={styles.description}>Use your workspace from Claude or ChatGPT. Choose Set up for step-by-step instructions.</p>
-      <p className={styles.approval}>Sending and paid actions still need approval in LeadZen.</p>
+      <p className={styles.approval}>Sending and paid actions need your approval. Approve them in LeadZen, or turn on approvals for a connected app below and approve in the chat.</p>
 
       {loading && !data && <p className={styles.status} role="status">Loading connections…</p>}
       {error && <div className="error" role="alert">{error} <button className="button" type="button" onClick={refresh}>Try again</button></div>}
@@ -282,6 +308,12 @@ export function MCPConnections() {
             <div className={styles.connectionInfo}>
               <strong>{connection.clientName}</strong>
               <p>{connection.lastUsedAt ? <>Last used <time dateTime={connection.lastUsedAt}>{formatNewYorkDateTime(connection.lastUsedAt)}</time></> : <>Connected <time dateTime={connection.createdAt}>{formatNewYorkDateTime(connection.createdAt)}</time></>} · New York time</p>
+              <label className={styles.approvalToggle}>
+                <input type="checkbox" checked={connection.allowApprovals === true} disabled={busy !== null}
+                  onChange={(event) => { void setApprovals(connection, event.currentTarget.checked); }} />
+                <span>Allow approvals from this app</span>
+                <HelpTooltip label="Approvals from this app">When this is on, the app can approve discovery, paid email lookups, AI drafts, inbox checks and sends after you say yes in the chat. Suppression, pacing and sending hours still apply. Turn it off to approve only in LeadZen.</HelpTooltip>
+              </label>
               {confirm === connection.id && <p>Disconnect this app? Its access stops immediately.</p>}
             </div>
             <div className={styles.actions}>

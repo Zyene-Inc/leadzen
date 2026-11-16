@@ -54,13 +54,16 @@ def approve(identity, operation):
 def test_catalog_exposes_complete_bounded_employee_capabilities_without_admin_or_approval_controls():
     entries = list_tools()
     names = {entry["name"] for entry in entries}
-    assert len(names) == 40
+    assert len(names) == 42
     assert {"find_leads", "find_work_emails", "create_drafts", "send_email", "send_campaign", "sync_mailbox", "get_settings", "pause_autopilot", "import_leads", "get_operation"} <= names
     assert not names & {"approve", "enable_autopilot", "shell", "execute_sql", "send_http", "list_users", "get_secrets"}
     for entry in entries:
         assert entry["inputSchema"]["additionalProperties"] is False
-        if not entry["annotations"]["readOnlyHint"]:
+        if not entry["annotations"]["readOnlyHint"] and entry["name"] not in {"approve_operation", "decline_operation"}:
             assert "requestId" in entry["inputSchema"]["required"]
+    approve_schema = next(entry for entry in entries if entry["name"] == "approve_operation")
+    assert set(approve_schema["inputSchema"]["required"]) == {"operationId", "actionId"}
+    assert approve_schema["annotations"]["destructiveHint"] is True
     send_schema = next(entry for entry in entries if entry["name"] == "send_email")["inputSchema"]
     assert "approvalToken" not in send_schema["properties"]
 
@@ -409,3 +412,61 @@ def test_resume_cannot_expand_original_saved_discovery_scope(identity):
         drive(row.pk)
         finder.assert_not_called()
     row.refresh_from_db(); assert row.status == "failed"
+
+
+def test_in_chat_approval_is_refused_until_employee_enables_it_for_the_connection(identity):
+    actor, conn, _ = identity
+    with patch("leadzen.chat.engine.find_leads") as finder, patch("leadzen.chat.views.launch") as launch:
+        operation = call(identity, "find_leads", {"count": 3, "includeEmails": False})
+        assert operation["approvalInChat"] is False and "Settings" in operation["note"]
+        with pytest.raises(PermissionError):
+            call(identity, "approve_operation", {"operationId": operation["operationId"], "actionId": operation["actionId"]})
+        launch.assert_not_called(); finder.assert_not_called()
+    assert ChatRun.objects.get(pk=operation["operationId"]).status == "awaiting_approval"
+
+
+def test_enabled_connection_records_exact_in_chat_approval_then_performs_once(identity):
+    actor, conn, _ = identity
+    MCPConnection.objects.filter(pk=conn.pk).update(allow_approvals=True)
+    with patch("leadzen.chat.engine.find_leads") as finder, patch("leadzen.chat.views.launch") as launch:
+        operation = call(identity, "find_leads", {"count": 3, "includeEmails": False})
+        assert operation["approvalInChat"] is True and operation["actionId"] == operation["operation"]["approval"]["id"]
+        with pytest.raises(ValueError):
+            call(identity, "approve_operation", {"operationId": operation["operationId"], "actionId": "forged-action"})
+        launch.assert_not_called()
+        approved = call(identity, "approve_operation", {"operationId": operation["operationId"], "actionId": operation["actionId"]})
+        assert approved["status"] == "queued"
+        launch.assert_called_once()
+        with pytest.raises(ValueError):
+            call(identity, "approve_operation", {"operationId": operation["operationId"], "actionId": operation["actionId"]})
+        finder.assert_not_called()
+    row = ChatRun.objects.get(pk=operation["operationId"])
+    assert row.pending["approvedVia"] == "mcp"
+    assert row.thread.messages.filter(role="approval", content__startswith="You approved in your connected assistant").exists()
+    with patch("leadzen.chat.engine.find_leads", return_value={"stored": 3, "partial": False}) as finder:
+        drive(row.pk); drive(row.pk)
+        finder.assert_called_once_with({"count": 3, "emails": False, "audience": ""})
+    assert call(identity, "get_operation", {"operationId": str(row.pk)})["status"] == "succeeded"
+
+
+def test_in_chat_approval_still_respects_expiry_and_connection_ownership(identity):
+    actor, conn, _ = identity
+    MCPConnection.objects.filter(pk=conn.pk).update(allow_approvals=True)
+    with patch("leadzen.chat.views.launch") as launch:
+        operation = call(identity, "find_leads", {"count": 2, "includeEmails": False})
+        ChatRun.objects.filter(pk=operation["operationId"]).update(approval_expires_at=timezone.now() - timedelta(seconds=1))
+        with pytest.raises(ValueError, match="expired"):
+            call(identity, "approve_operation", {"operationId": operation["operationId"], "actionId": operation["actionId"]})
+        other = MCPConnection.objects.create(user=actor, client=conn.client, resource=conn.resource, scopes=conn.scopes,
+            password_fingerprint=conn.password_fingerprint, expires_at=conn.expires_at, allow_approvals=True)
+        with pytest.raises(ValueError, match="not found"):
+            call_tool(actor, other, "approve_operation", {"operationId": operation["operationId"], "actionId": operation["actionId"]})
+        launch.assert_not_called()
+
+
+def test_decline_works_without_enabling_approvals_and_starts_nothing(identity):
+    with patch("leadzen.chat.views.launch") as launch:
+        operation = call(identity, "find_leads", {"count": 3, "includeEmails": False})
+        declined = call(identity, "decline_operation", {"operationId": operation["operationId"], "actionId": operation["actionId"]})
+        launch.assert_not_called()
+    assert declined["status"] == "cancelled"

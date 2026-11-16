@@ -88,7 +88,11 @@ employee database. Every read and operation is scoped to the verified employee;
 operation polling/idempotency also bind the connection. External actions create
 one direct-action ChatRun and the normal portal approval, then run one bounded
 capability without calling the model planner. Never accept an assistant's boolean,
-approval token or OAuth consent as approval to send/spend. Keep grant revocation,
+approval token or OAuth consent as approval to send/spend. The one exception is
+`approve_operation`, and only on a connection where the employee turned on
+`MCPConnection.allow_approvals` in the portal. It goes through the same
+`chat.views.decide_approval` checks as the portal (exact action ID, expiry,
+snapshot, connection ownership). Keep grant revocation,
 account/password changes, cancellation and expiry checks at the real provider and
 transport sinks. Preserve the original discovery goal when portal Resume rebuilds
 a remaining-work action. See [MCP setup](../../../docs/mcp-connections.md) and

@@ -18,6 +18,7 @@ export type DiscoveryEvent = {
     message?: string;
     profiles_returned?: number;
     email_status?: string;
+    source?: string;
   };
   created_at: string;
   display_time?: string;

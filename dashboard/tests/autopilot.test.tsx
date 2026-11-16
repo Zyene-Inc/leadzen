@@ -29,6 +29,7 @@ test("explicit approval sends exact scope once, with followups off", async () =>
   await waitFor(() => expect((screen.getByRole("switch") as HTMLButtonElement).disabled).toBe(false));
   await userEvent.click(screen.getByRole("switch"));
   await userEvent.click(screen.getByRole("checkbox", { name: "Add follow-ups" }));
+  await userEvent.click(screen.getByRole("radio", { name: /Don’t buy/ }));
   await userEvent.click(screen.getByRole("checkbox", { name: /I authorize recurring/ }));
   const submit = screen.getByRole("button", { name: "Enable automatic outreach" });
   fireEvent.click(submit); fireEvent.click(submit);
@@ -36,10 +37,26 @@ test("explicit approval sends exact scope once, with followups off", async () =>
   const body = JSON.parse(String(writes()[0][1]?.body));
   expect(body.authorize_automatic_outreach).toBe(true);
   expect(body.followup_days).toEqual([]);
+  expect(body.buy_missing_emails).toBe(false);
   expect(body.revision).toBe("revision1");
   expect(body.daily_contacts).toBe(10);
   expect(body.timezone).toBe("America/New_York");
   expect(body.sending_schedule).toEqual({ timezone: "America/New_York", days: [0, 1, 2, 3, 4], start: "08:00", end: "20:00" });
+});
+
+test("enabling needs an explicit choice about buying emails the free lookup misses", async () => {
+  call.mockResolvedValue({ setup, policy: null, runs: [] });
+  render(<Autopilot />);
+  await waitFor(() => expect((screen.getByRole("switch") as HTMLButtonElement).disabled).toBe(false));
+  await userEvent.click(screen.getByRole("switch"));
+  await userEvent.click(screen.getByRole("checkbox", { name: /I authorize recurring/ }));
+  const submit = screen.getByRole("button", { name: "Enable automatic outreach" }) as HTMLButtonElement;
+  expect(submit.disabled).toBe(true);
+  await userEvent.click(screen.getByRole("radio", { name: /Buy it with BetterContact credits/ }));
+  expect(screen.getByRole("checkbox", { name: /free and paid email lookups/ })).toBeTruthy();
+  await userEvent.click(submit);
+  await waitFor(() => expect(writes()).toHaveLength(1));
+  expect(JSON.parse(String(writes()[0][1]?.body)).buy_missing_emails).toBe(true);
 });
 
 test("Off writes immediately without another permission step", async () => {
@@ -56,6 +73,7 @@ test("failed enable keeps the form and approval visible", async () => {
   render(<Autopilot />);
   await waitFor(() => expect((screen.getByRole("switch") as HTMLButtonElement).disabled).toBe(false));
   await userEvent.click(screen.getByRole("switch"));
+  await userEvent.click(screen.getByRole("radio", { name: /Buy it with BetterContact credits/ }));
   await userEvent.click(screen.getByRole("checkbox", { name: /I authorize recurring/ }));
   await userEvent.click(screen.getByRole("button", { name: "Enable automatic outreach" }));
   expect((await screen.findByRole("alert")).textContent).toContain("Setup changed");
@@ -71,6 +89,7 @@ test("a saved one-follow-up authorization can be reviewed and edited without add
   expect(screen.queryByRole("spinbutton", { name: /Follow-up 2/ })).toBeNull();
   await userEvent.clear(delay);
   await userEvent.type(delay, "4");
+  await userEvent.click(screen.getByRole("radio", { name: /Buy it with BetterContact credits/ }));
   await userEvent.click(screen.getByRole("checkbox", { name: /I authorize recurring/ }));
   await userEvent.click(screen.getByRole("button", { name: "Enable automatic outreach" }));
   await waitFor(() => expect(writes()).toHaveLength(1));

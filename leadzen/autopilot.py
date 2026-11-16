@@ -193,7 +193,12 @@ def settings(request):
                 return error("Choose up to two follow-ups, each 1–30 working days after the previous email")
             if not isinstance(tone, str) or not tone.strip() or len(tone) > 500:
                 return error("Enter writing guidance of up to 500 characters")
+            # The free LinkedIn lookup always runs first. This is only about leads it misses.
+            buy_missing = body.get("buy_missing_emails", True)
+            if type(buy_missing) is not bool:
+                return error("Choose whether Autopilot may buy emails the free lookup misses")
             scope.update(timezone=zone, sending_schedule=schedule, followup_days=delays, tone=tone.strip(), request_hash=request_hash,
+                         buy_missing_emails=buy_missing,
                          **{k: current_setup[k] for k in ("target", "product", "sender", "signature", "booking_link")})
             for row in AutopilotPolicy.objects.filter(actor_id=request.actor.pk, enabled=True):
                 disable(row)
@@ -235,6 +240,11 @@ def authorized_run(policy_id):
         raise PermissionError("This discovery belongs to a different Autopilot authorization")
     check_policy(run.policy)
     return run
+
+
+def buys_missing_emails(policy):
+    """Policies saved before this choice existed authorized paid lookups, so they keep buying."""
+    return policy.scope.get("buy_missing_emails", True) is not False
 
 
 def ai_ark_contact_limit(policy, limit):

@@ -443,6 +443,21 @@ class DiscoveryLookup(models.Model):
         constraints = [models.UniqueConstraint(fields=["session", "source_id"], name="discovery_lookup_unique")]
 
 
+class FreeEmailLookup(models.Model):
+    """One free LinkedIn work-email lookup per discovered profile. It never uses provider credits.
+
+    status: running, found (verified and saved on the lead), not_found, unverified
+    (an address came back but was not verified for this company, so it is not saved), or error.
+    Only an error can be retried. A miss is final, so the paid lookup is offered instead.
+    """
+    source_id = models.PositiveIntegerField(unique=True)
+    status = models.CharField(max_length=16, default="running")
+    email = models.EmailField(blank=True, default="")
+    verdict = models.CharField(max_length=32, blank=True, default="")
+    attempts = models.PositiveSmallIntegerField(default=0)
+    checked_at = models.DateTimeField(db_index=True)
+
+
 class EmailReview(models.Model):
     """Saved human-review boundary; generation and approval never imply sending."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

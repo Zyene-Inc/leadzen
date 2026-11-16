@@ -122,6 +122,7 @@ test("Autopilot review uses the server's Settings snapshot instead of its old au
   expect(screen.queryByText(/Asia\/Kolkata|Europe\/London/)).toBeNull();
   expect(screen.queryByLabelText("Timezone")).toBeNull();
   expect(screen.getByRole("link", { name: "Edit schedule in Settings" }).getAttribute("href")).toBe("/settings#sending-hours");
+  await userEvent.click(screen.getByRole("radio", { name: /Buy it with BetterContact credits/ }));
   await userEvent.click(screen.getByRole("checkbox", { name: /I authorize recurring/ }));
   await userEvent.click(screen.getByRole("button", { name: "Enable automatic outreach" }));
   await waitFor(() => expect(writes()).toHaveLength(1));

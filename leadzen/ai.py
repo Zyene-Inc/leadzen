@@ -17,12 +17,18 @@ from leadzen.configuration import SettingsError, _valid_url, approved_host
 BASES = {"openai": "https://api.openai.com/v1", "groq": "https://api.groq.com", "anthropic": "https://api.anthropic.com", "google": "https://generativelanguage.googleapis.com", "mistral": "https://api.mistral.ai/v1", "cohere": "https://api.cohere.com"}
 
 
-def pinned_open(method, url, headers, content, host, *, kind="LLM", timeout=40):
+def pinned_open(method, url, headers, content, host, *, kind="LLM", timeout=40, preauthorized=False):
+    """preauthorized: the caller ran assert_action_access in its own thread immediately
+    before handing this one request to a worker thread (free email lookups only). The
+    worker never touches the database; every transport guard below still applies."""
     from leadzen.transports import public_socket
     from leadzen.workspaces import assert_worker_access
-    assert_worker_access()
+    if preauthorized and kind != "APPLYBOLT":
+        raise SettingsError("Only the free email lookup may be preauthorized")
     from leadzen.chat.engine import assert_action_access
-    assert_action_access(reserve_model=kind == "LLM")
+    if not preauthorized:
+        assert_worker_access()
+        assert_action_access(reserve_model=kind == "LLM")
     if kind == "LLM":
         from leadzen.outreach import generation_guard
         generation_guard()
@@ -31,7 +37,7 @@ def pinned_open(method, url, headers, content, host, *, kind="LLM", timeout=40):
         raise SettingsError("AI request must stay on the approved HTTPS endpoint")
     if kind == "LLM":
         approved_host(host, "LLM")
-    elif (kind, host) not in {("BETTERCONTACT", "app.bettercontact.rocks"), ("AI_ARK", "api.ai-ark.com")}:
+    elif (kind, host) not in {("BETTERCONTACT", "app.bettercontact.rocks"), ("AI_ARK", "api.ai-ark.com"), ("APPLYBOLT", "api.applybolt.app")}:
         raise SettingsError("Unapproved lead-provider endpoint")
     if method not in ({"POST"} if kind == "LLM" else {"GET", "POST"}) or len(content) > 262144:
         raise SettingsError("AI request is not supported or is too large")
@@ -43,7 +49,8 @@ def pinned_open(method, url, headers, content, host, *, kind="LLM", timeout=40):
                 self.sock = ssl.create_default_context().wrap_socket(sock, server_hostname=self.host)
                 # DNS/TCP/TLS can block after the initial reservation. Recheck
                 # authority before writing HTTP bytes without reserving again.
-                assert_action_access()
+                if not preauthorized:
+                    assert_action_access()
                 if kind == "LLM":
                     from leadzen.outreach import generation_guard
                     generation_guard()
@@ -77,9 +84,9 @@ def response_headers(response):
     return [(key, value) for key, value in response.getheaders() if key.lower() not in {"content-encoding", "transfer-encoding", "content-length"}]
 
 
-def pinned_request(method, url, headers, content, host, *, kind="LLM", timeout=40):
+def pinned_request(method, url, headers, content, host, *, kind="LLM", timeout=40, preauthorized=False):
     deadline = time.monotonic() + timeout
-    connection, response = pinned_open(method, url, headers, content, host, kind=kind, timeout=timeout)
+    connection, response = pinned_open(method, url, headers, content, host, kind=kind, timeout=timeout, preauthorized=preauthorized)
     try:
         from leadzen.provider_io import read_response
         raw = read_response(connection, response, limit=2097152, deadline=deadline, description="AI")

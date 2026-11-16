@@ -37,6 +37,12 @@ export type Contact = {
   opted_in: boolean;
   consent_note: string;
   timeline?: OutreachTimeline;
+  free_lookup?: null | {
+    status: "running" | "found" | "not_found" | "unverified" | "error";
+    checked_at: string;
+    label: string;
+    retry: boolean;
+  };
   lookup: null | {
     provider_name?: string;
     run_id: string | null;
@@ -59,5 +65,7 @@ export function leadStatus(value: string) {
 
 export function emailLabel(lead: Contact) {
   if (lead.email) return lead.email;
+  if (!lead.lookup && lead.free_lookup && lead.free_lookup.status !== "error")
+    return lead.free_lookup.status === "running" ? "Checking free lookup…" : "No free email found";
   return lead.email_status === "pending" ? "Finding email…" : lead.email_status === "review" ? "Search needs review" : lead.email_status === "not_found" ? "No email found" : "No email yet";
 }

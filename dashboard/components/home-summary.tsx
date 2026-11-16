@@ -146,7 +146,7 @@ export function HomeSummaryPanel({
             <h2 className="home-card-title">Import your own leads</h2>
             <p>Upload your list, then review emails before anything sends</p>
           </div>
-          <Link className="button primary" href="/contacts?import=1">Import CSV</Link>
+          <Link className="button" href="/contacts?import=1">Import CSV</Link>
         </section>
         <CreditBalance credits={home.credits} onRefresh={onRefresh} />
       </div>

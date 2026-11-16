@@ -4310,3 +4310,145 @@ h4, h5, h6 { font-size: 14px; font-weight: 600; }
   .import-card > .button { margin-left: 80px; }
   .main > a.text-link { display: inline-flex; align-items: center; min-height: 44px; }
 }
+
+/* ───────────────────────────────────────────────────────────────
+   Explee mail client inbox (measured Nov 15, 2026 in Explee's
+   /inbox): 340px column of conversation cards on the canvas, and a
+   white pane with a person header, folded earlier messages and a
+   reply box pinned to the bottom.
+   ─────────────────────────────────────────────────────────────── */
+.main.main-inbox { max-width: 1440px; }
+.main-inbox .conversation-layout { grid-template-columns: 340px minmax(0, 1fr); gap: 8px; margin-top: 16px; align-items: start; }
+.inbox-filters { display: grid; gap: 8px; margin-bottom: 8px; }
+.inbox-filters .select { width: 100%; min-height: 32px; padding: 4px 32px 4px 12px; border-radius: 8px; font-size: 14px; font-weight: 500; }
+.inbox-filters .search-field { max-width: none; }
+.inbox-filters .input { min-height: 32px; padding: 4px 12px 4px 30px; border-radius: 8px; font-size: 14px; }
+.inbox-filters .search-field .icon { top: 8px; left: 9px; width: 16px; height: 16px; }
+
+.conversation-list { min-width: 0; }
+.conversation-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; margin: 0; padding: 0; list-style: none; }
+.conversation-cards > li { min-width: 0; }
+.conversation-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none;
+  transition: border-color 120ms var(--ease), background-color 120ms var(--ease);
+}
+.conversation-row:hover { background: var(--surface); border-color: color-mix(in srgb, var(--ink) 20%, transparent); }
+.conversation-row[aria-pressed="true"] { border-color: var(--ink); outline: 0; box-shadow: none; background: var(--surface); }
+.conversation-row:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.conversation-row .avatar,
+.conversation-head .avatar,
+.thread-message .avatar { width: 32px; height: 32px; border: 0; background: var(--neutral-fill); color: var(--muted); font-size: 12px; font-weight: 600; }
+.conversation-row > .avatar { display: grid; margin: 0; }
+.conversation-row > .conversation-row-body { display: grid; gap: 2px; flex: 1; min-width: 0; margin: 0; font-size: 12px; }
+.conversation-row-top { display: flex; align-items: baseline; gap: 8px; min-width: 0; margin: 0; }
+.conversation-row-top strong { overflow: hidden; color: var(--ink); font-size: 14px; font-weight: 500; line-height: 18.2px; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-count { flex-shrink: 0; color: var(--muted); font-size: 12px; line-height: 15px; font-variant-numeric: tabular-nums; }
+.conversation-row-meta,
+.conversation-row-snippet { display: block; overflow: hidden; margin: 0; color: var(--muted); font-size: 12px; line-height: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-row-meta:empty { display: none; }
+.conversation-row-snippet { color: color-mix(in srgb, var(--ink) 70%, var(--muted)); }
+.conversation-row-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; min-height: 19px; }
+.conversation-row-foot time { color: var(--muted); font-size: 12px; line-height: 15px; font-variant-numeric: tabular-nums; }
+.conversation-row .reply-label { margin-left: 0; padding: 2px 8px; border-radius: 9999px; font-size: 12px; line-height: 15px; }
+.inbox-list-empty { display: grid; justify-items: center; gap: 8px; padding: 48px 16px; color: var(--muted); font-size: 14px; text-align: center; }
+.inbox-list-empty p { margin: 0; max-width: 240px; }
+.inbox-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border: 0; font-size: 12px; }
+.inbox-pagination .button { min-height: 32px; padding: 4px 10px; font-size: 14px; }
+
+/* Desktop: the inbox fills the window like a mail client. The list
+   scrolls on its own and the pane runs to the bottom edge. */
+@media (min-width: 1001px) {
+  .main.main-inbox { display: flex; flex-direction: column; height: 100dvh; padding-bottom: 24px; overflow-y: auto; }
+  .main-inbox > .topbar, .main-inbox > .inbox-check, .main-inbox > .error { flex-shrink: 0; }
+  .main-inbox .conversation-layout { flex: 1; min-height: 420px; align-items: stretch; }
+  .main-inbox .conversation-list { display: flex; flex-direction: column; min-height: 0; }
+  .main-inbox .conversation-cards { flex: 1; min-height: 0; overflow-y: auto; padding: 1px; align-content: start; }
+}
+.main-inbox .conversation-detail,
+.main-inbox .conversation-empty {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.main-inbox .conversation-empty { display: grid; place-items: center; text-align: center; animation: none; }
+.conversation-head { display: flex; align-items: center; gap: 12px; flex-shrink: 0; min-height: 62px; padding: 12px 24px; border-bottom: 1px solid var(--line); }
+.conversation-head-copy { flex: 1; min-width: 0; }
+.conversation-head-copy h2 { overflow: hidden; margin: 0; color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: normal; line-height: 18.2px; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-head-copy p { overflow: hidden; margin: 0; color: var(--muted); font-size: 12px; line-height: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-head-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.conversation-head-actions .button { min-height: 32px; padding: 6px 10px; border: 0; background: transparent; color: var(--muted); font-size: 14px; font-weight: 500; box-shadow: none; }
+.conversation-head-actions .button:hover:not(:disabled) { background: var(--neutral-fill); color: var(--ink); }
+.conversation-close { width: 32px; padding: 0 !important; justify-content: center; }
+.conversation-close .icon { width: 16px; height: 16px; }
+.conversation-notice { margin: 16px 24px; }
+
+.main-inbox .conversation-messages { flex: 1; min-height: 0; margin: 0; padding: 16px 24px; overflow-y: auto; overscroll-behavior: contain; }
+.thread-note { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
+.thread-message { margin: 0; padding: 0; border: 0; }
+.thread-message + .thread-message { margin-top: 16px; }
+.thread-message > summary { display: flex; align-items: flex-start; gap: 12px; list-style: none; cursor: pointer; border-radius: 8px; }
+.thread-message > summary::-webkit-details-marker { display: none; }
+.thread-message > summary:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.thread-message-main { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.thread-message-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-height: 18px; font-size: 12px; line-height: 15px; }
+.thread-message-head strong { color: var(--ink); font-size: 12px; font-weight: 500; }
+.thread-address,
+.thread-message-head time { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.thread-message-head .reply-label { margin-left: 0; padding: 2px 8px; border-radius: 9999px; font-size: 12px; line-height: 15px; }
+.thread-preview { overflow: hidden; color: var(--muted); font-size: 14px; line-height: 18.2px; text-overflow: ellipsis; white-space: nowrap; }
+.thread-message[open] .thread-preview { display: none; }
+.thread-message > summary:hover .thread-preview { color: var(--ink); }
+.thread-message-body { padding: 4px 0 0 44px; }
+.thread-meta { margin: 0 0 4px; color: var(--muted); font-size: 12px; line-height: 15px; }
+.thread-message-body .email-copy { max-width: 72ch; margin: 8px 0 0; color: var(--ink); font-size: 14px; line-height: 22.75px; }
+
+/* Reply box pinned to the bottom of the pane, like a mail composer. */
+.conversation-composer { flex-shrink: 0; max-height: 60%; margin: 0; padding: 4px 24px 16px; overflow-y: auto; border: 0; background: transparent; }
+.composer-box { display: grid; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.composer-box:focus-within { border-color: color-mix(in srgb, var(--ink) 24%, transparent); }
+.composer-to { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 15px; }
+.composer-chip { overflow: hidden; padding: 2px 8px; border-radius: 6px; background: var(--neutral-fill); color: var(--ink); font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.composer-box h3 { margin: 0; color: var(--ink); font-size: 14px; font-weight: 500; line-height: 18.2px; letter-spacing: normal; }
+.composer-placeholder { margin: 0; min-height: 44px; color: var(--muted); font-size: 14px; line-height: 22.75px; }
+.composer-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.composer-note { margin: 0; color: var(--muted); font-size: 12px; line-height: 15px; }
+
+@media (max-width: 1000px) {
+  .main-inbox .conversation-layout { grid-template-columns: minmax(0, 1fr); }
+  .main-inbox .has-conversation .conversation-list { display: none; }
+  .main-inbox .conversation-empty { display: none; }
+  .main-inbox .conversation-detail { overflow: visible; }
+  .main-inbox .conversation-messages { overflow: visible; }
+  .conversation-composer { max-height: none; overflow: visible; }
+}
+@media (max-width: 760px) {
+  .conversation-head { flex-wrap: wrap; row-gap: 4px; padding: 12px 16px; }
+  .conversation-head-copy { flex: 1 1 180px; }
+  .conversation-head-actions { margin-left: auto; }
+  .main-inbox .conversation-messages { padding: 16px; }
+  .conversation-composer { padding: 4px 16px 16px; }
+  .thread-message-body { padding-left: 0; }
+  .composer-actions { flex-wrap: wrap; }
+  .composer-actions .button { width: 100%; }
+  .conversation-close { width: 44px; min-height: 44px !important; }
+  .inbox-filters .select, .inbox-filters .input { min-height: 44px; font-size: 16px; }
+  .inbox-filters .search-field .icon { top: 14px; }
+}

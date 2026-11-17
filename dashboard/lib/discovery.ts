@@ -95,7 +95,11 @@ export function summaryNote(data: DiscoveryProgress) {
       ? `${data.counts.produced} verified email${data.counts.produced === 1 ? "" : "s"} found.`
       : `${data.counts.produced} qualified lead${data.counts.produced === 1 ? "" : "s"} found · ${data.counts.rejected} rejected.`;
   if (data.status === "paused") return "Saved. Resume finishes only what is left, within the same budget.";
-  if (!findingActive(data.status)) return "Ended before the goal. Results so far are saved.";
+  if (!findingActive(data.status)) {
+    // The saved stop reason says why and what to do next (older runs have none).
+    const stopped = [...data.events].reverse().find((event) => event.kind === "stopped")?.data.message;
+    return typeof stopped === "string" && stopped ? stopped : "Ended before the goal. Results so far are saved.";
+  }
   return "Counts are saved results, not estimates.";
 }
 
@@ -130,6 +134,8 @@ export function profileLink(value: string | undefined) {
 export const discoveryActivityLabels: Record<string, string> = {
   searching: "Searching profiles",
   search_completed: "Search results received",
+  search_retry: "Retrying search",
+  stopped: "Search stopped",
   discovered: "Candidate discovered",
   evaluating: "Evaluating fit",
   qualified: "Qualified",

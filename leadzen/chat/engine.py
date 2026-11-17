@@ -483,6 +483,14 @@ STOP_REASONS = (
 
 
 STOP_REASON_CONNECTION = "the connection to the lead provider or AI was lost"
+# BetterContact's own refusals, named by the error type the finder stops with.
+STOP_REASONS_PROVIDER = {
+    "provider_auth": "BetterContact rejected the API key",
+    "provider_out_of_credits": "BetterContact has no credits left",
+    "provider_rate_limited": "BetterContact is limiting how many searches can run right now",
+}
+# Waits between tries of one failed BetterContact search (free, so safe to resend).
+SEARCH_RETRY_WAITS = (3, 10)
 
 
 def stop_reason(exc):
@@ -492,6 +500,8 @@ def stop_reason(exc):
     seen = set()
     while exc is not None and id(exc) not in seen:
         seen.add(id(exc))
+        if getattr(exc, "error_type", None) in STOP_REASONS_PROVIDER:
+            return STOP_REASONS_PROVIDER[exc.error_type]
         if isinstance(exc, (ProviderUnreachable, ProviderTimeout)):
             return STOP_REASON_CONNECTION
         if isinstance(exc, PermissionError):
@@ -513,6 +523,17 @@ def error_name(exc):
         seen.add(id(exc))
         exc = exc.__cause__ or exc.__context__
     return type(exc).__name__
+
+
+def search_failure_reason(failure):
+    """Why the last BetterContact search failed, after its retries, in plain words."""
+    tries = len(SEARCH_RETRY_WAITS) + 1
+    status = failure.get("status")
+    if status is None:
+        return f"the connection to BetterContact was lost on {tries} tries in a row"
+    if status >= 500:
+        return f"BetterContact's search returned an error (HTTP {status}) on {tries} tries in a row"
+    return f"BetterContact refused the search (HTTP {status})"
 
 
 def find_leads(args, *, poll_only=False):
@@ -551,10 +572,21 @@ def find_leads(args, *, poll_only=False):
             monitor.event("search_plan", {"message": "Target changed: BetterContact search rebuilt for this target. The previous search was saved and is restored if you return to it."})
     # Guard the child provider in memory, without altering its installed files.
     # No POST retry or redirect can silently resubmit a paid lookup.
+    import time
     import requests
     from unittest.mock import patch
     from leadzen.ai import ProviderUnreachable, pinned_request
     from leadzen.provider_io import ProviderTimeout
+    from openoutfind.core.errors import ErrorType
+    from openoutfind.enrichment.bettercontact import BetterContactUnavailable
+    # The last BetterContact search that failed after its retries, cleared by any
+    # answered search. The finder only sees "unavailable", so this keeps the reason.
+    search_failure = {}
+
+    def count_call():
+        if monitor and DiscoverySession.objects.filter(pk=monitor.session.pk, provider_calls__lt=200).update(provider_calls=F("provider_calls") + 1) != 1:
+            raise PermissionError("Discovery provider-request limit reached")
+
     def bounded_provider(session, method, url, **kwargs):
         assert_action_access()
         if effective().lead_finder_provider != "bettercontact":
@@ -569,9 +601,8 @@ def find_leads(args, *, poll_only=False):
                 raise PermissionError("Discovering new profiles is outside this action")
             body["filters"] = search_plan.enforce(body.get("filters") or {}, plan.spec)
         receipt = None
+        count_call()
         if monitor:
-            if DiscoverySession.objects.filter(pk=monitor.session.pk, provider_calls__lt=200).update(provider_calls=F("provider_calls") + 1) != 1:
-                raise PermissionError("Discovery provider-request limit reached")
             if method == "POST" and path == "/api/v2/async":
                 receipt = monitor.reserve_lookup(body)
                 body.update(enrich_phone_number=False, enrich_profile=False, verify_catch_all=False)
@@ -585,16 +616,51 @@ def find_leads(args, *, poll_only=False):
         content = json.dumps(body).encode() if method == "POST" else b""
         headers = dict(session.headers)
         headers["Content-Type"] = "application/json"
-        try:
-            status, response_headers, raw = pinned_request(method, url, headers, content, "app.bettercontact.rocks", kind="BETTERCONTACT")
-        except (ProviderUnreachable, ProviderTimeout) as exc:
-            # A dropped profile search is an outage, not an answer: the finder keeps
-            # that query for later and continues, as it already does for an HTTP
-            # error. A paid lookup still stops, because its submit may have gone
-            # through and must never be silently sent again.
-            if path.startswith("/api/v2/lead_finder/"):
-                raise requests.ConnectionError("BetterContact search connection was lost") from exc
-            raise
+        # A profile search is free and has no side effect, so a dropped connection, a
+        # rate limit or a server error is tried again after a short wait. A paid lookup
+        # is never resent: its submit may have gone through.
+        search = path.startswith("/api/v2/lead_finder/")
+        waits = SEARCH_RETRY_WAITS if search else ()
+        for attempt in range(len(waits) + 1):
+            if attempt:
+                count_call()
+            lost = None
+            try:
+                status, response_headers, raw = pinned_request(method, url, headers, content, "app.bettercontact.rocks", kind="BETTERCONTACT")
+            except (ProviderUnreachable, ProviderTimeout) as exc:
+                if not search:
+                    raise
+                lost, status, response_headers = exc, None, {}
+            if lost is None and not (search and (status == 429 or status >= 500)):
+                break
+            if attempt == len(waits):
+                break
+            wait = waits[attempt]
+            if status == 429:
+                retry_after = dict((k.lower(), v) for k, v in dict(response_headers).items()).get("retry-after", "")
+                wait = min(int(retry_after), 60) if str(retry_after).isdigit() else max(wait, 10)
+            if monitor:
+                what = "connection was lost" if lost is not None else f"search returned HTTP {status}"
+                monitor.event("search_retry", {"message": f"BetterContact {what}. Trying again in {wait} seconds ({attempt + 2} of {len(waits) + 1})."})
+            time.sleep(wait)
+            if monitor:
+                monitor.boundary()
+        if lost is not None:
+            # An outage, not an answer: the finder keeps the query for later.
+            search_failure.clear()
+            search_failure.update(status=None)
+            raise requests.ConnectionError("BetterContact search connection was lost") from lost
+        # The refusals the finder's own client names, so a run stops with the real reason.
+        if status == 401:
+            raise BetterContactUnavailable("BetterContact rejected the API key (401)", ErrorType.PROVIDER_AUTH)
+        if status == 402:
+            raise BetterContactUnavailable("BetterContact credits are exhausted (402)", ErrorType.PROVIDER_OUT_OF_CREDITS)
+        if status == 429:
+            raise BetterContactUnavailable("BetterContact rate-limited this search", ErrorType.PROVIDER_RATE_LIMITED)
+        if search:
+            search_failure.clear()
+            if status >= 400:
+                search_failure.update(status=status)
         # BetterContact documents HTTP 202 as a normal pending poll. Some responses
         # omit its JSON body; the pinned finder expects a status object to distinguish
         # that accepted job from a malformed response.
@@ -625,8 +691,12 @@ def find_leads(args, *, poll_only=False):
             # one of the child's typed refusals. Never echo its exception or metadata.
             partial = True
             reason = stop_reason(exc)
-            if reason == STOP_REASONS_DEFAULT:
+            if search_failure and reason in (STOP_REASONS_DEFAULT, STOP_REASON_CONNECTION):
+                reason = search_failure_reason(search_failure)
+            elif reason == STOP_REASONS_DEFAULT:
                 reason += f" ({error_name(exc)})"
+            if monitor:
+                monitor.event("stopped", {"message": stopped_text(None, reason, closing=False)})
         output.seek(0)
         stored = ingest(output)
         return {"stored": stored.stored, "suppressed": stored.suppressed, "skipped": stored.skipped,
@@ -878,7 +948,20 @@ def finish(row, status, text):
     DiscoverySession.objects.filter(run_id=row.pk).update(phase=status, pause_requested=False, updated_at=timezone.now())
 
 
-def stopped_text(session, reason):
+# What to do next, by stop reason.
+STOP_HINTS = (
+    (STOP_REASONS_PROVIDER["provider_auth"], " Check the BetterContact key in Settings → Connections."),
+    (STOP_REASONS_PROVIDER["provider_out_of_credits"], " Add BetterContact credits, then search again."),
+    (STOP_REASONS_PROVIDER["provider_rate_limited"], " Saved results are kept; try again in a few minutes."),
+    (STOP_REASON_CONNECTION, " Saved results are kept; try again in a few minutes."),
+    ("the connection to BetterContact", " Saved results are kept; try again in a few minutes."),
+    ("BetterContact's search returned an error", " Saved results are kept; try again in a few minutes."),
+    ("BetterContact refused the search", " If it repeats, contact support@zyene.com."),
+    (STOP_REASONS_DEFAULT, " Check Settings → Connections."),
+)
+
+
+def stopped_text(session, reason, *, closing=True):
     """Say why a search stopped and what it found, so the person and Chat know what to do next."""
     from leadzen.discovery_progress import counts
     text = f"Discovery stopped because {reason}." if reason else "Discovery stopped with partial results."
@@ -889,11 +972,8 @@ def stopped_text(session, reason):
             text += " Most profiles did not match. Narrow the job titles or industry in Settings → Target, then search again."
     elif not reason:
         text += " Review leads and connections before starting another search."
-    if reason.startswith(STOP_REASONS_DEFAULT):
-        text += " Check Settings → Connections."
-    elif reason == STOP_REASON_CONNECTION:
-        text += " Saved results are kept; try again in a few minutes."
-    return text + " No emails were sent."
+    text += next((hint for prefix, hint in STOP_HINTS if reason.startswith(prefix)), "")
+    return text + " No emails were sent." if closing else text
 
 
 def email_next_step(session, free):

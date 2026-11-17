@@ -67,7 +67,12 @@ jobs:
           cache-dependency-path: dashboard/package-lock.json
       - name: Install dashboard dependencies
         run: npm ci
+      # Shipped dependencies gate the merge. Test tooling (vitest/vite) is still audited
+      # and shown as a warning, but cannot block on an advisory with no released fix.
       - name: Dependency advisories
+        run: npm audit --omit=dev --audit-level=high
+      - name: Development dependency advisories (report only)
+        continue-on-error: true
         run: npm audit --audit-level=high
       - name: Type check
         run: npm run lint

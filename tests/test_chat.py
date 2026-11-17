@@ -496,6 +496,30 @@ def test_a_stopped_search_says_why_and_what_it_found(chat_client):
     assert "Settings → Target" in text and text.endswith("No emails were sent.")
     assert stop_reason(ValueError("provider said sk-secret")) == STOP_REASONS_DEFAULT
     assert "Settings → Connections" in stopped_text(session, STOP_REASONS_DEFAULT)
+    # A lost connection says so, and is not sent to Connections to fix a setting.
+    from leadzen.ai import ProviderUnreachable
+    from leadzen.chat.engine import STOP_REASON_CONNECTION, error_name
+    from leadzen.provider_io import ProviderTimeout
+    assert stop_reason(ProviderUnreachable("AI provider could not be reached. Check Connections.")) == STOP_REASON_CONNECTION
+    try:
+        try:
+            raise ProviderTimeout("AI response deadline exceeded")
+        except ProviderTimeout as inner:
+            raise RuntimeError("finder wrapped it") from inner
+    except RuntimeError as exc:
+        assert stop_reason(exc) == STOP_REASON_CONNECTION
+    text = stopped_text(session, STOP_REASON_CONNECTION)
+    assert "was lost" in text and "try again in a few minutes" in text and "Connections" not in text
+    # Any other error names its type (never its message), and still points at Connections.
+    try:
+        try:
+            raise KeyError("sk-secret")
+        except KeyError:
+            raise RuntimeError("finder wrapped it")
+    except RuntimeError as exc:
+        assert error_name(exc) == "KeyError"
+    text = stopped_text(session, f"{STOP_REASONS_DEFAULT} (KeyError)")
+    assert "(KeyError)" in text and "Settings → Connections" in text and "sk-secret" not in text
 
 
 def test_an_unexpected_failure_names_its_cause_without_details(chat_client):

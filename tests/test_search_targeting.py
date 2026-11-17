@@ -254,6 +254,47 @@ def test_bettercontact_request_is_constrained_and_target_changes_rebuild(discove
     assert QueryNode.objects.filter(token_key="node-dentist").exists()
 
 
+
+def test_lost_search_connection_is_an_outage_but_a_lost_paid_lookup_still_stops(discovery_client):
+    """A dropped Lead Finder search keeps the run going; a dropped paid lookup never resends."""
+    import requests
+    from leadzen.ai import ProviderUnreachable
+    from leadzen.chat.engine import STOP_REASON_CONNECTION, find_leads
+    from leadzen.provider_io import ProviderTimeout
+    from openoutfind.core.errors import ErrorType
+    from openoutfind.enrichment import bettercontact
+    outcomes = []
+
+    def search(*args, **kwargs):
+        # The finder's own search transport: the same call that stopped a live run.
+        for _ in range(2):
+            try:
+                bettercontact.submit_and_poll("synthetic", "https://app.bettercontact.rocks/api/v2/lead_finder/async",
+                                              {"filters": {}, "limit": 25, "offset": 0})
+            except bettercontact.BetterContactUnavailable as exc:
+                outcomes.append(exc.error_type)
+
+    drops = iter([ProviderUnreachable("AI provider could not be reached. Check Connections."),
+                  ProviderTimeout("AI response deadline exceeded")])
+
+    def network(*args, **kwargs):
+        raise next(drops)
+
+    save_target(AUDIENCE)
+    with patch("django.core.management.call_command", search), patch("leadzen.ai.pinned_request", side_effect=network):
+        result = find_leads({"count": 1, "emails": False, "audience": ""})
+    # provider_unavailable is the one error the finder's fetch skips and keeps for later.
+    assert outcomes == [ErrorType.PROVIDER_UNAVAILABLE] * 2
+    assert result["partial"] is False and result["stop_reason"] == ""
+
+    def lookup(*args, **kwargs):
+        bettercontact._request(requests.Session(), "POST", "https://app.bettercontact.rocks/api/v2/async", json={"data": []})
+
+    with patch("django.core.management.call_command", lookup), \
+            patch("leadzen.ai.pinned_request", side_effect=ProviderUnreachable("AI provider could not be reached. Check Connections.")):
+        result = find_leads({"count": 1, "emails": True, "audience": ""})
+    assert result["partial"] is True and result["stop_reason"] == STOP_REASON_CONNECTION
+
 # ── Chat: one-off locations and a clear search/qualification preview ─
 
 

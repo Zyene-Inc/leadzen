@@ -482,11 +482,18 @@ STOP_REASONS = (
 )
 
 
+STOP_REASON_CONNECTION = "the connection to the lead provider or AI was lost"
+
+
 def stop_reason(exc):
     """A short, credential-free reason a search stopped, for the person and for Chat."""
+    from leadzen.ai import ProviderUnreachable
+    from leadzen.provider_io import ProviderTimeout
     seen = set()
     while exc is not None and id(exc) not in seen:
         seen.add(id(exc))
+        if isinstance(exc, (ProviderUnreachable, ProviderTimeout)):
+            return STOP_REASON_CONNECTION
         if isinstance(exc, PermissionError):
             message = str(exc).lower()
             for key, text in STOP_REASONS:
@@ -497,6 +504,15 @@ def stop_reason(exc):
 
 
 STOP_REASONS_DEFAULT = "the lead provider or AI connection returned an error"
+
+
+def error_name(exc):
+    """The class name of the deepest cause: safe to show, and it tells a reader where to look."""
+    seen = set()
+    while id(exc) not in seen and (exc.__cause__ or exc.__context__) is not None:
+        seen.add(id(exc))
+        exc = exc.__cause__ or exc.__context__
+    return type(exc).__name__
 
 
 def find_leads(args, *, poll_only=False):
@@ -537,7 +553,8 @@ def find_leads(args, *, poll_only=False):
     # No POST retry or redirect can silently resubmit a paid lookup.
     import requests
     from unittest.mock import patch
-    from leadzen.ai import pinned_request
+    from leadzen.ai import ProviderUnreachable, pinned_request
+    from leadzen.provider_io import ProviderTimeout
     def bounded_provider(session, method, url, **kwargs):
         assert_action_access()
         if effective().lead_finder_provider != "bettercontact":
@@ -568,7 +585,16 @@ def find_leads(args, *, poll_only=False):
         content = json.dumps(body).encode() if method == "POST" else b""
         headers = dict(session.headers)
         headers["Content-Type"] = "application/json"
-        status, response_headers, raw = pinned_request(method, url, headers, content, "app.bettercontact.rocks", kind="BETTERCONTACT")
+        try:
+            status, response_headers, raw = pinned_request(method, url, headers, content, "app.bettercontact.rocks", kind="BETTERCONTACT")
+        except (ProviderUnreachable, ProviderTimeout) as exc:
+            # A dropped profile search is an outage, not an answer: the finder keeps
+            # that query for later and continues, as it already does for an HTTP
+            # error. A paid lookup still stops, because its submit may have gone
+            # through and must never be silently sent again.
+            if path.startswith("/api/v2/lead_finder/"):
+                raise requests.ConnectionError("BetterContact search connection was lost") from exc
+            raise
         # BetterContact documents HTTP 202 as a normal pending poll. Some responses
         # omit its JSON body; the pinned finder expects a status object to distinguish
         # that accepted job from a malformed response.
@@ -599,6 +625,8 @@ def find_leads(args, *, poll_only=False):
             # one of the child's typed refusals. Never echo its exception or metadata.
             partial = True
             reason = stop_reason(exc)
+            if reason == STOP_REASONS_DEFAULT:
+                reason += f" ({error_name(exc)})"
         output.seek(0)
         stored = ingest(output)
         return {"stored": stored.stored, "suppressed": stored.suppressed, "skipped": stored.skipped,
@@ -861,8 +889,10 @@ def stopped_text(session, reason):
             text += " Most profiles did not match. Narrow the job titles or industry in Settings → Target, then search again."
     elif not reason:
         text += " Review leads and connections before starting another search."
-    if reason == STOP_REASONS_DEFAULT:
+    if reason.startswith(STOP_REASONS_DEFAULT):
         text += " Check Settings → Connections."
+    elif reason == STOP_REASON_CONNECTION:
+        text += " Saved results are kept; try again in a few minutes."
     return text + " No emails were sent."
 
 

@@ -255,45 +255,101 @@ def test_bettercontact_request_is_constrained_and_target_changes_rebuild(discove
 
 
 
-def test_lost_search_connection_is_an_outage_but_a_lost_paid_lookup_still_stops(discovery_client):
-    """A dropped Lead Finder search keeps the run going; a dropped paid lookup never resends."""
+LEAD_FINDER = "https://app.bettercontact.rocks/api/v2/lead_finder/async"
+
+
+def finder_search(outcomes):
+    """The finder's own search transport, then the finder's own stop: a refusal ends the
+    job with its error type, and an outage leaves nothing to do, so the goal is unreached."""
+    from openoutfind.core.errors import ErrorType, OpenOutFindError
+    from openoutfind.enrichment import bettercontact
+
+    def search(*args, **kwargs):
+        try:
+            bettercontact.submit_and_poll("synthetic", LEAD_FINDER, {"filters": {}, "limit": 25, "offset": 0})
+            outcomes.append("answered")
+        except bettercontact.BetterContactUnavailable as exc:
+            outcomes.append(exc.error_type)
+            unreached = exc.error_type == ErrorType.PROVIDER_UNAVAILABLE
+            raise OpenOutFindError(ErrorType.GOAL_UNREACHED if unreached else exc.error_type, "0 of 1 leads") from None
+    return search
+
+
+def answers(*replies):
+    """pinned_request stand-in: each reply is an HTTP status (with a fitting body) or an exception."""
+    calls = []
+
+    def network(method, url, *args, **kwargs):
+        calls.append(method)
+        reply = replies[min(len(calls), len(replies)) - 1]
+        if isinstance(reply, Exception):
+            raise reply
+        if reply == 200:
+            body = {"request_id": "synthetic-request"} if method == "POST" else {"status": "terminated", "leads": [], "summary": {}}
+            return 200, {}, json.dumps(body).encode()
+        return reply, {"Retry-After": "0"}, b'{"message": "synthetic"}'
+    return network, calls
+
+
+def test_failed_search_is_retried_then_stops_with_the_real_reason(discovery_client):
+    """A dropped connection, rate limit or server error retries the free search; the stop names what happened."""
+    from leadzen.ai import ProviderUnreachable
+    from leadzen.chat.engine import find_leads
+    from leadzen.provider_io import ProviderTimeout
+    save_target(AUDIENCE)
+    lost = ProviderUnreachable("AI provider could not be reached. Check Connections.")
+    cases = [
+        ((lost, ProviderTimeout("AI response deadline exceeded"), 200, 200), ["answered"], ""),
+        ((503, 429, 200, 200), ["answered"], ""),
+        ((lost,), ["provider_unavailable"], "the connection to BetterContact was lost on 3 tries in a row"),
+        ((503,), ["provider_unavailable"], "BetterContact's search returned an error (HTTP 503) on 3 tries in a row"),
+        ((429,), ["provider_rate_limited"], "BetterContact is limiting how many searches can run right now"),
+    ]
+    for replies, expected, reason in cases:
+        outcomes = []
+        network, calls = answers(*replies)
+        with patch("leadzen.chat.engine.SEARCH_RETRY_WAITS", (0, 0)), patch("time.sleep"), \
+                patch("django.core.management.call_command", finder_search(outcomes)), patch("leadzen.ai.pinned_request", side_effect=network):
+            result = find_leads({"count": 1, "emails": False, "audience": ""})
+        assert outcomes == expected, replies
+        assert result["stop_reason"] == reason and result["partial"] is bool(reason), replies
+        if reason:
+            assert calls == ["POST"] * 3, replies
+
+
+@pytest.mark.parametrize("status,reason,hint", [
+    (401, "BetterContact rejected the API key", "Check the BetterContact key in Settings → Connections."),
+    (402, "BetterContact has no credits left", "Add BetterContact credits"),
+    (400, "BetterContact refused the search (HTTP 400)", "contact support@zyene.com"),
+])
+def test_refused_search_stops_at_once_and_says_why(discovery_client, status, reason, hint):
+    from leadzen.chat.engine import find_leads, stopped_text
+    save_target(AUDIENCE)
+    network, calls = answers(status)
+    with patch("time.sleep") as wait, patch("django.core.management.call_command", finder_search([])), \
+            patch("leadzen.ai.pinned_request", side_effect=network):
+        result = find_leads({"count": 1, "emails": False, "audience": ""})
+    assert calls == ["POST"] and not wait.called
+    assert result["partial"] is True and result["stop_reason"] == reason
+    assert hint in stopped_text(None, reason)
+
+
+def test_lost_paid_lookup_is_never_resent(discovery_client):
     import requests
     from leadzen.ai import ProviderUnreachable
     from leadzen.chat.engine import STOP_REASON_CONNECTION, find_leads
-    from leadzen.provider_io import ProviderTimeout
-    from openoutfind.core.errors import ErrorType
     from openoutfind.enrichment import bettercontact
-    outcomes = []
-
-    def search(*args, **kwargs):
-        # The finder's own search transport: the same call that stopped a live run.
-        for _ in range(2):
-            try:
-                bettercontact.submit_and_poll("synthetic", "https://app.bettercontact.rocks/api/v2/lead_finder/async",
-                                              {"filters": {}, "limit": 25, "offset": 0})
-            except bettercontact.BetterContactUnavailable as exc:
-                outcomes.append(exc.error_type)
-
-    drops = iter([ProviderUnreachable("AI provider could not be reached. Check Connections."),
-                  ProviderTimeout("AI response deadline exceeded")])
-
-    def network(*args, **kwargs):
-        raise next(drops)
-
-    save_target(AUDIENCE)
-    with patch("django.core.management.call_command", search), patch("leadzen.ai.pinned_request", side_effect=network):
-        result = find_leads({"count": 1, "emails": False, "audience": ""})
-    # provider_unavailable is the one error the finder's fetch skips and keeps for later.
-    assert outcomes == [ErrorType.PROVIDER_UNAVAILABLE] * 2
-    assert result["partial"] is False and result["stop_reason"] == ""
 
     def lookup(*args, **kwargs):
         bettercontact._request(requests.Session(), "POST", "https://app.bettercontact.rocks/api/v2/async", json={"data": []})
 
-    with patch("django.core.management.call_command", lookup), \
-            patch("leadzen.ai.pinned_request", side_effect=ProviderUnreachable("AI provider could not be reached. Check Connections.")):
+    network, calls = answers(ProviderUnreachable("AI provider could not be reached. Check Connections."))
+    save_target(AUDIENCE)
+    with patch("time.sleep") as wait, patch("django.core.management.call_command", lookup), patch("leadzen.ai.pinned_request", side_effect=network):
         result = find_leads({"count": 1, "emails": True, "audience": ""})
+    assert calls == ["POST"] and not wait.called
     assert result["partial"] is True and result["stop_reason"] == STOP_REASON_CONNECTION
+
 
 # ── Chat: one-off locations and a clear search/qualification preview ─
 
@@ -369,3 +425,24 @@ def test_qualifier_is_told_the_size_band_the_search_enforced(discovery_client, s
         assert f"restricted to companies of {expected}" in inside and "If a required fact is unsupported, reject" in inside
     else:
         assert "Verified by the lead search" not in inside
+
+
+def test_find_leads_page_shows_retries_and_the_stop_reason(discovery_client):
+    """The Find leads page reads the saved events: each retry, then why the search stopped."""
+    from leadzen.chat.engine import find_leads
+    from leadzen.config.models import ChatRun
+    from leadzen.discovery_progress import Monitor, observe
+    from tests.test_discovery_live import start
+    save_target(AUDIENCE)
+    run = ChatRun.objects.get(pk=start(discovery_client))
+    network, _ = answers(503)
+    with observe(run), patch.object(Monitor, "boundary"), patch.object(Monitor, "adapters", lambda self, **kwargs: __import__("contextlib").nullcontext()), \
+            patch("leadzen.chat.engine.SEARCH_RETRY_WAITS", (0, 0)), patch("time.sleep"), patch("leadzen.chat.engine.assert_action_access"), \
+            patch("django.core.management.call_command", finder_search([])), patch("leadzen.ai.pinned_request", side_effect=network):
+        result = find_leads({"count": 1, "emails": False, "audience": ""})
+    events = [(e["kind"], e["data"].get("message", "")) for e in result["discovery"]["events"]]
+    retries = [message for kind, message in events if kind == "search_retry"]
+    assert retries == ["BetterContact search returned HTTP 503. Trying again in 0 seconds (2 of 3).",
+                       "BetterContact search returned HTTP 503. Trying again in 0 seconds (3 of 3)."]
+    assert events[-1] == ("stopped", "Discovery stopped because BetterContact's search returned an error (HTTP 503) on 3 tries in a row. "
+                                     "Saved results are kept; try again in a few minutes.")

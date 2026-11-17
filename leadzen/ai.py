@@ -14,6 +14,10 @@ from urllib.parse import urlparse
 
 from leadzen.configuration import SettingsError, _valid_url, approved_host
 
+
+class ProviderUnreachable(SettingsError):
+    """The connection to a provider failed or dropped before it answered: temporary, unlike a refusal."""
+
 BASES = {"openai": "https://api.openai.com/v1", "groq": "https://api.groq.com", "anthropic": "https://api.anthropic.com", "google": "https://generativelanguage.googleapis.com", "mistral": "https://api.mistral.ai/v1", "cohere": "https://api.cohere.com"}
 
 
@@ -74,7 +78,7 @@ def pinned_open(method, url, headers, content, host, *, kind="LLM", timeout=40, 
         raise
     except (OSError, http.client.HTTPException):
         connection.close()
-        raise SettingsError("AI provider could not be reached. Check Connections.") from None
+        raise ProviderUnreachable("AI provider could not be reached. Check Connections.") from None
     except BaseException:
         connection.close()
         raise
@@ -92,7 +96,7 @@ def pinned_request(method, url, headers, content, host, *, kind="LLM", timeout=4
         raw = read_response(connection, response, limit=2097152, deadline=deadline, description="AI")
         return response.status, response_headers(response), raw
     except (OSError, http.client.HTTPException):
-        raise SettingsError("AI provider could not be reached. Check Connections.") from None
+        raise ProviderUnreachable("AI provider could not be reached. Check Connections.") from None
     finally:
         connection.close()
 

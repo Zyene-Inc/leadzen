@@ -7,7 +7,10 @@ import os
 import logging
 import subprocess
 import sys
+import tempfile
 import time
+
+from leadzen.worker_status import BUSY_EXIT, reported_error
 
 logger = logging.getLogger(__name__)
 
@@ -51,12 +54,18 @@ def tick():
             if not database_path(profile).is_file():
                 continue
             try:
-                result = subprocess.run([sys.executable, "-m", "leadzen.scheduler", "--workspace"],
-                               env=worker_environment(profile), timeout=180,
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
-                if result.returncode:
-                    successful = False
-                    logger.error("Workspace follow-up worker failed (exit code %s). Check account access, schema and connection settings.", result.returncode)
+                with tempfile.TemporaryFile() as errors:
+                    result = subprocess.run([sys.executable, "-m", "leadzen.scheduler", "--workspace"],
+                                   env=worker_environment(profile), timeout=180,
+                                   stdout=subprocess.DEVNULL, stderr=errors, check=False)
+                    if result.returncode == BUSY_EXIT:
+                        # A Chat run or send holds the workspace; due follow-ups run next pass.
+                        logger.info("Workspace %s busy; follow-ups run on the next pass.", str(getattr(profile, "pk", ""))[:8])
+                    elif result.returncode:
+                        successful = False
+                        name = reported_error(errors)
+                        logger.error("Workspace follow-up worker failed for workspace %s (exit code %s%s). Check account access, schema and connection settings.",
+                                     str(getattr(profile, "pk", ""))[:8], result.returncode, f", {name}" if name else "")
             except subprocess.TimeoutExpired:
                 successful = False
                 # Interrupted claimed messages remain sending/review, never retried.
@@ -75,7 +84,8 @@ def main():
     if sys.argv[1:] == ["--workspace"]:
         if not os.environ.get("LEADZEN_CONTROL_DB") or not os.environ.get("LEADZEN_ACTOR_ID"):
             raise SystemExit("An authorized workspace is required")
-        workspace_tick()
+        from leadzen.worker_status import run_pass
+        run_pass(workspace_tick)
         return
     if sys.argv[1:]:
         raise SystemExit("usage: python -m leadzen.scheduler")

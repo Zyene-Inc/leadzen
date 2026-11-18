@@ -17,7 +17,8 @@ def _database_lock(path):
         try:
             fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise RuntimeError("another LeadZen by Zyene job already owns the database")
+            from leadzen.worker_status import DatabaseBusy
+            raise DatabaseBusy("another LeadZen by Zyene job already owns the database")
         yield
         fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
 

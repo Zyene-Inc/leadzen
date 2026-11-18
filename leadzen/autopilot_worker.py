@@ -322,4 +322,5 @@ def workspace_tick():
 
 
 if __name__ == "__main__":
-    workspace_tick()
+    from leadzen.worker_status import run_pass
+    run_pass(workspace_tick)

@@ -23,6 +23,7 @@ from leadzen.config.models import CampaignRecipient, ChatMessage, ChatRun, ChatT
 from leadzen.configuration import SettingsError, effective
 from leadzen.workspaces import assert_worker_access
 from leadzen.lanes import LaneBusy
+from leadzen.worker_status import error_name  # shared with background workers; re-exported here
 
 TOOLS = Literal["answer", "connections", "overview", "list_leads", "list_replies", "list_campaigns", "find_leads", "draft_campaign", "send_campaign", "pause_campaign", "sync_replies", "get_workspace_status", "get_workspace_context", "get_target", "update_target", "stop_discovery", "get_lead", "find_work_emails", "get_credit_usage", "create_drafts", "get_draft", "update_draft", "regenerate_draft", "send_email", "send_emails", "sync_mailbox", "get_thread", "draft_reply", "send_reply", "suppress_contact", "unsuppress_contact", "get_activity", "add_contacts"]
 MAX_STEPS = 8
@@ -516,13 +517,6 @@ def stop_reason(exc):
 STOP_REASONS_DEFAULT = "the lead provider or AI connection returned an error"
 
 
-def error_name(exc):
-    """The class name of the deepest cause: safe to show, and it tells a reader where to look."""
-    seen = set()
-    while id(exc) not in seen and (exc.__cause__ or exc.__context__) is not None:
-        seen.add(id(exc))
-        exc = exc.__cause__ or exc.__context__
-    return type(exc).__name__
 
 
 def search_failure_reason(failure):
